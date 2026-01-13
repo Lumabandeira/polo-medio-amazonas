@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Polo Médio Amazonas - Designações e Calendário 2026</title>
     <style>
         * {
@@ -80,6 +81,8 @@
             transition: all 0.3s;
             border-bottom: 3px solid transparent;
             white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .tab-button:hover {
@@ -139,6 +142,7 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: table;
         }
 
         th {
@@ -190,6 +194,8 @@
             cursor: pointer;
             display: flex;
             flex-direction: column;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .calendar-day:hover {
@@ -207,6 +213,185 @@
         .calendar-day.empty:hover {
             transform: none;
             box-shadow: none;
+        }
+
+        .calendar-day.has-afastamento {
+            cursor: pointer;
+        }
+
+        .calendar-day.selected {
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.2);
+            transform: scale(1.02);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            margin: 40px auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: slideDown 0.3s;
+            position: relative;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-date-info {
+            background: var(--bg-color);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            color: var(--text-primary);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .modal-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .modal-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        .modal-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9em;
+        }
+
+        .modal-table tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .modal-table tr.highlight-row {
+            background: #fef3c7;
+            font-weight: 600;
+        }
+
+        .tipo-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .tipo-ferias {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .tipo-folga {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tipo-licenca {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        table a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3);
+            display: inline-block;
+            padding: 2px 0;
+            min-height: 44px;
+            line-height: 1.4;
+        }
+
+        table a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
         }
 
         .day-number {
@@ -267,6 +452,9 @@
             cursor: pointer;
             font-size: 1em;
             transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            min-height: 44px;
         }
 
         .month-selector button:hover {
@@ -339,41 +527,313 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                border-radius: 15px;
+            }
+
+            header {
+                padding: 25px 20px;
+            }
+
             header h1 {
-                font-size: 1.8em;
+                font-size: 1.5em;
+                margin-bottom: 8px;
+            }
+
+            header p {
+                font-size: 0.9em;
             }
 
             .tabs {
-                flex-direction: column;
+                flex-direction: row;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .tabs::-webkit-scrollbar {
+                display: none;
             }
 
             .tab-button {
-                border-bottom: 1px solid var(--border-color);
-                border-left: 3px solid transparent;
+                flex: 0 0 auto;
+                padding: 15px 12px;
+                font-size: 0.85em;
+                white-space: nowrap;
+                border-bottom: 3px solid transparent;
+                border-left: none;
+                min-width: fit-content;
             }
 
             .tab-button.active {
-                border-left-color: var(--primary-color);
-                border-bottom-color: var(--border-color);
+                border-left: none;
+                border-bottom-color: var(--primary-color);
+            }
+
+            .tab-content {
+                padding: 20px 15px;
+            }
+
+            .card {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+
+            .card h2 {
+                font-size: 1.4em;
+                margin-bottom: 15px;
+            }
+
+            .card h3 {
+                font-size: 1.2em;
+                margin: 20px 0 12px 0;
+            }
+
+            .card h4 {
+                font-size: 1.1em;
+            }
+
+            table {
+                font-size: 0.75em;
+                display: table;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                width: 100%;
+                min-width: 600px;
+            }
+
+            th, td {
+                padding: 8px 6px;
+                font-size: 0.85em;
+            }
+
+            th {
+                font-size: 0.8em;
+                padding: 10px 6px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-card .number {
+                font-size: 2em;
+            }
+
+            .defensor-card {
+                padding: 15px;
+                margin: 12px 0;
+            }
+
+            .defensor-card h4 {
+                font-size: 1.1em;
+                margin-bottom: 8px;
             }
 
             .calendar-grid {
-                gap: 4px;
+                gap: 3px;
+            }
+
+            .calendar-header {
+                padding: 8px 4px;
+                font-size: 0.75em;
             }
 
             .calendar-day {
-                padding: 5px;
-                font-size: 0.9em;
-                min-height: 80px;
+                padding: 4px;
+                font-size: 0.8em;
+                min-height: 70px;
             }
 
             .day-number {
-                font-size: 0.9em;
+                font-size: 0.85em;
+                margin-bottom: 3px;
             }
 
             .defensor-badge {
-                font-size: 0.65em;
-                padding: 3px 6px;
+                font-size: 0.6em;
+                padding: 2px 4px;
+                margin: 1px 0;
+            }
+
+            .month-selector {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+                margin: 20px 0;
+            }
+
+            .month-selector button {
+                width: 100%;
+                padding: 12px;
+                font-size: 0.9em;
+            }
+
+            .month-selector h3 {
+                font-size: 1.2em;
+                text-align: center;
+            }
+
+            .modal-content {
+                max-width: 95%;
+                margin: 20px auto;
+                border-radius: 15px;
+            }
+
+            .modal-header {
+                padding: 20px 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.3em;
+            }
+
+            .modal-close {
+                width: 35px;
+                height: 35px;
+                font-size: 1.3em;
+            }
+
+            .modal-body {
+                padding: 20px 15px;
+                max-height: 80vh;
+            }
+
+            .modal-date-info {
+                padding: 12px 15px;
+                font-size: 1em;
+            }
+
+            .modal-table {
+                font-size: 0.75em;
+            }
+
+            .modal-table th,
+            .modal-table td {
+                padding: 8px 6px;
+                font-size: 0.8em;
+            }
+
+            .tipo-badge {
+                font-size: 0.75em;
+                padding: 3px 8px;
+            }
+
+            ul {
+                font-size: 0.9em;
+            }
+
+            .card ul li {
+                margin-bottom: 8px;
+            }
+
+            h4[style*="margin-top"] {
+                font-size: 1em !important;
+                margin-top: 20px !important;
+                margin-bottom: 10px !important;
+            }
+
+            div[style*="overflow-x: auto"] {
+                margin: 0 -15px;
+                padding: 0 15px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            div[style*="overflow-x: auto"] table {
+                min-width: 600px;
+            }
+
+            div[style*="padding: 20px"][style*="background"] {
+                padding: 15px !important;
+                margin-top: 25px !important;
+            }
+
+            div[style*="padding: 20px"][style*="background"] h3 {
+                font-size: 1.1em !important;
+                margin-bottom: 10px !important;
+            }
+
+            div[style*="padding: 20px"][style*="background"] ul {
+                font-size: 0.85em !important;
+                line-height: 1.8 !important;
+            }
+
+            p[style*="margin-top: 30px"] {
+                font-size: 0.85em !important;
+                margin-top: 20px !important;
+                padding: 0 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            header {
+                padding: 20px 15px;
+            }
+
+            header h1 {
+                font-size: 1.3em;
+            }
+
+            header p {
+                font-size: 0.85em;
+            }
+
+            .tab-button {
+                padding: 12px 10px;
+                font-size: 0.8em;
+            }
+
+            .card {
+                padding: 15px 10px;
+            }
+
+            .card h2 {
+                font-size: 1.2em;
+            }
+
+            .calendar-day {
+                min-height: 60px;
+            }
+
+            .day-number {
+                font-size: 0.8em;
+            }
+
+            .defensor-badge {
+                font-size: 0.55em;
+                padding: 2px 3px;
+            }
+
+            table {
+                font-size: 0.7em;
+                min-width: 650px;
+            }
+
+            th, td {
+                padding: 6px 4px;
+                font-size: 0.8em;
+            }
+
+            .modal-content {
+                max-width: 98%;
+                margin: 10px auto;
+            }
+
+            .modal-body {
+                padding: 15px 10px;
             }
         }
     </style>
@@ -389,6 +849,7 @@
             <button class="tab-button active" onclick="showTab('designacoes')">📋 Designações</button>
             <button class="tab-button" onclick="showTab('calendario')">📅 Calendário Visual</button>
             <button class="tab-button" onclick="showTab('detalhes')">📊 Detalhes de Afastamentos</button>
+            <button class="tab-button" onclick="showTab('tabela')">📋 Tabela Completa</button>
         </div>
 
         <!-- Tab: Designações -->
@@ -539,6 +1000,447 @@
                 </ul>
             </div>
         </div>
+
+        <!-- Tab: Tabela Completa -->
+        <div id="tabela" class="tab-content">
+            <div class="card">
+                <h2>📋 Tabela Completa de Férias e Folgas 2026</h2>
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">Informações completas sobre todos os afastamentos dos Defensores Públicos do Polo Médio Amazonas em 2026.</p>
+                
+                <!-- Calendário Geral -->
+                <h3>📅 Calendário Geral por Mês</h3>
+                
+                <!-- Janeiro -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Janeiro 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Defensor</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Link Diário Oficial</th>
+                                <th>Processo SEI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>07-09/01</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>Elaine Maria Sousa Frota</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2564-2026__publicada_em_02_janeiro_de_2026.pdf" target="_blank">Edição 2564 - 02/01/2026</a></td><td>25.0.000011580-3</td></tr>
+                            <tr><td>07-09/01</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2564-2026__publicada_em_02_janeiro_de_2026.pdf" target="_blank">Edição 2564 - 02/01/2026</a></td><td>25.0.000011580-3</td></tr>
+                            <tr><td>07-09/01</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>Ícaro Oliveira de Avelar Costa</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2564-2026__publicada_em_02_janeiro_de_2026.pdf" target="_blank">Edição 2564 - 02/01/2026</a></td><td>25.0.000011580-3</td></tr>
+                            <tr><td>07-09/01</td><td><strong>Mariana Silva Paixão</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>4ª DP Cível PAR</td><td>Elaine Maria Sousa Frota</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2564-2026__publicada_em_02_janeiro_de_2026.pdf" target="_blank">Edição 2564 - 02/01/2026</a></td><td>25.0.000015402-7</td></tr>
+                            <tr><td>07-09/01</td><td><strong>Mariana Silva Paixão</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2564-2026__publicada_em_02_janeiro_de_2026.pdf" target="_blank">Edição 2564 - 02/01/2026</a></td><td>25.0.000015402-7</td></tr>
+                            <tr><td>12-21/01</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>2ª DP Família</td><td>Elaine Maria Sousa Frota</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf" target="_blank">Edição 2567 - 07/01/2026</a></td><td>25.0.000014378-5</td></tr>
+                            <tr><td>12-21/01</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>8ª DP Itapiranga</td><td>Ícaro Oliveira de Avelar Costa</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf" target="_blank">Edição 2567 - 07/01/2026</a></td><td>25.0.000014378-5</td></tr>
+                            <tr><td>12-19/01</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf" target="_blank">Edição 2567 - 07/01/2026</a></td><td>25.0.000014378-5</td></tr>
+                            <tr><td>20-21/01</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>Eliaquim Antunes de Souza</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf" target="_blank">Edição 2567 - 07/01/2026</a></td><td>25.0.000014378-5</td></tr>
+                            <tr><td>20/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>5ª DP Criminal</td><td>-</td><td>-</td><td>SGI 2500894</td></tr>
+                            <tr><td>20/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>12ª DP Silves</td><td>-</td><td>-</td><td>SGI 2500894</td></tr>
+                            <tr><td>21-30/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>5ª DP Criminal</td><td>-</td><td>-</td><td>SGI 2500800</td></tr>
+                            <tr><td>21-30/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>12ª DP Silves</td><td>-</td><td>-</td><td>SGI 2500800</td></tr>
+                            <tr><td>22/01-03/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>22/01-03/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>22/01-03/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>23/01</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>4ª DP Cível PAR</td><td>-</td><td>-</td><td>SGI 2500849</td></tr>
+                            <tr><td>23/01</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>-</td><td>-</td><td>SGI 2500849</td></tr>
+                            <tr><td>26/01-04/02</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>4ª DP Cível PAR</td><td>-</td><td>-</td><td>SGI 2500663</td></tr>
+                            <tr><td>26/01-04/02</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>9ª DP Urucurituba</td><td>-</td><td>-</td><td>SGI 2500663</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Fevereiro -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Fevereiro 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Defensor</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Link Diário Oficial</th>
+                                <th>Processo SEI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>02-13/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>1ª DP Família</td><td>-</td><td>-</td><td>25.0.000012796-8</td></tr>
+                            <tr><td>02-13/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>3ª DP Cível</td><td>-</td><td>-</td><td>25.0.000012796-8</td></tr>
+                            <tr><td>02-13/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>11ª DP Silves</td><td>-</td><td>-</td><td>25.0.000012796-8</td></tr>
+                            <tr><td>04-13/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
+                            <tr><td>04-13/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
+                            <tr><td>04-13/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
+                            <tr><td>05/02</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>4ª DP Cível PAR</td><td>-</td><td>-</td><td>SGI 2500849</td></tr>
+                            <tr><td>05/02</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>-</td><td>-</td><td>SGI 2500849</td></tr>
+                            <tr><td>19/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>19/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>19/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>19-20/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>1ª DP Família</td><td>-</td><td>-</td><td>25.0.000012796-8</td></tr>
+                            <tr><td>19-20/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>3ª DP Cível</td><td>-</td><td>-</td><td>25.0.000012796-8</td></tr>
+                            <tr><td>19-20/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>11ª DP Silves</td><td>-</td><td>-</td><td>25.0.000012796-8</td></tr>
+                            <tr><td>20/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>20/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>20/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>23-25/02</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>5ª DP Criminal</td><td>-</td><td>-</td><td>SGI 2600018</td></tr>
+                            <tr><td>23-25/02</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>12ª DP Silves</td><td>-</td><td>-</td><td>SGI 2600018</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Março -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Março 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Defensor</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Link Diário Oficial</th>
+                                <th>Processo SEI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>02-13/03</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>5ª DP Criminal</td><td>-</td><td>-</td><td>SGI 2500847</td></tr>
+                            <tr><td>02-13/03</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>12ª DP Silves</td><td>-</td><td>-</td><td>SGI 2500847</td></tr>
+                            <tr><td>16-27/03</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>5ª DP Criminal</td><td>-</td><td>-</td><td>SGI 2500844</td></tr>
+                            <tr><td>16-27/03</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>12ª DP Silves</td><td>-</td><td>-</td><td>SGI 2500844</td></tr>
+                            <tr><td>30/03</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>5ª DP Criminal</td><td>-</td><td>-</td><td>SGI 2500898</td></tr>
+                            <tr><td>30/03</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>12ª DP Silves</td><td>-</td><td>-</td><td>SGI 2500898</td></tr>
+                            <tr><td>31/03-01/04</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>5ª DP Criminal</td><td>-</td><td>-</td><td>SGI 2600017</td></tr>
+                            <tr><td>31/03-01/04</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>12ª DP Silves</td><td>-</td><td>-</td><td>SGI 2600017</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Abril -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Abril 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Defensor</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Link Diário Oficial</th>
+                                <th>Processo SEI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>06-17/04</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>1ª DP Família</td><td>-</td><td>-</td><td>SGI 2600016</td></tr>
+                            <tr><td>06-17/04</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>3ª DP Cível</td><td>-</td><td>-</td><td>SGI 2600016</td></tr>
+                            <tr><td>06-17/04</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>11ª DP Silves</td><td>-</td><td>-</td><td>SGI 2600016</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Junho -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Junho 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Defensor</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Link Diário Oficial</th>
+                                <th>Processo SEI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>08-25/06</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/06</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/06</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Setembro -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Setembro 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Defensor</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Link Diário Oficial</th>
+                                <th>Processo SEI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>04/09</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>04/09</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>04/09</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/09</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/09</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/09</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Novembro -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Novembro 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Defensor</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Link Diário Oficial</th>
+                                <th>Processo SEI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>23/11-04/12</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>23/11-04/12</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>-</td></tr>
+                            <tr><td>23/11-04/12</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Dezembro -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Dezembro 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Defensor</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Link Diário Oficial</th>
+                                <th>Processo SEI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>09-18/12</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
+                            <tr><td>09-18/12</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
+                            <tr><td>09-18/12</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Calendários Individuais -->
+                <h3 style="margin-top: 50px; margin-bottom: 20px;">👤 Calendários Individuais por Defensor</h3>
+                
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--secondary-color);">📋 José Antônio Pereira da Silva</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Processo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>07/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>Elaine Maria Sousa Frota</td><td>SEI 25.0.000011580-3</td></tr>
+                            <tr><td>07/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>Elton Dariva Staub</td><td>SEI 25.0.000011580-3</td></tr>
+                            <tr><td>07/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>Ícaro Oliveira de Avelar Costa</td><td>SEI 25.0.000011580-3</td></tr>
+                            <tr><td>08/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>Elaine Maria Sousa Frota</td><td>SEI 25.0.000011580-3</td></tr>
+                            <tr><td>08/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>Elton Dariva Staub</td><td>SEI 25.0.000011580-3</td></tr>
+                            <tr><td>08/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>Ícaro Oliveira de Avelar Costa</td><td>SEI 25.0.000011580-3</td></tr>
+                            <tr><td>09/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>Elaine Maria Sousa Frota</td><td>SEI 25.0.000011580-3</td></tr>
+                            <tr><td>09/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>Elton Dariva Staub</td><td>SEI 25.0.000011580-3</td></tr>
+                            <tr><td>09/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>Ícaro Oliveira de Avelar Costa</td><td>SEI 25.0.000011580-3</td></tr>
+                            <tr><td>12-21/01/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>2ª DP Família</td><td>Elaine Maria Sousa Frota</td><td>SEI 25.0.000014378-5</td></tr>
+                            <tr><td>12-21/01/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>8ª DP Itapiranga</td><td>Ícaro Oliveira de Avelar Costa</td><td>SEI 25.0.000014378-5</td></tr>
+                            <tr><td>12-19/01/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>Elton Dariva Staub</td><td>SEI 25.0.000014378-5</td></tr>
+                            <tr><td>20-21/01/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>Eliaquim Antunes de Souza</td><td>SEI 25.0.000014378-5</td></tr>
+                            <tr><td>22/01-03/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>-</td><td>-</td></tr>
+                            <tr><td>22/01-03/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td></tr>
+                            <tr><td>22/01-03/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td></tr>
+                            <tr><td>04-13/02/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>2ª DP Família</td><td>-</td><td>SEI 25.0.000014378-5</td></tr>
+                            <tr><td>04-13/02/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>8ª DP Itapiranga</td><td>-</td><td>SEI 25.0.000014378-5</td></tr>
+                            <tr><td>04-13/02/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>-</td><td>SEI 25.0.000014378-5</td></tr>
+                            <tr><td>19/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>-</td><td>-</td></tr>
+                            <tr><td>19/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td></tr>
+                            <tr><td>19/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td></tr>
+                            <tr><td>20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>-</td><td>-</td></tr>
+                            <tr><td>20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td></tr>
+                            <tr><td>20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/06/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/06/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/06/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td></tr>
+                            <tr><td>04/09/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>-</td><td>-</td></tr>
+                            <tr><td>04/09/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td></tr>
+                            <tr><td>04/09/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/09/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/09/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td></tr>
+                            <tr><td>08-25/09/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td></tr>
+                            <tr><td>23/11-04/12/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>-</td><td>-</td></tr>
+                            <tr><td>23/11-04/12/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td></tr>
+                            <tr><td>23/11-04/12/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td></tr>
+                            <tr><td>09-18/12/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>2ª DP Família</td><td>-</td><td>SEI 25.0.000014378-5</td></tr>
+                            <tr><td>09-18/12/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>8ª DP Itapiranga</td><td>-</td><td>SEI 25.0.000014378-5</td></tr>
+                            <tr><td>09-18/12/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>-</td><td>SEI 25.0.000014378-5</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--secondary-color);">📋 Ícaro Oliveira de Avelar Costa</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Processo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>02-13/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>1ª DP Família</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
+                            <tr><td>02-13/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>3ª DP Cível</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
+                            <tr><td>02-13/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>11ª DP Silves</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
+                            <tr><td>19-20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>1ª DP Família</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
+                            <tr><td>19-20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>3ª DP Cível</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
+                            <tr><td>19-20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>11ª DP Silves</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
+                            <tr><td>06-17/04/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>1ª DP Família</td><td>-</td><td>SGI 2600016</td></tr>
+                            <tr><td>06-17/04/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>3ª DP Cível</td><td>-</td><td>SGI 2600016</td></tr>
+                            <tr><td>06-17/04/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>11ª DP Silves</td><td>-</td><td>SGI 2600016</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--secondary-color);">📋 Elton Dariva Staub</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Processo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>20/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>5ª DP Criminal</td><td>-</td><td>SGI 2500894</td></tr>
+                            <tr><td>20/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>12ª DP Silves</td><td>-</td><td>SGI 2500894</td></tr>
+                            <tr><td>21-30/01/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>5ª DP Criminal</td><td>-</td><td>SGI 2500800</td></tr>
+                            <tr><td>21-30/01/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>12ª DP Silves</td><td>-</td><td>SGI 2500800</td></tr>
+                            <tr><td>23-25/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>5ª DP Criminal</td><td>-</td><td>SGI 2600018</td></tr>
+                            <tr><td>23-25/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>12ª DP Silves</td><td>-</td><td>SGI 2600018</td></tr>
+                            <tr><td>02-13/03/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>5ª DP Criminal</td><td>-</td><td>SGI 2500847</td></tr>
+                            <tr><td>02-13/03/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>12ª DP Silves</td><td>-</td><td>SGI 2500847</td></tr>
+                            <tr><td>16-27/03/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>5ª DP Criminal</td><td>-</td><td>SGI 2500844</td></tr>
+                            <tr><td>16-27/03/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>12ª DP Silves</td><td>-</td><td>SGI 2500844</td></tr>
+                            <tr><td>30/03/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>5ª DP Criminal</td><td>-</td><td>SGI 2500898</td></tr>
+                            <tr><td>30/03/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>12ª DP Silves</td><td>-</td><td>SGI 2500898</td></tr>
+                            <tr><td>31/03-01/04/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>5ª DP Criminal</td><td>-</td><td>SGI 2600017</td></tr>
+                            <tr><td>31/03-01/04/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>12ª DP Silves</td><td>-</td><td>SGI 2600017</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--secondary-color);">📋 Eliaquim Antunes de Souza</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Processo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>23/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>4ª DP Cível PAR</td><td>-</td><td>SGI 2500849</td></tr>
+                            <tr><td>23/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>-</td><td>SGI 2500849</td></tr>
+                            <tr><td>26/01-04/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>4ª DP Cível PAR</td><td>-</td><td>SGI 2500663</td></tr>
+                            <tr><td>26/01-04/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>9ª DP Urucurituba</td><td>-</td><td>SGI 2500663</td></tr>
+                            <tr><td>05/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>4ª DP Cível PAR</td><td>-</td><td>SGI 2500849</td></tr>
+                            <tr><td>05/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>-</td><td>SGI 2500849</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--secondary-color);">📋 Mariana Silva Paixão</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Tipo</th>
+                                <th>Defensoria Afetada</th>
+                                <th>Substituto</th>
+                                <th>Processo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>07-09/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>4ª DP Cível PAR</td><td>Elaine Maria Sousa Frota</td><td>SEI 25.0.000015402-7</td></tr>
+                            <tr><td>07-09/01/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td>SEI 25.0.000015402-7</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Legenda e Observações -->
+                <div style="margin-top: 50px; padding: 20px; background: var(--bg-color); border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px;">🔍 Legenda</h3>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li><span class="tipo-badge tipo-ferias">🔵 Férias</span> - Período de férias do defensor</li>
+                        <li><span class="tipo-badge tipo-folga">🟡 Folga</span> - Folga programada do defensor</li>
+                        <li><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span> - Licença especial do defensor</li>
+                        <li><strong>ÍMPAR:</strong> Defensoria de número ímpar</li>
+                        <li><strong>PAR:</strong> Defensoria de número par</li>
+                        <li><strong>Substituto:</strong> Defensor designado para substituir durante o afastamento</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: var(--bg-color); border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px;">📝 Observações</h3>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>As datas estão no formato DD/MM/AAAA</li>
+                        <li>Os processos/SEI estão indicados quando disponíveis</li>
+                        <li>As substituições são publicadas no Diário Oficial da DPE/AM</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: var(--bg-color); border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px;">🔗 Links Úteis</h3>
+                    <p style="margin-bottom: 10px;"><strong>Diário Oficial da DPE/AM:</strong> <a href="https://diario.defensoria.am.def.br/" target="_blank" style="color: var(--secondary-color);">https://diario.defensoria.am.def.br/</a></p>
+                    <p style="color: var(--text-secondary);">Publicação das substituições: Sexta-feira, 02 de janeiro de 2026</p>
+                </div>
+
+                <p style="margin-top: 30px; text-align: center; color: var(--text-secondary); font-style: italic;">
+                    <strong>Última atualização:</strong> Janeiro de 2026 (atualizado com informações de Janeiro a Dezembro de 2026)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Detalhes -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>📋 Detalhes do Afastamento</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-date-info" class="modal-date-info"></div>
+                <div id="modal-table-container"></div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -616,7 +1518,151 @@
             }
         };
 
+        // Dados detalhados dos afastamentos (da Tabela de Férias e Folgas)
+        // Estrutura: { mes: { dia: [{ defensor, tipo, defensoria, substituto, processo, link }] } }
+        const detalhesAfastamentosRaw = {
+            1: [ // Janeiro
+                { periodo: [7,8,9], defensor: 'José Antônio', tipo: 'Folga', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['Elaine Maria Sousa Frota', 'Elton Dariva Staub', 'Ícaro Oliveira de Avelar Costa'], processo: 'SEI 25.0.000011580-3', link: 'https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2564-2026__publicada_em_02_janeiro_de_2026.pdf' },
+                { periodo: [12,13,14,15,16,17,18,19,20,21], defensor: 'José Antônio', tipo: 'Licença Especial', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['Elaine Maria Sousa Frota', 'Ícaro Oliveira de Avelar Costa', 'Elton Dariva Staub'], processo: 'SEI 25.0.000014378-5', link: 'https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf' },
+                { periodo: [20,21], defensor: 'José Antônio', tipo: 'Licença Especial', defensorias: ['10ª DP Urucará'], substitutos: ['Eliaquim Antunes de Souza'], processo: 'SEI 25.0.000014378-5', link: 'https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf' },
+                { periodo: [22,23,24,25,26,27,28,29,30,31], defensor: 'José Antônio', tipo: 'Férias', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: '', link: '' },
+                { periodo: [20], defensor: 'Elton Dariva', tipo: 'Folga', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['', ''], processo: 'SGI 2500894', link: '' },
+                { periodo: [21,22,23,24,25,26,27,28,29,30], defensor: 'Elton Dariva', tipo: 'Férias', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['', ''], processo: 'SGI 2500800', link: '' },
+                { periodo: [23], defensor: 'Eliaquim Antunes', tipo: 'Folga', defensorias: ['4ª DP Cível PAR', '9ª DP Urucurituba'], substitutos: ['', ''], processo: 'SGI 2500849', link: '' },
+                { periodo: [26,27,28,29,30,31], defensor: 'Eliaquim Antunes', tipo: 'Férias', defensorias: ['4ª DP Cível PAR', '9ª DP Urucurituba'], substitutos: ['', ''], processo: 'SGI 2500663', link: '' }
+            ],
+            2: [ // Fevereiro
+                { periodo: [1,2,3], defensor: 'José Antônio', tipo: 'Férias', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: '', link: '' },
+                { periodo: [2,3,4,5,6,7,8,9,10,11,12,13], defensor: 'Ícaro Avelar', tipo: 'Férias', defensorias: ['1ª DP Família', '3ª DP Cível', '11ª DP Silves'], substitutos: ['', '', ''], processo: 'SEI 25.0.000012796-8', link: '' },
+                { periodo: [4,5,6,7,8,9,10,11,12,13], defensor: 'José Antônio', tipo: 'Licença Especial', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: 'SEI 25.0.000014378-5', link: '' },
+                { periodo: [1,2,3,4], defensor: 'Eliaquim Antunes', tipo: 'Férias', defensorias: ['4ª DP Cível PAR', '9ª DP Urucurituba'], substitutos: ['', ''], processo: 'SGI 2500663', link: '' },
+                { periodo: [5], defensor: 'Eliaquim Antunes', tipo: 'Folga', defensorias: ['4ª DP Cível PAR', '9ª DP Urucurituba'], substitutos: ['', ''], processo: 'SGI 2500849', link: '' },
+                { periodo: [19,20], defensor: 'José Antônio', tipo: 'Folga', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: '', link: '' },
+                { periodo: [19,20], defensor: 'Ícaro Avelar', tipo: 'Folga', defensorias: ['1ª DP Família', '3ª DP Cível', '11ª DP Silves'], substitutos: ['', '', ''], processo: 'SEI 25.0.000012796-8', link: '' },
+                { periodo: [23,24,25], defensor: 'Elton Dariva', tipo: 'Folga', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['', ''], processo: 'SGI 2600018', link: '' }
+            ],
+            3: [ // Março
+                { periodo: [2,3,4,5,6,7,8,9,10,11,12,13], defensor: 'Elton Dariva', tipo: 'Férias', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['', ''], processo: 'SGI 2500847', link: '' },
+                { periodo: [16,17,18,19,20,21,22,23,24,25,26,27], defensor: 'Elton Dariva', tipo: 'Férias', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['', ''], processo: 'SGI 2500844', link: '' },
+                { periodo: [30], defensor: 'Elton Dariva', tipo: 'Folga', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['', ''], processo: 'SGI 2500898', link: '' },
+                { periodo: [31], defensor: 'Elton Dariva', tipo: 'Folga', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['', ''], processo: 'SGI 2600017', link: '' }
+            ],
+            4: [ // Abril
+                { periodo: [1], defensor: 'Elton Dariva', tipo: 'Folga', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['', ''], processo: 'SGI 2600017', link: '' },
+                { periodo: [6,7,8,9,10,11,12,13,14,15,16,17], defensor: 'Ícaro Avelar', tipo: 'Férias', defensorias: ['1ª DP Família', '3ª DP Cível', '11ª DP Silves'], substitutos: ['', '', ''], processo: 'SGI 2600016', link: '' }
+            ],
+            6: [ // Junho
+                { periodo: [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25], defensor: 'José Antônio', tipo: 'Férias', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: '', link: '' }
+            ],
+            9: [ // Setembro
+                { periodo: [4], defensor: 'José Antônio', tipo: 'Folga', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: '', link: '' },
+                { periodo: [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25], defensor: 'José Antônio', tipo: 'Férias', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: '', link: '' }
+            ],
+            11: [ // Novembro
+                { periodo: [23,24,25,26,27,28,29,30], defensor: 'José Antônio', tipo: 'Férias', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: '', link: '' }
+            ],
+            12: [ // Dezembro
+                { periodo: [1,2,3,4], defensor: 'José Antônio', tipo: 'Férias', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: '', link: '' },
+                { periodo: [9,10,11,12,13,14,15,16,17,18], defensor: 'José Antônio', tipo: 'Licença Especial', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: 'SEI 25.0.000014378-5', link: '' }
+            ]
+        };
+
+        // Processar dados raw e expandir para estrutura por dia
+        const detalhesAfastamentos = {};
+        Object.keys(detalhesAfastamentosRaw).forEach(mes => {
+            detalhesAfastamentos[mes] = {};
+            detalhesAfastamentosRaw[mes].forEach(item => {
+                item.periodo.forEach(dia => {
+                    if (!detalhesAfastamentos[mes][dia]) {
+                        detalhesAfastamentos[mes][dia] = [];
+                    }
+                    item.defensorias.forEach((defensoria, idx) => {
+                        detalhesAfastamentos[mes][dia].push({
+                            defensor: item.defensor,
+                            tipo: item.tipo,
+                            defensoria: defensoria,
+                            substituto: item.substitutos[idx] || '',
+                            processo: item.processo,
+                            link: item.link
+                        });
+                    });
+                });
+            });
+        });
+
+        // Função para obter dados detalhados de um dia específico
+        function getDetalhesDia(mes, dia) {
+            const mesData = detalhesAfastamentos[mes];
+            if (!mesData) return [];
+            
+            const diaData = mesData[dia];
+            return diaData || [];
+        }
+
+        // Função para abrir o modal com os detalhes
+        function openModal(mes, dia) {
+            const detalhes = getDetalhesDia(mes, dia);
+            const mesNome = months[mes - 1];
+            const modal = document.getElementById('modal-overlay');
+            const dateInfo = document.getElementById('modal-date-info');
+            const tableContainer = document.getElementById('modal-table-container');
+            
+            // Remover seleção anterior
+            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Destacar o dia selecionado
+            const dayElements = document.querySelectorAll('.calendar-day');
+            dayElements.forEach(dayEl => {
+                const dayNum = parseInt(dayEl.querySelector('.day-number')?.textContent);
+                if (dayNum === dia && !dayEl.classList.contains('empty')) {
+                    dayEl.classList.add('selected');
+                }
+            });
+            
+            dateInfo.innerHTML = `<strong>📅 Data:</strong> ${dia} de ${mesNome} de 2026`;
+            
+            if (detalhes.length === 0) {
+                tableContainer.innerHTML = '<div class="no-data">Nenhum detalhe disponível para esta data.</div>';
+            } else {
+                let html = '<table class="modal-table"><thead><tr><th>Defensor</th><th>Tipo</th><th>Defensoria Afetada</th><th>Substituto</th><th>Processo</th></tr></thead><tbody>';
+                
+                detalhes.forEach(item => {
+                    const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' : 
+                                     item.tipo === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
+                    html += `<tr>
+                        <td><strong>${item.defensor}</strong></td>
+                        <td><span class="tipo-badge ${tipoClass}">${item.tipo}</span></td>
+                        <td>${item.defensoria}</td>
+                        <td>${item.substituto || '-'}</td>
+                        <td>${item.processo || '-'}</td>
+                    </tr>`;
+                });
+                
+                html += '</tbody></table>';
+                tableContainer.innerHTML = html;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        // Função para fechar o modal
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget && event.target.className !== 'modal-close') {
+                return;
+            }
+            const modal = document.getElementById('modal-overlay');
+            modal.classList.remove('active');
+            
+            // Remover seleção do dia
+            document.querySelectorAll('.calendar-day.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+        }
+
         let currentMonth = 0; // Janeiro = 0
+        let selectedDay = null;
 
         function showTab(tabName) {
             const tabs = document.querySelectorAll('.tab-content');
@@ -676,7 +1722,10 @@
             // Dias do mês
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayDiv = document.createElement('div');
-                dayDiv.className = 'calendar-day';
+                const monthData = afastamentos[month + 1];
+                const hasAfastamento = monthData && monthData[day];
+                
+                dayDiv.className = hasAfastamento ? 'calendar-day has-afastamento' : 'calendar-day';
                 
                 const dayNumber = document.createElement('div');
                 dayNumber.className = 'day-number';
@@ -686,14 +1735,16 @@
                 const markers = document.createElement('div');
                 markers.className = 'day-markers';
                 
-                const monthData = afastamentos[month + 1];
-                if (monthData && monthData[day]) {
+                if (hasAfastamento) {
                     monthData[day].forEach(defensor => {
                         const badge = document.createElement('div');
                         badge.className = `defensor-badge ${defensor}`;
                         badge.textContent = defensorNames[defensor];
                         markers.appendChild(badge);
                     });
+                    
+                    // Adicionar evento de clique
+                    dayDiv.onclick = () => openModal(month + 1, day);
                 }
                 
                 dayDiv.appendChild(markers);
