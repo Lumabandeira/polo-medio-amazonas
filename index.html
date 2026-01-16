@@ -121,6 +121,38 @@
             background: white;
         }
 
+        .month-filter-btn {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        .month-filter-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .month-filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .month-section {
+            display: block;
+        }
+
+        .month-section.hidden {
+            display: none;
+        }
+
         .tab-content {
             display: none;
             padding: 40px;
@@ -381,11 +413,6 @@
 
         .modal-table tr:hover {
             background: rgba(59, 130, 246, 0.05);
-        }
-
-        .modal-table tr.highlight-row {
-            background: #fef3c7;
-            font-weight: 600;
         }
 
         .tipo-badge {
@@ -1066,7 +1093,7 @@
                 
                 <h3>🔵 Ícaro Oliveira Avelar Costa</h3>
                 <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li><strong>Fevereiro:</strong> Folga 19-20/02</li>
+                    <li><strong>Fevereiro:</strong> Folga 11-13/02, Folga 19-20/02</li>
                     <li><strong>Abril:</strong> Férias 06-17/04</li>
                 </ul>
 
@@ -1103,8 +1130,14 @@
         <!-- Tab: Designações semanais -->
         <div id="designacoes-periodo" class="tab-content">
             <div class="card">
-                <h2>📅 Designações - Janeiro 2026</h2>
+                <h2>📅 Designações Semanais 2026</h2>
                 <p style="margin-bottom: 20px; color: var(--text-secondary);">Designações semanais dos Defensores Públicos organizadas por período, com visualização de todas as 12 DPs.</p>
+                
+                <!-- Botões de Filtro por Mês -->
+                <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
+                    <button class="month-filter-btn active" onclick="filterByMonth('janeiro')" data-month="janeiro">Janeiro</button>
+                    <button class="month-filter-btn" onclick="filterByMonth('fevereiro')" data-month="fevereiro">Fevereiro</button>
+                </div>
                 
                 <p style="margin: 0 0 15px 0; font-weight: 600; color: var(--text-primary); font-size: 1.1em;"><strong>Legenda:</strong></p>
                 <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
@@ -1116,8 +1149,12 @@
                     </div>
                 </div>
                 
+                <!-- Seção Janeiro -->
+                <div id="month-janeiro" class="month-section">
+                <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Designações - Janeiro 2026</h3>
+                
                 <!-- Período 07 a 11 de Janeiro -->
-                <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Designações - 07 a 11 de Janeiro de 2026</h3>
+                <h4 style="margin-top: 20px; margin-bottom: 15px; color: var(--primary-color);">Designações - 07 a 11 de Janeiro de 2026</h4>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
@@ -1148,7 +1185,7 @@
                 </div>
 
                 <!-- Período 12 a 18 de Janeiro -->
-                <h3 style="margin-top: 40px; margin-bottom: 15px; color: var(--primary-color);">Designações - 12 a 18 de Janeiro de 2026</h3>
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Designações - 12 a 18 de Janeiro de 2026</h4>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
@@ -1181,7 +1218,7 @@
                 </div>
 
                 <!-- Período 19 a 25 de Janeiro -->
-                <h3 style="margin-top: 40px; margin-bottom: 15px; color: var(--primary-color);">Designações - 19 a 25 de Janeiro de 2026</h3>
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Designações - 19 a 25 de Janeiro de 2026</h4>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
@@ -1211,6 +1248,177 @@
                             <tr><td class="silves">12ª DP (Silves)</td><td class="silves">Elton Dariva</td><td class="silves">Eliaquim</td><td class="silves">Eliaquim</td><td class="silves">Eliaquim</td><td class="silves">Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
                         </tbody>
                     </table>
+                </div>
+                
+                <!-- Período 26 de Janeiro a 01 de Fevereiro -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Designações - 26 de Janeiro a 01 de Fevereiro de 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>DP</th>
+                                <th>26/01</th>
+                                <th>27/01</th>
+                                <th>28/01</th>
+                                <th>29/01</th>
+                                <th>30/01</th>
+                                <th>31/01</th>
+                                <th>01/02</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1ª DP (Família)</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td class="itacoatiara">2ª DP (Família)</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara">Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                            <tr><td>3ª DP (Cível)</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td class="itacoatiara">4ª DP (Cível)</td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                            <tr><td class="itacoatiara">5ª DP (Criminal)</td><td class="itacoatiara">Elaine Maria</td><td class="itacoatiara">Elaine Maria</td><td class="itacoatiara">Elaine Maria</td><td class="itacoatiara">Elaine Maria</td><td class="itacoatiara">Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>6ª DP (Criminal)</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>7ª DP (SSU)</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>8ª DP (Itapiranga)</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td>9ª DP (Urucurituba)</td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                            <tr><td>10ª DP (Urucará)</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                            <tr><td class="silves">11ª DP (Silves)</td><td class="silves">Ícaro</td><td class="silves">Ícaro</td><td class="silves">Ícaro</td><td class="silves">Ícaro</td><td class="silves">Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td>12ª DP (Silves)</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                
+                <!-- Seção Fevereiro -->
+                <div id="month-fevereiro" class="month-section" style="display: none;">
+                <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Designações - Fevereiro 2026</h3>
+                
+                <!-- Período 02 a 08 de Fevereiro -->
+                <h4 style="margin-top: 20px; margin-bottom: 15px; color: var(--primary-color);">Designações - 02 a 08 de Fevereiro de 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>DP</th>
+                                <th>02/02</th>
+                                <th>03/02</th>
+                                <th>04/02</th>
+                                <th>05/02</th>
+                                <th>06/02</th>
+                                <th>07/02</th>
+                                <th>08/02</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="itacoatiara">1ª DP (Família)</td><td class="itacoatiara">Ícaro</td><td class="itacoatiara">Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td>2ª DP (Família)</td><td>Elton Dariva</td><td>Elton Dariva</td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td></tr>
+                            <tr><td class="itacoatiara">3ª DP (Cível)</td><td class="itacoatiara">Ícaro</td><td class="itacoatiara">Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td>4ª DP (Cível)</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td></tr>
+                            <tr><td>5ª DP (Criminal)</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                            <tr><td class="itacoatiara">6ª DP (Criminal)</td><td class="itacoatiara">Elaine Maria</td><td class="itacoatiara">Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>7ª DP (SSU)</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>8ª DP (Itapiranga)</td><td>Ícaro</td><td>Ícaro</td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td></tr>
+                            <tr><td>9ª DP (Urucurituba)</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td></tr>
+                            <tr><td>10ª DP (Urucará)</td><td>Elton Dariva</td><td>Elton Dariva</td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td></tr>
+                            <tr><td>11ª DP (Silves)</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td class="silves">12ª DP (Silves)</td><td class="silves">Elton Dariva</td><td class="silves">Elton Dariva</td><td class="silves">Elton Dariva</td><td class="silves">Elton Dariva</td><td class="silves">Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Período 09 a 15 de Fevereiro -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Designações - 09 a 15 de Fevereiro de 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>DP</th>
+                                <th>09/02</th>
+                                <th>10/02</th>
+                                <th>11/02</th>
+                                <th>12/02</th>
+                                <th>13/02</th>
+                                <th>14/02</th>
+                                <th>15/02</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1ª DP (Família)</td><td>Ícaro</td><td>Ícaro</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td class="itacoatiara">2ª DP (Família)</td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td></tr>
+                            <tr><td>3ª DP (Cível)</td><td>Ícaro</td><td>Ícaro</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td class="itacoatiara">4ª DP (Cível)</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td></tr>
+                            <tr><td class="itacoatiara">5ª DP (Criminal)</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara">Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                            <tr><td>6ª DP (Criminal)</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>7ª DP (SSU)</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>8ª DP (Itapiranga)</td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td></tr>
+                            <tr><td>9ª DP (Urucurituba)</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td></tr>
+                            <tr><td>10ª DP (Urucará)</td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td></tr>
+                            <tr><td class="silves">11ª DP (Silves)</td><td class="silves">Ícaro</td><td class="silves">Ícaro</td><td class="silves">Eliaquim</td><td class="silves">Eliaquim</td><td class="silves">Eliaquim</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td>12ª DP (Silves)</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Período 16 a 22 de Fevereiro -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Designações - 16 a 22 de Fevereiro de 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>DP</th>
+                                <th>16/02</th>
+                                <th>17/02</th>
+                                <th>18/02</th>
+                                <th>19/02</th>
+                                <th>20/02</th>
+                                <th>21/02</th>
+                                <th>22/02</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="itacoatiara">1ª DP (Família)</td><td class="itacoatiara">Ícaro</td><td class="itacoatiara">Ícaro</td><td class="itacoatiara">Ícaro</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td>2ª DP (Família)</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td></tr>
+                            <tr><td class="itacoatiara">3ª DP (Cível)</td><td class="itacoatiara">Ícaro</td><td class="itacoatiara">Ícaro</td><td class="itacoatiara">Ícaro</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td>4ª DP (Cível)</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td></tr>
+                            <tr><td>5ª DP (Criminal)</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                            <tr><td class="itacoatiara">6ª DP (Criminal)</td><td class="itacoatiara">Elaine Maria</td><td class="itacoatiara">Elaine Maria</td><td class="itacoatiara">Elaine Maria</td><td class="itacoatiara">Elaine Maria</td><td class="itacoatiara">Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>7ª DP (SSU)</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>8ª DP (Itapiranga)</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td></tr>
+                            <tr><td>9ª DP (Urucurituba)</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td></tr>
+                            <tr><td>10ª DP (Urucará)</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td></tr>
+                            <tr><td>11ª DP (Silves)</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Eliaquim</td><td>Eliaquim</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td class="silves">12ª DP (Silves)</td><td class="silves">Elton Dariva</td><td class="silves">Elton Dariva</td><td class="silves">Elton Dariva</td><td class="silves">Elton Dariva</td><td class="silves">Elton Dariva</td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Período 23 a 29 de Fevereiro -->
+                <h4 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary-color);">Designações - 23 a 29 de Fevereiro de 2026</h4>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>DP</th>
+                                <th>23/02</th>
+                                <th>24/02</th>
+                                <th>25/02</th>
+                                <th>26/02</th>
+                                <th>27/02</th>
+                                <th>28/02</th>
+                                <th>29/02</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1ª DP (Família)</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td class="itacoatiara">2ª DP (Família)</td><td class="itacoatiara">José Antônio</td><td class="itacoatiara">José Antônio</td><td class="itacoatiara">José Antônio</td><td class="itacoatiara">José Antônio</td><td class="itacoatiara">José Antônio</td><td>José Antônio</td><td>José Antônio</td></tr>
+                            <tr><td>3ª DP (Cível)</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td class="itacoatiara">4ª DP (Cível)</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td class="itacoatiara">Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td></tr>
+                            <tr><td class="itacoatiara">5ª DP (Criminal)</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara">Elton Dariva</td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td class="itacoatiara"><em>(sem indicação)</em></td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                            <tr><td>6ª DP (Criminal)</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>7ª DP (SSU)</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td><td>Elaine Maria</td></tr>
+                            <tr><td>8ª DP (Itapiranga)</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td></tr>
+                            <tr><td>9ª DP (Urucurituba)</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td><td>Eliaquim</td></tr>
+                            <tr><td>10ª DP (Urucará)</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td><td>José Antônio</td></tr>
+                            <tr><td class="silves">11ª DP (Silves)</td><td class="silves">Ícaro</td><td class="silves">Ícaro</td><td class="silves">Ícaro</td><td class="silves">Ícaro</td><td class="silves">Ícaro</td><td>Ícaro</td><td>Ícaro</td></tr>
+                            <tr><td>12ª DP (Silves)</td><td>Elton Dariva</td><td>Elton Dariva</td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td><em>(sem indicação)</em></td><td>Elton Dariva</td><td>Elton Dariva</td></tr>
+                        </tbody>
+                    </table>
+                </div>
                 </div>
             </div>
         </div>
@@ -1291,19 +1499,22 @@
                             <tr><td>01-03/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000067-0</td></tr>
                             <tr><td>01-03/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>Ícaro Oliveira Avelar Costa</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000067-0</td></tr>
                             <tr><td>01-03/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000067-0</td></tr>
-                            <tr><td>04-13/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
-                            <tr><td>04-13/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
-                            <tr><td>04-13/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
                             <tr><td>31/01-04/02</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>4ª DP Cível</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
                             <tr><td>05/02</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>4ª DP Cível</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
                             <tr><td>31/01-04/02</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
                             <tr><td>05/02</td><td><strong>Eliaquim Antunes</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
+                            <tr><td>04-13/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
+                            <tr><td>04-13/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
+                            <tr><td>04-13/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>25.0.000014378-5</td></tr>
+                            <tr><td>11-13/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>1ª DP Família</td><td>Eliaquim Antunes de Souza</td><td>-</td><td>-</td></tr>
+                            <tr><td>11-13/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>3ª DP Cível</td><td>Eliaquim Antunes de Souza</td><td>-</td><td>-</td></tr>
+                            <tr><td>11-13/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>11ª DP Silves</td><td>Eliaquim Antunes de Souza</td><td>-</td><td>-</td></tr>
+                            <tr><td>19-20/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>1ª DP Família</td><td>Eliaquim Antunes de Souza</td><td>-</td><td>-</td></tr>
+                            <tr><td>19-20/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>3ª DP Cível</td><td>Eliaquim Antunes de Souza</td><td>-</td><td>-</td></tr>
+                            <tr><td>19-20/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>11ª DP Silves</td><td>Eliaquim Antunes de Souza</td><td>-</td><td>-</td></tr>
                             <tr><td>19/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>-</td></tr>
                             <tr><td>19/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>-</td></tr>
                             <tr><td>19/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>-</td></tr>
-                            <tr><td>19-20/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>1ª DP Família</td><td>-</td><td>-</td><td>25.0.000012796-8</td></tr>
-                            <tr><td>19-20/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>3ª DP Cível</td><td>-</td><td>-</td><td>25.0.000012796-8</td></tr>
-                            <tr><td>19-20/02</td><td><strong>Ícaro Avelar</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>11ª DP Silves</td><td>-</td><td>-</td><td>25.0.000012796-8</td></tr>
                             <tr><td>20/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>2ª DP Família</td><td>-</td><td>-</td><td>-</td></tr>
                             <tr><td>20/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>8ª DP Itapiranga</td><td>-</td><td>-</td><td>-</td></tr>
                             <tr><td>20/02</td><td><strong>José Antônio</strong></td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>10ª DP Urucará</td><td>-</td><td>-</td><td>-</td></tr>
@@ -1498,6 +1709,10 @@
                             <tr><td>01-03/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>2ª DP Família</td><td>Elton Dariva Staub</td><td>26.0.000000067-0</td></tr>
                             <tr><td>01-03/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>8ª DP Itapiranga</td><td>Ícaro Oliveira Avelar Costa</td><td>26.0.000000067-0</td></tr>
                             <tr><td>01-03/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>10ª DP Urucará</td><td>Elton Dariva Staub</td><td>26.0.000000067-0</td></tr>
+                            <tr><td>31/01-04/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>4ª DP Cível</td><td>Elton Dariva Staub</td><td>SGI 2500663</td></tr>
+                            <tr><td>05/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>4ª DP Cível</td><td>Elton Dariva Staub</td><td>SGI 2500849</td></tr>
+                            <tr><td>31/01-04/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td>SGI 2500663</td></tr>
+                            <tr><td>05/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td>SGI 2500849</td></tr>
                             <tr><td>04-13/02/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>2ª DP Família</td><td>-</td><td>SEI 25.0.000014378-5</td></tr>
                             <tr><td>04-13/02/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>8ª DP Itapiranga</td><td>-</td><td>SEI 25.0.000014378-5</td></tr>
                             <tr><td>04-13/02/2026</td><td><span class="tipo-badge tipo-licenca">🟢 Licença Especial</span></td><td>10ª DP Urucará</td><td>-</td><td>SEI 25.0.000014378-5</td></tr>
@@ -1539,12 +1754,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>02-13/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>1ª DP Família</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
-                            <tr><td>02-13/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>3ª DP Cível</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
-                            <tr><td>02-13/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>11ª DP Silves</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
-                            <tr><td>19-20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>1ª DP Família</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
-                            <tr><td>19-20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>3ª DP Cível</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
-                            <tr><td>19-20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>11ª DP Silves</td><td>-</td><td>SEI 25.0.000012796-8</td></tr>
+                            <tr><td>11-13/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>1ª DP Família</td><td>Eliaquim Antunes de Souza</td><td>-</td></tr>
+                            <tr><td>11-13/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>3ª DP Cível</td><td>Eliaquim Antunes de Souza</td><td>-</td></tr>
+                            <tr><td>11-13/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>11ª DP Silves</td><td>Eliaquim Antunes de Souza</td><td>-</td></tr>
+                            <tr><td>19-20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>1ª DP Família</td><td>Eliaquim Antunes de Souza</td><td>-</td></tr>
+                            <tr><td>19-20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>3ª DP Cível</td><td>Eliaquim Antunes de Souza</td><td>-</td></tr>
+                            <tr><td>19-20/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>11ª DP Silves</td><td>Eliaquim Antunes de Souza</td><td>-</td></tr>
                             <tr><td>06-17/04/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>1ª DP Família</td><td>-</td><td>SGI 2600016</td></tr>
                             <tr><td>06-17/04/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>3ª DP Cível</td><td>-</td><td>SGI 2600016</td></tr>
                             <tr><td>06-17/04/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>11ª DP Silves</td><td>-</td><td>SGI 2600016</td></tr>
@@ -1602,9 +1817,6 @@
                             <tr><td>31/01-04/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>4ª DP Cível</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
                             <tr><td>05/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>4ª DP Cível</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
                             <tr><td>26/01-30/01/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>9ª DP Urucurituba</td><td>-</td><td>-</td><td>SGI 2500663</td></tr>
-                            <tr><td>31/01-04/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
-                            <tr><td>05/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
-                            <tr><td>26/01-30/01/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>9ª DP Urucurituba</td><td>-</td><td>SGI 2500663</td></tr>
                             <tr><td>31/01-04/02/2026</td><td><span class="tipo-badge tipo-ferias">🔵 Férias</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
                             <tr><td>05/02/2026</td><td><span class="tipo-badge tipo-folga">🟡 Folga</span></td><td>9ª DP Urucurituba</td><td>Elton Dariva Staub</td><td><a href="https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000004-2</td></tr>
                         </tbody>
@@ -1703,8 +1915,8 @@
                 4: ['jose', 'eliaquim'], 5: ['jose', 'eliaquim'],
                 6: ['jose'], 7: ['jose'],
                 8: ['jose'], 9: ['jose'],
-                10: ['jose'], 11: ['jose'],
-                12: ['jose'], 13: ['jose'],
+                10: ['jose'], 11: ['jose', 'icaro'],
+                12: ['jose', 'icaro'], 13: ['jose', 'icaro'],
                 19: ['jose', 'icaro'], 20: ['jose', 'icaro'],
                 23: ['elton'], 24: ['elton'], 25: ['elton']
             },
@@ -1748,7 +1960,6 @@
         };
 
         // Dados detalhados dos afastamentos (da Tabela de Férias e Folgas)
-        // Estrutura: { mes: { dia: [{ defensor, tipo, defensoria, substituto, processo, link }] } }
         const detalhesAfastamentosRaw = {
             1: [ // Janeiro
                 { periodo: [7,8,9], defensor: 'José Antônio', tipo: 'Folga', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['Elaine Maria Sousa Frota', 'Elton Dariva Staub', 'Ícaro Oliveira Avelar Costa'], processo: 'SEI 25.0.000011580-3', link: 'https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2564-2026__publicada_em_02_janeiro_de_2026.pdf' },
@@ -1762,15 +1973,16 @@
                 { periodo: [23,24,25,26,27,28,29,30], defensor: 'Elton Dariva', tipo: 'Férias', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['Elaine Maria Sousa Frota', 'Elaine Maria Sousa Frota'], processo: '26.0.000000008-5', link: 'https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf' },
                 { periodo: [23], defensor: 'Eliaquim Antunes', tipo: 'Folga', defensorias: ['4ª DP Cível', '9ª DP Urucurituba'], substitutos: ['', ''], processo: 'SGI 2500849', link: '' },
                 { periodo: [26,27,28,29,30], defensor: 'Eliaquim Antunes', tipo: 'Férias', defensorias: ['4ª DP Cível', '9ª DP Urucurituba'], substitutos: ['', ''], processo: 'SGI 2500663', link: '' },
-                { periodo: [31], defensor: 'Eliaquim Antunes', tipo: 'Férias', defensorias: ['4ª DP Cível', '9ª DP Urucurituba'], substitutos: ['Elton Dariva Staub', 'Elton Dariva Staub'], processo: '26.0.000000004-2', link: 'https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf' }
+                { periodo: [31], defensor: 'Eliaquim Antunes', tipo: 'Férias', defensorias: ['4ª DP Cível', '9ª DP Urucurituba'], substitutos: ['Elton Dariva Staub', 'Elton Dariva Staub'], processo: 'SGI 2500663', link: '' }
             ],
             2: [ // Fevereiro
                 { periodo: [1,2,3], defensor: 'José Antônio', tipo: 'Férias', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['Elton Dariva Staub', 'Ícaro Oliveira Avelar Costa', 'Elton Dariva Staub'], processo: '26.0.000000067-0', link: 'https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf' },
                 { periodo: [4,5,6,7,8,9,10,11,12,13], defensor: 'José Antônio', tipo: 'Licença Especial', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: 'SEI 25.0.000014378-5', link: '' },
                 { periodo: [1,2,3,4], defensor: 'Eliaquim Antunes', tipo: 'Férias', defensorias: ['4ª DP Cível', '9ª DP Urucurituba'], substitutos: ['Elton Dariva Staub', 'Elton Dariva Staub'], processo: '26.0.000000004-2', link: 'https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf' },
                 { periodo: [5], defensor: 'Eliaquim Antunes', tipo: 'Folga', defensorias: ['4ª DP Cível', '9ª DP Urucurituba'], substitutos: ['Elton Dariva Staub', 'Elton Dariva Staub'], processo: '26.0.000000004-2', link: 'https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf' },
+                { periodo: [11,12,13], defensor: 'Ícaro Avelar', tipo: 'Folga', defensorias: ['1ª DP Família', '3ª DP Cível', '11ª DP Silves'], substitutos: ['Eliaquim Antunes de Souza', 'Eliaquim Antunes de Souza', 'Eliaquim Antunes de Souza'], processo: '', link: '' },
+                { periodo: [19,20], defensor: 'Ícaro Avelar', tipo: 'Folga', defensorias: ['1ª DP Família', '3ª DP Cível', '11ª DP Silves'], substitutos: ['Eliaquim Antunes de Souza', 'Eliaquim Antunes de Souza', 'Eliaquim Antunes de Souza'], processo: '', link: '' },
                 { periodo: [19,20], defensor: 'José Antônio', tipo: 'Folga', defensorias: ['2ª DP Família', '8ª DP Itapiranga', '10ª DP Urucará'], substitutos: ['', '', ''], processo: '', link: '' },
-                { periodo: [19,20], defensor: 'Ícaro Avelar', tipo: 'Folga', defensorias: ['1ª DP Família', '3ª DP Cível', '11ª DP Silves'], substitutos: ['', '', ''], processo: 'SEI 25.0.000012796-8', link: '' },
                 { periodo: [23,24,25], defensor: 'Elton Dariva', tipo: 'Folga', defensorias: ['5ª DP Criminal', '12ª DP Silves'], substitutos: ['', ''], processo: 'SGI 2600018', link: '' }
             ],
             3: [ // Março
@@ -1895,7 +2107,41 @@
         }
 
         let currentMonth = 0; // Janeiro = 0
-        let selectedDay = null;
+
+        function filterByMonth(month) {
+            // Ocultar todas as seções de mês
+            const sections = document.querySelectorAll('.month-section');
+            sections.forEach(section => {
+                section.style.display = 'none';
+                section.classList.add('hidden');
+            });
+            
+            // Mostrar a seção do mês selecionado
+            const selectedSection = document.getElementById('month-' + month);
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+                selectedSection.classList.remove('hidden');
+            }
+            
+            // Atualizar botões ativos
+            const buttons = document.querySelectorAll('.month-filter-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('data-month') === month) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Remover destaque das últimas duas colunas após mudar o filtro
+            setTimeout(() => {
+                removeWeekendHighlightsFromRows();
+                // Executar novamente após um pequeno delay para garantir
+                setTimeout(() => {
+                    removeWeekendHighlightsFromRows();
+                }, 50);
+            }, 150);
+        }
 
         function showTab(tabName) {
             const tabs = document.querySelectorAll('.tab-content');
@@ -1909,6 +2155,15 @@
 
             if (tabName === 'calendario') {
                 renderCalendar();
+            }
+            
+            // Se abrir a aba de designações semanais, garantir que Janeiro está visível
+            if (tabName === 'designacoes-periodo') {
+                filterByMonth('janeiro');
+                // Garantir que a função seja executada quando a aba for aberta
+                setTimeout(() => {
+                    removeWeekendHighlightsFromRows();
+                }, 200);
             }
         }
 
@@ -2000,6 +2255,199 @@
          * Função para validar e corrigir automaticamente os destaques
          * Remove classes de destaque (itacoatiara/silves) de sábados e domingos
          */
+        // Função para validar alternância semanal entre DPs
+        function validateAlternation() {
+            const tables = document.querySelectorAll('#designacoes-periodo table');
+            
+            // GRUPOS FIXOS DE ALTERNÂNCIA
+            // Grupo A: 1ª DP (Família), 3ª DP (Cível), 6ª DP (Criminal), 12ª DP (Silves)
+            // Grupo B: 2ª DP (Família), 4ª DP (Cível), 5ª DP (Criminal), 11ª DP (Silves)
+            const groupA = [
+                { dp: '1ª DP', class: 'itacoatiara' },
+                { dp: '3ª DP', class: 'itacoatiara' },
+                { dp: '6ª DP', class: 'itacoatiara' },
+                { dp: '12ª DP', class: 'silves' }
+            ];
+            const groupB = [
+                { dp: '2ª DP', class: 'itacoatiara' },
+                { dp: '4ª DP', class: 'itacoatiara' },
+                { dp: '5ª DP', class: 'itacoatiara' },
+                { dp: '11ª DP', class: 'silves' }
+            ];
+            
+            // Extrair e ordenar tabelas por data cronológica
+            const tablesWithDates = [];
+            tables.forEach((table, index) => {
+                // Encontrar o título da tabela (h4 anterior)
+                let titleElement = table.previousElementSibling;
+                while (titleElement && titleElement.tagName !== 'H4') {
+                    titleElement = titleElement.previousElementSibling;
+                }
+                
+                if (!titleElement) {
+                    // Tentar encontrar no elemento pai
+                    const parent = table.closest('div');
+                    if (parent) {
+                        titleElement = parent.previousElementSibling;
+                        while (titleElement && titleElement.tagName !== 'H4') {
+                            titleElement = titleElement.previousElementSibling;
+                        }
+                    }
+                }
+                
+                let dateStr = '';
+                if (titleElement) {
+                    dateStr = titleElement.textContent.trim();
+                }
+                
+                // Extrair a primeira data do período
+                // Padrões possíveis:
+                // - "07 a 11 de Janeiro" -> primeira data: 07/01
+                // - "26 de Janeiro a 01 de Fevereiro" -> primeira data: 26/01
+                // - "26 de Janeiro" -> primeira data: 26/01
+                let date = null;
+                const monthMap = {
+                    'janeiro': 1, 'fevereiro': 2, 'março': 3, 'abril': 4,
+                    'maio': 5, 'junho': 6, 'julho': 7, 'agosto': 8,
+                    'setembro': 9, 'outubro': 10, 'novembro': 11, 'dezembro': 12
+                };
+                
+                // Tentar padrão: "XX de Mês a YY de Mês" (período que cruza meses)
+                const crossMonthMatch = dateStr.match(/(\d{1,2})\s+de\s+(\w+)\s+a\s+(\d{1,2})\s+de\s+(\w+)/i);
+                if (crossMonthMatch) {
+                    const day = parseInt(crossMonthMatch[1]);
+                    const monthName = crossMonthMatch[2].toLowerCase();
+                    const month = monthMap[monthName] || 1;
+                    date = new Date(2026, month - 1, day);
+                } else {
+                    // Tentar padrão: "XX a YY de Mês" (período dentro do mesmo mês)
+                    const sameMonthMatch = dateStr.match(/(\d{1,2})\s+a\s+(\d{1,2})\s+de\s+(\w+)/i);
+                    if (sameMonthMatch) {
+                        const day = parseInt(sameMonthMatch[1]);
+                        const monthName = sameMonthMatch[3].toLowerCase();
+                        const month = monthMap[monthName] || 1;
+                        date = new Date(2026, month - 1, day);
+                    } else {
+                        // Tentar padrão: "XX e YY de Mês"
+                        const andMatch = dateStr.match(/(\d{1,2})\s+e\s+(\d{1,2})\s+de\s+(\w+)/i);
+                        if (andMatch) {
+                            const day = parseInt(andMatch[1]);
+                            const monthName = andMatch[3].toLowerCase();
+                            const month = monthMap[monthName] || 1;
+                            date = new Date(2026, month - 1, day);
+                        } else {
+                            // Tentar padrão: "XX de Mês"
+                            const singleMatch = dateStr.match(/(\d{1,2})\s+de\s+(\w+)/i);
+                            if (singleMatch) {
+                                const day = parseInt(singleMatch[1]);
+                                const monthName = singleMatch[2].toLowerCase();
+                                const month = monthMap[monthName] || 1;
+                                date = new Date(2026, month - 1, day);
+                            } else {
+                                // Se não conseguir extrair data, usar índice como fallback
+                                date = new Date(2026, 0, index * 7 + 1);
+                            }
+                        }
+                    }
+                }
+                
+                tablesWithDates.push({ table, date, index, title: dateStr });
+            });
+            
+            // Ordenar por data
+            tablesWithDates.sort((a, b) => a.date - b.date);
+            
+            let previousGroup = null; // 'A' ou 'B'
+            const errors = [];
+            
+            tablesWithDates.forEach(({ table, date, index, title }) => {
+                const rows = table.querySelectorAll('tbody tr');
+                
+                // Verificar quais DPs estão destacadas
+                const highlightedDps = {
+                    '1ª DP': false,
+                    '2ª DP': false,
+                    '3ª DP': false,
+                    '4ª DP': false,
+                    '5ª DP': false,
+                    '6ª DP': false,
+                    '11ª DP': false,
+                    '12ª DP': false
+                };
+                
+                rows.forEach(row => {
+                    const firstCell = row.querySelector('td:first-child');
+                    if (!firstCell) return;
+                    
+                    const dpName = firstCell.textContent.trim();
+                    const hasItacoatiara = firstCell.classList.contains('itacoatiara');
+                    const hasSilves = firstCell.classList.contains('silves');
+                    const hasClass = hasItacoatiara || hasSilves;
+                    
+                    // Identificar qual DP é
+                    if (dpName.includes('1ª DP')) highlightedDps['1ª DP'] = hasClass;
+                    else if (dpName.includes('2ª DP')) highlightedDps['2ª DP'] = hasClass;
+                    else if (dpName.includes('3ª DP')) highlightedDps['3ª DP'] = hasClass;
+                    else if (dpName.includes('4ª DP')) highlightedDps['4ª DP'] = hasClass;
+                    else if (dpName.includes('5ª DP')) highlightedDps['5ª DP'] = hasClass;
+                    else if (dpName.includes('6ª DP')) highlightedDps['6ª DP'] = hasClass;
+                    else if (dpName.includes('11ª DP')) highlightedDps['11ª DP'] = hasClass;
+                    else if (dpName.includes('12ª DP')) highlightedDps['12ª DP'] = hasClass;
+                });
+                
+                // Verificar se todas do Grupo A estão destacadas
+                const allGroupAHighlighted = groupA.every(({ dp }) => highlightedDps[dp]);
+                const anyGroupAHighlighted = groupA.some(({ dp }) => highlightedDps[dp]);
+                
+                // Verificar se todas do Grupo B estão destacadas
+                const allGroupBHighlighted = groupB.every(({ dp }) => highlightedDps[dp]);
+                const anyGroupBHighlighted = groupB.some(({ dp }) => highlightedDps[dp]);
+                
+                // Determinar qual grupo está ativo
+                let currentGroup = null;
+                if (allGroupAHighlighted && !anyGroupBHighlighted) {
+                    currentGroup = 'A';
+                } else if (allGroupBHighlighted && !anyGroupAHighlighted) {
+                    currentGroup = 'B';
+                }
+                
+                // Verificar erros
+                if (currentGroup === null) {
+                    if (anyGroupAHighlighted && anyGroupBHighlighted) {
+                        errors.push(`${title}: DPs de ambos os grupos estão destacadas (deve haver apenas um grupo por vez)`);
+                    } else if (!anyGroupAHighlighted && !anyGroupBHighlighted) {
+                        errors.push(`${title}: Nenhuma DP dos grupos está destacada`);
+                    } else {
+                        const missingA = groupA.filter(({ dp }) => !highlightedDps[dp]).map(({ dp }) => dp);
+                        const missingB = groupB.filter(({ dp }) => !highlightedDps[dp]).map(({ dp }) => dp);
+                        if (anyGroupAHighlighted) {
+                            errors.push(`${title}: Grupo A incompleto - faltam: ${missingA.join(', ')}`);
+                        } else if (anyGroupBHighlighted) {
+                            errors.push(`${title}: Grupo B incompleto - faltam: ${missingB.join(', ')}`);
+                        }
+                    }
+                }
+                
+                // Verificar alternância com semana anterior
+                if (previousGroup !== null && currentGroup !== null) {
+                    if (previousGroup === currentGroup) {
+                        errors.push(`${title}: Grupo ${currentGroup} está destacado novamente (deveria alternar para Grupo ${currentGroup === 'A' ? 'B' : 'A'})`);
+                    }
+                }
+                
+                previousGroup = currentGroup;
+            });
+            
+            if (errors.length > 0) {
+                console.warn('⚠️ Erros de alternância detectados:', errors);
+                // Em produção, você pode querer exibir esses erros de forma mais visível
+            } else {
+                console.log('✅ Alternância validada com sucesso');
+            }
+            
+            return errors;
+        }
+
         function validateWeekendHighlights() {
             const year = 2026;
             
@@ -2081,11 +2529,56 @@
             });
         }
 
+        // Função para remover destaque das últimas duas colunas (sábado e domingo) de linhas destacadas
+        function removeWeekendHighlightsFromRows() {
+            // Buscar todas as tabelas, mesmo as que estão ocultas
+            const tables = document.querySelectorAll('#designacoes-periodo table');
+            
+            tables.forEach(table => {
+                const bodyRows = table.querySelectorAll('tbody tr');
+                
+                bodyRows.forEach(row => {
+                    // Verificar se a primeira célula (DP) tem classe de destaque
+                    const firstCell = row.querySelector('td:first-child');
+                    if (!firstCell) return;
+                    
+                    const hasItacoatiara = firstCell.classList.contains('itacoatiara');
+                    const hasSilves = firstCell.classList.contains('silves');
+                    
+                    if (hasItacoatiara || hasSilves) {
+                        // Se a linha está destacada, remover destaque das últimas duas células
+                        const cells = Array.from(row.querySelectorAll('td'));
+                        const totalCells = cells.length;
+                        
+                        // Remover classes das últimas duas células (sábado e domingo)
+                        // Ignorar a primeira célula (DP), então removemos das células totalCells-2 e totalCells-1
+                        if (totalCells >= 3) { // Pelo menos: DP + 2 células de data
+                            const secondLastCell = cells[totalCells - 2]; // Penúltima célula
+                            const lastCell = cells[totalCells - 1]; // Última célula
+                            
+                            if (secondLastCell) {
+                                secondLastCell.classList.remove('itacoatiara', 'silves');
+                            }
+                            if (lastCell) {
+                                lastCell.classList.remove('itacoatiara', 'silves');
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
         // Inicializar calendário e validar destaques quando a página carregar
         window.onload = function() {
             renderCalendar();
             // Aguardar um pouco para garantir que o DOM está totalmente carregado
-            setTimeout(validateWeekendHighlights, 100);
+            setTimeout(() => {
+                validateWeekendHighlights();
+                removeWeekendHighlightsFromRows(); // Remover destaque das últimas duas colunas
+                validateAlternation(); // Validar alternância semanal
+            }, 100);
+            // Inicializar filtro de mês com Janeiro
+            filterByMonth('janeiro');
         };
     </script>
 </body>
