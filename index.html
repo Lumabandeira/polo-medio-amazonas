@@ -2044,7 +2044,7 @@
 
                     <div class="merge-form-grid">
                         <div class="merge-field">
-                            <label>
+                            <label style="display: none;">
                                 <input type="checkbox" id="proxy-enabled">
                                 Usar Proxy Apps Script (recomendado para Drive)
                             </label>
@@ -2694,17 +2694,23 @@
             const proxyUrlKey = 'mergeProxyUrl';
 
             try {
-                const savedEnabled = localStorage.getItem(proxyEnabledKey) === 'true';
+                const savedEnabledRaw = localStorage.getItem(proxyEnabledKey);
                 const savedUrl = localStorage.getItem(proxyUrlKey) || '';
-                proxyToggle.checked = savedEnabled;
-                proxyUrlInput.disabled = !savedEnabled;
+                const savedEnabled = savedEnabledRaw === null ? true : savedEnabledRaw === 'true';
+                const effectiveEnabled = savedEnabled || Boolean(savedUrl);
+                proxyToggle.checked = effectiveEnabled;
+                proxyUrlInput.disabled = !effectiveEnabled;
                 proxyUrlInput.value = savedUrl;
-                mergeState.proxyEnabled = savedEnabled;
+                mergeState.proxyEnabled = effectiveEnabled;
                 mergeState.proxyUrl = savedUrl.trim();
-                proxyHelp.style.display = savedEnabled ? 'block' : 'none';
-                proxySteps.style.display = savedEnabled ? 'block' : 'none';
+                proxyHelp.style.display = effectiveEnabled ? 'block' : 'none';
+                proxySteps.style.display = effectiveEnabled ? 'block' : 'none';
             } catch (error) {
-                // Sem acesso ao localStorage (ex.: modo restrito do navegador)
+                proxyToggle.checked = true;
+                proxyUrlInput.disabled = false;
+                mergeState.proxyEnabled = true;
+                proxyHelp.style.display = 'block';
+                proxySteps.style.display = 'block';
             }
 
             loadBtn.addEventListener('click', () => handleLoadSheet());
@@ -2729,6 +2735,18 @@
             });
             proxyUrlInput.addEventListener('input', () => {
                 mergeState.proxyUrl = proxyUrlInput.value.trim();
+                if (!proxyToggle.checked) {
+                    proxyToggle.checked = true;
+                    mergeState.proxyEnabled = true;
+                    proxyUrlInput.disabled = false;
+                    proxyHelp.style.display = 'block';
+                    proxySteps.style.display = 'block';
+                    try {
+                        localStorage.setItem(proxyEnabledKey, 'true');
+                    } catch (error) {
+                        // Ignorar falhas de localStorage
+                    }
+                }
                 try {
                     if (mergeState.proxyUrl) {
                         localStorage.setItem(proxyUrlKey, mergeState.proxyUrl);
