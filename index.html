@@ -177,6 +177,155 @@
             border: 1px solid var(--border-color);
         }
 
+        .merge-app {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .merge-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .merge-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .merge-field label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .merge-input,
+        .merge-select {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+        }
+
+        .merge-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .merge-btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .merge-btn.primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .merge-btn.secondary {
+            background: var(--bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .merge-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .merge-status {
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .merge-columns-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .merge-column-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+        }
+
+        .merge-column-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .merge-note {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+        }
+
+        .merge-progress {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .merge-log {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .merge-log th,
+        .merge-log td {
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 0.95em;
+        }
+
+        .merge-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.85em;
+            font-weight: 600;
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .merge-pill.ok {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .merge-pill.error {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .merge-help {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: #92400e;
+        }
+
         .card h2 {
             color: var(--primary-color);
             margin-bottom: 20px;
@@ -956,6 +1105,7 @@
             <button class="tab-button" onclick="showTab('calendario')">📅 Calendário</button>
             <button class="tab-button" onclick="showTab('detalhes')">📊 Detalhes de Afastamentos</button>
             <button class="tab-button" onclick="showTab('tabela')">📋 Tabela Completa</button>
+            <button class="tab-button" onclick="showTab('merge-pdfs')">🧩 Mesclar PDFs</button>
         </div>
 
         <!-- Tab: Defensorias -->
@@ -1867,6 +2017,118 @@
                 </p>
             </div>
         </div>
+
+        <!-- Tab: Mesclar PDFs -->
+        <div id="merge-pdfs" class="tab-content">
+            <div class="card">
+                <h2>🧩 Mesclar PDFs a partir do Google Sheets</h2>
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">Carregue uma planilha pública, escolha as colunas de arquivos (em ordem) e gere um ZIP com todos os PDFs mesclados.</p>
+
+                <div class="merge-app">
+                    <div class="merge-form-grid">
+                        <div class="merge-field">
+                            <label for="sheet-url">Link público da planilha</label>
+                            <input id="sheet-url" class="merge-input" type="url" placeholder="https://docs.google.com/spreadsheets/d/.../edit#gid=..." />
+                            <span class="merge-note">Use o link completo da planilha. A aba deve estar pública.</span>
+                        </div>
+                        <div class="merge-field">
+                            <label for="sheet-csv">Ou envie um CSV do computador</label>
+                            <input id="sheet-csv" class="merge-input" type="file" accept=".csv,text/csv" />
+                            <span class="merge-note">Baixe a aba como CSV e envie aqui se o link falhar.</span>
+                        </div>
+                        <div class="merge-field">
+                            <label for="zip-name">Nome do arquivo ZIP</label>
+                            <input id="zip-name" class="merge-input" type="text" placeholder="candidatos_mesclados.zip" value="candidatos_mesclados.zip" />
+                        </div>
+                    </div>
+
+                    <div class="merge-actions">
+                        <button id="load-sheet-btn" class="merge-btn primary">Carregar planilha</button>
+                        <button id="load-csv-btn" class="merge-btn secondary">Carregar CSV</button>
+                        <button id="reset-merge-btn" class="merge-btn secondary">Limpar</button>
+                    </div>
+
+                    <div id="merge-status" class="merge-status">Informe o link da planilha e clique em "Carregar planilha".</div>
+
+                    <div id="merge-help" class="merge-help" style="display: none;">
+                        <strong>Como deixar público (planilha e arquivos):</strong>
+                        <ol style="margin: 10px 0 0 18px; line-height: 1.6;">
+                            <li>Abra a planilha no Google Sheets e clique em <strong>Compartilhar</strong>.</li>
+                            <li>Em <strong>Acesso geral</strong>, selecione <strong>Qualquer pessoa com o link</strong> e escolha <strong>Leitor</strong>.</li>
+                            <li>Para cada PDF no Google Drive, abra o arquivo, clique em <strong>Compartilhar</strong> e faça o mesmo (qualquer pessoa com o link).</li>
+                            <li>Volte aqui e tente novamente.</li>
+                        </ol>
+                    </div>
+
+                    <hr>
+
+                    <h3>Colunas de arquivos (ordem da mescla)</h3>
+                    <div class="merge-form-grid">
+                        <div class="merge-field">
+                            <label for="file-column-select">Adicionar coluna de arquivo</label>
+                            <select id="file-column-select" class="merge-select" disabled>
+                                <option value="">Carregue a planilha primeiro</option>
+                            </select>
+                            <span class="merge-note">Adicione as colunas na ordem em que deseja mesclar.</span>
+                        </div>
+                        <div class="merge-field" style="align-self: end;">
+                            <button id="add-file-column-btn" class="merge-btn secondary" disabled>Adicionar coluna</button>
+                        </div>
+                    </div>
+
+                    <div id="file-columns-list" class="merge-columns-list">
+                        <span class="merge-note">Nenhuma coluna adicionada.</span>
+                    </div>
+
+                    <h3>Nome do PDF</h3>
+                    <div class="merge-form-grid">
+                        <div class="merge-field">
+                            <label>
+                                <input type="radio" name="name-mode" value="column" checked>
+                                Usar coluna da planilha
+                            </label>
+                            <select id="name-column-select" class="merge-select" disabled>
+                                <option value="">Carregue a planilha primeiro</option>
+                            </select>
+                        </div>
+                        <div class="merge-field">
+                            <label>
+                                <input type="radio" name="name-mode" value="sequence">
+                                Numeração sequencial
+                            </label>
+                            <div style="display: flex; gap: 10px;">
+                                <input id="seq-prefix" class="merge-input" type="text" placeholder="candidato_" value="candidato_" />
+                                <input id="seq-start" class="merge-input" type="number" min="1" value="1" style="max-width: 120px;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="merge-actions">
+                        <button id="merge-run-btn" class="merge-btn primary" disabled>Gerar ZIP e baixar</button>
+                    </div>
+
+                    <div class="merge-status">
+                        <span class="merge-progress" id="merge-progress">Aguardando configuração.</span>
+                    </div>
+
+                    <div id="merge-log-container" style="display: none;">
+                        <h3>Resultado</h3>
+                        <table class="merge-log">
+                            <thead>
+                                <tr>
+                                    <th>Linha</th>
+                                    <th>Nome</th>
+                                    <th>Arquivos</th>
+                                    <th>Status</th>
+                                    <th>Detalhes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="merge-log-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal para Detalhes -->
@@ -1883,6 +2145,9 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script>
         const months = [
             'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -1890,6 +2155,475 @@
         ];
 
         const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+        const mergeState = {
+            rows: [],
+            fields: [],
+            fileColumns: []
+        };
+
+        function setMergeStatus(message, isError = false) {
+            const statusEl = document.getElementById('merge-status');
+            if (!statusEl) return;
+            statusEl.textContent = message;
+            statusEl.style.background = isError ? '#fee2e2' : '#f1f5f9';
+            statusEl.style.borderColor = isError ? '#fca5a5' : 'var(--border-color)';
+            statusEl.style.color = isError ? '#b91c1c' : 'var(--text-secondary)';
+        }
+
+        function setMergeHelpVisible(visible) {
+            const helpEl = document.getElementById('merge-help');
+            if (helpEl) {
+                helpEl.style.display = visible ? 'block' : 'none';
+            }
+        }
+
+        function buildCsvUrls(input) {
+            const trimmed = (input || '').trim();
+            if (!trimmed) {
+                return { error: 'Informe um link de planilha válido.' };
+            }
+
+            if (trimmed.includes('output=csv') || trimmed.includes('format=csv')) {
+                return { urls: [trimmed] };
+            }
+
+            const match = trimmed.match(/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+            if (!match) {
+                return { error: 'Link da planilha não reconhecido.' };
+            }
+
+            const sheetId = match[1];
+            const gidMatch = trimmed.match(/gid=([0-9]+)/);
+            const gid = gidMatch ? gidMatch[1] : '0';
+            const urls = [
+                `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`,
+                `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&gid=${gid}`
+            ];
+            return { urls };
+        }
+
+        function sanitizeFileName(name) {
+            const sanitized = (name || '')
+                .replace(/[<>:"/\\|?*]/g, '_')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .replace(/[. ]+$/, '');
+            return sanitized || 'sem_nome';
+        }
+
+        function extractDriveId(url) {
+            if (!url) return null;
+            const idMatch = url.match(/id=([a-zA-Z0-9-_]+)/);
+            if (idMatch) return idMatch[1];
+            const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+            if (fileMatch) return fileMatch[1];
+            return null;
+        }
+
+        async function fetchDriveFileBytes(fileId) {
+            const baseUrl = `https://drive.usercontent.google.com/uc?id=${fileId}&export=download`;
+            const response = await fetch(baseUrl);
+            if (!response.ok) {
+                throw new Error(`Falha ao baixar arquivo (${response.status}).`);
+            }
+
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('text/html')) {
+                const html = await response.text();
+                const confirmMatch = html.match(/confirm=([0-9A-Za-z_]+)/);
+                if (confirmMatch) {
+                    const confirmUrl = `https://drive.usercontent.google.com/uc?id=${fileId}&export=download&confirm=${confirmMatch[1]}`;
+                    const confirmResponse = await fetch(confirmUrl);
+                    if (!confirmResponse.ok) {
+                        throw new Error(`Falha ao baixar arquivo (${confirmResponse.status}).`);
+                    }
+                    return new Uint8Array(await confirmResponse.arrayBuffer());
+                }
+                throw new Error('Arquivo não está acessível publicamente.');
+            }
+
+            return new Uint8Array(await response.arrayBuffer());
+        }
+
+        async function fetchFileBytes(link) {
+            const driveId = extractDriveId(link);
+            if (driveId) {
+                return await fetchDriveFileBytes(driveId);
+            }
+            const response = await fetch(link);
+            if (!response.ok) {
+                throw new Error(`Falha ao baixar arquivo (${response.status}).`);
+            }
+            return new Uint8Array(await response.arrayBuffer());
+        }
+
+        function updateFileColumnsList() {
+            const listEl = document.getElementById('file-columns-list');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+
+            if (mergeState.fileColumns.length === 0) {
+                const empty = document.createElement('span');
+                empty.className = 'merge-note';
+                empty.textContent = 'Nenhuma coluna adicionada.';
+                listEl.appendChild(empty);
+                return;
+            }
+
+            mergeState.fileColumns.forEach((col, index) => {
+                const item = document.createElement('div');
+                item.className = 'merge-column-item';
+
+                const label = document.createElement('span');
+                label.textContent = `${index + 1}. ${col}`;
+
+                const actions = document.createElement('div');
+                actions.className = 'merge-column-actions';
+
+                const upBtn = document.createElement('button');
+                upBtn.className = 'merge-btn secondary';
+                upBtn.textContent = '↑';
+                upBtn.dataset.action = 'up';
+                upBtn.dataset.index = index;
+
+                const downBtn = document.createElement('button');
+                downBtn.className = 'merge-btn secondary';
+                downBtn.textContent = '↓';
+                downBtn.dataset.action = 'down';
+                downBtn.dataset.index = index;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'merge-btn secondary';
+                removeBtn.textContent = 'Remover';
+                removeBtn.dataset.action = 'remove';
+                removeBtn.dataset.index = index;
+
+                actions.appendChild(upBtn);
+                actions.appendChild(downBtn);
+                actions.appendChild(removeBtn);
+
+                item.appendChild(label);
+                item.appendChild(actions);
+                listEl.appendChild(item);
+            });
+        }
+
+        function enableMergeControls(enabled) {
+            const fileSelect = document.getElementById('file-column-select');
+            const addBtn = document.getElementById('add-file-column-btn');
+            const nameSelect = document.getElementById('name-column-select');
+            const runBtn = document.getElementById('merge-run-btn');
+            if (fileSelect) fileSelect.disabled = !enabled;
+            if (addBtn) addBtn.disabled = !enabled;
+            if (nameSelect) nameSelect.disabled = !enabled;
+            if (runBtn) runBtn.disabled = !enabled;
+        }
+
+        async function handleLoadSheet() {
+            setMergeHelpVisible(false);
+            const sheetUrl = document.getElementById('sheet-url').value;
+            const build = buildCsvUrls(sheetUrl);
+            if (build.error) {
+                setMergeStatus(build.error, true);
+                return;
+            }
+
+            setMergeStatus('Carregando planilha...');
+            enableMergeControls(false);
+
+            try {
+                let text = null;
+                let lastError = null;
+
+                for (const url of build.urls) {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) {
+                            lastError = new Error('Não foi possível acessar a planilha.');
+                            continue;
+                        }
+                        const responseText = await response.text();
+                        if (responseText.toLowerCase().includes('<html')) {
+                            lastError = new Error('A planilha não está pública ou houve bloqueio do navegador.');
+                            continue;
+                        }
+                        text = responseText;
+                        break;
+                    } catch (error) {
+                        lastError = error;
+                    }
+                }
+
+                if (!text) {
+                    throw lastError || new Error('Não foi possível acessar a planilha.');
+                }
+
+                const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
+                if (parsed.errors.length) {
+                    throw new Error('Erro ao ler o CSV da planilha.');
+                }
+
+                mergeState.rows = parsed.data;
+                mergeState.fields = parsed.meta.fields || [];
+                mergeState.fileColumns = [];
+                updateFileColumnsList();
+
+                const fileSelect = document.getElementById('file-column-select');
+                const nameSelect = document.getElementById('name-column-select');
+                fileSelect.innerHTML = '';
+                nameSelect.innerHTML = '';
+
+                mergeState.fields.forEach(field => {
+                    const opt1 = document.createElement('option');
+                    opt1.value = field;
+                    opt1.textContent = field;
+                    fileSelect.appendChild(opt1);
+
+                    const opt2 = document.createElement('option');
+                    opt2.value = field;
+                    opt2.textContent = field;
+                    nameSelect.appendChild(opt2);
+                });
+
+                enableMergeControls(true);
+                setMergeStatus(`Planilha carregada com ${mergeState.rows.length} linhas.`);
+            } catch (error) {
+                setMergeStatus(error.message || 'Falha ao carregar planilha.', true);
+                setMergeHelpVisible(true);
+                enableMergeControls(false);
+            }
+        }
+
+        async function handleLoadCsvFile() {
+            setMergeHelpVisible(false);
+            const fileInput = document.getElementById('sheet-csv');
+            const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+            if (!file) {
+                setMergeStatus('Selecione um arquivo CSV.', true);
+                return;
+            }
+
+            setMergeStatus('Lendo CSV...');
+            enableMergeControls(false);
+
+            try {
+                const text = await file.text();
+                const parsed = Papa.parse(text, { header: true, skipEmptyLines: true });
+                if (parsed.errors.length) {
+                    throw new Error('Erro ao ler o CSV.');
+                }
+
+                mergeState.rows = parsed.data;
+                mergeState.fields = parsed.meta.fields || [];
+                mergeState.fileColumns = [];
+                updateFileColumnsList();
+
+                const fileSelect = document.getElementById('file-column-select');
+                const nameSelect = document.getElementById('name-column-select');
+                fileSelect.innerHTML = '';
+                nameSelect.innerHTML = '';
+
+                mergeState.fields.forEach(field => {
+                    const opt1 = document.createElement('option');
+                    opt1.value = field;
+                    opt1.textContent = field;
+                    fileSelect.appendChild(opt1);
+
+                    const opt2 = document.createElement('option');
+                    opt2.value = field;
+                    opt2.textContent = field;
+                    nameSelect.appendChild(opt2);
+                });
+
+                enableMergeControls(true);
+                setMergeStatus(`CSV carregado com ${mergeState.rows.length} linhas.`);
+            } catch (error) {
+                setMergeStatus(error.message || 'Falha ao carregar CSV.', true);
+                enableMergeControls(false);
+            }
+        }
+
+        async function handleMerge() {
+            const progressEl = document.getElementById('merge-progress');
+            const logContainer = document.getElementById('merge-log-container');
+            const logBody = document.getElementById('merge-log-body');
+            logBody.innerHTML = '';
+            logContainer.style.display = 'none';
+
+            if (mergeState.fileColumns.length === 0) {
+                setMergeStatus('Adicione ao menos uma coluna de arquivos.', true);
+                return;
+            }
+
+            const nameMode = document.querySelector('input[name="name-mode"]:checked').value;
+            const nameColumn = document.getElementById('name-column-select').value;
+            const seqPrefix = document.getElementById('seq-prefix').value || 'arquivo_';
+            const seqStart = parseInt(document.getElementById('seq-start').value || '1', 10);
+            const zipNameInput = document.getElementById('zip-name').value || 'arquivos_mesclados.zip';
+            const zipName = zipNameInput.endsWith('.zip') ? zipNameInput : `${zipNameInput}.zip`;
+
+            if (nameMode === 'column' && !nameColumn) {
+                setMergeStatus('Selecione a coluna para nomear os PDFs.', true);
+                return;
+            }
+
+            progressEl.textContent = 'Iniciando mesclagem...';
+            setMergeStatus('Processando arquivos. Isso pode demorar.', false);
+
+            const zip = new JSZip();
+            let processed = 0;
+            let successCount = 0;
+            let seqCounter = seqStart;
+
+            for (let i = 0; i < mergeState.rows.length; i++) {
+                const row = mergeState.rows[i];
+                const links = mergeState.fileColumns
+                    .map(col => (row[col] || '').toString().trim())
+                    .filter(value => value && value.toLowerCase().startsWith('http'));
+
+                if (!links.length) {
+                    continue;
+                }
+
+                const nameValue = nameMode === 'column' ? row[nameColumn] : `${seqPrefix}${seqCounter}`;
+                const baseName = sanitizeFileName(nameValue || `${seqPrefix}${seqCounter}`);
+                if (nameMode === 'sequence') {
+                    seqCounter += 1;
+                }
+
+                processed += 1;
+                progressEl.textContent = `Mesclando ${processed} de ${mergeState.rows.length}...`;
+
+                const logRow = document.createElement('tr');
+                const rowIndexCell = document.createElement('td');
+                rowIndexCell.textContent = i + 2;
+                const nameCell = document.createElement('td');
+                nameCell.textContent = baseName;
+                const filesCell = document.createElement('td');
+                filesCell.textContent = links.length;
+                const statusCell = document.createElement('td');
+                const detailsCell = document.createElement('td');
+
+                try {
+                    const mergedPdf = await PDFLib.PDFDocument.create();
+
+                    for (let linkIndex = 0; linkIndex < links.length; linkIndex++) {
+                        const bytes = await fetchFileBytes(links[linkIndex]);
+                        const source = await PDFLib.PDFDocument.load(bytes, { ignoreEncryption: true });
+                        const pages = await mergedPdf.copyPages(source, source.getPageIndices());
+                        pages.forEach(page => mergedPdf.addPage(page));
+                    }
+
+                    const mergedBytes = await mergedPdf.save();
+                    zip.file(`${baseName}.pdf`, mergedBytes);
+
+                    const pill = document.createElement('span');
+                    pill.className = 'merge-pill ok';
+                    pill.textContent = 'OK';
+                    statusCell.appendChild(pill);
+                    detailsCell.textContent = '';
+                    successCount += 1;
+                } catch (error) {
+                    const pill = document.createElement('span');
+                    pill.className = 'merge-pill error';
+                    pill.textContent = 'Erro';
+                    statusCell.appendChild(pill);
+                    detailsCell.textContent = error.message || 'Falha ao mesclar.';
+                    if (error.message && (error.message.includes('pública') || error.message.includes('fetch'))) {
+                        setMergeHelpVisible(true);
+                    }
+                }
+
+                logRow.appendChild(rowIndexCell);
+                logRow.appendChild(nameCell);
+                logRow.appendChild(filesCell);
+                logRow.appendChild(statusCell);
+                logRow.appendChild(detailsCell);
+                logBody.appendChild(logRow);
+            }
+
+            if (successCount === 0) {
+                setMergeStatus('Nenhum PDF foi gerado. Verifique os links e permissões.', true);
+                setMergeHelpVisible(true);
+                progressEl.textContent = 'Nenhum arquivo gerado.';
+                return;
+            }
+
+            const blob = await zip.generateAsync({ type: 'blob' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = zipName;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(link.href);
+
+            logContainer.style.display = 'block';
+            progressEl.textContent = `Concluído: ${successCount} PDFs gerados.`;
+            setMergeStatus('ZIP gerado e download iniciado.', false);
+        }
+
+        function initMergeApp() {
+            const loadBtn = document.getElementById('load-sheet-btn');
+            const loadCsvBtn = document.getElementById('load-csv-btn');
+            const resetBtn = document.getElementById('reset-merge-btn');
+            const addFileBtn = document.getElementById('add-file-column-btn');
+            const fileSelect = document.getElementById('file-column-select');
+            const fileList = document.getElementById('file-columns-list');
+            const runBtn = document.getElementById('merge-run-btn');
+
+            if (!loadBtn) return;
+
+            loadBtn.addEventListener('click', () => handleLoadSheet());
+            loadCsvBtn.addEventListener('click', () => handleLoadCsvFile());
+            resetBtn.addEventListener('click', () => {
+                mergeState.rows = [];
+                mergeState.fields = [];
+                mergeState.fileColumns = [];
+                updateFileColumnsList();
+                enableMergeControls(false);
+                setMergeStatus('Informe o link da planilha e clique em "Carregar planilha".');
+                setMergeHelpVisible(false);
+                document.getElementById('merge-progress').textContent = 'Aguardando configuração.';
+                document.getElementById('merge-log-container').style.display = 'none';
+            });
+
+            addFileBtn.addEventListener('click', () => {
+                const selected = fileSelect.value;
+                if (!selected) return;
+                if (mergeState.fileColumns.includes(selected)) {
+                    setMergeStatus('Coluna já adicionada.', true);
+                    return;
+                }
+                mergeState.fileColumns.push(selected);
+                updateFileColumnsList();
+                setMergeStatus('Coluna adicionada com sucesso.');
+            });
+
+            fileList.addEventListener('click', (event) => {
+                const button = event.target.closest('button');
+                if (!button) return;
+                const index = parseInt(button.dataset.index, 10);
+                const action = button.dataset.action;
+                if (Number.isNaN(index)) return;
+
+                if (action === 'remove') {
+                    mergeState.fileColumns.splice(index, 1);
+                }
+                if (action === 'up' && index > 0) {
+                    [mergeState.fileColumns[index - 1], mergeState.fileColumns[index]] =
+                        [mergeState.fileColumns[index], mergeState.fileColumns[index - 1]];
+                }
+                if (action === 'down' && index < mergeState.fileColumns.length - 1) {
+                    [mergeState.fileColumns[index + 1], mergeState.fileColumns[index]] =
+                        [mergeState.fileColumns[index], mergeState.fileColumns[index + 1]];
+                }
+                updateFileColumnsList();
+            });
+
+            runBtn.addEventListener('click', () => handleMerge());
+        }
 
         // Dados de afastamentos
         const defensorNames = {
@@ -2571,6 +3305,7 @@
 
         // Inicializar calendário e validar destaques quando a página carregar
         window.onload = function() {
+            initMergeApp();
             renderCalendar();
             // Aguardar um pouco para garantir que o DOM está totalmente carregado
             setTimeout(() => {
