@@ -2096,8 +2096,9 @@
     }
     var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true, followRedirects: true });
     var blob = response.getBlob();
-    return ContentService.createTextOutput(blob.getBytes())
-      .setMimeType(blob.getContentType())
+    var base64 = Utilities.base64Encode(blob.getBytes());
+    return ContentService.createTextOutput(base64)
+      .setMimeType(ContentService.MimeType.TEXT)
       .setHeader('Access-Control-Allow-Origin', '*');
   } catch (err) {
     return ContentService.createTextOutput('Error: ' + err)
@@ -2274,6 +2275,21 @@
             return null;
         }
 
+        function base64ToBytes(base64) {
+            const clean = (base64 || '').trim();
+            const binary = atob(clean);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return bytes;
+        }
+
+        function isProxyErrorText(text) {
+            const trimmed = (text || '').trim();
+            return trimmed.startsWith('Error:') || trimmed.startsWith('Missing url');
+        }
+
         function isCorsLikeError(message) {
             const text = (message || '').toLowerCase();
             return text.includes('failed to fetch') || text.includes('cors') || text.includes('bloqueio');
@@ -2323,13 +2339,24 @@
                     if (!response.ok) {
                         throw new Error(`Falha ao baixar arquivo (${response.status}).`);
                     }
-                    return new Uint8Array(await response.arrayBuffer());
+                    const text = await response.text();
+                    if (isProxyErrorText(text)) {
+                        throw new Error(text.trim());
+                    }
+                    return base64ToBytes(text);
                 }
                 return await fetchDriveFileBytes(driveId);
             }
             const response = await fetch(buildProxyFetchUrl(link));
             if (!response.ok) {
                 throw new Error(`Falha ao baixar arquivo (${response.status}).`);
+            }
+            if (mergeState.proxyEnabled && mergeState.proxyUrl) {
+                const text = await response.text();
+                if (isProxyErrorText(text)) {
+                    throw new Error(text.trim());
+                }
+                return base64ToBytes(text);
             }
             return new Uint8Array(await response.arrayBuffer());
         }
@@ -2663,6 +2690,23 @@
 
             if (!loadBtn) return;
 
+            const proxyEnabledKey = 'mergeProxyEnabled';
+            const proxyUrlKey = 'mergeProxyUrl';
+
+            try {
+                const savedEnabled = localStorage.getItem(proxyEnabledKey) === 'true';
+                const savedUrl = localStorage.getItem(proxyUrlKey) || '';
+                proxyToggle.checked = savedEnabled;
+                proxyUrlInput.disabled = !savedEnabled;
+                proxyUrlInput.value = savedUrl;
+                mergeState.proxyEnabled = savedEnabled;
+                mergeState.proxyUrl = savedUrl.trim();
+                proxyHelp.style.display = savedEnabled ? 'block' : 'none';
+                proxySteps.style.display = savedEnabled ? 'block' : 'none';
+            } catch (error) {
+                // Sem acesso ao localStorage (ex.: modo restrito do navegador)
+            }
+
             loadBtn.addEventListener('click', () => handleLoadSheet());
             loadCsvBtn.addEventListener('click', () => handleLoadCsvFile());
             proxyToggle.addEventListener('change', () => {
@@ -2674,9 +2718,26 @@
                     mergeState.proxyUrl = '';
                     proxyUrlInput.value = '';
                 }
+                try {
+                    localStorage.setItem(proxyEnabledKey, String(proxyToggle.checked));
+                    if (!proxyToggle.checked) {
+                        localStorage.removeItem(proxyUrlKey);
+                    }
+                } catch (error) {
+                    // Ignorar falhas de localStorage
+                }
             });
             proxyUrlInput.addEventListener('input', () => {
                 mergeState.proxyUrl = proxyUrlInput.value.trim();
+                try {
+                    if (mergeState.proxyUrl) {
+                        localStorage.setItem(proxyUrlKey, mergeState.proxyUrl);
+                    } else {
+                        localStorage.removeItem(proxyUrlKey);
+                    }
+                } catch (error) {
+                    // Ignorar falhas de localStorage
+                }
             });
             resetBtn.addEventListener('click', () => {
                 mergeState.rows = [];
@@ -2695,6 +2756,12 @@
                 proxySteps.style.display = 'none';
                 document.getElementById('merge-progress').textContent = 'Aguardando configuração.';
                 document.getElementById('merge-log-container').style.display = 'none';
+                try {
+                    localStorage.removeItem(proxyEnabledKey);
+                    localStorage.removeItem(proxyUrlKey);
+                } catch (error) {
+                    // Ignorar falhas de localStorage
+                }
             });
 
             addFileBtn.addEventListener('click', () => {
