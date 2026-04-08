@@ -1,0 +1,602 @@
+{
+  "meta": {
+    "ano": 2026,
+    "ultima_atualizacao": "2026-04-07",
+    "atualizado_por": "Ícaro Oliveira Avelar Costa"
+  },
+
+  "defensores": {
+    "icaro":        { "nome": "Ícaro Oliveira Avelar Costa",           "nome_curto": "Ícaro Avelar",     "externo": false },
+    "jose-antonio": { "nome": "José Antônio Pereira da Silva",         "nome_curto": "José Antônio",     "externo": false },
+    "eliaquim":     { "nome": "Eliaquim Antunes de Souza",             "nome_curto": "Eliaquim Antunes", "externo": false },
+    "elton":        { "nome": "Elton Dariva Staub",                    "nome_curto": "Elton Dariva",     "externo": false },
+    "elaine":       { "nome": "Elaine Maria Sousa Frota",              "nome_curto": "Elaine Frota",     "externo": false },
+    "miguel":       { "nome": "Miguel Eduardo de Azevedo Martins Filho","nome_curto": "Miguel Martins",  "externo": false },
+    "mariana":      { "nome": "Mariana Silva Paixão",                  "nome_curto": "Mariana Paixão",   "externo": true  },
+    "bruna-farias": { "nome": "Bruna Costa de Farias",                 "nome_curto": "Bruna Farias",     "externo": true  },
+    "danielle":     { "nome": "Danielle Mascarenhas Cunha de Almeida", "nome_curto": "Danielle Almeida", "externo": true  },
+    "oswaldo":      { "nome": "Oswaldo Machado Neto",                  "nome_curto": "Oswaldo Machado",  "externo": true  }
+  },
+
+  "defensorias": {
+    "1": {
+      "nome": "1ª Defensoria Pública",
+      "area": "Família, Sucessões e Infância",
+      "destaque": "itacoatiara",
+      "historico_titulares": [
+        { "defensor": "icaro", "inicio": "2026-01-01", "fim": null }
+      ]
+    },
+    "2": {
+      "nome": "2ª Defensoria Pública",
+      "area": "Família, Sucessões e Infância",
+      "destaque": "itacoatiara",
+      "historico_titulares": [
+        { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": null }
+      ]
+    },
+    "3": {
+      "nome": "3ª Defensoria Pública",
+      "area": "Cível, Registros e Previdenciário",
+      "destaque": null,
+      "historico_titulares": [
+        { "defensor": "icaro", "inicio": "2026-01-01", "fim": null }
+      ]
+    },
+    "4": {
+      "nome": "4ª Defensoria Pública",
+      "area": "Cível, Registros e Previdenciário",
+      "destaque": null,
+      "historico_titulares": [
+        { "defensor": "eliaquim", "inicio": "2026-01-01", "fim": null }
+      ]
+    },
+    "5": {
+      "nome": "5ª Defensoria Pública",
+      "area": "Criminal e Medidas Socioeducativas",
+      "destaque": "itacoatiara",
+      "historico_titulares": [
+        { "defensor": "elton", "inicio": "2026-01-01", "fim": null }
+      ]
+    },
+    "6": {
+      "nome": "6ª Defensoria Pública",
+      "area": "Criminal e Medidas Socioeducativas",
+      "destaque": "itacoatiara",
+      "historico_titulares": [
+        { "defensor": "elaine", "inicio": "2026-01-01", "fim": "2026-03-01" },
+        { "defensor": "miguel", "inicio": "2026-03-01", "fim": null }
+      ]
+    },
+    "7": {
+      "nome": "7ª Defensoria Pública (SSU)",
+      "area": "Todas as áreas",
+      "destaque": null,
+      "historico_titulares": [
+        { "defensor": "elaine", "inicio": "2026-01-01", "fim": "2026-03-07" },
+        { "defensor": "miguel", "inicio": "2026-03-07", "fim": null }
+      ]
+    },
+    "8": {
+      "nome": "8ª Defensoria Pública (Itapiranga)",
+      "area": "Todas as áreas",
+      "destaque": null,
+      "historico_titulares": [
+        { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": null }
+      ]
+    },
+    "9": {
+      "nome": "9ª Defensoria Pública (Urucurituba)",
+      "area": "Todas as áreas",
+      "destaque": null,
+      "historico_titulares": [
+        { "defensor": "eliaquim", "inicio": "2026-01-01", "fim": null }
+      ]
+    },
+    "10": {
+      "nome": "10ª Defensoria Pública (Urucará)",
+      "area": "Todas as áreas",
+      "destaque": null,
+      "historico_titulares": [
+        { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": null }
+      ]
+    },
+    "11": {
+      "nome": "11ª Defensoria Pública (Silves)",
+      "area": "Todas as áreas",
+      "destaque": "silves",
+      "historico_titulares": [
+        { "defensor": "icaro", "inicio": "2026-01-01", "fim": null }
+      ]
+    },
+    "12": {
+      "nome": "12ª Defensoria Pública (Silves)",
+      "area": "Todas as áreas",
+      "destaque": "silves",
+      "historico_titulares": [
+        { "defensor": "elton", "inicio": "2026-01-01", "fim": "2026-04-06" },
+        { "defensor": null,    "inicio": "2026-04-06", "fim": null }
+      ]
+    }
+  },
+
+  "eventos": [
+
+    {
+      "id": "ev-001",
+      "defensor": "jose-antonio",
+      "tipo": "folga",
+      "data_inicio": "2026-01-07",
+      "data_fim": "2026-01-09",
+      "portaria": {
+        "numero": "Portaria Nº 1378/2025-GSPG/DPE/AM",
+        "edicao": 2564,
+        "data": "2026-01-02",
+        "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2564-2026__publicada_em_02_janeiro_de_2026.pdf",
+        "sei": "25.0.000011580-3"
+      },
+      "designacoes": [
+        { "dp": "2",  "substituto": "elaine" },
+        { "dp": "8",  "substituto": "elton"  },
+        { "dp": "10", "substituto": "icaro"  }
+      ]
+    },
+
+    {
+      "id": "ev-002",
+      "defensor": "mariana",
+      "tipo": "folga",
+      "data_inicio": "2026-01-07",
+      "data_fim": "2026-01-09",
+      "portaria": {
+        "numero": "Portaria Nº 1375/2025-GSPG/DPE/AM",
+        "edicao": 2564,
+        "data": "2026-01-02",
+        "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2564-2026__publicada_em_02_janeiro_de_2026.pdf",
+        "sei": "25.0.000015402-7"
+      },
+      "designacoes": [
+        { "dp": "4", "substituto": "elaine" },
+        { "dp": "9", "substituto": "elton"  }
+      ]
+    },
+
+    {
+      "id": "ev-003",
+      "defensor": "jose-antonio",
+      "tipo": "licenca_especial",
+      "data_inicio": "2026-01-12",
+      "data_fim": "2026-01-21",
+      "portaria": {
+        "numero": "Portaria nº 7/2026-GSPG/DPE/AM",
+        "edicao": 2567,
+        "data": "2026-01-07",
+        "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf",
+        "sei": "25.0.000014378-5"
+      },
+      "designacoes": [
+        { "dp": "2",  "substituto": "elaine"   },
+        { "dp": "8",  "substituto": "icaro"    },
+        { "dp": "10", "data_fim": "2026-01-19", "substituto": "elton"    },
+        { "dp": "10", "data_inicio": "2026-01-20", "data_fim": "2026-01-21", "substituto": "eliaquim" }
+      ]
+    },
+
+    {
+      "id": "ev-004",
+      "defensor": "elton",
+      "tipo": "folga",
+      "data_inicio": "2026-01-20",
+      "data_fim": "2026-01-20",
+      "portaria": {
+        "numero": "Portaria nº 18/2026-GSPG/DPE/AM",
+        "edicao": 2572,
+        "data": "2026-01-14",
+        "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf",
+        "sei": "26.0.000000008-5"
+      },
+      "designacoes": [
+        { "dp": "5",  "substituto": "eliaquim" },
+        { "dp": "12", "substituto": "eliaquim" }
+      ]
+    },
+
+    {
+      "id": "ev-005",
+      "defensor": "elton",
+      "tipo": "ferias",
+      "data_inicio": "2026-01-21",
+      "data_fim": "2026-01-30",
+      "portaria": {
+        "numero": "Portaria nº 18/2026-GSPG/DPE/AM",
+        "edicao": 2572,
+        "data": "2026-01-14",
+        "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf",
+        "sei": "26.0.000000008-5"
+      },
+      "designacoes": [
+        { "dp": "5",  "data_fim": "2026-01-22", "substituto": "eliaquim" },
+        { "dp": "5",  "data_inicio": "2026-01-23", "substituto": "elaine"   },
+        { "dp": "12", "data_fim": "2026-01-22", "substituto": "eliaquim" },
+        { "dp": "12", "data_inicio": "2026-01-23", "substituto": "elaine"   }
+      ]
+    },
+
+    {
+      "id": "ev-006",
+      "defensor": "jose-antonio",
+      "tipo": "ferias",
+      "data_inicio": "2026-01-22",
+      "data_fim": "2026-02-03",
+      "portaria": {
+        "numero": "Portaria nº 19/2026-GSPG/DPE/AM",
+        "edicao": 2572,
+        "data": "2026-01-14",
+        "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf",
+        "sei": "26.0.000000067-0"
+      },
+      "designacoes": [
+        { "dp": "2",  "data_fim": "2026-01-30", "substituto": "bruna-farias" },
+        { "dp": "2",  "data_inicio": "2026-01-31", "substituto": "elton"      },
+        { "dp": "8",  "substituto": "icaro"      },
+        { "dp": "10", "data_fim": "2026-01-30", "substituto": "danielle"    },
+        { "dp": "10", "data_inicio": "2026-01-31", "substituto": "elton"      }
+      ]
+    },
+
+    {
+      "id": "ev-007",
+      "defensor": "eliaquim",
+      "tipo": "folga",
+      "data_inicio": "2026-01-23",
+      "data_fim": "2026-01-23",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": "SGI 2500849"
+      },
+      "designacoes": [
+        { "dp": "4", "substituto": "mariana" },
+        { "dp": "9", "substituto": "mariana" }
+      ]
+    },
+
+    {
+      "id": "ev-008",
+      "defensor": "eliaquim",
+      "tipo": "ferias",
+      "data_inicio": "2026-01-26",
+      "data_fim": "2026-02-05",
+      "portaria": {
+        "numero": "Portaria nº 24/2026-GSPG/DPE/AM",
+        "edicao": 2572,
+        "data": "2026-01-14",
+        "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf",
+        "sei": "26.0.000000004-2"
+      },
+      "designacoes": [
+        { "dp": "4", "data_fim": "2026-01-30", "substituto": "mariana" },
+        { "dp": "4", "data_inicio": "2026-01-31", "substituto": "elton"   },
+        { "dp": "9", "data_fim": "2026-01-30", "substituto": "mariana" },
+        { "dp": "9", "data_inicio": "2026-01-31", "substituto": "elton"   }
+      ]
+    },
+
+    {
+      "id": "ev-009",
+      "defensor": "jose-antonio",
+      "tipo": "licenca_especial",
+      "data_inicio": "2026-02-04",
+      "data_fim": "2026-02-13",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": "25.0.000014378-5"
+      },
+      "designacoes": [
+        { "dp": "2",  "substituto": null },
+        { "dp": "8",  "substituto": null },
+        { "dp": "10", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-010",
+      "defensor": "icaro",
+      "tipo": "folga",
+      "data_inicio": "2026-02-11",
+      "data_fim": "2026-02-13",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": null
+      },
+      "designacoes": [
+        { "dp": "1",  "substituto": null      },
+        { "dp": "3",  "substituto": "eliaquim"},
+        { "dp": "11", "substituto": null      }
+      ]
+    },
+
+    {
+      "id": "ev-011",
+      "defensor": "icaro",
+      "tipo": "folga",
+      "data_inicio": "2026-02-19",
+      "data_fim": "2026-02-20",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": null
+      },
+      "designacoes": [
+        { "dp": "1",  "substituto": null      },
+        { "dp": "3",  "substituto": "eliaquim"},
+        { "dp": "11", "substituto": null      }
+      ]
+    },
+
+    {
+      "id": "ev-012",
+      "defensor": "jose-antonio",
+      "tipo": "folga",
+      "data_inicio": "2026-02-19",
+      "data_fim": "2026-02-20",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": null
+      },
+      "designacoes": [
+        { "dp": "2",  "substituto": null },
+        { "dp": "8",  "substituto": null },
+        { "dp": "10", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-013",
+      "defensor": "elton",
+      "tipo": "folga",
+      "data_inicio": "2026-02-23",
+      "data_fim": "2026-02-25",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": "SGI 2600018"
+      },
+      "designacoes": [
+        { "dp": "5",  "substituto": null },
+        { "dp": "12", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-014",
+      "defensor": "elaine",
+      "tipo": "ferias",
+      "data_inicio": "2026-03-02",
+      "data_fim": "2026-03-27",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": null
+      },
+      "designacoes": [
+        { "dp": "6", "substituto": null },
+        { "dp": "7", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-015",
+      "defensor": "elton",
+      "tipo": "ferias",
+      "data_inicio": "2026-03-02",
+      "data_fim": "2026-03-13",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": "SGI 2500847"
+      },
+      "designacoes": [
+        { "dp": "5",  "substituto": null },
+        { "dp": "12", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-016",
+      "defensor": "elton",
+      "tipo": "ferias",
+      "data_inicio": "2026-03-16",
+      "data_fim": "2026-03-27",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": "SGI 2500844"
+      },
+      "designacoes": [
+        { "dp": "5",  "substituto": null },
+        { "dp": "12", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-017",
+      "defensor": "elton",
+      "tipo": "folga",
+      "data_inicio": "2026-03-30",
+      "data_fim": "2026-03-30",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": "SGI 2500898"
+      },
+      "designacoes": [
+        { "dp": "5",  "substituto": null },
+        { "dp": "12", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-018",
+      "defensor": "elton",
+      "tipo": "folga",
+      "data_inicio": "2026-03-31",
+      "data_fim": "2026-04-01",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": "SGI 2600017"
+      },
+      "designacoes": [
+        { "dp": "5",  "substituto": null },
+        { "dp": "12", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-019",
+      "defensor": "icaro",
+      "tipo": "ferias",
+      "data_inicio": "2026-04-06",
+      "data_fim": "2026-04-17",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": "SGI 2600016"
+      },
+      "designacoes": [
+        { "dp": "1",  "substituto": null },
+        { "dp": "3",  "substituto": null },
+        { "dp": "11", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-020",
+      "defensor": "jose-antonio",
+      "tipo": "ferias",
+      "data_inicio": "2026-06-08",
+      "data_fim": "2026-06-25",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": null
+      },
+      "designacoes": [
+        { "dp": "2",  "substituto": null },
+        { "dp": "8",  "substituto": null },
+        { "dp": "10", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-021",
+      "defensor": "jose-antonio",
+      "tipo": "folga",
+      "data_inicio": "2026-09-04",
+      "data_fim": "2026-09-04",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": null
+      },
+      "designacoes": [
+        { "dp": "2",  "substituto": null },
+        { "dp": "8",  "substituto": null },
+        { "dp": "10", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-022",
+      "defensor": "jose-antonio",
+      "tipo": "ferias",
+      "data_inicio": "2026-09-08",
+      "data_fim": "2026-09-25",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": null
+      },
+      "designacoes": [
+        { "dp": "2",  "substituto": null },
+        { "dp": "8",  "substituto": null },
+        { "dp": "10", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-023",
+      "defensor": "jose-antonio",
+      "tipo": "ferias",
+      "data_inicio": "2026-11-23",
+      "data_fim": "2026-12-04",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": null
+      },
+      "designacoes": [
+        { "dp": "2",  "substituto": null },
+        { "dp": "8",  "substituto": null },
+        { "dp": "10", "substituto": null }
+      ]
+    },
+
+    {
+      "id": "ev-024",
+      "defensor": "jose-antonio",
+      "tipo": "licenca_especial",
+      "data_inicio": "2026-12-09",
+      "data_fim": "2026-12-18",
+      "portaria": {
+        "numero": null,
+        "edicao": null,
+        "data": null,
+        "url": null,
+        "sei": "25.0.000014378-5"
+      },
+      "designacoes": [
+        { "dp": "2",  "substituto": null },
+        { "dp": "8",  "substituto": null },
+        { "dp": "10", "substituto": null }
+      ]
+    }
+
+  ]
+}
