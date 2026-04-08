@@ -1,0 +1,36 @@
+{
+  "email": {
+    "remetente": "",
+    "senha_app": "",
+    "destinatario": "lumabandeira@defensoria.am.def.br",
+    "smtp_server": "smtp.gmail.com",
+    "smtp_port": 587
+  },
+  "defensores_polo_medio": [
+    {
+      "nome_completo": "José Antônio Pereira da Silva",
+      "nome_busca": ["José Antônio Pereira", "Jose Antonio Pereira"],
+      "dps": ["2ª DP", "8ª DP", "10ª DP"]
+    },
+    {
+      "nome_completo": "Ícaro Oliveira Avelar Costa",
+      "nome_busca": ["Ícaro Oliveira", "Icaro Oliveira"],
+      "dps": ["1ª DP", "3ª DP", "11ª DP"]
+    },
+    {
+      "nome_completo": "Eliaquim Antunes de Souza Santos",
+      "nome_busca": ["Eliaquim Antunes"],
+      "dps": ["4ª DP", "9ª DP"]
+    },
+    {
+      "nome_completo": "Elton Dariva Staub",
+      "nome_busca": ["Elton Dariva"],
+      "dps": ["5ª DP", "12ª DP"]
+    },
+    {
+      "nome_completo": "Elaine Maria Sousa Frota",
+      "nome_busca": ["Elaine Maria Sousa"],
+      "dps": ["6ª DP", "7ª DP"]
+    }
+  ]
+}
