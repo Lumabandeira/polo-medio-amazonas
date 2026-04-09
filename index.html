@@ -2058,20 +2058,28 @@
             if (detalhes.length === 0) {
                 tableContainer.innerHTML = '<div class="no-data">Nenhum detalhe disponível para esta data.</div>';
             } else {
-                let html = '<table class="modal-table"><thead><tr><th>Defensor</th><th>Tipo</th><th>Defensoria Afetada</th><th>Substituto</th><th>Processo</th></tr></thead><tbody>';
-                
+                let html = '<table class="modal-table"><thead><tr><th>Defensor</th><th>Tipo</th><th>Defensoria Afetada</th><th>Substituto</th><th>Diário Oficial</th><th>Processo</th></tr></thead><tbody>';
+
                 detalhes.forEach(item => {
-                    const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' : 
+                    const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' :
                                      item.tipo === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
+                    // Extrair número da edição do link, se disponível
+                    let linkHtml = '-';
+                    if (item.link) {
+                        const edNum = item.link.match(/Edicao_(\d+)/i);
+                        const label = edNum ? `Edição ${edNum[1]}` : 'Abrir PDF';
+                        linkHtml = `<a href="${item.link}" target="_blank" style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap;">📄 ${label}</a>`;
+                    }
                     html += `<tr>
                         <td><strong>${item.defensor}</strong></td>
                         <td><span class="tipo-badge ${tipoClass}">${item.tipo}</span></td>
                         <td>${item.defensoria}</td>
                         <td>${item.substituto || '-'}</td>
+                        <td>${linkHtml}</td>
                         <td>${item.processo || '-'}</td>
                     </tr>`;
                 });
-                
+
                 html += '</tbody></table>';
                 tableContainer.innerHTML = html;
             }
