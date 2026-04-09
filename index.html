@@ -3127,7 +3127,7 @@
                 defensorias[dpKey].historico_titulares.forEach(h => {
                     if (!h.defensor) return;
                     if (!defHistorico[h.defensor]) defHistorico[h.defensor] = [];
-                    defHistorico[h.defensor].push({ dpKey, inicio: h.inicio, fim: h.fim });
+                    defHistorico[h.defensor].push({ dpKey, inicio: h.inicio, fim: h.fim, portaria_entrada: h.portaria_entrada || null, portaria_saida: h.portaria_saida || null });
                 });
             });
 
