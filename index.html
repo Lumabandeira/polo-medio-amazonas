@@ -1380,14 +1380,256 @@
             .landing-btn { min-width: 100%; max-width: 100%; padding: 30px 25px; }
             .diario-search-bar { flex-direction: column; }
         }
+
+        /* ─── Login Overlay ────────────────────────────────────────── */
+        #login-overlay {
+            display: flex;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 45px 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            margin-bottom: 6px;
+        }
+
+        .login-box p.subtitulo {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .login-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+        }
+
+        #login-error {
+            color: var(--danger-color);
+            font-size: 0.88em;
+            min-height: 20px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .login-btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .login-btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59,130,246,0.4);
+        }
+
+        .login-btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* ─── Botão Auth no Header ─────────────────────────────────── */
+        .auth-btn {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.82em;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+
+        .auth-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        #admin-badge {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            background: rgba(16, 185, 129, 0.25);
+            border: 2px solid rgba(16, 185, 129, 0.5);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.78em;
+            font-weight: 700;
+        }
+
+        /* ─── Botões de Edição Admin ───────────────────────────────── */
+        .admin-only {
+            display: none;
+        }
+
+        .btn-editar {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82em;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+
+        .btn-editar:hover { background: var(--secondary-color); }
+
+        .btn-salvar {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82em;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .btn-salvar:hover:not(:disabled) { background: #059669; }
+        .btn-salvar:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .btn-cancelar {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: #f1f5f9;
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.82em;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        .btn-cancelar:hover { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+
+        .secao-editavel[contenteditable="true"] {
+            border: 2px dashed var(--secondary-color);
+            border-radius: 8px;
+            padding: 12px;
+            outline: none;
+            min-height: 60px;
+        }
+
+        /* ─── Toast ────────────────────────────────────────────────── */
+        #toast {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            z-index: 5000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: fadeIn 0.3s;
+        }
     </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
+<!-- Login Overlay -->
+<div id="login-overlay">
+    <div class="login-box">
+        <div style="font-size:3em;margin-bottom:12px;">🏛️</div>
+        <h2>Polo Médio Amazonas</h2>
+        <p class="subtitulo">Acesso restrito à equipe da Defensoria Pública</p>
+        <input type="email" id="login-email" class="login-input" placeholder="E-mail institucional"
+            onkeydown="if(event.key==='Enter') fazerLogin()">
+        <input type="password" id="login-password" class="login-input" placeholder="Senha"
+            onkeydown="if(event.key==='Enter') fazerLogin()">
+        <div id="login-error"></div>
+        <button id="login-btn" class="login-btn-submit" onclick="fazerLogin()">Entrar</button>
+        <p style="margin-top:20px;font-size:0.8em;color:#94a3b8;">Problemas de acesso? Contate o administrador.</p>
+    </div>
+</div>
+
+<!-- Toast de notificação -->
+<div id="toast"></div>
+
 <body>
     <div class="container">
         <header>
             <button class="open-new-tab-btn" onclick="window.open(window.location.href, '_blank')" title="Abrir em nova aba">
                 🔗 Nova Aba
             </button>
+            <button id="auth-btn" class="auth-btn" onclick="fazerLogout()">🚪 Sair</button>
+            <span id="admin-badge">⚙️ ADMIN</span>
             <button id="sync-btn" class="sync-btn" onclick="syncFromSheets()" title="Sincronizar dados da planilha Google Sheets">
                 🔄 Sincronizar Planilha
             </button>
@@ -1422,7 +1664,6 @@
             <button class="tab-button" onclick="showTab('designacoes-periodo')">📅 Designações semanais</button>
             <button class="tab-button" onclick="showTab('calendario')">📅 Calendário</button>
             <button class="tab-button" onclick="showTab('detalhes')">📊 Detalhes de Afastamentos</button>
-            <button class="tab-button" onclick="showTab('tabela')">📋 Tabela Completa</button>
             <button id="tab-btn-diario" class="tab-button" onclick="showTab('diario-oficial')">📰 Diário Oficial</button>
         </div>
 
@@ -1441,29 +1682,49 @@
             </div>
 
             <div class="card">
-                <h2>🔄 Regra de Alternância para Atendimentos</h2>
-                <p><strong>Observação sobre alternância para Itacoatiara e Silves:</strong></p>
-                <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>1ª e 2ª DP alternam para atendimentos de Família, Sucessões e Infância em Itacoatiara</li>
-                    <li>3ª e 4ª DP alternam para atendimentos de Cível, Registros e Previdenciário em Itacoatiara</li>
-                    <li>5ª e 6ª DP alternam para atendimentos de Criminal e Medidas Socioeducativas em Itacoatiara</li>
-                    <li>11ª e 12ª DP alternam para atendimentos de Silves</li>
-                </ul>
+                <h2>
+                    🔄 Regra de Alternância para Atendimentos
+                    <button class="btn-editar admin-only" id="edit-btn-regra_alternancia"
+                        onclick="iniciarEdicao('regra_alternancia')">✏️ Editar</button>
+                    <button class="btn-salvar admin-only" id="save-btn-regra_alternancia"
+                        onclick="salvarSecao('regra_alternancia')">💾 Salvar</button>
+                    <button class="btn-cancelar admin-only" id="cancel-btn-regra_alternancia"
+                        onclick="cancelarEdicao('regra_alternancia')">✕ Cancelar</button>
+                </h2>
+                <div id="regra_alternancia-html" class="secao-editavel">
+                    <p><strong>Observação sobre alternância para Itacoatiara e Silves:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>1ª e 2ª DP alternam para atendimentos de Família, Sucessões e Infância em Itacoatiara</li>
+                        <li>3ª e 4ª DP alternam para atendimentos de Cível, Registros e Previdenciário em Itacoatiara</li>
+                        <li>5ª e 6ª DP alternam para atendimentos de Criminal e Medidas Socioeducativas em Itacoatiara</li>
+                        <li>11ª e 12ª DP alternam para atendimentos de Silves</li>
+                    </ul>
+                </div>
             </div>
 
             <div class="card">
-                <h2>🏖️ Férias/Folgas/Licenças dos Membros</h2>
-                <p style="margin-top: 15px; line-height: 1.8;">
-                    É aconselhável que haja, no máximo, <strong>dois defensores afastados simultaneamente</strong>, 
-                    restando pelo menos <strong>três membros na ativa</strong>. Esta orientação visa evitar a 
-                    sobrecarga dos demais membros em atuação, considerando que a distribuição máxima ideal é de 
-                    <strong>4 Defensorias por Defensor</strong> (12 DPs ÷ 3 defensores = 4 DPs/defensor).
-                </p>
-                <p style="margin-top: 15px; line-height: 1.8;">
-                    <strong>Observação importante:</strong> A titular da 1ª Defensoria Pública, 
-                    <strong>Isabela do Amaral Sales</strong>, está cedida ao Ministério do Meio Ambiente e 
-                    Mudança do Clima, nos termos da <strong>Portaria nº 479/2024-GDPG/DPE/AM</strong>.
-                </p>
+                <h2>
+                    🏖️ Férias/Folgas/Licenças dos Membros
+                    <button class="btn-editar admin-only" id="edit-btn-ferias_folgas"
+                        onclick="iniciarEdicao('ferias_folgas')">✏️ Editar</button>
+                    <button class="btn-salvar admin-only" id="save-btn-ferias_folgas"
+                        onclick="salvarSecao('ferias_folgas')">💾 Salvar</button>
+                    <button class="btn-cancelar admin-only" id="cancel-btn-ferias_folgas"
+                        onclick="cancelarEdicao('ferias_folgas')">✕ Cancelar</button>
+                </h2>
+                <div id="ferias_folgas-html" class="secao-editavel">
+                    <p style="margin-top: 15px; line-height: 1.8;">
+                        É aconselhável que haja, no máximo, <strong>dois defensores afastados simultaneamente</strong>,
+                        restando pelo menos <strong>três membros na ativa</strong>. Esta orientação visa evitar a
+                        sobrecarga dos demais membros em atuação, considerando que a distribuição máxima ideal é de
+                        <strong>4 Defensorias por Defensor</strong> (12 DPs ÷ 3 defensores = 4 DPs/defensor).
+                    </p>
+                    <p style="margin-top: 15px; line-height: 1.8;">
+                        <strong>Observação importante:</strong> A titular da 1ª Defensoria Pública,
+                        <strong>Isabela do Amaral Sales</strong>, está cedida ao Ministério do Meio Ambiente e
+                        Mudança do Clima, nos termos da <strong>Portaria nº 479/2024-GDPG/DPE/AM</strong>.
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -3251,9 +3512,181 @@
         }
 
         // =====================================================================
+        // FIREBASE — Autenticação e Edição de Seções
+        // =====================================================================
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRVApg_mxzKry8VGs7plZg_ZdWXGdqnBE",
+            authDomain: "polo-medio-as.firebaseapp.com",
+            projectId: "polo-medio-as",
+            storageBucket: "polo-medio-as.firebasestorage.app",
+            messagingSenderId: "473110061267",
+            appId: "1:473110061267:web:9f028c8ccd803b64ebf426"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db   = firebase.firestore();
+
+        let currentUser = null;
+        let userRole    = null;
+
+        // ── Monitor de estado de autenticação ──────────────────────────────
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                try {
+                    const doc = await db.collection('usuarios').doc(user.uid).get();
+                    userRole  = doc.exists ? (doc.data().role || 'viewer') : 'viewer';
+                } catch(e) {
+                    userRole = 'viewer';
+                }
+                mostrarSiteAutenticado();
+                carregarConteudoFirestore();
+            } else {
+                currentUser = null;
+                userRole    = null;
+                mostrarLoginOverlay();
+            }
+        });
+
+        function mostrarLoginOverlay() {
+            document.getElementById('login-overlay').style.display = 'flex';
+            document.querySelector('.container').style.display = 'none';
+        }
+
+        function mostrarSiteAutenticado() {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.querySelector('.container').style.display = 'block';
+
+            // Exibir elementos de admin
+            if (userRole === 'admin') {
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.style.display = 'inline-flex';
+                });
+                document.getElementById('admin-badge').style.display = 'inline-block';
+            }
+        }
+
+        // ── Login ──────────────────────────────────────────────────────────
+        async function fazerLogin() {
+            const email    = document.getElementById('login-email').value.trim();
+            const senha    = document.getElementById('login-password').value;
+            const erroEl   = document.getElementById('login-error');
+            const btnEl    = document.getElementById('login-btn');
+
+            if (!email || !senha) {
+                erroEl.textContent = 'Preencha e-mail e senha.';
+                return;
+            }
+
+            btnEl.disabled    = true;
+            btnEl.textContent = 'Entrando...';
+            erroEl.textContent = '';
+
+            try {
+                await auth.signInWithEmailAndPassword(email, senha);
+            } catch(e) {
+                let msg = 'Erro ao fazer login.';
+                if (['auth/user-not-found','auth/wrong-password','auth/invalid-credential','auth/invalid-email'].includes(e.code)) {
+                    msg = 'E-mail ou senha incorretos.';
+                } else if (e.code === 'auth/too-many-requests') {
+                    msg = 'Muitas tentativas. Aguarde alguns minutos.';
+                }
+                erroEl.textContent = msg;
+                btnEl.disabled     = false;
+                btnEl.textContent  = 'Entrar';
+            }
+        }
+
+        // ── Logout ─────────────────────────────────────────────────────────
+        async function fazerLogout() {
+            await auth.signOut();
+        }
+
+        // ── Carregar conteúdo do Firestore ─────────────────────────────────
+        async function carregarConteudoFirestore() {
+            const secoes = ['regra_alternancia', 'ferias_folgas'];
+            for (const id of secoes) {
+                try {
+                    const doc = await db.collection('secoes').doc(id).get();
+                    if (doc.exists && doc.data().html) {
+                        document.getElementById(id + '-html').innerHTML = doc.data().html;
+                    }
+                } catch(e) {
+                    // Mantém o conteúdo padrão do HTML
+                }
+            }
+        }
+
+        // ── Edição inline de seções ────────────────────────────────────────
+        function iniciarEdicao(secaoId) {
+            const el = document.getElementById(secaoId + '-html');
+            el.dataset.original   = el.innerHTML;
+            el.contentEditable    = 'true';
+            el.focus();
+
+            document.getElementById('edit-btn-' + secaoId).style.display   = 'none';
+            document.getElementById('save-btn-' + secaoId).style.display   = 'inline-flex';
+            document.getElementById('cancel-btn-' + secaoId).style.display = 'inline-flex';
+        }
+
+        function cancelarEdicao(secaoId) {
+            const el = document.getElementById(secaoId + '-html');
+            el.innerHTML       = el.dataset.original;
+            el.contentEditable = 'false';
+
+            document.getElementById('edit-btn-' + secaoId).style.display   = 'inline-flex';
+            document.getElementById('save-btn-' + secaoId).style.display   = 'none';
+            document.getElementById('cancel-btn-' + secaoId).style.display = 'none';
+        }
+
+        async function salvarSecao(secaoId) {
+            const el      = document.getElementById(secaoId + '-html');
+            const saveBtn = document.getElementById('save-btn-' + secaoId);
+            const novoHTML = el.innerHTML;
+
+            saveBtn.disabled     = true;
+            saveBtn.textContent  = '⏳ Salvando...';
+
+            try {
+                await db.collection('secoes').doc(secaoId).set({
+                    html: novoHTML,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                el.contentEditable = 'false';
+                document.getElementById('edit-btn-' + secaoId).style.display   = 'inline-flex';
+                saveBtn.style.display   = 'none';
+                saveBtn.disabled        = false;
+                saveBtn.innerHTML       = '💾 Salvar';
+                document.getElementById('cancel-btn-' + secaoId).style.display = 'none';
+
+                mostrarToast('✅ Conteúdo salvo com sucesso!');
+            } catch(e) {
+                saveBtn.disabled    = false;
+                saveBtn.innerHTML   = '💾 Salvar';
+                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+            }
+        }
+
+        // ── Toast ──────────────────────────────────────────────────────────
+        function mostrarToast(msg, erro = false) {
+            const t = document.getElementById('toast');
+            t.textContent       = msg;
+            t.style.background  = erro ? '#ef4444' : '#1e293b';
+            t.style.display     = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
+
+        // =====================================================================
 
         window.onload = function() {
-            // Iniciar na landing page
+            // Ocultar site até confirmação de autenticação (Firebase resolve isso via onAuthStateChanged)
+            document.querySelector('.container').style.display = 'none';
+
+            // Iniciar na landing page (aplicado quando autenticado)
             document.querySelector('.tabs').style.display = 'none';
             document.getElementById('sync-btn').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
