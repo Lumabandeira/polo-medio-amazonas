@@ -3104,6 +3104,12 @@
             const { defensores, defensorias } = jsonDesignacoes;
             const today = new Date();
 
+            function fmtDate(str) {
+                if (!str) return null;
+                const [y, m, d] = str.split('-');
+                return `${d}/${m}/${y}`;
+            }
+
             function getCurrentTitular(dpKey) {
                 const dp = defensorias[dpKey];
                 if (!dp) return null;
@@ -3115,13 +3121,26 @@
                 return null;
             }
 
-            const defensorDPs = {};
+            // Mapa: defKey -> lista de { dpKey, inicio, fim } (histórico completo)
+            const defHistorico = {};
             Object.keys(defensorias).forEach(dpKey => {
-                const tit = getCurrentTitular(dpKey);
-                if (tit) { if (!defensorDPs[tit]) defensorDPs[tit] = []; defensorDPs[tit].push(dpKey); }
+                defensorias[dpKey].historico_titulares.forEach(h => {
+                    if (!h.defensor) return;
+                    if (!defHistorico[h.defensor]) defHistorico[h.defensor] = [];
+                    defHistorico[h.defensor].push({ dpKey, inicio: h.inicio, fim: h.fim });
+                });
             });
 
-            const internos = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo !== false);
+            // DPs atuais por defensor (apenas titulares vigentes)
+            const defCurrentDPs = {};
+            Object.keys(defensorias).forEach(dpKey => {
+                const tit = getCurrentTitular(dpKey);
+                if (tit) { if (!defCurrentDPs[tit]) defCurrentDPs[tit] = []; defCurrentDPs[tit].push(dpKey); }
+            });
+
+            const internos   = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo !== false);
+            const exMembros  = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo === false);
+
             let html = `<h2>👥 Defensores Públicos</h2>`
                      + `<div class="stats-grid">`
                      + `<div class="stat-card"><h4>Total de Defensores</h4><div class="number">${internos.length}</div></div>`
@@ -3130,22 +3149,48 @@
 
             internos.forEach((defKey, i) => {
                 const defInfo = defensores[defKey];
-                const dps = (defensorDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
+                const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
                 html += `<div class="defensor-card"><h4>${i+1}. ${esc(defInfo.nome)}</h4><ul>`;
                 if (dps.length > 0) {
                     dps.forEach(dpKey => {
                         const dp = defensorias[dpKey];
-                        // Se o nome já tem localidade em parênteses, não adicionar área
                         const label = dp.nome.includes('(')
                             ? esc(dp.nome)
                             : `${esc(dp.nome)} (${esc(dp.area)})`;
-                        html += `<li>${label}</li>`;
+                        const hist = (defHistorico[defKey] || []).find(h => h.dpKey === dpKey && !h.fim);
+                        const desde = hist ? ` <span style="color:var(--text-secondary);font-size:0.85em;">(desde ${fmtDate(hist.inicio)})</span>` : '';
+                        html += `<li>${label}${desde}</li>`;
                     });
                 } else {
                     html += '<li><em>Sem designação atual</em></li>';
                 }
                 html += '</ul></div>';
             });
+
+            if (exMembros.length > 0) {
+                html += `<h3 style="margin-top:32px;margin-bottom:14px;color:var(--text-secondary);font-size:1em;font-weight:600;letter-spacing:.03em;">Ex-membros</h3>`;
+                exMembros.forEach(defKey => {
+                    const defInfo = defensores[defKey];
+                    const dpsHist = (defHistorico[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
+                    html += `<div class="defensor-card" style="opacity:0.72;border-left:4px solid var(--text-secondary);">`;
+                    html += `<h4 style="color:var(--text-secondary);">${esc(defInfo.nome)} <span style="font-size:0.8em;font-weight:400;">(ex-membro)</span></h4><ul>`;
+                    if (dpsHist.length > 0) {
+                        dpsHist.forEach(({ dpKey, inicio, fim }) => {
+                            const dp = defensorias[dpKey];
+                            const label = dp.nome.includes('(')
+                                ? esc(dp.nome)
+                                : `${esc(dp.nome)} (${esc(dp.area)})`;
+                            const periodo = fim
+                                ? `${fmtDate(inicio)} – ${fmtDate(fim)}`
+                                : `desde ${fmtDate(inicio)}`;
+                            html += `<li>${label} <span style="color:var(--text-secondary);font-size:0.85em;">(${periodo})</span></li>`;
+                        });
+                    } else {
+                        html += '<li><em>Sem designações registradas</em></li>';
+                    }
+                    html += '</ul></div>';
+                });
+            }
 
             document.getElementById('defensores-content').innerHTML = html;
 

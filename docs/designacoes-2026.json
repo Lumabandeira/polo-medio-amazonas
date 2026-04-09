@@ -64,7 +64,7 @@
       "area": "Criminal e Medidas Socioeducativas",
       "destaque": "itacoatiara",
       "historico_titulares": [
-        { "defensor": "elaine", "inicio": "2026-01-01", "fim": "2026-03-01" },
+        { "defensor": "elaine", "inicio": "2025-11-30", "fim": "2026-03-01" },
         { "defensor": "miguel", "inicio": "2026-03-01", "fim": null }
       ]
     },
@@ -73,8 +73,8 @@
       "area": "Todas as áreas",
       "destaque": null,
       "historico_titulares": [
-        { "defensor": "elaine", "inicio": "2026-01-01", "fim": "2026-03-07" },
-        { "defensor": "miguel", "inicio": "2026-03-07", "fim": null }
+        { "defensor": "elaine", "inicio": "2025-12-20", "fim": "2026-03-01" },
+        { "defensor": "miguel", "inicio": "2026-03-01", "fim": null }
       ]
     },
     "8": {
