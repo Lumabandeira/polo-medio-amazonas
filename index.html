@@ -1683,12 +1683,12 @@
 
             <div class="card">
                 <h2>
-                    🔄 Regra de Alternância para Atendimentos
+                    <span id="regra_alternancia-titulo">🔄 Regra de Alternância para Atendimentos</span>
                     <button class="btn-editar admin-only" id="edit-btn-regra_alternancia"
                         onclick="iniciarEdicao('regra_alternancia')">✏️ Editar</button>
-                    <button class="btn-salvar admin-only" id="save-btn-regra_alternancia"
+                    <button class="btn-salvar" id="save-btn-regra_alternancia" style="display:none"
                         onclick="salvarSecao('regra_alternancia')">💾 Salvar</button>
-                    <button class="btn-cancelar admin-only" id="cancel-btn-regra_alternancia"
+                    <button class="btn-cancelar" id="cancel-btn-regra_alternancia" style="display:none"
                         onclick="cancelarEdicao('regra_alternancia')">✕ Cancelar</button>
                 </h2>
                 <div id="regra_alternancia-html" class="secao-editavel">
@@ -1704,12 +1704,12 @@
 
             <div class="card">
                 <h2>
-                    🏖️ Férias/Folgas/Licenças dos Membros
+                    <span id="ferias_folgas-titulo">🏖️ Férias/Folgas/Licenças dos Membros</span>
                     <button class="btn-editar admin-only" id="edit-btn-ferias_folgas"
                         onclick="iniciarEdicao('ferias_folgas')">✏️ Editar</button>
-                    <button class="btn-salvar admin-only" id="save-btn-ferias_folgas"
+                    <button class="btn-salvar" id="save-btn-ferias_folgas" style="display:none"
                         onclick="salvarSecao('ferias_folgas')">💾 Salvar</button>
-                    <button class="btn-cancelar admin-only" id="cancel-btn-ferias_folgas"
+                    <button class="btn-cancelar" id="cancel-btn-ferias_folgas" style="display:none"
                         onclick="cancelarEdicao('ferias_folgas')">✕ Cancelar</button>
                 </h2>
                 <div id="ferias_folgas-html" class="secao-editavel">
@@ -3610,8 +3610,10 @@
             for (const id of secoes) {
                 try {
                     const doc = await db.collection('secoes').doc(id).get();
-                    if (doc.exists && doc.data().html) {
-                        document.getElementById(id + '-html').innerHTML = doc.data().html;
+                    if (doc.exists) {
+                        const data = doc.data();
+                        if (data.html)   document.getElementById(id + '-html').innerHTML  = data.html;
+                        if (data.titulo) document.getElementById(id + '-titulo').textContent = data.titulo;
                     }
                 } catch(e) {
                     // Mantém o conteúdo padrão do HTML
@@ -3619,12 +3621,25 @@
             }
         }
 
-        // ── Edição inline de seções ────────────────────────────────────────
+        // ── Edição inline de seções (conteúdo + título) ───────────────────
         function iniciarEdicao(secaoId) {
-            const el = document.getElementById(secaoId + '-html');
-            el.dataset.original   = el.innerHTML;
-            el.contentEditable    = 'true';
-            el.focus();
+            const conteudoEl = document.getElementById(secaoId + '-html');
+            const tituloEl   = document.getElementById(secaoId + '-titulo');
+
+            // Guardar originais para cancelar
+            conteudoEl.dataset.original = conteudoEl.innerHTML;
+            tituloEl.dataset.original   = tituloEl.textContent;
+
+            // Ativar edição no conteúdo
+            conteudoEl.contentEditable = 'true';
+            conteudoEl.focus();
+
+            // Ativar edição no título
+            tituloEl.contentEditable = 'true';
+            tituloEl.style.outline      = '2px dashed #3b82f6';
+            tituloEl.style.borderRadius = '4px';
+            tituloEl.style.padding      = '2px 6px';
+            tituloEl.title              = 'Clique para editar o título';
 
             document.getElementById('edit-btn-' + secaoId).style.display   = 'none';
             document.getElementById('save-btn-' + secaoId).style.display   = 'inline-flex';
@@ -3632,9 +3647,18 @@
         }
 
         function cancelarEdicao(secaoId) {
-            const el = document.getElementById(secaoId + '-html');
-            el.innerHTML       = el.dataset.original;
-            el.contentEditable = 'false';
+            const conteudoEl = document.getElementById(secaoId + '-html');
+            const tituloEl   = document.getElementById(secaoId + '-titulo');
+
+            conteudoEl.innerHTML       = conteudoEl.dataset.original;
+            conteudoEl.contentEditable = 'false';
+
+            tituloEl.textContent        = tituloEl.dataset.original;
+            tituloEl.contentEditable    = 'false';
+            tituloEl.style.outline      = '';
+            tituloEl.style.borderRadius = '';
+            tituloEl.style.padding      = '';
+            tituloEl.title              = '';
 
             document.getElementById('edit-btn-' + secaoId).style.display   = 'inline-flex';
             document.getElementById('save-btn-' + secaoId).style.display   = 'none';
@@ -3642,31 +3666,39 @@
         }
 
         async function salvarSecao(secaoId) {
-            const el      = document.getElementById(secaoId + '-html');
-            const saveBtn = document.getElementById('save-btn-' + secaoId);
-            const novoHTML = el.innerHTML;
+            const conteudoEl  = document.getElementById(secaoId + '-html');
+            const tituloEl    = document.getElementById(secaoId + '-titulo');
+            const saveBtn     = document.getElementById('save-btn-' + secaoId);
 
-            saveBtn.disabled     = true;
-            saveBtn.textContent  = '⏳ Salvando...';
+            saveBtn.disabled    = true;
+            saveBtn.textContent = '⏳ Salvando...';
 
             try {
                 await db.collection('secoes').doc(secaoId).set({
-                    html: novoHTML,
+                    html:          conteudoEl.innerHTML,
+                    titulo:        tituloEl.textContent,
                     atualizado_por: currentUser.email,
-                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                    atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                el.contentEditable = 'false';
+                // Desativar edição
+                conteudoEl.contentEditable  = 'false';
+                tituloEl.contentEditable    = 'false';
+                tituloEl.style.outline      = '';
+                tituloEl.style.borderRadius = '';
+                tituloEl.style.padding      = '';
+                tituloEl.title              = '';
+
                 document.getElementById('edit-btn-' + secaoId).style.display   = 'inline-flex';
                 saveBtn.style.display   = 'none';
                 saveBtn.disabled        = false;
                 saveBtn.innerHTML       = '💾 Salvar';
                 document.getElementById('cancel-btn-' + secaoId).style.display = 'none';
 
-                mostrarToast('✅ Conteúdo salvo com sucesso!');
+                mostrarToast('✅ Salvo com sucesso!');
             } catch(e) {
-                saveBtn.disabled    = false;
-                saveBtn.innerHTML   = '💾 Salvar';
+                saveBtn.disabled  = false;
+                saveBtn.innerHTML = '💾 Salvar';
                 mostrarToast('❌ Erro ao salvar: ' + e.message, true);
             }
         }
