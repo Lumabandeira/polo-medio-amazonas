@@ -3175,15 +3175,21 @@
                     html += `<div class="defensor-card" style="opacity:0.72;border-left:4px solid var(--text-secondary);">`;
                     html += `<h4 style="color:var(--text-secondary);">${esc(defInfo.nome)} <span style="font-size:0.8em;font-weight:400;">(ex-membro)</span></h4><ul>`;
                     if (dpsHist.length > 0) {
-                        dpsHist.forEach(({ dpKey, inicio, fim }) => {
+                        dpsHist.forEach(({ dpKey, inicio, fim, portaria_entrada, portaria_saida }) => {
                             const dp = defensorias[dpKey];
                             const label = dp.nome.includes('(')
                                 ? esc(dp.nome)
                                 : `${esc(dp.nome)} (${esc(dp.area)})`;
-                            const periodo = fim
-                                ? `${fmtDate(inicio)} – ${fmtDate(fim)}`
-                                : `desde ${fmtDate(inicio)}`;
-                            html += `<li>${label} <span style="color:var(--text-secondary);font-size:0.85em;">(${periodo})</span></li>`;
+                            const s = `color:var(--text-secondary);font-size:0.82em;`;
+                            let detalhe = `<br><span style="${s}">Entrada: ${fmtDate(inicio)}`;
+                            if (portaria_entrada) detalhe += ` — ${esc(portaria_entrada)}`;
+                            detalhe += `</span>`;
+                            if (fim) {
+                                detalhe += `<br><span style="${s}">Saída: ${fmtDate(fim)}`;
+                                if (portaria_saida) detalhe += ` — ${esc(portaria_saida)}`;
+                                detalhe += `</span>`;
+                            }
+                            html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
                         });
                     } else {
                         html += '<li><em>Sem designações registradas</em></li>';
