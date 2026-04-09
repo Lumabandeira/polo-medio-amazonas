@@ -2,10 +2,65 @@
 
 ## O que é este projeto
 
-Site HTML responsivo (`index.html`) para gerenciar designações semanais e ausências dos Defensores Públicos do Polo Médio Amazonas em 2026. Tecnologias: HTML5, CSS3, JavaScript vanilla. Publicado via GitHub Pages.
+Site HTML responsivo (`index.html`) para gerenciar designações semanais e ausências dos Defensores Públicos do Polo Médio Amazonas em 2026. Tecnologias: HTML5, CSS3, JavaScript vanilla. Publicado via GitHub Pages em https://lumabandeira.github.io/polo-medio-amazonas/
 
 - **5 defensores ativos**, **12 Defensorias Públicas**
 - Regra central: alternância semanal obrigatória entre **Grupo A** e **Grupo B**
+
+---
+
+## Firebase (autenticação e banco de dados)
+
+O site usa **Firebase** para login e edição de conteúdo. Console: https://console.firebase.google.com/project/polo-medio-as
+
+### Serviços ativos
+- **Firebase Auth** — login por e-mail/senha. 40 usuários (3 admins + 37 viewers).
+- **Firestore** — banco de dados em tempo real. Projeto: `polo-medio-as`
+
+### Estrutura do Firestore
+```
+usuarios/{uid}
+  role: "admin" | "viewer"
+  nome: "..."
+
+secoes/regra_alternancia
+  html: "..."           ← conteúdo editável da seção Regra de Alternância
+  atualizado_por: "..."
+  atualizado_em: timestamp
+
+secoes/ferias_folgas
+  html: "..."           ← conteúdo editável da seção Férias/Folgas/Licenças
+  atualizado_por: "..."
+  atualizado_em: timestamp
+```
+
+### Regras de segurança do Firestore
+- Leitura: apenas usuários autenticados
+- Escrita: apenas usuários com `role == "admin"`
+
+### Como funciona o login no site
+1. Página carrega → overlay de login cobre tudo
+2. Usuário digita e-mail + senha → Firebase Auth valida
+3. Site lê `role` no Firestore (`usuarios/{uid}`)
+4. Admin: vê badge "ADMIN" + botões ✏️ Editar nas seções
+5. Viewer: vê o site normalmente sem botões de edição
+
+### Seções editáveis (admin)
+- **Regra de Alternância** (`#regra_alternancia-html`) — edição inline com contentEditable
+- **Férias/Folgas/Licenças** (`#ferias_folgas-html`) — edição inline com contentEditable
+- Edições salvas em `secoes/{id}` no Firestore e carregadas a cada login
+
+### Funções JS do Firebase no index.html
+- `fazerLogin()` — autentica com Firebase Auth
+- `fazerLogout()` — encerra sessão
+- `carregarConteudoFirestore()` — carrega conteúdo editável do Firestore
+- `iniciarEdicao(secaoId)` — ativa contentEditable na seção
+- `salvarSecao(secaoId)` — salva HTML no Firestore
+- `cancelarEdicao(secaoId)` — restaura conteúdo original
+- `mostrarToast(msg)` — exibe notificação temporária
+
+### Para adicionar novos usuários
+Firebase Console → Authentication → Adicionar usuário → copiar UID → Firestore → coleção `usuarios` → novo documento com o UID → campos `role` e `nome`
 
 ---
 
@@ -90,4 +145,5 @@ github-pages/
 - **Alternância semanal:** Grupo A e Grupo B alternam toda semana sem exceção. Ver `docs/regras/alternancia.md`.
 - **Destaques apenas em dias úteis:** nunca aplicar classes `itacoatiara` ou `silves` em sábados/domingos.
 - **Máximo 2 defensores ausentes** ao mesmo tempo; mínimo 3 ativos.
-- **Ordem de atualização:** sempre começar pela aba "Tabela Completa" no `index.html`. Ver `docs/site/processo-atualizacao.md`.
+- **Aba Tabela Completa foi removida** — o Calendário Visual é a aba principal de ausências.
+- **Nunca editar seções do Firestore diretamente no HTML** — o conteúdo vem do Firestore e sobrescreve o HTML padrão ao carregar.
