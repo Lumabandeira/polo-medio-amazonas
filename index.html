@@ -3063,7 +3063,7 @@
             const byDef = {};
             rows.forEach(r => { if (!byDef[r.evDefensor]) byDef[r.evDefensor] = []; byDef[r.evDefensor].push(r); });
 
-            const internos  = Object.keys(defensores).filter(k => !defensores[k].externo);
+            const internos  = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo !== false);
             const externos  = Object.keys(defensores).filter(k =>  defensores[k].externo);
 
             [...internos, ...externos].forEach(defKey => {
@@ -3121,7 +3121,7 @@
                 if (tit) { if (!defensorDPs[tit]) defensorDPs[tit] = []; defensorDPs[tit].push(dpKey); }
             });
 
-            const internos = Object.keys(defensores).filter(k => !defensores[k].externo);
+            const internos = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo !== false);
             let html = `<h2>👥 Defensores Públicos</h2>`
                      + `<div class="stats-grid">`
                      + `<div class="stat-card"><h4>Total de Defensores</h4><div class="number">${internos.length}</div></div>`
