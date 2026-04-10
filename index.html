@@ -2324,14 +2324,17 @@
             if (desigDp && desigDp.length > 0) {
                 desigDp.forEach(desig => {
                     const dpLabel = dpDisplayLabel(desig.dp);
-                    const subs = desig.substitutos || [{}];
+                    const subs = desig.substitutos || [];
+
+                    // Dias do afastamento cobertos por algum substituto definido
+                    const diasCobertos = new Set();
+
                     subs.forEach(sub => {
-                        const subVal  = sub.substituto || '';
+                        const subVal = sub.substituto || '';
+                        if (!subVal) return; // "não definido" não cobre dias
                         const subNome = subVal === '_outro'
                             ? (sub.substituto_nome_externo || 'Externo')
-                            : subVal
-                                ? ((jsonDesignacoes?.defensores || {})[subVal]?.nome_curto || subVal)
-                                : '— ainda não definido —';
+                            : ((jsonDesignacoes?.defensores || {})[subVal]?.nome_curto || subVal);
                         const link   = sub.portaria_url || '';
                         const sStart = new Date((sub.data_inicio || reg.data_inicio) + 'T12:00:00');
                         const sEnd   = new Date((sub.data_fim    || reg.data_fim)    + 'T12:00:00');
@@ -2339,6 +2342,7 @@
                         while (c <= sEnd) {
                             const m = c.getMonth() + 1;
                             const d = c.getDate();
+                            diasCobertos.add(`${m}-${d}`);
                             if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
                             if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
                             detalhesAfastamentos[m][d].push({
@@ -2349,6 +2353,23 @@
                             c.setDate(c.getDate() + 1);
                         }
                     });
+
+                    // Preencher dias do afastamento sem cobertura como "ainda não definido"
+                    let c = new Date(start);
+                    while (c <= end) {
+                        const m = c.getMonth() + 1;
+                        const d = c.getDate();
+                        if (!diasCobertos.has(`${m}-${d}`)) {
+                            if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
+                            if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
+                            detalhesAfastamentos[m][d].push({
+                                defensor: defNome, tipo: tipoLabel,
+                                defensoria: dpLabel, substituto: 'ainda não definido',
+                                processo, link: '', firestoreId: reg.id
+                            });
+                        }
+                        c.setDate(c.getDate() + 1);
+                    }
                 });
             } else if (desigOld.length > 0) {
                 // Compatibilidade com estrutura antiga
@@ -2573,7 +2594,7 @@
                 <div class="form-group">
                     <label>Substituto</label>
                     <select class="sub-select" onchange="onSubstitutoChange(this)">
-                        <option value="">— ainda não definido —</option>
+                        <option value="">ainda não definido</option>
                         ${_opcoesSubstituto(defensorAusente, subVal)}
                     </select>
                     <input type="text" class="sub-outro-nome"
