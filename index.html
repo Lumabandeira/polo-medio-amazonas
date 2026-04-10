@@ -2592,8 +2592,14 @@
             const subVal    = subData?.substituto || '';
             const isOutro   = subVal === '_outro';
             const isDefinido = subVal !== '';
-            const inicio    = subData?.data_inicio || defaultInicio || '';
-            const fim       = subData?.data_fim    || defaultFim    || '';
+            // Recortar datas do subData para dentro do intervalo do afastamento
+            // (evita que o navegador descarte o value por estar fora do min/max)
+            let inicio = subData?.data_inicio || defaultInicio || '';
+            let fim    = subData?.data_fim    || defaultFim    || '';
+            if (defaultInicio && inicio && inicio < defaultInicio) inicio = defaultInicio;
+            if (defaultFim   && fim   && fim   > defaultFim)   fim   = defaultFim;
+            if (defaultFim   && inicio && inicio > defaultFim)  inicio = defaultFim;
+            if (defaultInicio && fim  && fim   < defaultInicio) fim   = defaultFim;
 
             const row = document.createElement('div');
             row.className = 'sub-row';
