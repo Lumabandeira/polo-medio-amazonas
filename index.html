@@ -63,74 +63,6 @@
             opacity: 0.9;
         }
 
-        .open-new-tab-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .open-new-tab-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .sync-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(16, 185, 129, 0.2);
-            border: 2px solid rgba(16, 185, 129, 0.5);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .sync-btn:hover:not(:disabled) {
-            background: rgba(16, 185, 129, 0.4);
-            border-color: rgba(16, 185, 129, 0.8);
-            transform: translateY(-2px);
-        }
-
-        .sync-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .sync-status {
-            position: absolute;
-            top: 65px;
-            left: 20px;
-            font-size: 0.78em;
-            background: rgba(0, 0, 0, 0.35);
-            padding: 4px 10px;
-            border-radius: 4px;
-            max-width: 300px;
-            display: none;
-        }
-
-        .sync-status:not(:empty) {
-            display: block;
-        }
 
         .tabs {
             display: flex;
@@ -654,25 +586,6 @@
                 padding: 25px 20px;
             }
 
-            .open-new-tab-btn {
-                top: 10px;
-                right: 10px;
-                padding: 8px 12px;
-                font-size: 0.8em;
-            }
-
-            .sync-btn {
-                top: 10px;
-                left: 10px;
-                padding: 8px 12px;
-                font-size: 0.8em;
-            }
-
-            .sync-status {
-                top: 56px;
-                left: 10px;
-                font-size: 0.72em;
-            }
 
             header h1 {
                 font-size: 1.5em;
@@ -927,26 +840,7 @@
                 padding: 20px 15px;
             }
 
-            .open-new-tab-btn {
-                top: 8px;
-                right: 8px;
-                padding: 6px 10px;
-                font-size: 0.75em;
-            }
 
-            .sync-btn {
-                top: 8px;
-                left: 8px;
-                padding: 6px 10px;
-                font-size: 0.75em;
-            }
-
-            .sync-status {
-                top: 52px;
-                left: 8px;
-                font-size: 0.7em;
-                max-width: 220px;
-            }
 
             header h1 {
                 font-size: 1.3em;
@@ -1494,7 +1388,7 @@
         #admin-badge {
             display: none;
             position: absolute;
-            top: 60px;
+            top: 75px;
             left: 20px;
             background: rgba(16, 185, 129, 0.25);
             border: 2px solid rgba(16, 185, 129, 0.5);
@@ -1625,15 +1519,8 @@
 <body>
     <div class="container">
         <header>
-            <button class="open-new-tab-btn" onclick="window.open(window.location.href, '_blank')" title="Abrir em nova aba">
-                🔗 Nova Aba
-            </button>
             <button id="auth-btn" class="auth-btn" onclick="fazerLogout()">🚪 Sair</button>
             <span id="admin-badge">⚙️ ADMIN</span>
-            <button id="sync-btn" class="sync-btn" onclick="syncFromSheets()" title="Sincronizar dados da planilha Google Sheets">
-                🔄 Sincronizar Planilha
-            </button>
-            <div id="sync-status" class="sync-status"></div>
             <button id="inicio-btn" class="inicio-btn" onclick="showLanding()">🏠 Início</button>
             <h1>🏛️ Polo Médio Amazonas</h1>
             <p>Designações dos Defensores Públicos e Calendário de Afastamentos 2026</p>
@@ -2897,46 +2784,6 @@
             return result;
         }
 
-        async function syncFromSheets() {
-            const btn = document.getElementById('sync-btn');
-            const status = document.getElementById('sync-status');
-
-            btn.disabled = true;
-            btn.innerHTML = '⏳ Sincronizando...';
-            status.innerHTML = '';
-
-            try {
-                const response = await fetch(SHEETS_CSV_URL);
-                if (!response.ok) throw new Error('HTTP ' + response.status);
-                const csvText = await response.text();
-
-                const rows = parseSheetCSV(csvText).filter(r =>
-                    r['Defensor(a)'] && r['Data inicio'] && r['Data fim'] && r['Defensoria']
-                );
-
-                if (rows.length === 0) throw new Error('Nenhum dado válido encontrado na planilha');
-
-                afastamentos = buildAfastamentosFromRows(rows);
-                const rawFromSheets = buildDetalhesFromRows(rows);
-                rebuildDetalhesAfastamentosFromRaw(rawFromSheets);
-                renderCalendar();
-                renderDesignacoes();
-
-                const agora = new Date().toLocaleString('pt-BR');
-                status.innerHTML = `<span style="color:#6ee7b7">✅ Sincronizado às ${agora} — ${rows.length} registros</span>`;
-
-            } catch (err) {
-                console.error('Erro ao sincronizar:', err);
-                if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-                    status.innerHTML = `<span style="color:#fca5a5">❌ Erro de rede. Verifique se a planilha está publicada no Google Sheets (Arquivo → Compartilhar → Publicar na Web → CSV).</span>`;
-                } else {
-                    status.innerHTML = `<span style="color:#fca5a5">❌ Erro: ${err.message}</span>`;
-                }
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '🔄 Sincronizar Planilha';
-            }
-        }
 
         // =====================================================================
         // Navegação: landing ↔ seções
@@ -2947,7 +2794,6 @@
             document.querySelector('.tabs').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
             document.getElementById('inicio-btn').style.display = 'none';
-            document.getElementById('sync-btn').style.display = 'flex';
             // Restaurar visibilidade do botão Diário Oficial para próxima navegação
             document.getElementById('tab-btn-diario').style.display = '';
         }
@@ -2955,7 +2801,6 @@
         function showSection(tabName) {
             document.getElementById('landing').style.display = 'none';
             document.getElementById('inicio-btn').style.display = 'flex';
-            document.getElementById('sync-btn').style.display = 'none';
 
             // Limpar estado de todas as abas
             document.querySelectorAll('.tab-content').forEach(t => {
@@ -3728,7 +3573,6 @@
 
             // Iniciar na landing page (aplicado quando autenticado)
             document.querySelector('.tabs').style.display = 'none';
-            document.getElementById('sync-btn').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
 
             filterByMonth('janeiro');
