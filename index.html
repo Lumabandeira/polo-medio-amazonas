@@ -2592,14 +2592,8 @@
             const subVal    = subData?.substituto || '';
             const isOutro   = subVal === '_outro';
             const isDefinido = subVal !== '';
-            // Recortar datas do subData para dentro do intervalo do afastamento
-            // (evita que o navegador descarte o value por estar fora do min/max)
-            let inicio = subData?.data_inicio || defaultInicio || '';
-            let fim    = subData?.data_fim    || defaultFim    || '';
-            if (defaultInicio && inicio && inicio < defaultInicio) inicio = defaultInicio;
-            if (defaultFim   && fim   && fim   > defaultFim)   fim   = defaultFim;
-            if (defaultFim   && inicio && inicio > defaultFim)  inicio = defaultFim;
-            if (defaultInicio && fim  && fim   < defaultInicio) fim   = defaultFim;
+            const inicio = subData?.data_inicio || defaultInicio || '';
+            const fim    = subData?.data_fim    || defaultFim    || '';
 
             const row = document.createElement('div');
             row.className = 'sub-row';
@@ -2624,11 +2618,11 @@
                     <div class="sub-grid-datas">
                         <div class="form-group">
                             <label>Cobertura início</label>
-                            <input type="date" class="sub-data-inicio" min="${defaultInicio}" max="${defaultFim}" value="${inicio}">
+                            <input type="date" class="sub-data-inicio" value="${inicio}">
                         </div>
                         <div class="form-group">
                             <label>Cobertura fim</label>
-                            <input type="date" class="sub-data-fim" min="${defaultInicio}" max="${defaultFim}" value="${fim}">
+                            <input type="date" class="sub-data-fim" value="${fim}">
                         </div>
                     </div>
                     <div class="form-group" style="margin-top:10px">
