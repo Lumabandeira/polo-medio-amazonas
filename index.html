@@ -2832,10 +2832,10 @@
                     const dpNome = dpDisplayLabel(desig.dp);
                     for (const sub of (desig.substitutos || [])) {
                         if (sub.data_inicio && sub.data_inicio < dados.data_inicio) {
-                            mostrarToast('❌ A cobertura início não pode ser anterior ao início do afastamento (' + dados.data_inicio + ').', true); return;
+                            mostrarToast('❌ O início da substituição não pode ser anterior ao início do afastamento (' + dados.data_inicio + ').', true); return;
                         }
                         if (sub.data_fim && sub.data_fim > dados.data_fim) {
-                            mostrarToast('❌ A cobertura fim não pode ser posterior ao fim do afastamento (' + dados.data_fim + ').', true); return;
+                            mostrarToast('❌ O fim da substituição não pode ser posterior ao fim do afastamento (' + dados.data_fim + ').', true); return;
                         }
                         if (sub.data_inicio && sub.data_fim && sub.data_fim < sub.data_inicio) {
                             mostrarToast('❌ A cobertura fim não pode ser anterior à cobertura início.', true); return;
