@@ -155,7 +155,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 09/04/2026)
+## Estado atual do site (atualizado em 10/04/2026)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -167,18 +167,40 @@ github-pages/
 - **Aba Tabela Completa removida** — Calendário Visual é a aba principal
 - **Botões "Nova Aba" e "Sincronizar Planilha" removidos** — e todo código/CSS associado limpo
 - **1 usuário admin cadastrado** — bandeira.lkp@gmail.com (role: admin, nome: Luma) no Firestore
-- **Calendário interativo para admins** — admin pode adicionar/editar/remover afastamentos direto do calendário (dados salvos em `afastamentos_admin` no Firestore, mesclados com os JSONs em memória)
+- **Calendário interativo para admins** — CRUD completo de afastamentos via Firestore (`afastamentos_admin`). Detalhes abaixo em "Arquitetura do calendário interativo".
 
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 39 usuários** (2 admins + 37 viewers) no Firebase Auth + Firestore
-- **Edição dos defensores titulares de cada DP** — atualmente vem do `docs/designacoes-2026.json`, sem interface de edição
+- **Integração do calendário com a aba Designações Semanais** — quando um afastamento cadastrado via calendário tiver substituto "ainda não definido", isso deve refletir na tabela semanal (célula da DP mostrando ausência sem cobertura). Decidido que será feito em sessão futura.
+- **Edição dos defensores titulares de cada DP** — atualmente vem do `docs/designacoes-2026.json`, sem interface de edição. Quando implementado, o formulário de afastamento já está preparado: lê `historico_titulares` dinamicamente, sem mapeamento fixo.
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
 
 ### Decisões de arquitetura já tomadas
 - Sem automação do Diário Oficial — admin insere links manualmente
 - Sem migração de hospedagem — continua no GitHub Pages
-- Dados de afastamentos e designações ainda vêm dos JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) — apenas as seções de texto estático foram migradas para o Firestore
+- JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) = base imutável pela UI. Coleção `afastamentos_admin` no Firestore = registros adicionados/editados pelo admin. Os dois são mesclados em memória ao carregar.
 - Função `syncFromSheets()` removida definitivamente
+- Formulário de afastamento dividido em duas fases: (1) cadastrar ausência sem Diário Oficial; (2) registrar substituto + portaria quando o diário sair. Portaria e link DO ficam dentro de cada designação por DP, não no nível do afastamento.
+
+---
+
+## Arquitetura do calendário interativo (admin)
+
+### Fluxo de dados
+1. `loadJSONData()` carrega os JSONs e constrói `afastamentos` e `detalhesAfastamentos`
+2. `loadAfastamentosFirestore()` lê `afastamentos_admin` e mescla por cima (additive)
+3. `reloadAfastamentosData()` repete os passos 1+2 sem refetch de rede (usa JSONs já em memória)
+
+### Estrutura do formulário de afastamento
+- **Nível do afastamento:** defensor, tipo (Férias/Folga/Licença Especial/Outro+texto), data início, data fim, processo SEI/SGI
+- **DPs afetadas:** preenchidas automaticamente ao selecionar o defensor, lendo `jsonDesignacoes.defensorias[dp].historico_titulares` para o período do afastamento
+- **Por DP:** lista de substitutos (pode ser múltiplos para cobertura escalonada), cada um com: substituto (defensores do polo exceto o ausente, ou "Outro" com campo livre), período de cobertura, portaria, link DO
+- **Padrão sem substituto:** "ainda não definido" — campos de detalhe ficam ocultos
+
+### Lógica de exibição no modal
+- Para cada DP do afastamento, os dias cobertos por substitutos definidos mostram o nome do substituto
+- Os dias do afastamento **não cobertos** por nenhum substituto mostram automaticamente "ainda não definido" (gap filling em `mergeAfastamentoFirestoreRecord`)
+- Registros do Firestore mostram botões ✏️/🗑️ no modal; registros dos JSONs mostram "base" (somente leitura)
 
 ---
 
