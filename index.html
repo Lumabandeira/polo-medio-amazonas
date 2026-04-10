@@ -2111,8 +2111,14 @@
                             <input type="date" id="form-af-fim" min="2026-01-01" max="2026-12-31" required onchange="onDatasChange()">
                         </div>
                         <div class="form-group form-full">
-                            <label>Processo SEI / SGI</label>
-                            <input type="text" id="form-af-sei" placeholder="ex: 26.0.000000123-4">
+                            <label>Processo</label>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <select id="form-af-processo-tipo" style="width:80px;padding:8px 6px;border:1px solid var(--border-color,#d1d5db);border-radius:8px;font-size:0.95em;background:#fff;color:var(--text-primary,#1f2937);flex-shrink:0;">
+                                    <option value="SEI">SEI</option>
+                                    <option value="SGI">SGI</option>
+                                </select>
+                                <input type="text" id="form-af-sei" placeholder="ex: 26.0.000000123-4" style="flex:1;">
+                            </div>
                         </div>
                     </div>
                     <div id="form-af-dps-section" style="display:none">
@@ -2314,7 +2320,9 @@
             const tipoLabel = reg.tipo === 'outro'
                 ? (reg.tipo_custom || 'Outro')
                 : (TIPO_LABELS[reg.tipo] || 'Folga');
-            const processo  = reg.processo_sei || reg.portaria_sei || '';
+            const processoNum = reg.processo_sei || reg.portaria_sei || '';
+            const processoTipo = reg.processo_tipo || '';
+            const processo = processoNum ? (processoTipo ? processoTipo + ': ' + processoNum : processoNum) : '';
 
             // Estrutura nova: designacoes_dp
             const desigDp = reg.designacoes_dp;
@@ -2727,7 +2735,8 @@
             const tipoCustom = tipo==='outro' ? document.getElementById('form-af-tipo-outro').value.trim() : '';
             const dataInicio = document.getElementById('form-af-inicio').value;
             const dataFim    = document.getElementById('form-af-fim').value;
-            const sei        = document.getElementById('form-af-sei').value.trim();
+            const processoTipo   = document.getElementById('form-af-processo-tipo').value;
+            const sei            = document.getElementById('form-af-sei').value.trim();
             const designacoesDp = [];
             document.querySelectorAll('#form-af-dps .dp-section').forEach(dpSection => {
                 const dpKey = dpSection.dataset.dp;
@@ -2750,7 +2759,7 @@
             });
             return { defensor, tipo, tipo_custom: tipoCustom,
                      data_inicio: dataInicio, data_fim: dataFim,
-                     processo_sei: sei, designacoes_dp: designacoesDp };
+                     processo_tipo: processoTipo, processo_sei: sei, designacoes_dp: designacoesDp };
         }
 
         function abrirFormAfastamento(firestoreId, mes, dia) {
@@ -2772,6 +2781,7 @@
                 document.getElementById('form-af-tipo').value     = reg.tipo        || 'folga';
                 document.getElementById('form-af-inicio').value   = reg.data_inicio || '';
                 document.getElementById('form-af-fim').value      = reg.data_fim    || '';
+                document.getElementById('form-af-processo-tipo').value = reg.processo_tipo || 'SEI';
                 document.getElementById('form-af-sei').value      = reg.processo_sei || reg.portaria_sei || '';
                 if (reg.tipo === 'outro') {
                     document.getElementById('form-af-tipo-outro-group').style.display = 'block';
@@ -4017,7 +4027,7 @@
                       + '<div style="overflow-x:auto;"><table><thead><tr>'
                       + '<th>Período</th><th>Defensor</th><th>Tipo</th>'
                       + '<th>Defensoria Afetada</th><th>Substituto</th>'
-                      + '<th>Link Diário Oficial</th><th>Processo SEI</th>'
+                      + '<th>Link Diário Oficial</th><th>Processo</th>'
                       + '</tr></thead><tbody>';
                 byMonth[mNum].forEach(r => {
                     const defInfo   = defensores[r.evDefensor] || {};
