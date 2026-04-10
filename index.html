@@ -1719,6 +1719,89 @@
             .form-grid { grid-template-columns: 1fr; }
             .form-group.form-full { grid-column: 1; }
         }
+
+        /* ── Seções de DP no formulário ──────────────────────── */
+        .dp-section {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 14px;
+            overflow: hidden;
+        }
+
+        .dp-section-header {
+            background: #f8fafc;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dp-section-title { font-weight: 700; color: var(--text-primary); font-size: 0.92em; }
+        .dp-section-area  { font-size: 0.8em; color: var(--text-secondary); }
+
+        .dp-section-body { padding: 14px 16px; }
+
+        .sub-row {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .sub-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .sub-row-label {
+            font-size: 0.78em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-remover-sub {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            border-radius: 6px;
+            padding: 3px 9px;
+            cursor: pointer;
+            font-size: 0.78em;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-remover-sub:hover { background: #fecaca; }
+
+        .sub-detalhes { margin-top: 10px; }
+
+        .sub-grid-datas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-add-sub {
+            background: none;
+            border: 1px dashed #94a3b8;
+            color: #64748b;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.83em;
+            width: 100%;
+            transition: all 0.2s;
+            margin-top: 2px;
+        }
+
+        .btn-add-sub:hover { border-color: #10b981; color: #059669; background: #f0fdf4; }
+
+        .admin-day-hint { cursor: pointer; }
+        .admin-day-hint:hover { background: rgba(16,185,129,0.06); }
     </style>
 
     <!-- Firebase SDK -->
@@ -1996,7 +2079,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Defensor Ausente</label>
-                            <select id="form-af-defensor" required>
+                            <select id="form-af-defensor" required onchange="onDefensorChange()">
                                 <option value="">Selecionar...</option>
                                 <option value="icaro">Ícaro Oliveira Avelar Costa</option>
                                 <option value="jose-antonio">José Antônio Pereira da Silva</option>
@@ -2008,39 +2091,35 @@
                         </div>
                         <div class="form-group">
                             <label>Tipo</label>
-                            <select id="form-af-tipo" required>
+                            <select id="form-af-tipo" required onchange="onTipoChange()">
                                 <option value="ferias">🔵 Férias</option>
                                 <option value="folga">🟡 Folga</option>
                                 <option value="licenca_especial">🟢 Licença Especial</option>
+                                <option value="outro">✏️ Outro</option>
                             </select>
+                        </div>
+                        <div class="form-group form-full" id="form-af-tipo-outro-group" style="display:none">
+                            <label>Especificar motivo</label>
+                            <input type="text" id="form-af-tipo-outro" placeholder="ex: Cedido para outro órgão, Tratamento de saúde...">
                         </div>
                         <div class="form-group">
                             <label>Data Início</label>
-                            <input type="date" id="form-af-inicio" min="2026-01-01" max="2026-12-31" required>
+                            <input type="date" id="form-af-inicio" min="2026-01-01" max="2026-12-31" required onchange="onDatasChange()">
                         </div>
                         <div class="form-group">
                             <label>Data Fim</label>
-                            <input type="date" id="form-af-fim" min="2026-01-01" max="2026-12-31" required>
+                            <input type="date" id="form-af-fim" min="2026-01-01" max="2026-12-31" required onchange="onDatasChange()">
                         </div>
                         <div class="form-group form-full">
-                            <label>Número da Portaria</label>
-                            <input type="text" id="form-af-portaria" placeholder="ex: Portaria nº 123/2026-GSPG/DPE/AM">
-                        </div>
-                        <div class="form-group form-full">
-                            <label>Link do Diário Oficial (PDF)</label>
-                            <input type="url" id="form-af-url" placeholder="https://diario.defensoria.am.def.br/...">
-                        </div>
-                        <div class="form-group form-full">
-                            <label>Processo SEI</label>
+                            <label>Processo SEI / SGI</label>
                             <input type="text" id="form-af-sei" placeholder="ex: 26.0.000000123-4">
                         </div>
                     </div>
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <strong>Designações por Defensoria (opcional)</strong>
-                            <button type="button" class="btn-add-dp" onclick="adicionarLinhaDesignacao()">+ Adicionar DP</button>
+                    <div id="form-af-dps-section" style="display:none">
+                        <div class="form-section-header" style="margin-bottom:14px">
+                            <strong>Defensorias Afetadas</strong>
                         </div>
-                        <div id="form-af-designacoes"></div>
+                        <div id="form-af-dps"></div>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="btn-cancelar-form" onclick="fecharFormAfastamento()">Cancelar</button>
@@ -2215,7 +2294,7 @@
         // ── Afastamentos do Firestore (admin) ────────────────────────────
 
         function mergeAfastamentoFirestoreRecord(reg) {
-            // 1. Atualizar badges do calendário
+            // 1. Badges do calendário
             const calKey = defensorCalKey(reg.defensor);
             const start  = new Date(reg.data_inicio + 'T12:00:00');
             const end    = new Date(reg.data_fim    + 'T12:00:00');
@@ -2228,38 +2307,83 @@
                 if (!afastamentos[m][d].includes(calKey)) afastamentos[m][d].push(calKey);
                 cur.setDate(cur.getDate() + 1);
             }
-            // 2. Atualizar detalhes do modal
+
+            // 2. Detalhes do modal
             const defInfo   = (jsonDesignacoes?.defensores || {})[reg.defensor] || {};
             const defNome   = defInfo.nome_curto || reg.defensor;
-            const tipoLabel = TIPO_LABELS[reg.tipo] || 'Folga';
-            const processo  = reg.portaria_sei || '';
-            const link      = reg.portaria_url || '';
-            const desigs    = reg.designacoes || [];
-            cur = new Date(start);
-            while (cur <= end) {
-                const m = cur.getMonth() + 1;
-                const d = cur.getDate();
-                if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
-                if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
-                if (desigs.length > 0) {
-                    desigs.forEach(des => {
+            const tipoLabel = reg.tipo === 'outro'
+                ? (reg.tipo_custom || 'Outro')
+                : (TIPO_LABELS[reg.tipo] || 'Folga');
+            const processo  = reg.processo_sei || reg.portaria_sei || '';
+
+            // Estrutura nova: designacoes_dp
+            const desigDp = reg.designacoes_dp;
+            // Estrutura antiga (compat): designacoes
+            const desigOld = reg.designacoes || [];
+
+            if (desigDp && desigDp.length > 0) {
+                desigDp.forEach(desig => {
+                    const dpLabel = dpDisplayLabel(desig.dp);
+                    const subs = desig.substitutos || [{}];
+                    subs.forEach(sub => {
+                        const subVal  = sub.substituto || '';
+                        const subNome = subVal === '_outro'
+                            ? (sub.substituto_nome_externo || 'Externo')
+                            : subVal
+                                ? ((jsonDesignacoes?.defensores || {})[subVal]?.nome_curto || subVal)
+                                : '— ainda não definido —';
+                        const link   = sub.portaria_url || '';
+                        const sStart = new Date((sub.data_inicio || reg.data_inicio) + 'T12:00:00');
+                        const sEnd   = new Date((sub.data_fim    || reg.data_fim)    + 'T12:00:00');
+                        let c = new Date(sStart);
+                        while (c <= sEnd) {
+                            const m = c.getMonth() + 1;
+                            const d = c.getDate();
+                            if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
+                            if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
+                            detalhesAfastamentos[m][d].push({
+                                defensor: defNome, tipo: tipoLabel,
+                                defensoria: dpLabel, substituto: subNome,
+                                processo, link, firestoreId: reg.id
+                            });
+                            c.setDate(c.getDate() + 1);
+                        }
+                    });
+                });
+            } else if (desigOld.length > 0) {
+                // Compatibilidade com estrutura antiga
+                cur = new Date(start);
+                while (cur <= end) {
+                    const m = cur.getMonth() + 1;
+                    const d = cur.getDate();
+                    if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
+                    if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
+                    desigOld.forEach(des => {
                         const dpLabel = dpDisplayLabel(des.dp);
                         const subInfo = (jsonDesignacoes?.defensores || {})[des.substituto] || {};
-                        const subNome = subInfo.nome_curto || des.substituto || '';
                         detalhesAfastamentos[m][d].push({
                             defensor: defNome, tipo: tipoLabel,
-                            defensoria: dpLabel, substituto: subNome,
-                            processo, link, firestoreId: reg.id
+                            defensoria: dpLabel,
+                            substituto: subInfo.nome_curto || des.substituto || '',
+                            processo, link: reg.portaria_url || '', firestoreId: reg.id
                         });
                     });
-                } else {
+                    cur.setDate(cur.getDate() + 1);
+                }
+            } else {
+                cur = new Date(start);
+                while (cur <= end) {
+                    const m = cur.getMonth() + 1;
+                    const d = cur.getDate();
+                    if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
+                    if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
                     detalhesAfastamentos[m][d].push({
                         defensor: defNome, tipo: tipoLabel,
                         defensoria: '—', substituto: '',
-                        processo, link, firestoreId: reg.id
+                        processo, link: '', firestoreId: reg.id
                     });
+                    cur.setDate(cur.getDate() + 1);
                 }
-                cur.setDate(cur.getDate() + 1);
             }
         }
 
@@ -2393,28 +2517,248 @@
 
         // ── Formulário de Afastamento (Admin) ─────────────────────────────
 
+        // Retorna DPs cujo titular é o defensor em algum momento do período
+        function getDPsDoDefensor(defensor, dataInicio, dataFim) {
+            if (!jsonDesignacoes) return [];
+            const start = new Date(dataInicio + 'T12:00:00');
+            const end   = new Date(dataFim    + 'T12:00:00');
+            const dps = [];
+            Object.keys(jsonDesignacoes.defensorias).sort((a,b) => +a - +b).forEach(dpKey => {
+                const dp = jsonDesignacoes.defensorias[dpKey];
+                for (const h of dp.historico_titulares) {
+                    if (h.defensor !== defensor) continue;
+                    const hStart = new Date(h.inicio + 'T12:00:00');
+                    const hEnd   = h.fim ? new Date(h.fim + 'T12:00:00') : new Date(2027,0,1);
+                    if (hStart <= end && hEnd >= start) {
+                        dps.push({ dp: dpKey, nome: dp.nome, area: dp.area });
+                        break;
+                    }
+                }
+            });
+            return dps;
+        }
+
+        // Retorna opções de substituto excluindo o defensor ausente
+        function _opcoesSubstituto(defensorAusente, subSelecionado) {
+            const polo = [
+                {v:'icaro',        n:'Ícaro Avelar'},
+                {v:'jose-antonio', n:'José Antônio'},
+                {v:'eliaquim',     n:'Eliaquim Antunes'},
+                {v:'elton',        n:'Elton Dariva'},
+                {v:'elaine',       n:'Elaine Frota'},
+                {v:'miguel',       n:'Miguel Martins'},
+            ];
+            return polo
+                .filter(d => d.v !== defensorAusente)
+                .map(({v,n}) => `<option value="${v}"${v===subSelecionado?' selected':''}>${n}</option>`)
+                .join('') + `<option value="_outro"${subSelecionado==='_outro'?' selected':''}>Outro (digitar nome)</option>`;
+        }
+
+        // Cria uma linha de substituto dentro de uma DP
+        function _criarSubstitutoRow(dpKey, defensorAusente, isFirst, subData, defaultInicio, defaultFim) {
+            const subVal    = subData?.substituto || '';
+            const isOutro   = subVal === '_outro';
+            const isDefinido = subVal !== '';
+            const inicio    = subData?.data_inicio || defaultInicio || '';
+            const fim       = subData?.data_fim    || defaultFim    || '';
+
+            const row = document.createElement('div');
+            row.className = 'sub-row';
+            row.dataset.dp = dpKey;
+            row.innerHTML = `
+                ${!isFirst ? `<div class="sub-row-header">
+                    <span class="sub-row-label">Substituto adicional</span>
+                    <button type="button" class="btn-remover-sub" onclick="this.closest('.sub-row').remove()">✕ Remover</button>
+                </div>` : ''}
+                <div class="form-group">
+                    <label>Substituto</label>
+                    <select class="sub-select" onchange="onSubstitutoChange(this)">
+                        <option value="">— ainda não definido —</option>
+                        ${_opcoesSubstituto(defensorAusente, subVal)}
+                    </select>
+                    <input type="text" class="sub-outro-nome"
+                        placeholder="Nome completo do defensor"
+                        style="display:${isOutro?'block':'none'};margin-top:8px"
+                        value="${subData?.substituto_nome_externo || ''}">
+                </div>
+                <div class="sub-detalhes" style="display:${isDefinido?'block':'none'}">
+                    <div class="sub-grid-datas">
+                        <div class="form-group">
+                            <label>Cobertura início</label>
+                            <input type="date" class="sub-data-inicio" min="2026-01-01" max="2026-12-31" value="${inicio}">
+                        </div>
+                        <div class="form-group">
+                            <label>Cobertura fim</label>
+                            <input type="date" class="sub-data-fim" min="2026-01-01" max="2026-12-31" value="${fim}">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:10px">
+                        <label>Número da Portaria</label>
+                        <input type="text" class="sub-portaria"
+                            placeholder="ex: Portaria nº 123/2026-GSPG/DPE/AM"
+                            value="${subData?.portaria_numero || ''}">
+                    </div>
+                    <div class="form-group" style="margin-top:10px">
+                        <label>Link do Diário Oficial (PDF)</label>
+                        <input type="url" class="sub-url"
+                            placeholder="https://diario.defensoria.am.def.br/..."
+                            value="${subData?.portaria_url || ''}">
+                    </div>
+                </div>`;
+            return row;
+        }
+
+        // Cria uma seção de DP completa
+        function criarDPSection(dpKey, dpNome, dpArea, defensorAusente, dataInicio, dataFim, subsExistentes) {
+            const section = document.createElement('div');
+            section.className = 'dp-section';
+            section.dataset.dp = dpKey;
+            section.innerHTML = `
+                <div class="dp-section-header">
+                    <span class="dp-section-title">${dpNome}</span>
+                    <span class="dp-section-area"> — ${dpArea}</span>
+                </div>
+                <div class="dp-section-body">
+                    <div class="dp-substitutos-container"></div>
+                    <button type="button" class="btn-add-sub"
+                        onclick="adicionarSubstitutoRow('${dpKey}','${defensorAusente}')">
+                        + Adicionar outro substituto para esta DP
+                    </button>
+                </div>`;
+            const container = section.querySelector('.dp-substitutos-container');
+            const subs = subsExistentes?.length ? subsExistentes : [null];
+            subs.forEach((sub, idx) =>
+                container.appendChild(_criarSubstitutoRow(dpKey, defensorAusente, idx===0, sub, dataInicio, dataFim))
+            );
+            return section;
+        }
+
+        // Popula o container de DPs com base no defensor e período
+        function popularDPsAfetadas(defensor, dataInicio, dataFim, existingDesignacoesDp) {
+            const container = document.getElementById('form-af-dps');
+            const section   = document.getElementById('form-af-dps-section');
+            container.innerHTML = '';
+            if (!defensor || !dataInicio || !dataFim) { section.style.display='none'; return; }
+            const dps = getDPsDoDefensor(defensor, dataInicio, dataFim);
+            if (!dps.length) { section.style.display='none'; return; }
+            dps.forEach(({dp, nome, area}) => {
+                const existing = existingDesignacoesDp?.find(d => String(d.dp)===String(dp));
+                container.appendChild(criarDPSection(dp, nome, area, defensor, dataInicio, dataFim, existing?.substitutos || null));
+            });
+            section.style.display = 'block';
+        }
+
+        // Callbacks dos campos do formulário
+        function onTipoChange() {
+            const v = document.getElementById('form-af-tipo').value;
+            document.getElementById('form-af-tipo-outro-group').style.display = v==='outro' ? 'block' : 'none';
+        }
+
+        function onDefensorChange() {
+            const defensor = document.getElementById('form-af-defensor').value;
+            const inicio   = document.getElementById('form-af-inicio').value;
+            const fim      = document.getElementById('form-af-fim').value;
+            if (defensor && inicio && fim) popularDPsAfetadas(defensor, inicio, fim, null);
+        }
+
+        function onDatasChange() {
+            const defensor = document.getElementById('form-af-defensor').value;
+            const inicio   = document.getElementById('form-af-inicio').value;
+            const fim      = document.getElementById('form-af-fim').value;
+            const container = document.getElementById('form-af-dps');
+            if (container.children.length === 0) {
+                if (defensor && inicio && fim) popularDPsAfetadas(defensor, inicio, fim, null);
+            }
+        }
+
+        function onSubstitutoChange(selectEl) {
+            const row      = selectEl.closest('.sub-row');
+            const detalhes = row.querySelector('.sub-detalhes');
+            const outroNome = row.querySelector('.sub-outro-nome');
+            const val = selectEl.value;
+            outroNome.style.display = val === '_outro' ? 'block' : 'none';
+            if (val === '') {
+                detalhes.style.display = 'none';
+            } else {
+                detalhes.style.display = 'block';
+                const inicio = document.getElementById('form-af-inicio').value;
+                const fim    = document.getElementById('form-af-fim').value;
+                const si = row.querySelector('.sub-data-inicio');
+                const sf = row.querySelector('.sub-data-fim');
+                if (!si.value) si.value = inicio;
+                if (!sf.value) sf.value = fim;
+            }
+        }
+
+        function adicionarSubstitutoRow(dpKey, defensorAusente) {
+            const dpSection = document.querySelector(`.dp-section[data-dp="${dpKey}"]`);
+            if (!dpSection) return;
+            const container = dpSection.querySelector('.dp-substitutos-container');
+            const inicio = document.getElementById('form-af-inicio').value;
+            const fim    = document.getElementById('form-af-fim').value;
+            container.appendChild(_criarSubstitutoRow(dpKey, defensorAusente, false, null, inicio, fim));
+        }
+
+        // Coleta todos os dados do formulário
+        function coletarDadosFormulario() {
+            const defensor   = document.getElementById('form-af-defensor').value;
+            const tipo       = document.getElementById('form-af-tipo').value;
+            const tipoCustom = tipo==='outro' ? document.getElementById('form-af-tipo-outro').value.trim() : '';
+            const dataInicio = document.getElementById('form-af-inicio').value;
+            const dataFim    = document.getElementById('form-af-fim').value;
+            const sei        = document.getElementById('form-af-sei').value.trim();
+            const designacoesDp = [];
+            document.querySelectorAll('#form-af-dps .dp-section').forEach(dpSection => {
+                const dpKey = dpSection.dataset.dp;
+                const substitutos = [];
+                dpSection.querySelectorAll('.sub-row').forEach(subRow => {
+                    const subVal   = subRow.querySelector('.sub-select').value;
+                    const subOutro = subRow.querySelector('.sub-outro-nome').value.trim();
+                    const si = subRow.querySelector('.sub-data-inicio')?.value || '';
+                    const sf = subRow.querySelector('.sub-data-fim')?.value    || '';
+                    substitutos.push({
+                        substituto:              subVal,
+                        substituto_nome_externo: subVal==='_outro' ? subOutro : '',
+                        data_inicio:             si,
+                        data_fim:                sf,
+                        portaria_numero: subRow.querySelector('.sub-portaria')?.value.trim() || '',
+                        portaria_url:    subRow.querySelector('.sub-url')?.value.trim()      || ''
+                    });
+                });
+                designacoesDp.push({ dp: dpKey, substitutos });
+            });
+            return { defensor, tipo, tipo_custom: tipoCustom,
+                     data_inicio: dataInicio, data_fim: dataFim,
+                     processo_sei: sei, designacoes_dp: designacoesDp };
+        }
+
         function abrirFormAfastamento(firestoreId, mes, dia) {
             _formAfMesCtx = mes;
             _formAfDiaCtx = dia;
-
             const overlay = document.getElementById('form-af-overlay');
             document.getElementById('form-af').reset();
             document.getElementById('form-af-id').value = '';
-            document.getElementById('form-af-designacoes').innerHTML = '';
+            document.getElementById('form-af-dps').innerHTML = '';
+            document.getElementById('form-af-dps-section').style.display = 'none';
+            document.getElementById('form-af-tipo-outro-group').style.display = 'none';
 
             if (firestoreId) {
                 document.getElementById('form-af-titulo').textContent = '✏️ Editar Afastamento';
                 const reg = afastamentosFirestoreMap[firestoreId];
                 if (!reg) { mostrarToast('❌ Registro não encontrado.', true); return; }
                 document.getElementById('form-af-id').value       = firestoreId;
-                document.getElementById('form-af-defensor').value = reg.defensor        || '';
-                document.getElementById('form-af-tipo').value     = reg.tipo            || 'folga';
-                document.getElementById('form-af-inicio').value   = reg.data_inicio     || '';
-                document.getElementById('form-af-fim').value      = reg.data_fim        || '';
-                document.getElementById('form-af-portaria').value = reg.portaria_numero || '';
-                document.getElementById('form-af-url').value      = reg.portaria_url    || '';
-                document.getElementById('form-af-sei').value      = reg.portaria_sei    || '';
-                (reg.designacoes || []).forEach(d => adicionarLinhaDesignacao(d.dp, d.substituto));
+                document.getElementById('form-af-defensor').value = reg.defensor    || '';
+                document.getElementById('form-af-tipo').value     = reg.tipo        || 'folga';
+                document.getElementById('form-af-inicio').value   = reg.data_inicio || '';
+                document.getElementById('form-af-fim').value      = reg.data_fim    || '';
+                document.getElementById('form-af-sei').value      = reg.processo_sei || reg.portaria_sei || '';
+                if (reg.tipo === 'outro') {
+                    document.getElementById('form-af-tipo-outro-group').style.display = 'block';
+                    document.getElementById('form-af-tipo-outro').value = reg.tipo_custom || '';
+                }
+                if (reg.defensor && reg.data_inicio && reg.data_fim) {
+                    popularDPsAfetadas(reg.defensor, reg.data_inicio, reg.data_fim, reg.designacoes_dp || null);
+                }
             } else {
                 document.getElementById('form-af-titulo').textContent = '➕ Novo Afastamento';
                 if (mes && dia) {
@@ -2423,7 +2767,6 @@
                     document.getElementById('form-af-fim').value    = dateStr;
                 }
             }
-
             overlay.classList.add('active');
         }
 
@@ -2433,84 +2776,24 @@
             document.getElementById('form-af-overlay').classList.remove('active');
         }
 
-        function adicionarLinhaDesignacao(dpVal, subVal) {
-            const container = document.getElementById('form-af-designacoes');
-            const dpOpts = [1,2,3,4,5,6,7,8,9,10,11,12].map(n => {
-                const nomes = {
-                    1:'1ª DP (Família)',    2:'2ª DP (Família)',
-                    3:'3ª DP (Cível)',      4:'4ª DP (Cível)',
-                    5:'5ª DP (Criminal)',   6:'6ª DP (Criminal)',
-                    7:'7ª DP (SSU)',        8:'8ª DP (Itapiranga)',
-                    9:'9ª DP (Urucurituba)',10:'10ª DP (Urucará)',
-                    11:'11ª DP (Silves)',   12:'12ª DP (Silves)'
-                };
-                const sel = String(n) === String(dpVal) ? ' selected' : '';
-                return `<option value="${n}"${sel}>${nomes[n]}</option>`;
-            }).join('');
-
-            const subOpts = [
-                {v:'icaro',        n:'Ícaro Avelar'},
-                {v:'jose-antonio', n:'José Antônio'},
-                {v:'eliaquim',     n:'Eliaquim Antunes'},
-                {v:'elton',        n:'Elton Dariva'},
-                {v:'elaine',       n:'Elaine Frota'},
-                {v:'miguel',       n:'Miguel Martins'},
-                {v:'mariana',      n:'Mariana Paixão'},
-                {v:'bruna-farias', n:'Bruna Farias'},
-                {v:'danielle',     n:'Danielle Almeida'},
-                {v:'oswaldo',      n:'Oswaldo Machado'}
-            ].map(({v,n}) => {
-                const sel = v === subVal ? ' selected' : '';
-                return `<option value="${v}"${sel}>${n}</option>`;
-            }).join('');
-
-            const row = document.createElement('div');
-            row.className = 'designacao-row';
-            row.innerHTML = `
-                <select class="form-dp-sel"><option value="">DP...</option>${dpOpts}</select>
-                <select class="form-sub-sel"><option value="">Substituto...</option>${subOpts}</select>
-                <button type="button" class="btn-remover-dp" onclick="this.parentElement.remove()">✕</button>
-            `;
-            container.appendChild(row);
-        }
-
         async function salvarAfastamentoFirestore() {
             const submitBtn = document.getElementById('form-af-submit');
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Salvando...';
             try {
                 const firestoreId = document.getElementById('form-af-id').value;
-                const defensor    = document.getElementById('form-af-defensor').value;
-                const tipo        = document.getElementById('form-af-tipo').value;
-                const dataInicio  = document.getElementById('form-af-inicio').value;
-                const dataFim     = document.getElementById('form-af-fim').value;
-
-                if (!defensor || !dataInicio || !dataFim) {
-                    mostrarToast('❌ Preencha defensor e datas.', true);
-                    return;
+                const dados = coletarDadosFormulario();
+                if (!dados.defensor || !dados.data_inicio || !dados.data_fim) {
+                    mostrarToast('❌ Preencha defensor e datas.', true); return;
                 }
-                if (dataFim < dataInicio) {
-                    mostrarToast('❌ Data fim não pode ser anterior à data início.', true);
-                    return;
+                if (dados.data_fim < dados.data_inicio) {
+                    mostrarToast('❌ Data fim não pode ser anterior à data início.', true); return;
                 }
-
-                const designacoes = [];
-                document.querySelectorAll('#form-af-designacoes .designacao-row').forEach(row => {
-                    const dp  = row.querySelector('.form-dp-sel').value;
-                    const sub = row.querySelector('.form-sub-sel').value;
-                    if (dp) designacoes.push({ dp, substituto: sub });
-                });
-
-                const dados = {
-                    defensor, tipo, data_inicio: dataInicio, data_fim: dataFim,
-                    portaria_numero: document.getElementById('form-af-portaria').value.trim(),
-                    portaria_url:    document.getElementById('form-af-url').value.trim(),
-                    portaria_sei:    document.getElementById('form-af-sei').value.trim(),
-                    designacoes,
-                    atualizado_por: currentUser.email,
-                    atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
-                };
-
+                if (dados.tipo === 'outro' && !dados.tipo_custom) {
+                    mostrarToast('❌ Especifique o motivo do afastamento.', true); return;
+                }
+                dados.atualizado_por = currentUser.email;
+                dados.atualizado_em  = firebase.firestore.FieldValue.serverTimestamp();
                 if (firestoreId) {
                     await db.collection('afastamentos_admin').doc(firestoreId).update(dados);
                 } else {
@@ -2518,12 +2801,10 @@
                     dados.criado_em  = firebase.firestore.FieldValue.serverTimestamp();
                     await db.collection('afastamentos_admin').add(dados);
                 }
-
                 fecharFormAfastamento();
                 mostrarToast('✅ Afastamento salvo com sucesso!');
                 await reloadAfastamentosData();
                 if (_formAfMesCtx && _formAfDiaCtx) openModal(_formAfMesCtx, _formAfDiaCtx);
-
             } catch(e) {
                 mostrarToast('❌ Erro ao salvar: ' + e.message, true);
             } finally {
@@ -2672,9 +2953,14 @@
                         badge.textContent = defensorNames[defensor];
                         markers.appendChild(badge);
                     });
-                    
-                    // Adicionar evento de clique
+                }
+
+                // Admin: todos os dias são clicáveis. Outros usuários: só dias com afastamento
+                if (hasAfastamento || userRole === 'admin') {
                     dayDiv.onclick = () => openModal(month + 1, day);
+                    if (userRole === 'admin' && !hasAfastamento) {
+                        dayDiv.classList.add('admin-day-hint');
+                    }
                 }
                 
                 dayDiv.appendChild(markers);
