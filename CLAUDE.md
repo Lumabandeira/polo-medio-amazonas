@@ -32,7 +32,23 @@ secoes/ferias_folgas
   html: "..."           ← conteúdo editável da seção Férias/Folgas/Licenças
   atualizado_por: "..."
   atualizado_em: timestamp
+
+afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendário
+  defensor: "elton"       ← chave do defensor (mesmo padrão dos JSONs)
+  tipo: "ferias" | "folga" | "licenca_especial"
+  data_inicio: "2026-04-15"
+  data_fim: "2026-04-20"
+  portaria_numero: "Portaria nº 123/2026-GSPG/DPE/AM"
+  portaria_url: "https://..."   ← link do PDF do Diário Oficial
+  portaria_sei: "26.0.000..."
+  designacoes: [{ dp: "5", substituto: "eliaquim" }, ...]
+  criado_por: "email@..."
+  criado_em: timestamp
+  atualizado_por: "email@..."
+  atualizado_em: timestamp
 ```
+
+> **Nota:** Os dados dos JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) continuam sendo a base. A coleção `afastamentos_admin` contém apenas os registros adicionados/editados pelo admin via interface. Os dois são mesclados em memória ao carregar a página.
 
 ### Regras de segurança do Firestore
 - Leitura: apenas usuários autenticados
@@ -151,10 +167,10 @@ github-pages/
 - **Aba Tabela Completa removida** — Calendário Visual é a aba principal
 - **Botões "Nova Aba" e "Sincronizar Planilha" removidos** — e todo código/CSS associado limpo
 - **1 usuário admin cadastrado** — bandeira.lkp@gmail.com (role: admin, nome: Luma) no Firestore
+- **Calendário interativo para admins** — admin pode adicionar/editar/remover afastamentos direto do calendário (dados salvos em `afastamentos_admin` no Firestore, mesclados com os JSONs em memória)
 
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 39 usuários** (2 admins + 37 viewers) no Firebase Auth + Firestore
-- **Calendário interativo para admins** — adicionar/editar/remover afastamentos diretamente no calendário com link do Diário Oficial (atualmente os dados vêm dos JSONs e são somente leitura)
 - **Edição dos defensores titulares de cada DP** — atualmente vem do `docs/designacoes-2026.json`, sem interface de edição
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
 

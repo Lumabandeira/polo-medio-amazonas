@@ -1490,6 +1490,235 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             animation: fadeIn 0.3s;
         }
+        /* ── Calendário Admin ─────────────────────────────────── */
+        .modal-admin-footer {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-novo-afastamento {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-novo-afastamento:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+        }
+
+        .btn-acao-tabela {
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.2s;
+            margin-right: 3px;
+        }
+
+        .btn-editar-af  { background: #dbeafe; color: #1e40af; }
+        .btn-editar-af:hover  { background: #bfdbfe; }
+        .btn-deletar-af { background: #fee2e2; color: #dc2626; }
+        .btn-deletar-af:hover { background: #fecaca; }
+
+        /* Formulário de afastamento */
+        .form-af-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            z-index: 1100;
+            overflow-y: auto;
+            animation: fadeIn 0.3s;
+        }
+
+        .form-af-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .form-af-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 680px;
+            width: 100%;
+            margin: 40px auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: slideDown 0.3s;
+        }
+
+        .form-af-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 22px 28px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-af-header h2 { margin: 0; font-size: 1.4em; }
+
+        .form-af-body { padding: 28px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.form-full { grid-column: 1 / -1; }
+
+        .form-group label {
+            font-size: 0.82em;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .form-section { margin-bottom: 20px; }
+
+        .form-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .form-section-header strong { font-size: 0.9em; color: var(--text-primary); }
+
+        .btn-add-dp {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-add-dp:hover { background: #dbeafe; }
+
+        .designacao-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .designacao-row select {
+            padding: 8px 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-family: inherit;
+        }
+
+        .designacao-row select:focus { outline: none; border-color: #10b981; }
+
+        .btn-remover-dp {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .btn-remover-dp:hover { background: #fecaca; }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-cancelar-form {
+            background: #f1f5f9;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 10px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-cancelar-form:hover { background: #e2e8f0; }
+
+        .btn-salvar-form {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-salvar-form:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+        }
+
+        .btn-salvar-form:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.form-full { grid-column: 1; }
+        }
     </style>
 
     <!-- Firebase SDK -->
@@ -1754,6 +1983,74 @@
         </div>
     </div>
 
+    <!-- Modal Formulário de Afastamento (Admin) -->
+    <div id="form-af-overlay" class="form-af-overlay" onclick="fecharFormAfastamento(event)">
+        <div class="form-af-content" onclick="event.stopPropagation()">
+            <div class="form-af-header">
+                <h2 id="form-af-titulo">➕ Novo Afastamento</h2>
+                <button class="modal-close" onclick="fecharFormAfastamento()">×</button>
+            </div>
+            <div class="form-af-body">
+                <form id="form-af" onsubmit="event.preventDefault(); salvarAfastamentoFirestore()">
+                    <input type="hidden" id="form-af-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Defensor Ausente</label>
+                            <select id="form-af-defensor" required>
+                                <option value="">Selecionar...</option>
+                                <option value="icaro">Ícaro Oliveira Avelar Costa</option>
+                                <option value="jose-antonio">José Antônio Pereira da Silva</option>
+                                <option value="eliaquim">Eliaquim Antunes de Souza</option>
+                                <option value="elton">Elton Dariva Staub</option>
+                                <option value="elaine">Elaine Maria Sousa Frota</option>
+                                <option value="miguel">Miguel Eduardo de A. M. Filho</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select id="form-af-tipo" required>
+                                <option value="ferias">🔵 Férias</option>
+                                <option value="folga">🟡 Folga</option>
+                                <option value="licenca_especial">🟢 Licença Especial</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Data Início</label>
+                            <input type="date" id="form-af-inicio" min="2026-01-01" max="2026-12-31" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data Fim</label>
+                            <input type="date" id="form-af-fim" min="2026-01-01" max="2026-12-31" required>
+                        </div>
+                        <div class="form-group form-full">
+                            <label>Número da Portaria</label>
+                            <input type="text" id="form-af-portaria" placeholder="ex: Portaria nº 123/2026-GSPG/DPE/AM">
+                        </div>
+                        <div class="form-group form-full">
+                            <label>Link do Diário Oficial (PDF)</label>
+                            <input type="url" id="form-af-url" placeholder="https://diario.defensoria.am.def.br/...">
+                        </div>
+                        <div class="form-group form-full">
+                            <label>Processo SEI</label>
+                            <input type="text" id="form-af-sei" placeholder="ex: 26.0.000000123-4">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <strong>Designações por Defensoria (opcional)</strong>
+                            <button type="button" class="btn-add-dp" onclick="adicionarLinhaDesignacao()">+ Adicionar DP</button>
+                        </div>
+                        <div id="form-af-designacoes"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancelar-form" onclick="fecharFormAfastamento()">Cancelar</button>
+                        <button type="submit" id="form-af-submit" class="btn-salvar-form">💾 Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para Detalhes -->
     <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
@@ -1805,6 +2102,12 @@
         // afastamentos e detalhesAfastamentos são populados por loadJSONData()
         let afastamentos = {};
         let detalhesAfastamentos = {};
+
+        // Mapa de registros adicionados pelo admin via Firestore
+        let afastamentosFirestoreMap = {}; // firestoreId → record completo
+        let jsonDataLoaded = false;        // true após loadJSONData concluir
+        let _formAfMesCtx = null;          // contexto de dia para reabrir modal
+        let _formAfDiaCtx = null;
 
         // ===== Builders a partir dos JSONs =====
 
@@ -1909,6 +2212,79 @@
         }
 
 
+        // ── Afastamentos do Firestore (admin) ────────────────────────────
+
+        function mergeAfastamentoFirestoreRecord(reg) {
+            // 1. Atualizar badges do calendário
+            const calKey = defensorCalKey(reg.defensor);
+            const start  = new Date(reg.data_inicio + 'T12:00:00');
+            const end    = new Date(reg.data_fim    + 'T12:00:00');
+            let cur = new Date(start);
+            while (cur <= end) {
+                const m = cur.getMonth() + 1;
+                const d = cur.getDate();
+                if (!afastamentos[m])    afastamentos[m] = {};
+                if (!afastamentos[m][d]) afastamentos[m][d] = [];
+                if (!afastamentos[m][d].includes(calKey)) afastamentos[m][d].push(calKey);
+                cur.setDate(cur.getDate() + 1);
+            }
+            // 2. Atualizar detalhes do modal
+            const defInfo   = (jsonDesignacoes?.defensores || {})[reg.defensor] || {};
+            const defNome   = defInfo.nome_curto || reg.defensor;
+            const tipoLabel = TIPO_LABELS[reg.tipo] || 'Folga';
+            const processo  = reg.portaria_sei || '';
+            const link      = reg.portaria_url || '';
+            const desigs    = reg.designacoes || [];
+            cur = new Date(start);
+            while (cur <= end) {
+                const m = cur.getMonth() + 1;
+                const d = cur.getDate();
+                if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
+                if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
+                if (desigs.length > 0) {
+                    desigs.forEach(des => {
+                        const dpLabel = dpDisplayLabel(des.dp);
+                        const subInfo = (jsonDesignacoes?.defensores || {})[des.substituto] || {};
+                        const subNome = subInfo.nome_curto || des.substituto || '';
+                        detalhesAfastamentos[m][d].push({
+                            defensor: defNome, tipo: tipoLabel,
+                            defensoria: dpLabel, substituto: subNome,
+                            processo, link, firestoreId: reg.id
+                        });
+                    });
+                } else {
+                    detalhesAfastamentos[m][d].push({
+                        defensor: defNome, tipo: tipoLabel,
+                        defensoria: '—', substituto: '',
+                        processo, link, firestoreId: reg.id
+                    });
+                }
+                cur.setDate(cur.getDate() + 1);
+            }
+        }
+
+        async function loadAfastamentosFirestore() {
+            try {
+                const snapshot = await db.collection('afastamentos_admin').get();
+                afastamentosFirestoreMap = {};
+                snapshot.forEach(doc => {
+                    const reg = { id: doc.id, ...doc.data() };
+                    afastamentosFirestoreMap[doc.id] = reg;
+                    mergeAfastamentoFirestoreRecord(reg);
+                });
+                renderCalendar();
+            } catch(e) {
+                console.warn('Firestore afastamentos_admin:', e.message);
+            }
+        }
+
+        async function reloadAfastamentosData() {
+            // Reconstrói a partir dos JSONs já em memória (sem refetch de rede)
+            afastamentos = buildAfastamentosFromJSONRegistros(jsonAfastamentos.registros);
+            buildDetalhesFromJSONEventos(jsonDesignacoes.eventos, jsonDesignacoes.defensores);
+            await loadAfastamentosFirestore();
+        }
+
         // Função para obter dados detalhados de um dia específico
         function getDetalhesDia(mes, dia) {
             const mesData = detalhesAfastamentos[mes];
@@ -1925,37 +2301,56 @@
             const modal = document.getElementById('modal-overlay');
             const dateInfo = document.getElementById('modal-date-info');
             const tableContainer = document.getElementById('modal-table-container');
-            
+
             // Remover seleção anterior
             document.querySelectorAll('.calendar-day.selected').forEach(el => {
                 el.classList.remove('selected');
             });
-            
+
             // Destacar o dia selecionado
-            const dayElements = document.querySelectorAll('.calendar-day');
-            dayElements.forEach(dayEl => {
+            document.querySelectorAll('.calendar-day').forEach(dayEl => {
                 const dayNum = parseInt(dayEl.querySelector('.day-number')?.textContent);
                 if (dayNum === dia && !dayEl.classList.contains('empty')) {
                     dayEl.classList.add('selected');
                 }
             });
-            
+
             dateInfo.innerHTML = `<strong>📅 Data:</strong> ${dia} de ${mesNome} de 2026`;
-            
+
+            const isAdmin = userRole === 'admin';
+            const acoesTh = isAdmin ? '<th style="width:80px">Ações</th>' : '';
+
             if (detalhes.length === 0) {
                 tableContainer.innerHTML = '<div class="no-data">Nenhum detalhe disponível para esta data.</div>';
             } else {
-                let html = '<table class="modal-table"><thead><tr><th>Defensor</th><th>Tipo</th><th>Defensoria Afetada</th><th>Substituto</th><th>Diário Oficial</th><th>Processo</th></tr></thead><tbody>';
+                let html = `<table class="modal-table"><thead><tr>
+                    <th>Defensor</th><th>Tipo</th><th>Defensoria Afetada</th>
+                    <th>Substituto</th><th>Diário Oficial</th><th>Processo</th>${acoesTh}
+                </tr></thead><tbody>`;
 
+                const firestoreVistos = new Set();
                 detalhes.forEach(item => {
                     const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' :
                                      item.tipo === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
-                    // Extrair número da edição do link, se disponível
                     let linkHtml = '-';
                     if (item.link) {
                         const edNum = item.link.match(/Edicao_(\d+)/i);
                         const label = edNum ? `Edição ${edNum[1]}` : 'Abrir PDF';
                         linkHtml = `<a href="${item.link}" target="_blank" style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap;">📄 ${label}</a>`;
+                    }
+                    let acoesTd = '';
+                    if (isAdmin) {
+                        if (item.firestoreId && !firestoreVistos.has(item.firestoreId)) {
+                            firestoreVistos.add(item.firestoreId);
+                            acoesTd = `<td style="white-space:nowrap">
+                                <button class="btn-acao-tabela btn-editar-af" title="Editar"
+                                    onclick="abrirFormAfastamento('${item.firestoreId}',${mes},${dia})">✏️</button>
+                                <button class="btn-acao-tabela btn-deletar-af" title="Excluir"
+                                    onclick="confirmarDeletarAfastamento('${item.firestoreId}',${mes},${dia})">🗑️</button>
+                            </td>`;
+                        } else {
+                            acoesTd = `<td><span style="font-size:0.72em;color:#94a3b8">${item.firestoreId ? '' : 'base'}</span></td>`;
+                        }
                     }
                     html += `<tr>
                         <td><strong>${item.defensor}</strong></td>
@@ -1964,13 +2359,22 @@
                         <td>${item.substituto || '-'}</td>
                         <td>${linkHtml}</td>
                         <td>${item.processo || '-'}</td>
+                        ${acoesTd}
                     </tr>`;
                 });
-
                 html += '</tbody></table>';
                 tableContainer.innerHTML = html;
             }
-            
+
+            // Botão admin para adicionar novo afastamento
+            if (isAdmin) {
+                const footer = document.createElement('div');
+                footer.className = 'modal-admin-footer';
+                footer.innerHTML = `<button class="btn-novo-afastamento"
+                    onclick="abrirFormAfastamento(null,${mes},${dia})">➕ Novo Afastamento</button>`;
+                tableContainer.appendChild(footer);
+            }
+
             modal.classList.add('active');
         }
 
@@ -1981,11 +2385,167 @@
             }
             const modal = document.getElementById('modal-overlay');
             modal.classList.remove('active');
-            
-            // Remover seleção do dia
+
             document.querySelectorAll('.calendar-day.selected').forEach(el => {
                 el.classList.remove('selected');
             });
+        }
+
+        // ── Formulário de Afastamento (Admin) ─────────────────────────────
+
+        function abrirFormAfastamento(firestoreId, mes, dia) {
+            _formAfMesCtx = mes;
+            _formAfDiaCtx = dia;
+
+            const overlay = document.getElementById('form-af-overlay');
+            document.getElementById('form-af').reset();
+            document.getElementById('form-af-id').value = '';
+            document.getElementById('form-af-designacoes').innerHTML = '';
+
+            if (firestoreId) {
+                document.getElementById('form-af-titulo').textContent = '✏️ Editar Afastamento';
+                const reg = afastamentosFirestoreMap[firestoreId];
+                if (!reg) { mostrarToast('❌ Registro não encontrado.', true); return; }
+                document.getElementById('form-af-id').value       = firestoreId;
+                document.getElementById('form-af-defensor').value = reg.defensor        || '';
+                document.getElementById('form-af-tipo').value     = reg.tipo            || 'folga';
+                document.getElementById('form-af-inicio').value   = reg.data_inicio     || '';
+                document.getElementById('form-af-fim').value      = reg.data_fim        || '';
+                document.getElementById('form-af-portaria').value = reg.portaria_numero || '';
+                document.getElementById('form-af-url').value      = reg.portaria_url    || '';
+                document.getElementById('form-af-sei').value      = reg.portaria_sei    || '';
+                (reg.designacoes || []).forEach(d => adicionarLinhaDesignacao(d.dp, d.substituto));
+            } else {
+                document.getElementById('form-af-titulo').textContent = '➕ Novo Afastamento';
+                if (mes && dia) {
+                    const dateStr = `2026-${String(mes).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+                    document.getElementById('form-af-inicio').value = dateStr;
+                    document.getElementById('form-af-fim').value    = dateStr;
+                }
+            }
+
+            overlay.classList.add('active');
+        }
+
+        function fecharFormAfastamento(event) {
+            if (event && event.target !== event.currentTarget &&
+                !event.target.classList.contains('modal-close')) return;
+            document.getElementById('form-af-overlay').classList.remove('active');
+        }
+
+        function adicionarLinhaDesignacao(dpVal, subVal) {
+            const container = document.getElementById('form-af-designacoes');
+            const dpOpts = [1,2,3,4,5,6,7,8,9,10,11,12].map(n => {
+                const nomes = {
+                    1:'1ª DP (Família)',    2:'2ª DP (Família)',
+                    3:'3ª DP (Cível)',      4:'4ª DP (Cível)',
+                    5:'5ª DP (Criminal)',   6:'6ª DP (Criminal)',
+                    7:'7ª DP (SSU)',        8:'8ª DP (Itapiranga)',
+                    9:'9ª DP (Urucurituba)',10:'10ª DP (Urucará)',
+                    11:'11ª DP (Silves)',   12:'12ª DP (Silves)'
+                };
+                const sel = String(n) === String(dpVal) ? ' selected' : '';
+                return `<option value="${n}"${sel}>${nomes[n]}</option>`;
+            }).join('');
+
+            const subOpts = [
+                {v:'icaro',        n:'Ícaro Avelar'},
+                {v:'jose-antonio', n:'José Antônio'},
+                {v:'eliaquim',     n:'Eliaquim Antunes'},
+                {v:'elton',        n:'Elton Dariva'},
+                {v:'elaine',       n:'Elaine Frota'},
+                {v:'miguel',       n:'Miguel Martins'},
+                {v:'mariana',      n:'Mariana Paixão'},
+                {v:'bruna-farias', n:'Bruna Farias'},
+                {v:'danielle',     n:'Danielle Almeida'},
+                {v:'oswaldo',      n:'Oswaldo Machado'}
+            ].map(({v,n}) => {
+                const sel = v === subVal ? ' selected' : '';
+                return `<option value="${v}"${sel}>${n}</option>`;
+            }).join('');
+
+            const row = document.createElement('div');
+            row.className = 'designacao-row';
+            row.innerHTML = `
+                <select class="form-dp-sel"><option value="">DP...</option>${dpOpts}</select>
+                <select class="form-sub-sel"><option value="">Substituto...</option>${subOpts}</select>
+                <button type="button" class="btn-remover-dp" onclick="this.parentElement.remove()">✕</button>
+            `;
+            container.appendChild(row);
+        }
+
+        async function salvarAfastamentoFirestore() {
+            const submitBtn = document.getElementById('form-af-submit');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Salvando...';
+            try {
+                const firestoreId = document.getElementById('form-af-id').value;
+                const defensor    = document.getElementById('form-af-defensor').value;
+                const tipo        = document.getElementById('form-af-tipo').value;
+                const dataInicio  = document.getElementById('form-af-inicio').value;
+                const dataFim     = document.getElementById('form-af-fim').value;
+
+                if (!defensor || !dataInicio || !dataFim) {
+                    mostrarToast('❌ Preencha defensor e datas.', true);
+                    return;
+                }
+                if (dataFim < dataInicio) {
+                    mostrarToast('❌ Data fim não pode ser anterior à data início.', true);
+                    return;
+                }
+
+                const designacoes = [];
+                document.querySelectorAll('#form-af-designacoes .designacao-row').forEach(row => {
+                    const dp  = row.querySelector('.form-dp-sel').value;
+                    const sub = row.querySelector('.form-sub-sel').value;
+                    if (dp) designacoes.push({ dp, substituto: sub });
+                });
+
+                const dados = {
+                    defensor, tipo, data_inicio: dataInicio, data_fim: dataFim,
+                    portaria_numero: document.getElementById('form-af-portaria').value.trim(),
+                    portaria_url:    document.getElementById('form-af-url').value.trim(),
+                    portaria_sei:    document.getElementById('form-af-sei').value.trim(),
+                    designacoes,
+                    atualizado_por: currentUser.email,
+                    atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (firestoreId) {
+                    await db.collection('afastamentos_admin').doc(firestoreId).update(dados);
+                } else {
+                    dados.criado_por = currentUser.email;
+                    dados.criado_em  = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('afastamentos_admin').add(dados);
+                }
+
+                fecharFormAfastamento();
+                mostrarToast('✅ Afastamento salvo com sucesso!');
+                await reloadAfastamentosData();
+                if (_formAfMesCtx && _formAfDiaCtx) openModal(_formAfMesCtx, _formAfDiaCtx);
+
+            } catch(e) {
+                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '💾 Salvar';
+            }
+        }
+
+        async function confirmarDeletarAfastamento(firestoreId, mes, dia) {
+            const reg = afastamentosFirestoreMap[firestoreId];
+            if (!reg) return;
+            const defInfo = (jsonDesignacoes?.defensores || {})[reg.defensor] || {};
+            const defNome = defInfo.nome_curto || reg.defensor;
+            if (!confirm(`Excluir afastamento de ${defNome} (${reg.data_inicio} a ${reg.data_fim})?`)) return;
+            try {
+                await db.collection('afastamentos_admin').doc(firestoreId).delete();
+                mostrarToast('✅ Afastamento excluído.');
+                await reloadAfastamentosData();
+                openModal(mes, dia);
+            } catch(e) {
+                mostrarToast('❌ Erro ao excluir: ' + e.message, true);
+            }
         }
 
         let currentMonth = 0; // Janeiro = 0
@@ -3359,6 +3919,10 @@
                     validateAlternation();
                 }, 100);
 
+                // Sinalizar que os JSONs estão prontos e carregar dados do Firestore se autenticado
+                jsonDataLoaded = true;
+                if (currentUser) await loadAfastamentosFirestore();
+
             } catch(err) {
                 console.error('Erro ao carregar dados JSON:', err);
             }
@@ -3419,6 +3983,9 @@
                 });
                 document.getElementById('admin-badge').style.display = 'inline-block';
             }
+
+            // Se os JSONs já carregaram antes da autenticação, carregar dados do Firestore agora
+            if (jsonDataLoaded) loadAfastamentosFirestore();
         }
 
         // ── Login ──────────────────────────────────────────────────────────
