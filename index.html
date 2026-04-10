@@ -2588,7 +2588,7 @@
             row.dataset.dp = dpKey;
             row.innerHTML = `
                 ${!isFirst ? `<div class="sub-row-header">
-                    <span class="sub-row-label">Substituto adicional</span>
+                    <span class="sub-row-label">Substituto adicional — ${dpDisplayLabel(dpKey)}</span>
                     <button type="button" class="btn-remover-sub" onclick="this.closest('.sub-row').remove()">✕ Remover</button>
                 </div>` : ''}
                 <div class="form-group">
