@@ -168,6 +168,8 @@ github-pages/
 - **Botões "Nova Aba" e "Sincronizar Planilha" removidos** — e todo código/CSS associado limpo
 - **1 usuário admin cadastrado** — bandeira.lkp@gmail.com (role: admin, nome: Luma) no Firestore
 - **Calendário interativo para admins** — CRUD completo de afastamentos via Firestore (`afastamentos_admin`). Detalhes abaixo em "Arquitetura do calendário interativo".
+- **Datas de cobertura do substituto liberadas** — removidos os atributos `min`/`max` dos inputs e a lógica de clamping que forçava as datas para dentro do afastamento (causava bug de só permitir selecionar 1 dia). A validação agora ocorre apenas no momento de salvar, com mensagem de erro.
+- **Validação de sobreposição entre substitutos** — ao salvar, o sistema verifica se dois substitutos da mesma DP têm períodos de cobertura sobrepostos (inclusive dias iguais na fronteira). Exibe mensagem `❌ [Nome A] e [Nome B] (DP) têm períodos de cobertura sobrepostos.` e bloqueia o salvamento.
 
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 39 usuários** (2 admins + 37 viewers) no Firebase Auth + Firestore
@@ -201,6 +203,17 @@ github-pages/
 - Para cada DP do afastamento, os dias cobertos por substitutos definidos mostram o nome do substituto
 - Os dias do afastamento **não cobertos** por nenhum substituto mostram automaticamente "ainda não definido" (gap filling em `mergeAfastamentoFirestoreRecord`)
 - Registros do Firestore mostram botões ✏️/🗑️ no modal; registros dos JSONs mostram "base" (somente leitura)
+
+### Validações no salvar (`salvarAfastamentoFirestore`)
+1. Defensor e datas do afastamento obrigatórios
+2. Data fim não pode ser anterior à data início
+3. Tipo "outro" exige texto no campo motivo
+4. Por substituto: início da substituição não pode ser anterior ao início do afastamento
+5. Por substituto: fim da substituição não pode ser posterior ao fim do afastamento
+6. Por substituto: fim da substituição não pode ser anterior ao início da substituição
+7. **Por DP:** nenhum par de substitutos pode ter períodos sobrepostos (dias iguais na fronteira = sobreposição)
+
+> **Atenção:** afastamentos salvos antes da correção do bug de clamping podem ter datas de cobertura incorretas no Firestore (ex: cobertura gravada com apenas 1 dia em vez do período completo). Para corrigir, o admin deve reabrir o afastamento e salvar novamente com as datas corretas.
 
 ---
 
