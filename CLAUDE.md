@@ -139,6 +139,33 @@ github-pages/
 
 ---
 
+## Estado atual do site (atualizado em 09/04/2026)
+
+### O que já foi implementado ✅
+- **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
+- **Badge ADMIN** no header (visível só para admins, posicionado em top:75px left:20px)
+- **Botão Sair** no header (top:60px right:20px)
+- **Botão Início** no header (aparece ao entrar nas abas, some na landing)
+- **Seções editáveis inline** — "Regra de Alternância" e "Férias/Folgas/Licenças" com título + conteúdo editáveis via contentEditable, salvos no Firestore
+- **Coluna Diário Oficial no modal do calendário** — link clicável para o PDF ao clicar em dia com afastamento
+- **Aba Tabela Completa removida** — Calendário Visual é a aba principal
+- **Botões "Nova Aba" e "Sincronizar Planilha" removidos** — e todo código/CSS associado limpo
+- **1 usuário admin cadastrado** — bandeira.lkp@gmail.com (role: admin, nome: Luma) no Firestore
+
+### O que ainda falta implementar ⏳
+- **Cadastrar os outros 39 usuários** (2 admins + 37 viewers) no Firebase Auth + Firestore
+- **Calendário interativo para admins** — adicionar/editar/remover afastamentos diretamente no calendário com link do Diário Oficial (atualmente os dados vêm dos JSONs e são somente leitura)
+- **Edição dos defensores titulares de cada DP** — atualmente vem do `docs/designacoes-2026.json`, sem interface de edição
+- **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
+
+### Decisões de arquitetura já tomadas
+- Sem automação do Diário Oficial — admin insere links manualmente
+- Sem migração de hospedagem — continua no GitHub Pages
+- Dados de afastamentos e designações ainda vêm dos JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) — apenas as seções de texto estático foram migradas para o Firestore
+- Função `syncFromSheets()` removida definitivamente
+
+---
+
 ## Regras Críticas (resumo rápido)
 
 - **Arquivo único:** existe apenas um `index.html` na raiz. Nunca duplicar.
