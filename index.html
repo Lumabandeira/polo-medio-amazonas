@@ -1604,6 +1604,7 @@
         }
         .form-titulares-header h2 { margin: 0; font-size: 1.4em; }
 
+        #form-titulares-overlay .form-af-content { max-width: 860px; }
         #form-titulares-body table { width: 100%; border-collapse: collapse; }
         #form-titulares-body th {
             background: var(--primary, #1e40af);
@@ -2938,31 +2939,23 @@
 
         function abrirModalTitulares() {
             const { defensores, defensorias } = jsonDesignacoes;
-            const internos = Object.keys(defensores)
-                .filter(k => !defensores[k].externo && defensores[k].ativo !== false);
-
-            const optsBase = `<option value="">— Vaga —</option>` +
-                internos.map(k => `<option value="${k}">${esc(defensores[k].nome)}</option>`).join('');
 
             let rows = '';
             Object.keys(defensorias).sort((a, b) => +a - +b).forEach(dpKey => {
                 const dp = defensorias[dpKey];
                 const vigente = dp.historico_titulares.find(h => h.fim === null) || {};
                 const defAtual = vigente.defensor || '';
+                // Resolve chave conhecida para nome completo; se já for nome livre, usa diretamente
+                const nomeAtual = defAtual ? (defensores[defAtual]?.nome || defAtual) : '';
                 const inicioAtual = vigente.inicio || '';
                 const portariaAtual = vigente.portaria_entrada || '';
-
-                const opts = optsBase.replace(
-                    `value="${defAtual}"`,
-                    `value="${defAtual}" selected`
-                );
 
                 rows += `<tr>
                     <td style="white-space:nowrap">
                         <strong>${esc(dp.nome)}</strong><br>
                         <span style="font-size:0.78em;color:var(--text-secondary)">${esc(dp.area)}</span>
                     </td>
-                    <td><select class="tit-select" data-dp="${dpKey}">${opts}</select></td>
+                    <td><input type="text" class="tit-titular" data-dp="${dpKey}" value="${esc(nomeAtual)}" placeholder="Nome completo ou deixe vazio (Vaga)"></td>
                     <td><input type="date" class="tit-inicio" data-dp="${dpKey}" value="${inicioAtual}"></td>
                     <td><input type="text" class="tit-portaria" data-dp="${dpKey}" value="${esc(portariaAtual)}" placeholder="Portaria nº ..."></td>
                 </tr>`;
@@ -2995,10 +2988,29 @@
             btn.textContent = '⏳ Salvando...';
 
             try {
+                const { defensores } = jsonDesignacoes;
+
+                // Resolve nome digitado para chave conhecida (se houver) ou mantém o nome livre
+                function resolverDefensor(nomeDigitado) {
+                    if (!nomeDigitado) return null;
+                    const match = Object.keys(defensores).find(k =>
+                        defensores[k].nome.toLowerCase() === nomeDigitado.toLowerCase() ||
+                        (defensores[k].nome_curto || '').toLowerCase() === nomeDigitado.toLowerCase()
+                    );
+                    return match || nomeDigitado;
+                }
+
+                // Resolve chave ou nome livre para nome exibível (para comparação)
+                function resolverNome(defVal) {
+                    if (!defVal) return null;
+                    return defensores[defVal]?.nome || defVal;
+                }
+
                 const saves = [];
-                document.querySelectorAll('.tit-select').forEach(sel => {
-                    const dpKey = sel.dataset.dp;
-                    const newDefensor = sel.value || null;
+                document.querySelectorAll('.tit-titular').forEach(input => {
+                    const dpKey = input.dataset.dp;
+                    const nomeDigitado = input.value.trim();
+                    const newDefensor = resolverDefensor(nomeDigitado);
                     const newInicio = document.querySelector(`.tit-inicio[data-dp="${dpKey}"]`).value;
                     const newPortaria = document.querySelector(`.tit-portaria[data-dp="${dpKey}"]`).value.trim() || null;
 
@@ -3006,7 +3018,10 @@
                     const vigenteIdx = dp.historico_titulares.findIndex(h => h.fim === null);
                     const vigente = vigenteIdx >= 0 ? dp.historico_titulares[vigenteIdx] : null;
 
-                    const defChanged = (vigente?.defensor || null) !== newDefensor;
+                    // Compara nomes resolvidos para detectar mudança corretamente
+                    const nomeAtual = resolverNome(vigente?.defensor || null);
+                    const nomeNovo  = resolverNome(newDefensor);
+                    const defChanged = nomeAtual !== nomeNovo;
                     const inicioChanged = (vigente?.inicio || '') !== newInicio;
                     const portariaChanged = (vigente?.portaria_entrada || null) !== newPortaria;
 
@@ -4498,7 +4513,7 @@
             Object.keys(defensorias).sort((a,b) => parseInt(a)-parseInt(b)).forEach(dpKey => {
                 const dp  = defensorias[dpKey];
                 const tit = getCurrentTitular(dpKey);
-                const titNome = tit ? esc(defensores[tit]?.nome || '-') : '<em>(Vaga)</em>';
+                const titNome = tit ? esc(defensores[tit]?.nome || tit) : '<em>(Vaga)</em>';
                 tableHtml += `<tr><td>${esc(dp.nome)}</td><td style="white-space:nowrap">${titNome}</td><td>${esc(dp.area)}</td></tr>`;
             });
             tableHtml += '</tbody></table></div>';
