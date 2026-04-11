@@ -2920,6 +2920,24 @@
             overlay.classList.add('active');
         }
 
+        // Quando o nome do titular muda, redefine a data de início para hoje
+        // evitando que uma mudança retroaja acidentalmente ao início da designação anterior
+        function onTitularNomeInput(input, hoje) {
+            const nomeOriginal = input.dataset.nomeOriginal || '';
+            const inicioCampo = document.querySelector(`.tit-inicio[data-dp="${input.dataset.dp}"]`);
+            if (!inicioCampo) return;
+            if (input.value.trim() !== nomeOriginal) {
+                // Titular diferente do original → data de início vira hoje
+                if (!inicioCampo.dataset.alteradoManualmente) {
+                    inicioCampo.value = hoje;
+                }
+            } else {
+                // Voltou ao nome original → restaura data original
+                inicioCampo.removeAttribute('data-alterado-manualmente');
+                inicioCampo.value = inicioCampo.dataset.valorOriginal || '';
+            }
+        }
+
         function toggleExMembros(btn) {
             const body = btn.nextElementSibling;
             const aberto = body.classList.toggle('aberto');
@@ -2939,6 +2957,7 @@
 
         function abrirModalTitulares() {
             const { defensores, defensorias } = jsonDesignacoes;
+            const hoje = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
 
             let rows = '';
             Object.keys(defensorias).sort((a, b) => +a - +b).forEach(dpKey => {
@@ -2950,13 +2969,20 @@
                 const inicioAtual = vigente.inicio || '';
                 const portariaAtual = vigente.portaria_entrada || '';
 
+                // ID único para o input de início desta DP
+                const idInicio = `tit-inicio-${dpKey}`;
+
                 rows += `<tr>
                     <td style="white-space:nowrap">
                         <strong>${esc(dp.nome)}</strong><br>
                         <span style="font-size:0.78em;color:var(--text-secondary)">${esc(dp.area)}</span>
                     </td>
-                    <td><input type="text" class="tit-titular" data-dp="${dpKey}" value="${esc(nomeAtual)}" placeholder="Nome completo ou deixe vazio (Vaga)"></td>
-                    <td><input type="date" class="tit-inicio" data-dp="${dpKey}" value="${inicioAtual}"></td>
+                    <td><input type="text" class="tit-titular" data-dp="${dpKey}"
+                        data-nome-original="${esc(nomeAtual)}"
+                        value="${esc(nomeAtual)}"
+                        placeholder="Nome completo ou deixe vazio (Vaga)"
+                        oninput="onTitularNomeInput(this, '${hoje}')"></td>
+                    <td><input type="date" id="${idInicio}" class="tit-inicio" data-dp="${dpKey}" value="${inicioAtual}" data-valor-original="${inicioAtual}"></td>
                     <td><input type="text" class="tit-portaria" data-dp="${dpKey}" value="${esc(portariaAtual)}" placeholder="Portaria nº ..."></td>
                 </tr>`;
             });
