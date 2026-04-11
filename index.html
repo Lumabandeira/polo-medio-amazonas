@@ -551,6 +551,36 @@
             border-left: 4px solid var(--secondary-color);
         }
 
+        .ex-membros-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            margin-top: 32px;
+            margin-bottom: 0;
+            color: var(--text-secondary);
+            font-size: 1em;
+            font-weight: 600;
+            letter-spacing: .03em;
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: inherit;
+        }
+        .ex-membros-toggle:hover { color: var(--primary-color); }
+        .ex-membros-toggle .toggle-arrow {
+            font-size: 0.75em;
+            transition: transform 0.25s;
+            display: inline-block;
+        }
+        .ex-membros-toggle.aberto .toggle-arrow { transform: rotate(90deg); }
+        .ex-membros-body {
+            display: none;
+            margin-top: 14px;
+        }
+        .ex-membros-body.aberto { display: block; }
+
         .defensor-card h4 {
             color: var(--primary-color);
             margin-bottom: 10px;
@@ -2889,6 +2919,13 @@
             overlay.classList.add('active');
         }
 
+        function toggleExMembros(btn) {
+            const body = btn.nextElementSibling;
+            const aberto = body.classList.toggle('aberto');
+            btn.classList.toggle('aberto', aberto);
+            btn.setAttribute('aria-expanded', aberto);
+        }
+
         function fecharFormAfastamento(event) {
             if (event && event.target !== event.currentTarget &&
                 !event.target.classList.contains('modal-close')) return;
@@ -4392,7 +4429,7 @@
             internos.forEach((defKey, i) => {
                 const defInfo = defensores[defKey];
                 const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
-                html += `<div class="defensor-card"><h4>${i+1}. ${esc(defInfo.nome)}</h4><ul>`;
+                html += `<div class="defensor-card"><h4>${esc(defInfo.nome)}</h4><ul>`;
                 if (dps.length > 0) {
                     dps.forEach(dpKey => {
                         const dp = defensorias[dpKey];
@@ -4400,8 +4437,14 @@
                             ? esc(dp.nome)
                             : `${esc(dp.nome)} (${esc(dp.area)})`;
                         const hist = (defHistorico[defKey] || []).find(h => h.dpKey === dpKey && !h.fim);
-                        const desde = hist ? ` <span style="color:var(--text-secondary);font-size:0.85em;">(desde ${fmtDate(hist.inicio)})</span>` : '';
-                        html += `<li>${label}${desde}</li>`;
+                        const s = `color:var(--text-secondary);font-size:0.82em;`;
+                        let detalhe = '';
+                        if (hist) {
+                            detalhe += `<br><span style="${s}">Primeiro dia: ${fmtDate(hist.inicio)}`;
+                            if (hist.portaria_entrada) detalhe += ` — ${esc(hist.portaria_entrada)}`;
+                            detalhe += `</span>`;
+                        }
+                        html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
                     });
                 } else {
                     html += '<li><em>Sem designação atual</em></li>';
@@ -4410,7 +4453,10 @@
             });
 
             if (exMembros.length > 0) {
-                html += `<h3 style="margin-top:32px;margin-bottom:14px;color:var(--text-secondary);font-size:1em;font-weight:600;letter-spacing:.03em;">Ex-membros</h3>`;
+                html += `<button class="ex-membros-toggle" onclick="toggleExMembros(this)" aria-expanded="false">
+                    <span class="toggle-arrow">▶</span> Ex-membros das Defensorias do Polo Médio Amazonas
+                </button>`;
+                html += `<div class="ex-membros-body">`;
                 exMembros.forEach(defKey => {
                     const defInfo = defensores[defKey];
                     const dpsHist = (defHistorico[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
@@ -4423,11 +4469,11 @@
                                 ? esc(dp.nome)
                                 : `${esc(dp.nome)} (${esc(dp.area)})`;
                             const s = `color:var(--text-secondary);font-size:0.82em;`;
-                            let detalhe = `<br><span style="${s}">Entrada: ${fmtDate(inicio)}`;
+                            let detalhe = `<br><span style="${s}">Primeiro dia: ${fmtDate(inicio)}`;
                             if (portaria_entrada) detalhe += ` — ${esc(portaria_entrada)}`;
                             detalhe += `</span>`;
                             if (fim) {
-                                detalhe += `<br><span style="${s}">Saída: ${fmtDate(fim)}`;
+                                detalhe += `<br><span style="${s}">Último dia: ${fmtDate(fim)}`;
                                 if (portaria_saida) detalhe += ` — ${esc(portaria_saida)}`;
                                 detalhe += `</span>`;
                             }
@@ -4438,6 +4484,7 @@
                     }
                     html += '</ul></div>';
                 });
+                html += `</div>`;
             }
 
             document.getElementById('defensores-content').innerHTML = html;
@@ -4447,14 +4494,14 @@
                     style="display:${userRole === 'admin' ? 'inline-flex' : 'none'};margin-left:12px;font-size:0.7em;padding:5px 12px;vertical-align:middle;">
                     ✏️ Editar Titulares
                 </button></h2>`
-                          + `<table><thead><tr><th>Órgão de Atuação</th><th>Defensor Público</th><th>Área de Atuação</th></tr></thead><tbody>`;
+                          + `<div style="overflow-x:auto"><table style="min-width:600px"><thead><tr><th style="width:30%">Órgão de Atuação</th><th style="min-width:260px">Defensor Público</th><th style="width:30%">Área de Atuação</th></tr></thead><tbody>`;
             Object.keys(defensorias).sort((a,b) => parseInt(a)-parseInt(b)).forEach(dpKey => {
                 const dp  = defensorias[dpKey];
                 const tit = getCurrentTitular(dpKey);
                 const titNome = tit ? esc(defensores[tit]?.nome || '-') : '<em>(Vaga)</em>';
-                tableHtml += `<tr><td>${esc(dp.nome)}</td><td>${titNome}</td><td>${esc(dp.area)}</td></tr>`;
+                tableHtml += `<tr><td>${esc(dp.nome)}</td><td style="white-space:nowrap">${titNome}</td><td>${esc(dp.area)}</td></tr>`;
             });
-            tableHtml += '</tbody></table>';
+            tableHtml += '</tbody></table></div>';
             document.getElementById('defensorias-table-content').innerHTML = tableHtml;
         }
 
