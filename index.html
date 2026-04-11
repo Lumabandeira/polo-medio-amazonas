@@ -1604,35 +1604,93 @@
         }
         .form-titulares-header h2 { margin: 0; font-size: 1.4em; }
 
-        #form-titulares-overlay .form-af-content { max-width: 860px; }
-        #form-titulares-body table { width: 100%; border-collapse: collapse; }
-        #form-titulares-body th {
-            background: var(--primary, #1e40af);
-            color: white;
-            padding: 10px 12px;
-            text-align: left;
-            font-size: 0.78em;
+        #form-titulares-overlay .form-af-content { max-width: 720px; }
+
+        .tit-entry-card {
+            background: var(--bg-color, #f9fafb);
+            border: 1px solid var(--border-color, #e5e7eb);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 14px;
+            position: relative;
+        }
+        .tit-entry-card.tit-entry-vigente {
+            border-left: 4px solid #10b981;
+        }
+        .tit-entry-card.tit-entry-passada {
+            border-left: 4px solid var(--text-secondary, #6b7280);
+            opacity: 0.85;
+        }
+        .tit-entry-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .tit-entry-grid .tit-field { display: flex; flex-direction: column; gap: 4px; }
+        .tit-entry-grid .tit-field.full { grid-column: 1 / -1; }
+        .tit-entry-grid label {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: var(--text-secondary, #6b7280);
             text-transform: uppercase;
-            letter-spacing: .05em;
+            letter-spacing: .04em;
         }
-        #form-titulares-body td {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border-color, #e5e7eb);
-            vertical-align: top;
-        }
-        #form-titulares-body tr:last-child td { border-bottom: none; }
-        #form-titulares-body select,
-        #form-titulares-body input[type="date"],
-        #form-titulares-body input[type="text"] {
-            width: 100%;
-            padding: 7px 10px;
+        .tit-entry-grid input[type="text"],
+        .tit-entry-grid input[type="date"] {
+            padding: 8px 10px;
             border: 1px solid var(--border-color, #d1d5db);
             border-radius: 8px;
             font-size: 0.9em;
             background: #fff;
             color: var(--text-primary, #1f2937);
             box-sizing: border-box;
+            width: 100%;
         }
+        .tit-entry-badge {
+            display: inline-block;
+            font-size: 0.72em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .tit-entry-badge.vigente { background: #d1fae5; color: #065f46; }
+        .tit-entry-badge.passada { background: #e5e7eb; color: #4b5563; }
+        .tit-btn-remover {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: none;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            border-radius: 6px;
+            padding: 3px 10px;
+            font-size: 0.78em;
+            cursor: pointer;
+        }
+        .tit-btn-remover:hover { background: #fef2f2; }
+        .tit-btn-adicionar {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed var(--border-color, #d1d5db);
+            border-radius: 12px;
+            background: transparent;
+            color: var(--text-secondary, #6b7280);
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+        .tit-btn-adicionar:hover { border-color: #1e40af; color: #1e40af; }
+        .tit-dp-info {
+            text-align: center;
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-color, #e5e7eb);
+        }
+        .tit-dp-info .dp-nome { font-size: 1.15em; font-weight: 700; color: var(--primary-color, #1e40af); }
+        .tit-dp-info .dp-area { font-size: 0.85em; color: var(--text-secondary, #6b7280); margin-top: 2px; }
 
         .form-af-header {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -2207,18 +2265,18 @@
         </div>
     </div>
 
-    <!-- Modal Editar Titulares (admin) -->
+    <!-- Modal Editar Titulares por DP (admin) -->
     <div id="form-titulares-overlay" class="form-af-overlay" onclick="fecharModalTitulares(event)">
         <div class="form-af-content" onclick="event.stopPropagation()">
             <div class="form-titulares-header">
-                <h2>✏️ Editar Titulares das Defensorias</h2>
+                <h2 id="form-titulares-titulo">✏️ Editar Titulares</h2>
                 <button class="modal-close" onclick="fecharModalTitulares()">×</button>
             </div>
             <div class="form-af-body">
                 <div id="form-titulares-body"></div>
                 <div class="form-actions" style="margin-top:20px">
                     <button type="button" class="btn-cancelar-form" onclick="fecharModalTitulares()">Cancelar</button>
-                    <button type="button" id="btn-salvar-titulares" class="btn-salvar-form" onclick="salvarTitulares()">💾 Salvar Alterações</button>
+                    <button type="button" id="btn-salvar-titulares" class="btn-salvar-form" onclick="salvarTitularesDp()">💾 Salvar Alterações</button>
                 </div>
             </div>
         </div>
@@ -2920,24 +2978,6 @@
             overlay.classList.add('active');
         }
 
-        // Quando o nome do titular muda, redefine a data de início para hoje
-        // evitando que uma mudança retroaja acidentalmente ao início da designação anterior
-        function onTitularNomeInput(input, hoje) {
-            const nomeOriginal = input.dataset.nomeOriginal || '';
-            const inicioCampo = document.querySelector(`.tit-inicio[data-dp="${input.dataset.dp}"]`);
-            if (!inicioCampo) return;
-            if (input.value.trim() !== nomeOriginal) {
-                // Titular diferente do original → data de início vira hoje
-                if (!inicioCampo.dataset.alteradoManualmente) {
-                    inicioCampo.value = hoje;
-                }
-            } else {
-                // Voltou ao nome original → restaura data original
-                inicioCampo.removeAttribute('data-alterado-manualmente');
-                inicioCampo.value = inicioCampo.dataset.valorOriginal || '';
-            }
-        }
-
         function toggleExMembros(btn) {
             const body = btn.nextElementSibling;
             const aberto = body.classList.toggle('aberto');
@@ -2952,155 +2992,221 @@
         }
 
         // =====================================================================
-        // MODAL EDITAR TITULARES
+        // MODAL EDITAR TITULARES — por DP individual
         // =====================================================================
 
-        function abrirModalTitulares() {
-            const { defensores, defensorias } = jsonDesignacoes;
-            const hoje = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+        let _titDpKey = null; // DP sendo editada no modal
 
-            let rows = '';
-            Object.keys(defensorias).sort((a, b) => +a - +b).forEach(dpKey => {
-                const dp = defensorias[dpKey];
-                const vigente = dp.historico_titulares.find(h => h.fim === null) || {};
-                const defAtual = vigente.defensor || '';
-                // Resolve chave conhecida para nome completo; se já for nome livre, usa diretamente
-                const nomeAtual = defAtual ? (defensores[defAtual]?.nome || defAtual) : '';
-                const inicioAtual = vigente.inicio || '';
-                const portariaAtual = vigente.portaria_entrada || '';
+        // Resolve nome digitado para chave interna (se houver) ou mantém nome livre
+        function _resolverDefensor(nomeDigitado) {
+            if (!nomeDigitado) return null;
+            const defensores = jsonDesignacoes.defensores;
+            const match = Object.keys(defensores).find(k =>
+                defensores[k].nome.toLowerCase() === nomeDigitado.toLowerCase() ||
+                (defensores[k].nome_curto || '').toLowerCase() === nomeDigitado.toLowerCase()
+            );
+            return match || nomeDigitado;
+        }
 
-                // ID único para o input de início desta DP
-                const idInicio = `tit-inicio-${dpKey}`;
+        // Resolve chave ou nome livre para nome exibível
+        function _resolverNomeDefensor(defVal) {
+            if (!defVal) return '';
+            return jsonDesignacoes.defensores[defVal]?.nome || defVal;
+        }
 
-                rows += `<tr>
-                    <td style="white-space:nowrap">
-                        <strong>${esc(dp.nome)}</strong><br>
-                        <span style="font-size:0.78em;color:var(--text-secondary)">${esc(dp.area)}</span>
-                    </td>
-                    <td><input type="text" class="tit-titular" data-dp="${dpKey}"
-                        data-nome-original="${esc(nomeAtual)}"
-                        value="${esc(nomeAtual)}"
-                        placeholder="Nome completo ou deixe vazio (Vaga)"
-                        oninput="onTitularNomeInput(this, '${hoje}')"></td>
-                    <td><input type="date" id="${idInicio}" class="tit-inicio" data-dp="${dpKey}" value="${inicioAtual}" data-valor-original="${inicioAtual}"></td>
-                    <td><input type="text" class="tit-portaria" data-dp="${dpKey}" value="${esc(portariaAtual)}" placeholder="Portaria nº ..."></td>
-                </tr>`;
+        function abrirModalTitulares(dpKey) {
+            _titDpKey = dpKey;
+            const dp = jsonDesignacoes.defensorias[dpKey];
+            if (!dp) return;
+
+            document.getElementById('form-titulares-titulo').textContent =
+                `✏️ ${dp.nome}`;
+
+            _renderEntradas(dpKey);
+            document.getElementById('form-titulares-overlay').classList.add('active');
+        }
+
+        function _renderEntradas(dpKey) {
+            const dp = jsonDesignacoes.defensorias[dpKey];
+            const historico = dp.historico_titulares;
+            const hoje = new Date().toISOString().split('T')[0];
+
+            let html = `<div class="tit-dp-info">
+                <div class="dp-nome">${esc(dp.nome)}</div>
+                <div class="dp-area">${esc(dp.area)}</div>
+            </div>`;
+
+            historico.forEach((h, idx) => {
+                const isVigente = h.fim === null;
+                const tipo = isVigente ? 'vigente' : 'passada';
+                const nomeDisplay = _resolverNomeDefensor(h.defensor);
+
+                html += `<div class="tit-entry-card tit-entry-${tipo}" data-idx="${idx}">
+                    <span class="tit-entry-badge ${tipo}">${isVigente ? 'Titular atual' : 'Histórico'}</span>
+                    <button type="button" class="tit-btn-remover" onclick="_removerEntrada(${idx})">✕ Remover</button>
+                    <div class="tit-entry-grid">
+                        <div class="tit-field full">
+                            <label>Nome do defensor</label>
+                            <input type="text" class="tit-e-nome" data-idx="${idx}"
+                                value="${esc(nomeDisplay)}"
+                                placeholder="Nome completo (vazio = Vaga)">
+                        </div>
+                        <div class="tit-field">
+                            <label>Primeiro dia</label>
+                            <input type="date" class="tit-e-inicio" data-idx="${idx}"
+                                value="${h.inicio || ''}">
+                        </div>
+                        <div class="tit-field">
+                            <label>Último dia</label>
+                            <input type="date" class="tit-e-fim" data-idx="${idx}"
+                                value="${h.fim || ''}"
+                                placeholder="Em branco = vigente"
+                                ${isVigente ? '' : ''}>
+                        </div>
+                        <div class="tit-field">
+                            <label>Portaria de entrada</label>
+                            <input type="text" class="tit-e-portent" data-idx="${idx}"
+                                value="${esc(h.portaria_entrada || '')}"
+                                placeholder="Portaria nº ...">
+                        </div>
+                        <div class="tit-field">
+                            <label>Portaria de saída</label>
+                            <input type="text" class="tit-e-portsai" data-idx="${idx}"
+                                value="${esc(h.portaria_saida || '')}"
+                                placeholder="Portaria nº ...">
+                        </div>
+                    </div>
+                </div>`;
             });
 
-            document.getElementById('form-titulares-body').innerHTML = `
-                <table>
-                    <thead><tr>
-                        <th>Defensoria</th>
-                        <th>Titular</th>
-                        <th style="width:150px">Início</th>
-                        <th>Portaria de Entrada</th>
-                    </tr></thead>
-                    <tbody>${rows}</tbody>
-                </table>`;
+            html += `<button type="button" class="tit-btn-adicionar" onclick="_adicionarEntrada()">
+                + Adicionar novo titular
+            </button>`;
 
-            document.getElementById('form-titulares-overlay').classList.add('active');
+            document.getElementById('form-titulares-body').innerHTML = html;
+        }
+
+        function _adicionarEntrada() {
+            const dp = jsonDesignacoes.defensorias[_titDpKey];
+            if (!dp) return;
+            const hoje = new Date().toISOString().split('T')[0];
+
+            // Fecha a entrada vigente no DOM se existir (preenche "Último dia" com hoje)
+            const fimInputs = document.querySelectorAll('.tit-e-fim');
+            fimInputs.forEach(input => {
+                if (!input.value) input.value = hoje;
+            });
+
+            // Adiciona entrada temporária ao histórico em memória para re-render
+            dp.historico_titulares.push({
+                defensor: null,
+                inicio: hoje,
+                fim: null,
+                portaria_entrada: null,
+                portaria_saida: null
+            });
+
+            // Salvar valores atuais do DOM antes de re-render
+            _sincronizarDomParaHistorico(_titDpKey);
+
+            _renderEntradas(_titDpKey);
+        }
+
+        function _removerEntrada(idx) {
+            const dp = jsonDesignacoes.defensorias[_titDpKey];
+            if (!dp || dp.historico_titulares.length <= 1) {
+                mostrarToast('❌ A DP deve ter pelo menos uma entrada no histórico.', true);
+                return;
+            }
+            // Salvar valores atuais do DOM antes de remover
+            _sincronizarDomParaHistorico(_titDpKey);
+            dp.historico_titulares.splice(idx, 1);
+            _renderEntradas(_titDpKey);
+        }
+
+        // Sincroniza os valores dos inputs do DOM de volta para o array historico_titulares em memória
+        function _sincronizarDomParaHistorico(dpKey) {
+            const dp = jsonDesignacoes.defensorias[dpKey];
+            if (!dp) return;
+            document.querySelectorAll('.tit-entry-card').forEach(card => {
+                const idx = parseInt(card.dataset.idx);
+                if (isNaN(idx) || !dp.historico_titulares[idx]) return;
+                const h = dp.historico_titulares[idx];
+                const nome = card.querySelector('.tit-e-nome')?.value.trim() || '';
+                h.defensor = _resolverDefensor(nome);
+                h.inicio = card.querySelector('.tit-e-inicio')?.value || h.inicio;
+                h.fim = card.querySelector('.tit-e-fim')?.value || null;
+                h.portaria_entrada = card.querySelector('.tit-e-portent')?.value.trim() || null;
+                h.portaria_saida = card.querySelector('.tit-e-portsai')?.value.trim() || null;
+            });
         }
 
         function fecharModalTitulares(event) {
             if (event && event.target !== event.currentTarget &&
                 !event.target.classList.contains('modal-close')) return;
+            // Reverter mudanças em memória não salvas — recarregar do snapshot
+            if (_titDpKey) {
+                reloadTitularesData();
+                _titDpKey = null;
+            }
             document.getElementById('form-titulares-overlay').classList.remove('active');
         }
 
-        async function salvarTitulares() {
-            const { defensorias } = jsonDesignacoes;
+        async function salvarTitularesDp() {
+            if (!_titDpKey) return;
+            const dpKey = _titDpKey;
+            const dp = jsonDesignacoes.defensorias[dpKey];
+            if (!dp) return;
+
             const btn = document.getElementById('btn-salvar-titulares');
             btn.disabled = true;
             btn.textContent = '⏳ Salvando...';
 
             try {
-                const { defensores } = jsonDesignacoes;
+                // Sincronizar DOM → memória
+                _sincronizarDomParaHistorico(dpKey);
 
-                // Resolve nome digitado para chave conhecida (se houver) ou mantém o nome livre
-                function resolverDefensor(nomeDigitado) {
-                    if (!nomeDigitado) return null;
-                    const match = Object.keys(defensores).find(k =>
-                        defensores[k].nome.toLowerCase() === nomeDigitado.toLowerCase() ||
-                        (defensores[k].nome_curto || '').toLowerCase() === nomeDigitado.toLowerCase()
-                    );
-                    return match || nomeDigitado;
+                const historico = dp.historico_titulares;
+
+                // Validações
+                for (let i = 0; i < historico.length; i++) {
+                    const h = historico[i];
+                    if (!h.inicio) {
+                        throw new Error(`Entrada ${i + 1}: informe o "Primeiro dia".`);
+                    }
+                    if (h.fim && h.fim < h.inicio) {
+                        throw new Error(`Entrada ${i + 1}: "Último dia" não pode ser anterior ao "Primeiro dia".`);
+                    }
                 }
 
-                // Resolve chave ou nome livre para nome exibível (para comparação)
-                function resolverNome(defVal) {
-                    if (!defVal) return null;
-                    return defensores[defVal]?.nome || defVal;
+                // Verificar que existe no máximo 1 entrada sem fim (vigente)
+                const vigentes = historico.filter(h => !h.fim);
+                if (vigentes.length > 1) {
+                    throw new Error('Apenas uma entrada pode estar sem "Último dia" (titular atual).');
                 }
 
-                const saves = [];
-                document.querySelectorAll('.tit-titular').forEach(input => {
-                    const dpKey = input.dataset.dp;
-                    const nomeDigitado = input.value.trim();
-                    const newDefensor = resolverDefensor(nomeDigitado);
-                    const newInicio = document.querySelector(`.tit-inicio[data-dp="${dpKey}"]`).value;
-                    const newPortaria = document.querySelector(`.tit-portaria[data-dp="${dpKey}"]`).value.trim() || null;
+                // Ordenar por data de início
+                historico.sort((a, b) => (a.inicio || '').localeCompare(b.inicio || ''));
 
-                    const dp = defensorias[dpKey];
-                    const vigenteIdx = dp.historico_titulares.findIndex(h => h.fim === null);
-                    const vigente = vigenteIdx >= 0 ? dp.historico_titulares[vigenteIdx] : null;
-
-                    // Compara nomes resolvidos para detectar mudança corretamente
-                    const nomeAtual = resolverNome(vigente?.defensor || null);
-                    const nomeNovo  = resolverNome(newDefensor);
-                    const defChanged = nomeAtual !== nomeNovo;
-                    const inicioChanged = (vigente?.inicio || '') !== newInicio;
-                    const portariaChanged = (vigente?.portaria_entrada || null) !== newPortaria;
-
-                    if (!defChanged && !inicioChanged && !portariaChanged) return;
-
-                    // Validação básica
-                    if (defChanged && !newInicio) {
-                        throw new Error(`Informe a data de início para ${dp.nome}.`);
-                    }
-
-                    const historico = dp.historico_titulares.map(h => ({ ...h }));
-
-                    if (defChanged) {
-                        // Fechar entrada vigente anterior e criar nova
-                        const dataFim = newInicio || new Date().toISOString().split('T')[0];
-                        if (vigenteIdx >= 0) historico[vigenteIdx].fim = dataFim;
-                        historico.push({
-                            defensor: newDefensor,
-                            inicio: newInicio || new Date().toISOString().split('T')[0],
-                            fim: null,
-                            portaria_entrada: newPortaria || null
-                        });
-                    } else {
-                        // Corrigir início ou portaria da entrada vigente (mesmo titular)
-                        if (vigenteIdx >= 0) {
-                            if (newInicio) historico[vigenteIdx].inicio = newInicio;
-                            historico[vigenteIdx].portaria_entrada = newPortaria || null;
-                        }
-                    }
-
-                    saves.push({ dpKey, historico });
+                // Salvar no Firestore
+                await db.collection('titulares_admin').doc(dpKey).set({
+                    historico_titulares: historico.map(h => ({
+                        defensor: h.defensor || null,
+                        inicio: h.inicio,
+                        fim: h.fim || null,
+                        portaria_entrada: h.portaria_entrada || null,
+                        portaria_saida: h.portaria_saida || null
+                    })),
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                if (saves.length === 0) {
-                    mostrarToast('Nenhuma alteração detectada.');
-                    fecharModalTitulares();
-                    return;
-                }
-
-                await Promise.all(saves.map(({ dpKey, historico }) =>
-                    db.collection('titulares_admin').doc(dpKey).set({
-                        historico_titulares: historico,
-                        atualizado_por: currentUser.email,
-                        atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
-                    })
-                ));
-
+                _titDpKey = null;
                 await reloadTitularesData();
-                fecharModalTitulares();
-                const n = saves.length;
-                mostrarToast(`✅ ${n} DP${n > 1 ? 's' : ''} atualizada${n > 1 ? 's' : ''} com sucesso.`);
+                document.getElementById('form-titulares-overlay').classList.remove('active');
+                mostrarToast(`✅ ${dp.nome} atualizada com sucesso.`);
 
-            } catch(e) {
+            } catch (e) {
                 console.error('Erro ao salvar titulares:', e);
                 mostrarToast('❌ ' + e.message, true);
             } finally {
@@ -4530,17 +4636,15 @@
 
             document.getElementById('defensores-content').innerHTML = html;
 
-            let tableHtml = `<h2>📍 Designações Atuais (2026)
-                <button class="btn-editar admin-only" onclick="abrirModalTitulares()"
-                    style="display:${userRole === 'admin' ? 'inline-flex' : 'none'};margin-left:12px;font-size:0.7em;padding:5px 12px;vertical-align:middle;">
-                    ✏️ Editar Titulares
-                </button></h2>`
-                          + `<div style="overflow-x:auto"><table style="min-width:600px"><thead><tr><th style="width:30%">Órgão de Atuação</th><th style="min-width:260px">Defensor Público</th><th style="width:30%">Área de Atuação</th></tr></thead><tbody>`;
+            const isAdmin = userRole === 'admin';
+            let tableHtml = `<h2>📍 Designações Atuais (2026)</h2>`
+                          + `<div style="overflow-x:auto"><table style="min-width:600px"><thead><tr><th style="width:28%">Órgão de Atuação</th><th style="min-width:260px">Defensor Público</th><th style="width:28%">Área de Atuação</th>${isAdmin ? '<th style="width:44px"></th>' : ''}</tr></thead><tbody>`;
             Object.keys(defensorias).sort((a,b) => parseInt(a)-parseInt(b)).forEach(dpKey => {
                 const dp  = defensorias[dpKey];
                 const tit = getCurrentTitular(dpKey);
                 const titNome = tit ? esc(defensores[tit]?.nome || tit) : '<em>(Vaga)</em>';
-                tableHtml += `<tr><td>${esc(dp.nome)}</td><td style="white-space:nowrap">${titNome}</td><td>${esc(dp.area)}</td></tr>`;
+                const btnEdit = isAdmin ? `<td><button class="btn-editar admin-only" style="display:inline-flex;padding:4px 8px;font-size:0.8em;" onclick="abrirModalTitulares('${dpKey}')">✏️</button></td>` : '';
+                tableHtml += `<tr><td>${esc(dp.nome)}</td><td style="white-space:nowrap">${titNome}</td><td>${esc(dp.area)}</td>${btnEdit}</tr>`;
             });
             tableHtml += '</tbody></table></div>';
             document.getElementById('defensorias-table-content').innerHTML = tableHtml;
