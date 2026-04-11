@@ -1563,6 +1563,46 @@
             animation: slideDown 0.3s;
         }
 
+        .form-titulares-header {
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+            color: white;
+            padding: 22px 28px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .form-titulares-header h2 { margin: 0; font-size: 1.4em; }
+
+        #form-titulares-body table { width: 100%; border-collapse: collapse; }
+        #form-titulares-body th {
+            background: var(--primary, #1e40af);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.78em;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+        #form-titulares-body td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color, #e5e7eb);
+            vertical-align: top;
+        }
+        #form-titulares-body tr:last-child td { border-bottom: none; }
+        #form-titulares-body select,
+        #form-titulares-body input[type="date"],
+        #form-titulares-body input[type="text"] {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid var(--border-color, #d1d5db);
+            border-radius: 8px;
+            font-size: 0.9em;
+            background: #fff;
+            color: var(--text-primary, #1f2937);
+            box-sizing: border-box;
+        }
+
         .form-af-header {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
@@ -2136,6 +2176,23 @@
         </div>
     </div>
 
+    <!-- Modal Editar Titulares (admin) -->
+    <div id="form-titulares-overlay" class="form-af-overlay" onclick="fecharModalTitulares(event)">
+        <div class="form-af-content" onclick="event.stopPropagation()">
+            <div class="form-titulares-header">
+                <h2>✏️ Editar Titulares das Defensorias</h2>
+                <button class="modal-close" onclick="fecharModalTitulares()">×</button>
+            </div>
+            <div class="form-af-body">
+                <div id="form-titulares-body"></div>
+                <div class="form-actions" style="margin-top:20px">
+                    <button type="button" class="btn-cancelar-form" onclick="fecharModalTitulares()">Cancelar</button>
+                    <button type="button" id="btn-salvar-titulares" class="btn-salvar-form" onclick="salvarTitulares()">💾 Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para Detalhes -->
     <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
@@ -2191,6 +2248,7 @@
         // Mapa de registros adicionados pelo admin via Firestore
         let afastamentosFirestoreMap = {}; // firestoreId → record completo
         let jsonDataLoaded = false;        // true após loadJSONData concluir
+        let _jsonDesignacoesBkDefensorias = null; // snapshot imutável do JSON base (para reloadTitularesData)
         let _formAfMesCtx = null;          // contexto de dia para reabrir modal
         let _formAfDiaCtx = null;
 
@@ -2440,6 +2498,32 @@
             afastamentos = buildAfastamentosFromJSONRegistros(jsonAfastamentos.registros);
             buildDetalhesFromJSONEventos(jsonDesignacoes.eventos, jsonDesignacoes.defensores);
             await loadAfastamentosFirestore();
+        }
+
+        async function loadTitularesFirestore() {
+            try {
+                const snapshot = await db.collection('titulares_admin').get();
+                snapshot.forEach(doc => {
+                    const dpKey = doc.id;
+                    if (jsonDesignacoes.defensorias[dpKey]) {
+                        jsonDesignacoes.defensorias[dpKey].historico_titulares = doc.data().historico_titulares;
+                    }
+                });
+                renderDefensorias();
+                renderDesignacoes();
+                renderCalendar();
+            } catch(e) {
+                console.warn('Firestore titulares_admin:', e.message);
+            }
+        }
+
+        async function reloadTitularesData() {
+            // Restaura snapshot imutável do JSON antes de reaplicar Firestore
+            Object.keys(_jsonDesignacoesBkDefensorias).forEach(k => {
+                jsonDesignacoes.defensorias[k].historico_titulares =
+                    JSON.parse(JSON.stringify(_jsonDesignacoesBkDefensorias[k].historico_titulares));
+            });
+            await loadTitularesFirestore();
         }
 
         // Função para obter dados detalhados de um dia específico
@@ -2809,6 +2893,142 @@
             if (event && event.target !== event.currentTarget &&
                 !event.target.classList.contains('modal-close')) return;
             document.getElementById('form-af-overlay').classList.remove('active');
+        }
+
+        // =====================================================================
+        // MODAL EDITAR TITULARES
+        // =====================================================================
+
+        function abrirModalTitulares() {
+            const { defensores, defensorias } = jsonDesignacoes;
+            const internos = Object.keys(defensores)
+                .filter(k => !defensores[k].externo && defensores[k].ativo !== false);
+
+            const optsBase = `<option value="">— Vaga —</option>` +
+                internos.map(k => `<option value="${k}">${esc(defensores[k].nome)}</option>`).join('');
+
+            let rows = '';
+            Object.keys(defensorias).sort((a, b) => +a - +b).forEach(dpKey => {
+                const dp = defensorias[dpKey];
+                const vigente = dp.historico_titulares.find(h => h.fim === null) || {};
+                const defAtual = vigente.defensor || '';
+                const inicioAtual = vigente.inicio || '';
+                const portariaAtual = vigente.portaria_entrada || '';
+
+                const opts = optsBase.replace(
+                    `value="${defAtual}"`,
+                    `value="${defAtual}" selected`
+                );
+
+                rows += `<tr>
+                    <td style="white-space:nowrap">
+                        <strong>${esc(dp.nome)}</strong><br>
+                        <span style="font-size:0.78em;color:var(--text-secondary)">${esc(dp.area)}</span>
+                    </td>
+                    <td><select class="tit-select" data-dp="${dpKey}">${opts}</select></td>
+                    <td><input type="date" class="tit-inicio" data-dp="${dpKey}" value="${inicioAtual}"></td>
+                    <td><input type="text" class="tit-portaria" data-dp="${dpKey}" value="${esc(portariaAtual)}" placeholder="Portaria nº ..."></td>
+                </tr>`;
+            });
+
+            document.getElementById('form-titulares-body').innerHTML = `
+                <table>
+                    <thead><tr>
+                        <th>Defensoria</th>
+                        <th>Titular</th>
+                        <th style="width:150px">Início</th>
+                        <th>Portaria de Entrada</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>`;
+
+            document.getElementById('form-titulares-overlay').classList.add('active');
+        }
+
+        function fecharModalTitulares(event) {
+            if (event && event.target !== event.currentTarget &&
+                !event.target.classList.contains('modal-close')) return;
+            document.getElementById('form-titulares-overlay').classList.remove('active');
+        }
+
+        async function salvarTitulares() {
+            const { defensorias } = jsonDesignacoes;
+            const btn = document.getElementById('btn-salvar-titulares');
+            btn.disabled = true;
+            btn.textContent = '⏳ Salvando...';
+
+            try {
+                const saves = [];
+                document.querySelectorAll('.tit-select').forEach(sel => {
+                    const dpKey = sel.dataset.dp;
+                    const newDefensor = sel.value || null;
+                    const newInicio = document.querySelector(`.tit-inicio[data-dp="${dpKey}"]`).value;
+                    const newPortaria = document.querySelector(`.tit-portaria[data-dp="${dpKey}"]`).value.trim() || null;
+
+                    const dp = defensorias[dpKey];
+                    const vigenteIdx = dp.historico_titulares.findIndex(h => h.fim === null);
+                    const vigente = vigenteIdx >= 0 ? dp.historico_titulares[vigenteIdx] : null;
+
+                    const defChanged = (vigente?.defensor || null) !== newDefensor;
+                    const inicioChanged = (vigente?.inicio || '') !== newInicio;
+                    const portariaChanged = (vigente?.portaria_entrada || null) !== newPortaria;
+
+                    if (!defChanged && !inicioChanged && !portariaChanged) return;
+
+                    // Validação básica
+                    if (defChanged && !newInicio) {
+                        throw new Error(`Informe a data de início para ${dp.nome}.`);
+                    }
+
+                    const historico = dp.historico_titulares.map(h => ({ ...h }));
+
+                    if (defChanged) {
+                        // Fechar entrada vigente anterior e criar nova
+                        const dataFim = newInicio || new Date().toISOString().split('T')[0];
+                        if (vigenteIdx >= 0) historico[vigenteIdx].fim = dataFim;
+                        historico.push({
+                            defensor: newDefensor,
+                            inicio: newInicio || new Date().toISOString().split('T')[0],
+                            fim: null,
+                            portaria_entrada: newPortaria || null
+                        });
+                    } else {
+                        // Corrigir início ou portaria da entrada vigente (mesmo titular)
+                        if (vigenteIdx >= 0) {
+                            if (newInicio) historico[vigenteIdx].inicio = newInicio;
+                            historico[vigenteIdx].portaria_entrada = newPortaria || null;
+                        }
+                    }
+
+                    saves.push({ dpKey, historico });
+                });
+
+                if (saves.length === 0) {
+                    mostrarToast('Nenhuma alteração detectada.');
+                    fecharModalTitulares();
+                    return;
+                }
+
+                await Promise.all(saves.map(({ dpKey, historico }) =>
+                    db.collection('titulares_admin').doc(dpKey).set({
+                        historico_titulares: historico,
+                        atualizado_por: currentUser.email,
+                        atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                    })
+                ));
+
+                await reloadTitularesData();
+                fecharModalTitulares();
+                const n = saves.length;
+                mostrarToast(`✅ ${n} DP${n > 1 ? 's' : ''} atualizada${n > 1 ? 's' : ''} com sucesso.`);
+
+            } catch(e) {
+                console.error('Erro ao salvar titulares:', e);
+                mostrarToast('❌ ' + e.message, true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Salvar Alterações';
+            }
         }
 
         async function salvarAfastamentoFirestore() {
@@ -4222,7 +4442,11 @@
 
             document.getElementById('defensores-content').innerHTML = html;
 
-            let tableHtml = `<h2>📍 Designações Atuais (2026)</h2>`
+            let tableHtml = `<h2>📍 Designações Atuais (2026)
+                <button class="btn-editar admin-only" onclick="abrirModalTitulares()"
+                    style="display:${userRole === 'admin' ? 'inline-flex' : 'none'};margin-left:12px;font-size:0.7em;padding:5px 12px;vertical-align:middle;">
+                    ✏️ Editar Titulares
+                </button></h2>`
                           + `<table><thead><tr><th>Órgão de Atuação</th><th>Defensor Público</th><th>Área de Atuação</th></tr></thead><tbody>`;
             Object.keys(defensorias).sort((a,b) => parseInt(a)-parseInt(b)).forEach(dpKey => {
                 const dp  = defensorias[dpKey];
@@ -4249,6 +4473,7 @@
 
                 jsonAfastamentos = await resAf.json();
                 jsonDesignacoes  = await resDes.json();
+                _jsonDesignacoesBkDefensorias = JSON.parse(JSON.stringify(jsonDesignacoes.defensorias));
 
                 // Reconstruir dados operacionais a partir dos JSONs
                 afastamentos = buildAfastamentosFromJSONRegistros(jsonAfastamentos.registros);
@@ -4269,7 +4494,10 @@
 
                 // Sinalizar que os JSONs estão prontos e carregar dados do Firestore se autenticado
                 jsonDataLoaded = true;
-                if (currentUser) await loadAfastamentosFirestore();
+                if (currentUser) {
+                    await loadAfastamentosFirestore();
+                    await loadTitularesFirestore();
+                }
 
             } catch(err) {
                 console.error('Erro ao carregar dados JSON:', err);
@@ -4333,7 +4561,7 @@
             }
 
             // Se os JSONs já carregaram antes da autenticação, carregar dados do Firestore agora
-            if (jsonDataLoaded) loadAfastamentosFirestore();
+            if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); }
         }
 
         // ── Login ──────────────────────────────────────────────────────────
