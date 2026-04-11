@@ -1415,6 +1415,33 @@
             border-color: rgba(255, 255, 255, 0.5);
         }
 
+        #btn-editar-header {
+            display: none;
+            position: absolute;
+            top: 105px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.82em;
+            font-weight: 600;
+            transition: all 0.3s;
+            align-items: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+        #btn-editar-header:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        #btn-editar-header.ativo {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.6);
+        }
+
         #admin-badge {
             display: none;
             position: absolute;
@@ -1961,6 +1988,7 @@
     <div class="container">
         <header>
             <button id="auth-btn" class="auth-btn" onclick="fazerLogout()">🚪 Sair</button>
+            <button id="btn-editar-header" onclick="toggleModoEdicao()">✏️ Editar</button>
             <span id="admin-badge">⚙️ ADMIN</span>
             <button id="inicio-btn" class="inicio-btn" onclick="showLanding()">🏠 Início</button>
             <h1>🏛️ Polo Médio Amazonas</h1>
@@ -2978,6 +3006,38 @@
             overlay.classList.add('active');
         }
 
+        let _modoEdicaoAtivo = false;
+
+        function toggleModoEdicao() {
+            _modoEdicaoAtivo = !_modoEdicaoAtivo;
+            const btn = document.getElementById('btn-editar-header');
+            btn.textContent = _modoEdicaoAtivo ? '✅ Pronto' : '✏️ Editar';
+            btn.classList.toggle('ativo', _modoEdicaoAtivo);
+            _aplicarModoEdicao();
+        }
+
+        function _aplicarModoEdicao() {
+            const show = _modoEdicaoAtivo ? 'inline-flex' : 'none';
+            // Botões de edição das seções (Alternância, Observação)
+            document.querySelectorAll('#designacoes .admin-only').forEach(el => {
+                el.style.display = show;
+            });
+            // Células ✏️ por linha na tabela Designações Atuais
+            document.querySelectorAll('.cel-editar-dp').forEach(c => {
+                c.style.display = _modoEdicaoAtivo ? 'table-cell' : 'none';
+            });
+            const colHeader = document.querySelector('.col-editar-dp');
+            if (colHeader) colHeader.style.display = _modoEdicaoAtivo ? 'table-cell' : 'none';
+        }
+
+        function _desativarModoEdicao() {
+            if (!_modoEdicaoAtivo) return;
+            _modoEdicaoAtivo = false;
+            const btn = document.getElementById('btn-editar-header');
+            if (btn) { btn.textContent = '✏️ Editar'; btn.classList.remove('ativo'); }
+            _aplicarModoEdicao();
+        }
+
         function toggleExMembros(btn) {
             const body = btn.nextElementSibling;
             const aberto = body.classList.toggle('aberto');
@@ -3347,12 +3407,20 @@
         function showTab(tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-button');
-            
+
             tabs.forEach(tab => tab.classList.remove('active'));
             buttons.forEach(btn => btn.classList.remove('active'));
-            
+
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+
+            // Botão editar do header: só visível na aba Defensorias + admin
+            const btnEditar = document.getElementById('btn-editar-header');
+            if (btnEditar) {
+                btnEditar.style.display = (tabName === 'designacoes' && userRole === 'admin') ? 'flex' : 'none';
+            }
+            // Desativar modo edição ao trocar de aba
+            _desativarModoEdicao();
 
             if (tabName === 'calendario') {
                 renderCalendar();
@@ -4120,6 +4188,9 @@
             document.getElementById('inicio-btn').style.display = 'none';
             // Restaurar visibilidade do botão Diário Oficial para próxima navegação
             document.getElementById('tab-btn-diario').style.display = '';
+            // Esconder botão editar e desativar modo edição
+            document.getElementById('btn-editar-header').style.display = 'none';
+            _desativarModoEdicao();
         }
 
         function showSection(tabName) {
@@ -4132,6 +4203,11 @@
                 t.classList.remove('active');
             });
             document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+
+            // Botão editar no header: só na aba Defensorias + admin
+            const btnEdH = document.getElementById('btn-editar-header');
+            if (btnEdH) btnEdH.style.display = (tabName === 'designacoes' && userRole === 'admin') ? 'flex' : 'none';
+            _desativarModoEdicao();
 
             if (tabName === 'diario-oficial') {
                 // Diário Oficial: sem barra de abas, conteúdo direto
@@ -4650,12 +4726,12 @@
 
             const isAdmin = userRole === 'admin';
             let tableHtml = `<h2>📍 Designações Atuais (2026)</h2>`
-                          + `<div style="overflow-x:auto"><table style="min-width:600px"><thead><tr><th style="width:28%">Órgão de Atuação</th><th style="min-width:260px">Defensor Público</th><th style="width:28%">Área de Atuação</th>${isAdmin ? '<th style="width:44px"></th>' : ''}</tr></thead><tbody>`;
+                          + `<div style="overflow-x:auto"><table style="min-width:600px"><thead><tr><th style="width:28%">Órgão de Atuação</th><th style="min-width:260px">Defensor Público</th><th style="width:28%">Área de Atuação</th>${isAdmin ? '<th style="width:44px;display:none" class="col-editar-dp"></th>' : ''}</tr></thead><tbody>`;
             Object.keys(defensorias).sort((a,b) => parseInt(a)-parseInt(b)).forEach(dpKey => {
                 const dp  = defensorias[dpKey];
                 const tit = getCurrentTitular(dpKey);
                 const titNome = tit ? esc(defensores[tit]?.nome || tit) : '<em>(Vaga)</em>';
-                const btnEdit = isAdmin ? `<td><button class="btn-editar admin-only" style="display:inline-flex;padding:4px 8px;font-size:0.8em;" onclick="abrirModalTitulares('${dpKey}')">✏️</button></td>` : '';
+                const btnEdit = isAdmin ? `<td class="cel-editar-dp" style="display:none"><button class="btn-editar" style="padding:4px 8px;font-size:0.8em;" onclick="abrirModalTitulares('${dpKey}')">✏️</button></td>` : '';
                 tableHtml += `<tr><td>${esc(dp.nome)}</td><td style="white-space:nowrap">${titNome}</td><td>${esc(dp.area)}</td>${btnEdit}</tr>`;
             });
             tableHtml += '</tbody></table></div>';
@@ -4758,10 +4834,13 @@
 
             // Exibir elementos de admin
             if (userRole === 'admin') {
-                document.querySelectorAll('.admin-only').forEach(el => {
-                    el.style.display = 'inline-flex';
-                });
                 document.getElementById('admin-badge').style.display = 'inline-block';
+                // Botão editar no header: visível se aba Defensorias está ativa
+                const abaDef = document.getElementById('designacoes');
+                if (abaDef && abaDef.classList.contains('active')) {
+                    document.getElementById('btn-editar-header').style.display = 'flex';
+                }
+                // .admin-only ficam ocultos até o admin clicar em "Editar"
             }
 
             // Se os JSONs já carregaram antes da autenticação, carregar dados do Firestore agora
