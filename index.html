@@ -3036,7 +3036,24 @@
                 <div class="dp-area">${esc(dp.area)}</div>
             </div>`;
 
-            historico.forEach((h, idx) => {
+            // Botão de adicionar no topo, logo abaixo do nome da DP
+            html += `<button type="button" class="tit-btn-adicionar" onclick="_adicionarEntrada()" style="margin-bottom:16px">
+                + Adicionar novo titular
+            </button>`;
+
+            // Renderiza na ordem inversa: titular atual primeiro (topo), histórico depois
+            const indices = historico.map((_, i) => i);
+            indices.sort((a, b) => {
+                const ha = historico[a], hb = historico[b];
+                // Vigente (fim === null) sempre primeiro
+                if (!ha.fim && hb.fim) return -1;
+                if (ha.fim && !hb.fim) return 1;
+                // Entre passadas: mais recente primeiro
+                return (hb.inicio || '').localeCompare(ha.inicio || '');
+            });
+
+            indices.forEach(idx => {
+                const h = historico[idx];
                 const isVigente = h.fim === null;
                 const tipo = isVigente ? 'vigente' : 'passada';
                 const nomeDisplay = _resolverNomeDefensor(h.defensor);
@@ -3060,8 +3077,7 @@
                             <label>Último dia</label>
                             <input type="date" class="tit-e-fim" data-idx="${idx}"
                                 value="${h.fim || ''}"
-                                placeholder="Em branco = vigente"
-                                ${isVigente ? '' : ''}>
+                                placeholder="Em branco = vigente">
                         </div>
                         <div class="tit-field">
                             <label>Portaria de entrada</label>
@@ -3078,10 +3094,6 @@
                     </div>
                 </div>`;
             });
-
-            html += `<button type="button" class="tit-btn-adicionar" onclick="_adicionarEntrada()">
-                + Adicionar novo titular
-            </button>`;
 
             document.getElementById('form-titulares-body').innerHTML = html;
         }
