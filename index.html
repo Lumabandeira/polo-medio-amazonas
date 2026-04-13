@@ -3184,10 +3184,22 @@
                                 placeholder="Portaria nº ...">
                         </div>
                         <div class="tit-field">
+                            <label>Link DO (entrada)</label>
+                            <input type="url" class="tit-e-doent" data-idx="${idx}"
+                                value="${esc(h.do_entrada || '')}"
+                                placeholder="https://...">
+                        </div>
+                        <div class="tit-field">
                             <label>Portaria de saída</label>
                             <input type="text" class="tit-e-portsai" data-idx="${idx}"
                                 value="${esc(h.portaria_saida || '')}"
                                 placeholder="Portaria nº ...">
+                        </div>
+                        <div class="tit-field">
+                            <label>Link DO (saída)</label>
+                            <input type="url" class="tit-e-dosai" data-idx="${idx}"
+                                value="${esc(h.do_saida || '')}"
+                                placeholder="https://...">
                         </div>
                     </div>
                 </div>`;
@@ -3213,7 +3225,9 @@
                 inicio: hoje,
                 fim: null,
                 portaria_entrada: null,
-                portaria_saida: null
+                do_entrada: null,
+                portaria_saida: null,
+                do_saida: null
             });
 
             // Salvar valores atuais do DOM antes de re-render
@@ -3247,7 +3261,9 @@
                 h.inicio = card.querySelector('.tit-e-inicio')?.value || h.inicio;
                 h.fim = card.querySelector('.tit-e-fim')?.value || null;
                 h.portaria_entrada = card.querySelector('.tit-e-portent')?.value.trim() || null;
+                h.do_entrada = card.querySelector('.tit-e-doent')?.value.trim() || null;
                 h.portaria_saida = card.querySelector('.tit-e-portsai')?.value.trim() || null;
+                h.do_saida = card.querySelector('.tit-e-dosai')?.value.trim() || null;
             });
         }
 
@@ -3305,7 +3321,9 @@
                         inicio: h.inicio,
                         fim: h.fim || null,
                         portaria_entrada: h.portaria_entrada || null,
-                        portaria_saida: h.portaria_saida || null
+                        do_entrada: h.do_entrada || null,
+                        portaria_saida: h.portaria_saida || null,
+                        do_saida: h.do_saida || null
                     })),
                     atualizado_por: currentUser.email,
                     atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
@@ -4679,7 +4697,7 @@
                 defensorias[dpKey].historico_titulares.forEach(h => {
                     if (!h.defensor) return;
                     if (!defHistorico[h.defensor]) defHistorico[h.defensor] = [];
-                    defHistorico[h.defensor].push({ dpKey, inicio: h.inicio, fim: h.fim, portaria_entrada: h.portaria_entrada || null, portaria_saida: h.portaria_saida || null });
+                    defHistorico[h.defensor].push({ dpKey, inicio: h.inicio, fim: h.fim, portaria_entrada: h.portaria_entrada || null, do_entrada: h.do_entrada || null, portaria_saida: h.portaria_saida || null, do_saida: h.do_saida || null });
                 });
             });
 
@@ -4714,7 +4732,11 @@
                         let detalhe = '';
                         if (hist) {
                             detalhe += `<br><span style="${s}">Primeiro dia: ${fmtDate(hist.inicio)}`;
-                            if (hist.portaria_entrada) detalhe += ` — ${esc(hist.portaria_entrada)}`;
+                            if (hist.portaria_entrada) {
+                                detalhe += hist.do_entrada
+                                    ? ` — <a href="${esc(hist.do_entrada)}" target="_blank" rel="noopener" style="color:var(--primary-color)">${esc(hist.portaria_entrada)}</a>`
+                                    : ` — ${esc(hist.portaria_entrada)}`;
+                            }
                             detalhe += `</span>`;
                         }
                         html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
@@ -4736,18 +4758,26 @@
                     html += `<div class="defensor-card" style="opacity:0.72;border-left:4px solid var(--text-secondary);">`;
                     html += `<h4 style="color:var(--text-secondary);">${esc(defInfo.nome)} <span style="font-size:0.8em;font-weight:400;">(ex-membro)</span></h4><ul>`;
                     if (dpsHist.length > 0) {
-                        dpsHist.forEach(({ dpKey, inicio, fim, portaria_entrada, portaria_saida }) => {
+                        dpsHist.forEach(({ dpKey, inicio, fim, portaria_entrada, do_entrada, portaria_saida, do_saida }) => {
                             const dp = defensorias[dpKey];
                             const label = dp.nome.includes('(')
                                 ? esc(dp.nome)
                                 : `${esc(dp.nome)} (${esc(dp.area)})`;
                             const s = `color:var(--text-secondary);font-size:0.82em;`;
                             let detalhe = `<br><span style="${s}">Primeiro dia: ${fmtDate(inicio)}`;
-                            if (portaria_entrada) detalhe += ` — ${esc(portaria_entrada)}`;
+                            if (portaria_entrada) {
+                                detalhe += do_entrada
+                                    ? ` — <a href="${esc(do_entrada)}" target="_blank" rel="noopener" style="color:var(--text-secondary)">${esc(portaria_entrada)}</a>`
+                                    : ` — ${esc(portaria_entrada)}`;
+                            }
                             detalhe += `</span>`;
                             if (fim) {
                                 detalhe += `<br><span style="${s}">Último dia: ${fmtDate(fim)}`;
-                                if (portaria_saida) detalhe += ` — ${esc(portaria_saida)}`;
+                                if (portaria_saida) {
+                                    detalhe += do_saida
+                                        ? ` — <a href="${esc(do_saida)}" target="_blank" rel="noopener" style="color:var(--text-secondary)">${esc(portaria_saida)}</a>`
+                                        : ` — ${esc(portaria_saida)}`;
+                                }
                                 detalhe += `</span>`;
                             }
                             html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
