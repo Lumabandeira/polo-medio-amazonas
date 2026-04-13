@@ -36,9 +36,11 @@ secoes/ferias_folgas
 titulares_admin/{dpKey}   ← histórico de titulares editado pelo admin (por DP)
   historico_titulares: [
     { defensor: "icaro", inicio: "2026-01-01", fim: null,
-      portaria_entrada: "...", portaria_saida: null },
+      portaria_entrada: "...", do_entrada: "https://...",
+      portaria_saida: null, do_saida: null },
     { defensor: "elaine", inicio: "2025-01-01", fim: "2025-12-31",
-      portaria_entrada: "...", portaria_saida: "..." }
+      portaria_entrada: "...", do_entrada: "https://...",
+      portaria_saida: "...", do_saida: "https://..." }
   ]
   atualizado_por: "email@..."
   atualizado_em: timestamp
@@ -173,7 +175,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 12/04/2026)
+## Estado atual do site (atualizado em 13/04/2026)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -189,7 +191,7 @@ github-pages/
 - **Datas de cobertura do substituto liberadas** — removidos os atributos `min`/`max` dos inputs e a lógica de clamping que forçava as datas para dentro do afastamento (causava bug de só permitir selecionar 1 dia). A validação agora ocorre apenas no momento de salvar, com mensagem de erro.
 - **Validação de sobreposição entre substitutos** — ao salvar, o sistema verifica se dois substitutos da mesma DP têm períodos de cobertura sobrepostos (inclusive dias iguais na fronteira). Exibe mensagem `❌ [Nome A] e [Nome B] (DP) têm períodos de cobertura sobrepostos.` e bloqueia o salvamento.
 - **Edição dos defensores titulares de cada DP** — interface completa para admin gerenciar histórico de titulares. Detalhes abaixo em "Arquitetura da edição de titulares".
-- **Botão "Editar" centralizado no header** — botão único na área azul do header (top:60px right:140px, ao lado do botão Sair) que alterna modo de edição. Visível apenas na aba Defensorias para admins. Ao clicar, exibe/oculta todos os botões ✏️ por linha na tabela Designações Atuais e os botões de edição das seções (Alternância, Observação). Desativa automaticamente ao trocar de aba ou voltar ao Início.
+- **Toggle switch "Editar" no header** — `<label id="btn-editar-header">` com checkbox interno (`#toggle-editar-checkbox`) na área azul do header (top:60px right:140px, ao lado do botão Sair). Deslizante cinza/verde que alterna modo de edição. Visível apenas na aba Defensorias para admins. Exibe/oculta todos os botões ✏️ por linha na tabela Designações Atuais e os botões de edição das seções (Alternância, Observação). Desativa automaticamente ao trocar de aba ou voltar ao Início. Após salvar/cancelar no modal de titulares, `renderDefensorias()` chama `_aplicarModoEdicao()` para re-aplicar o estado.
 - **Controle de visibilidade admin-only por especificidade CSS** — regra `.btn-editar.admin-only { display: none }` garante que botões de edição fiquem ocultos por padrão; inline style via `_aplicarModoEdicao()` sobrescreve quando admin ativa o modo edição.
 
 ### O que ainda falta implementar ⏳
@@ -253,7 +255,7 @@ github-pages/
 
 ### Modal de edição por DP
 - `abrirModalTitulares(dpKey)` — abre modal para uma DP específica, chamado pelo botão ✏️ na tabela Designações Atuais
-- `_renderEntradas(dpKey)` — renderiza cards em ordem reversa (vigente primeiro, históricos por mais recente). Cada card: nome (campo texto livre), início, fim, portaria de entrada, portaria de saída
+- `_renderEntradas(dpKey)` — renderiza cards em ordem reversa (vigente primeiro, históricos por mais recente). Cada card: nome (campo texto livre), início, fim, portaria de entrada, link DO entrada (`do_entrada`), portaria de saída, link DO saída (`do_saida`)
 - Botão "+ Adicionar" no topo — fecha o vigente atual (define `fim` = hoje) e cria nova entrada vigente
 - `_removerEntrada(idx)` — remove entrada (mínimo 1 obrigatório)
 
@@ -275,15 +277,17 @@ github-pages/
 - **Aba Calendário:** re-renderizado para refletir novos titulares nos afastamentos
 
 ### Modo de edição (`toggleModoEdicao`)
-- Botão `#btn-editar-header` na área azul do header — visível apenas na aba Defensorias para admins
-- Toggle entre "✏️ Editar" e "✅ Pronto"
-- `_aplicarModoEdicao()` — mostra/oculta botões ✏️ por linha na tabela e botões `.admin-only` das seções editáveis
-- `_desativarModoEdicao()` — chamado ao trocar de aba (`showTab`) ou voltar ao início (`showLanding`/`showSection`)
+- Toggle switch `#btn-editar-header` (label) + `#toggle-editar-checkbox` (checkbox interno) na área azul do header — visível apenas na aba Defensorias para admins
+- Estado lido diretamente de `checkbox.checked`; verde = modo edição ativo
+- `_aplicarModoEdicao()` — mostra/oculta botões ✏️ por linha na tabela e botões `.admin-only` das seções editáveis; chamado também ao final de `renderDefensorias()` para preservar estado após re-render do DOM
+- `_desativarModoEdicao()` — desmarca o checkbox e chama `_aplicarModoEdicao()`; acionado ao trocar de aba (`showTab`) ou voltar ao início (`showLanding`/`showSection`)
 
 ### Renderização da aba Defensorias (`renderDefensorias`)
 - Cards sem numeração, com label "Primeiro dia" e portarias
+- Portaria vira link clicável quando `do_entrada` ou `do_saida` estiver preenchido (abre em nova aba)
 - Accordion "Ex-membros" para entradas antigas com `fim` preenchido
 - Tabela Designações Atuais com coluna ✏️ oculta por padrão (classe `cel-editar-dp`)
+- Ao final da função, chama `_aplicarModoEdicao()` para re-aplicar modo edição após rebuild do DOM
 
 ---
 
