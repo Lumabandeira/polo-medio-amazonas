@@ -33,6 +33,16 @@ secoes/ferias_folgas
   atualizado_por: "..."
   atualizado_em: timestamp
 
+titulares_admin/{dpKey}   ← histórico de titulares editado pelo admin (por DP)
+  historico_titulares: [
+    { defensor: "icaro", inicio: "2026-01-01", fim: null,
+      portaria_entrada: "...", portaria_saida: null },
+    { defensor: "elaine", inicio: "2025-01-01", fim: "2025-12-31",
+      portaria_entrada: "...", portaria_saida: "..." }
+  ]
+  atualizado_por: "email@..."
+  atualizado_em: timestamp
+
 afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendário
   defensor: "elton"       ← chave do defensor (mesmo padrão dos JSONs)
   tipo: "ferias" | "folga" | "licenca_especial"
@@ -53,6 +63,7 @@ afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendári
 ### Regras de segurança do Firestore
 - Leitura: apenas usuários autenticados
 - Escrita: apenas usuários com `role == "admin"`
+- Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`
 
 ### Como funciona o login no site
 1. Página carrega → overlay de login cobre tudo
@@ -74,6 +85,13 @@ afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendári
 - `salvarSecao(secaoId)` — salva HTML no Firestore
 - `cancelarEdicao(secaoId)` — restaura conteúdo original
 - `mostrarToast(msg)` — exibe notificação temporária
+- `loadTitularesFirestore()` — carrega histórico de titulares do Firestore e mescla com JSON base
+- `reloadTitularesData()` — restaura snapshot do JSON e reaplicar dados do Firestore
+- `abrirModalTitulares(dpKey)` — abre modal de edição de titulares para uma DP
+- `salvarTitularesDp()` — valida e salva histórico de titulares no Firestore
+- `fecharModalTitulares()` — fecha modal e reverte alterações não salvas
+- `toggleModoEdicao()` — alterna modo de edição (mostra/oculta botões ✏️)
+- `getTitularForDPOnDay(dpNum, mes, dia)` — resolve titular de uma DP em data específica
 
 ### Para adicionar novos usuários
 Firebase Console → Authentication → Adicionar usuário → copiar UID → Firestore → coleção `usuarios` → novo documento com o UID → campos `role` e `nome`
@@ -155,7 +173,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 10/04/2026)
+## Estado atual do site (atualizado em 12/04/2026)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -170,19 +188,24 @@ github-pages/
 - **Calendário interativo para admins** — CRUD completo de afastamentos via Firestore (`afastamentos_admin`). Detalhes abaixo em "Arquitetura do calendário interativo".
 - **Datas de cobertura do substituto liberadas** — removidos os atributos `min`/`max` dos inputs e a lógica de clamping que forçava as datas para dentro do afastamento (causava bug de só permitir selecionar 1 dia). A validação agora ocorre apenas no momento de salvar, com mensagem de erro.
 - **Validação de sobreposição entre substitutos** — ao salvar, o sistema verifica se dois substitutos da mesma DP têm períodos de cobertura sobrepostos (inclusive dias iguais na fronteira). Exibe mensagem `❌ [Nome A] e [Nome B] (DP) têm períodos de cobertura sobrepostos.` e bloqueia o salvamento.
+- **Edição dos defensores titulares de cada DP** — interface completa para admin gerenciar histórico de titulares. Detalhes abaixo em "Arquitetura da edição de titulares".
+- **Botão "Editar" centralizado no header** — botão único na área azul do header (top:60px right:140px, ao lado do botão Sair) que alterna modo de edição. Visível apenas na aba Defensorias para admins. Ao clicar, exibe/oculta todos os botões ✏️ por linha na tabela Designações Atuais e os botões de edição das seções (Alternância, Observação). Desativa automaticamente ao trocar de aba ou voltar ao Início.
+- **Controle de visibilidade admin-only por especificidade CSS** — regra `.btn-editar.admin-only { display: none }` garante que botões de edição fiquem ocultos por padrão; inline style via `_aplicarModoEdicao()` sobrescreve quando admin ativa o modo edição.
 
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 39 usuários** (2 admins + 37 viewers) no Firebase Auth + Firestore
 - **Integração do calendário com a aba Designações Semanais** — quando um afastamento cadastrado via calendário tiver substituto "ainda não definido", isso deve refletir na tabela semanal (célula da DP mostrando ausência sem cobertura). Decidido que será feito em sessão futura.
-- **Edição dos defensores titulares de cada DP** — atualmente vem do `docs/designacoes-2026.json`, sem interface de edição. Quando implementado, o formulário de afastamento já está preparado: lê `historico_titulares` dinamicamente, sem mapeamento fixo.
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
+- **Coleção `defensores_admin` no Firestore** — para gerenciar status ativo/ex-membro dos defensores via interface (planejado mas não solicitado ainda)
 
 ### Decisões de arquitetura já tomadas
 - Sem automação do Diário Oficial — admin insere links manualmente
 - Sem migração de hospedagem — continua no GitHub Pages
-- JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) = base imutável pela UI. Coleção `afastamentos_admin` no Firestore = registros adicionados/editados pelo admin. Os dois são mesclados em memória ao carregar.
+- JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) = base imutável pela UI. Coleções `afastamentos_admin` e `titulares_admin` no Firestore = registros adicionados/editados pelo admin. Mesclados em memória ao carregar (Firestore sobrescreve JSON).
 - Função `syncFromSheets()` removida definitivamente
 - Formulário de afastamento dividido em duas fases: (1) cadastrar ausência sem Diário Oficial; (2) registrar substituto + portaria quando o diário sair. Portaria e link DO ficam dentro de cada designação por DP, não no nível do afastamento.
+- Edição de titulares não retroage: cada entrada tem data de início explícita; a resolução por data (`getTitularForDPOnDay`) garante que tabelas passadas não são afetadas por mudanças futuras.
+- Nomes de defensores em campo texto livre (não dropdown fixo) para acomodar defensores externos ou futuros.
 
 ---
 
@@ -214,6 +237,53 @@ github-pages/
 7. **Por DP:** nenhum par de substitutos pode ter períodos sobrepostos (dias iguais na fronteira = sobreposição)
 
 > **Atenção:** afastamentos salvos antes da correção do bug de clamping podem ter datas de cobertura incorretas no Firestore (ex: cobertura gravada com apenas 1 dia em vez do período completo). Para corrigir, o admin deve reabrir o afastamento e salvar novamente com as datas corretas.
+
+---
+
+## Arquitetura da edição de titulares (admin)
+
+### Fluxo de dados
+1. `loadJSONData()` carrega `designacoes-2026.json` e cria snapshot imutável em `_jsonDesignacoesBkDefensorias`
+2. `loadTitularesFirestore()` lê `titulares_admin` e substitui `historico_titulares` das DPs correspondentes em memória, depois re-renderiza (Defensorias, Designações, Calendário)
+3. `reloadTitularesData()` restaura do snapshot e reaplicar dados do Firestore (usado ao cancelar edição)
+
+### Resolução de titular por data
+- `getTitularForDPOnDay(dpNum, mes, dia)` — percorre `historico_titulares` da DP e retorna o defensor vigente usando intervalos right-exclusive (`date >= inicio && date < fim`; `fim == null` = vigente)
+- Garante que alterações de titular não retroagem: cada entrada tem data de início explícita
+
+### Modal de edição por DP
+- `abrirModalTitulares(dpKey)` — abre modal para uma DP específica, chamado pelo botão ✏️ na tabela Designações Atuais
+- `_renderEntradas(dpKey)` — renderiza cards em ordem reversa (vigente primeiro, históricos por mais recente). Cada card: nome (campo texto livre), início, fim, portaria de entrada, portaria de saída
+- Botão "+ Adicionar" no topo — fecha o vigente atual (define `fim` = hoje) e cria nova entrada vigente
+- `_removerEntrada(idx)` — remove entrada (mínimo 1 obrigatório)
+
+### Nomes de defensores
+- Campo de texto livre: aceita nomes de defensores do polo ou nomes externos
+- `_resolverDefensor(nomeDigitado)` — tenta casar com `defensores[key].nome` ou `.nome_curto`; se não encontrar, armazena como string livre
+- `_resolverNomeDefensor(defVal)` — resolve chave para nome completo, ou retorna valor como está
+
+### Validações no salvar (`salvarTitularesDp`)
+1. Nome do defensor obrigatório em toda entrada
+2. Data de início obrigatória
+3. Se `fim` preenchido, `fim >= inicio`
+4. Máximo 1 entrada sem `fim` (vigente) por DP
+5. Salva em `titulares_admin/{dpKey}` no Firestore
+
+### Impacto nas outras abas
+- **Aba Defensorias:** cards de defensores e tabela Designações Atuais re-renderizados após salvar
+- **Aba Designações Semanais:** tabelas semanais usam `getTitularForDPOnDay()` que reflete o titular correto por data
+- **Aba Calendário:** re-renderizado para refletir novos titulares nos afastamentos
+
+### Modo de edição (`toggleModoEdicao`)
+- Botão `#btn-editar-header` na área azul do header — visível apenas na aba Defensorias para admins
+- Toggle entre "✏️ Editar" e "✅ Pronto"
+- `_aplicarModoEdicao()` — mostra/oculta botões ✏️ por linha na tabela e botões `.admin-only` das seções editáveis
+- `_desativarModoEdicao()` — chamado ao trocar de aba (`showTab`) ou voltar ao início (`showLanding`/`showSection`)
+
+### Renderização da aba Defensorias (`renderDefensorias`)
+- Cards sem numeração, com label "Primeiro dia" e portarias
+- Accordion "Ex-membros" para entradas antigas com `fim` preenchido
+- Tabela Designações Atuais com coluna ✏️ oculta por padrão (classe `cel-editar-dp`)
 
 ---
 
