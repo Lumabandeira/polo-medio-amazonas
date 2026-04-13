@@ -1420,26 +1420,56 @@
             position: absolute;
             top: 60px;
             right: 140px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 8px;
+            align-items: center;
+            gap: 8px;
             cursor: pointer;
+            color: white;
             font-size: 0.82em;
             font-weight: 600;
-            transition: all 0.3s;
-            align-items: center;
-            gap: 6px;
-            font-family: inherit;
+            user-select: none;
         }
-        #btn-editar-header:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.5);
+        #btn-editar-header .toggle-editar-label {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
-        #btn-editar-header.ativo {
-            background: rgba(16, 185, 129, 0.3);
-            border-color: rgba(16, 185, 129, 0.6);
+        #btn-editar-header .toggle-switch-wrap {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        #btn-editar-header .toggle-switch-wrap input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        #btn-editar-header .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 24px;
+            border: 1.5px solid rgba(255,255,255,0.4);
+            transition: background 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+        #btn-editar-header .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 2px;
+            top: 2px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        #btn-editar-header .toggle-switch-wrap input:checked + .toggle-slider {
+            background: rgba(16, 185, 129, 0.7);
+            border-color: rgba(16, 185, 129, 0.9);
+        }
+        #btn-editar-header .toggle-switch-wrap input:checked + .toggle-slider::before {
+            transform: translateX(20px);
         }
 
         #admin-badge {
@@ -1992,7 +2022,13 @@
     <div class="container">
         <header>
             <button id="auth-btn" class="auth-btn" onclick="fazerLogout()">🚪 Sair</button>
-            <button id="btn-editar-header" onclick="toggleModoEdicao()">✏️ Editar</button>
+            <label id="btn-editar-header">
+                <span class="toggle-editar-label">✏️ Editar</span>
+                <div class="toggle-switch-wrap">
+                    <input type="checkbox" id="toggle-editar-checkbox" onchange="toggleModoEdicao()">
+                    <span class="toggle-slider"></span>
+                </div>
+            </label>
             <span id="admin-badge">⚙️ ADMIN</span>
             <button id="inicio-btn" class="inicio-btn" onclick="showLanding()">🏠 Início</button>
             <h1>🏛️ Polo Médio Amazonas</h1>
@@ -3013,10 +3049,8 @@
         let _modoEdicaoAtivo = false;
 
         function toggleModoEdicao() {
-            _modoEdicaoAtivo = !_modoEdicaoAtivo;
-            const btn = document.getElementById('btn-editar-header');
-            btn.textContent = _modoEdicaoAtivo ? '✅ Pronto' : '✏️ Editar';
-            btn.classList.toggle('ativo', _modoEdicaoAtivo);
+            const checkbox = document.getElementById('toggle-editar-checkbox');
+            _modoEdicaoAtivo = checkbox ? checkbox.checked : false;
             _aplicarModoEdicao();
         }
 
@@ -3037,8 +3071,8 @@
         function _desativarModoEdicao() {
             if (!_modoEdicaoAtivo) return;
             _modoEdicaoAtivo = false;
-            const btn = document.getElementById('btn-editar-header');
-            if (btn) { btn.textContent = '✏️ Editar'; btn.classList.remove('ativo'); }
+            const checkbox = document.getElementById('toggle-editar-checkbox');
+            if (checkbox) checkbox.checked = false;
             _aplicarModoEdicao();
         }
 
@@ -4740,6 +4774,8 @@
             });
             tableHtml += '</tbody></table></div>';
             document.getElementById('defensorias-table-content').innerHTML = tableHtml;
+            // Re-aplicar modo edição após reconstruir o DOM da tabela
+            if (typeof _modoEdicaoAtivo !== 'undefined') _aplicarModoEdicao();
         }
 
         // =====================================================================
