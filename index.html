@@ -2273,6 +2273,7 @@
             <div class="form-af-body">
                 <form id="form-af" onsubmit="event.preventDefault(); salvarAfastamentoFirestore()">
                     <input type="hidden" id="form-af-id">
+                    <input type="hidden" id="form-af-json-base-id">
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Defensor Ausente</label>
@@ -2409,6 +2410,11 @@
         let _formAfMesCtx = null;          // contexto de dia para reabrir modal
         let _formAfDiaCtx = null;
 
+        // Mapa de eventos base do JSON: jsonEventoId → objeto evento completo
+        let jsonEventosMap = {};
+        // Mapa de eventos JSON que foram sobrescritos por registro Firestore: jsonEventoId → firestoreId
+        let jsonOverrideMap = {};
+
         // ===== Builders a partir dos JSONs =====
 
         function buildAfastamentosFromJSONRegistros(registros) {
@@ -2442,7 +2448,9 @@
 
         function buildDetalhesFromJSONEventos(eventos, defensores) {
             detalhesAfastamentos = {};
+            jsonEventosMap = {};
             eventos.forEach(ev => {
+                jsonEventosMap[ev.id] = ev; // armazena evento completo para pré-popular formulário
                 const defInfo    = defensores[ev.defensor] || {};
                 const defNome    = defInfo.nome_curto || ev.defensor;
                 const tipoLabel  = TIPO_LABELS[ev.tipo] || ev.tipo;
@@ -2465,7 +2473,8 @@
                         detalhesAfastamentos[m][d].push({
                             defensor: defNome, tipo: tipoLabel,
                             defensoria: dpLabel, substituto: subNome,
-                            processo, link
+                            processo, link,
+                            jsonEventoId: ev.id // identifica origem para edição e supressão
                         });
                         cur.setDate(cur.getDate() + 1);
                     }
@@ -2515,6 +2524,9 @@
         // ── Afastamentos do Firestore (admin) ────────────────────────────
 
         function mergeAfastamentoFirestoreRecord(reg) {
+            // Se este registro Firestore substitui um evento JSON base, registra o override
+            if (reg.json_base_id) jsonOverrideMap[reg.json_base_id] = reg.id;
+
             // 1. Badges do calendário
             const calKey = defensorCalKey(reg.defensor);
             const start  = new Date(reg.data_inicio + 'T12:00:00');
@@ -2639,6 +2651,7 @@
             try {
                 const snapshot = await db.collection('afastamentos_admin').get();
                 afastamentosFirestoreMap = {};
+                jsonOverrideMap = {};
                 snapshot.forEach(doc => {
                     const reg = { id: doc.id, ...doc.data() };
                     afastamentosFirestoreMap[doc.id] = reg;
@@ -2652,6 +2665,7 @@
 
         async function reloadAfastamentosData() {
             // Reconstrói a partir dos JSONs já em memória (sem refetch de rede)
+            jsonOverrideMap = {}; // limpa overrides antes de reconstruir
             afastamentos = buildAfastamentosFromJSONRegistros(jsonAfastamentos.registros);
             buildDetalhesFromJSONEventos(jsonDesignacoes.eventos, jsonDesignacoes.defensores);
             await loadAfastamentosFirestore();
@@ -2727,7 +2741,11 @@
                 </tr></thead><tbody>`;
 
                 const firestoreVistos = new Set();
+                const jsonBaseVistos  = new Set(); // evita duplicar linhas do mesmo evento JSON
                 detalhes.forEach(item => {
+                    // Suprime linhas base cujo evento JSON foi substituído por Firestore
+                    if (!item.firestoreId && item.jsonEventoId && jsonOverrideMap[item.jsonEventoId]) return;
+
                     const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' :
                                      item.tipo === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
                     let linkHtml = '-';
@@ -2746,8 +2764,15 @@
                                 <button class="btn-acao-tabela btn-deletar-af" title="Excluir"
                                     onclick="confirmarDeletarAfastamento('${item.firestoreId}',${mes},${dia})">🗑️</button>
                             </td>`;
+                        } else if (!item.firestoreId && item.jsonEventoId && !jsonBaseVistos.has(item.jsonEventoId)) {
+                            // Registro base ainda não substituído: oferece ✏️ para promover ao Firestore
+                            jsonBaseVistos.add(item.jsonEventoId);
+                            acoesTd = `<td style="white-space:nowrap">
+                                <button class="btn-acao-tabela btn-editar-af" title="Editar registro base"
+                                    onclick="abrirFormAfastamento(null,${mes},${dia},'${item.jsonEventoId}')">✏️</button>
+                            </td>`;
                         } else {
-                            acoesTd = `<td><span style="font-size:0.72em;color:#94a3b8">${item.firestoreId ? '' : 'base'}</span></td>`;
+                            acoesTd = `<td><span style="font-size:0.72em;color:#94a3b8">${item.firestoreId ? '' : ''}</span></td>`;
                         }
                     }
                     html += `<tr>
@@ -3007,17 +3032,38 @@
                      processo_tipo: processoTipo, processo_sei: sei, designacoes_dp: designacoesDp };
         }
 
-        function abrirFormAfastamento(firestoreId, mes, dia) {
+        // Converte array de designacoes do formato JSON (estrutura simples)
+        // para o formato Firestore (designacoes_dp com substitutos[])
+        function converterDesignacoesJSONParaFirestore(ev) {
+            const dpMap = {};
+            (ev.designacoes || []).forEach(des => {
+                const dp = String(des.dp);
+                if (!dpMap[dp]) dpMap[dp] = [];
+                dpMap[dp].push({
+                    substituto:              des.substituto || '',
+                    substituto_nome_externo: '',
+                    data_inicio:             des.data_inicio || ev.data_inicio,
+                    data_fim:                des.data_fim    || ev.data_fim,
+                    portaria_numero:         ev.portaria?.numero || '',
+                    portaria_url:            ev.portaria?.url    || ''
+                });
+            });
+            return Object.entries(dpMap).map(([dp, substitutos]) => ({ dp, substitutos }));
+        }
+
+        function abrirFormAfastamento(firestoreId, mes, dia, jsonEventoId) {
             _formAfMesCtx = mes;
             _formAfDiaCtx = dia;
             const overlay = document.getElementById('form-af-overlay');
             document.getElementById('form-af').reset();
             document.getElementById('form-af-id').value = '';
+            document.getElementById('form-af-json-base-id').value = '';
             document.getElementById('form-af-dps').innerHTML = '';
             document.getElementById('form-af-dps-section').style.display = 'none';
             document.getElementById('form-af-tipo-outro-group').style.display = 'none';
 
             if (firestoreId) {
+                // ── Editar registro Firestore existente ──
                 document.getElementById('form-af-titulo').textContent = '✏️ Editar Afastamento';
                 const reg = afastamentosFirestoreMap[firestoreId];
                 if (!reg) { mostrarToast('❌ Registro não encontrado.', true); return; }
@@ -3035,7 +3081,27 @@
                 if (reg.defensor && reg.data_inicio && reg.data_fim) {
                     popularDPsAfetadas(reg.defensor, reg.data_inicio, reg.data_fim, reg.designacoes_dp || null);
                 }
+            } else if (jsonEventoId) {
+                // ── Promover registro base (JSON) ao Firestore ──
+                document.getElementById('form-af-titulo').textContent = '✏️ Editar Afastamento';
+                const ev = jsonEventosMap[jsonEventoId];
+                if (!ev) { mostrarToast('❌ Evento base não encontrado.', true); return; }
+                document.getElementById('form-af-json-base-id').value = jsonEventoId;
+                document.getElementById('form-af-defensor').value = ev.defensor    || '';
+                document.getElementById('form-af-tipo').value     = ev.tipo        || 'folga';
+                document.getElementById('form-af-inicio').value   = ev.data_inicio || '';
+                document.getElementById('form-af-fim').value      = ev.data_fim    || '';
+                document.getElementById('form-af-processo-tipo').value = 'SEI';
+                document.getElementById('form-af-sei').value      = ev.portaria?.sei || '';
+                if (ev.tipo === 'outro') {
+                    document.getElementById('form-af-tipo-outro-group').style.display = 'block';
+                }
+                if (ev.defensor && ev.data_inicio && ev.data_fim) {
+                    const designacoesDp = converterDesignacoesJSONParaFirestore(ev);
+                    popularDPsAfetadas(ev.defensor, ev.data_inicio, ev.data_fim, designacoesDp);
+                }
             } else {
+                // ── Novo afastamento ──
                 document.getElementById('form-af-titulo').textContent = '➕ Novo Afastamento';
                 if (mes && dia) {
                     const dateStr = `2026-${String(mes).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
@@ -3393,6 +3459,9 @@
                 } else {
                     dados.criado_por = currentUser.email;
                     dados.criado_em  = firebase.firestore.FieldValue.serverTimestamp();
+                    // Preservar json_base_id se este registro promove um evento JSON base
+                    const jsonBaseId = document.getElementById('form-af-json-base-id')?.value;
+                    if (jsonBaseId) dados.json_base_id = jsonBaseId;
                     await db.collection('afastamentos_admin').add(dados);
                 }
                 fecharFormAfastamento();
