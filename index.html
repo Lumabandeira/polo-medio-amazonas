@@ -2428,7 +2428,7 @@
     <div id="view-af-overlay" class="form-af-overlay" onclick="fecharVisualizacaoAfastamento(event)">
         <div class="form-af-content" onclick="event.stopPropagation()">
             <div class="view-af-header">
-                <h2>👁️ Detalhes do Afastamento</h2>
+                <h2>🔍 Detalhes do Afastamento</h2>
                 <button class="modal-close" onclick="fecharVisualizacaoAfastamento()">×</button>
             </div>
             <div class="view-af-body" id="view-af-body"></div>
@@ -2856,14 +2856,14 @@
                         linkHtml = `<a href="${item.link}" target="_blank" style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap;">📄 ${label}</a>`;
                     }
 
-                    // Botão 👁️ — visível para todos; aparece uma vez por afastamento único
+                    // Botão 🔍 — visível para todos; aparece uma vez por afastamento único
                     let btnVer = '';
                     if (item.firestoreId && !firestoreVistos.has(item.firestoreId)) {
                         btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes"
-                            onclick="abrirVisualizacaoAfastamento('firestore','${item.firestoreId}')">👁️</button>`;
+                            onclick="abrirVisualizacaoAfastamento('firestore','${item.firestoreId}')">🔍</button>`;
                     } else if (!item.firestoreId && item.jsonEventoId && !jsonBaseVistos.has(item.jsonEventoId)) {
                         btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes"
-                            onclick="abrirVisualizacaoAfastamento('json','${item.jsonEventoId}')">👁️</button>`;
+                            onclick="abrirVisualizacaoAfastamento('json','${item.jsonEventoId}')">🔍</button>`;
                     }
 
                     // Botões de edição — apenas admin
