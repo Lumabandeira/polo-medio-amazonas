@@ -175,7 +175,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 13/04/2026)
+## Estado atual do site (atualizado em 14/04/2026)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -193,12 +193,16 @@ github-pages/
 - **Edição dos defensores titulares de cada DP** — interface completa para admin gerenciar histórico de titulares. Detalhes abaixo em "Arquitetura da edição de titulares".
 - **Toggle switch "Editar" no header** — `<label id="btn-editar-header">` com checkbox interno (`#toggle-editar-checkbox`) na área azul do header (top:60px right:140px, ao lado do botão Sair). Deslizante cinza/verde que alterna modo de edição. Visível apenas na aba Defensorias para admins. Exibe/oculta todos os botões ✏️ por linha na tabela Designações Atuais e os botões de edição das seções (Alternância, Observação). Desativa automaticamente ao trocar de aba ou voltar ao Início. Após salvar/cancelar no modal de titulares, `renderDefensorias()` chama `_aplicarModoEdicao()` para re-aplicar o estado.
 - **Controle de visibilidade admin-only por especificidade CSS** — regra `.btn-editar.admin-only { display: none }` garante que botões de edição fiquem ocultos por padrão; inline style via `_aplicarModoEdicao()` sobrescreve quando admin ativa o modo edição.
+- **Registros base (JSON) editáveis pelo admin no calendário** — botão ✏️ adicionado a registros "base" (vindos dos JSONs) no modal "Detalhes do Afastamento". Ao clicar, abre o formulário pré-populado com os dados do JSON. Ao salvar, cria registro no Firestore com campo `json_base_id` apontando para o evento JSON original, que é então suprimido da renderização. Globais: `jsonEventosMap` (id→evento) e `jsonOverrideMap` (jsonEventoId→firestoreId). Função auxiliar: `converterDesignacoesJSONParaFirestore(ev)`.
+- **Modal de visualização somente leitura no calendário** — ícone 🔍 no modal "Detalhes do Afastamento", visível para todos os usuários (admin e viewer). Abre modal "🔍 Detalhes do Afastamento" (cabeçalho azul) com: defensor, tipo, data início/fim do afastamento completo, processo SEI, e por DP: substituto, data início/fim de cobertura, portaria clicável. Funciona para registros base (JSON) e Firestore. Função: `abrirVisualizacaoAfastamento(tipo, id)` onde `tipo` é `'firestore'` ou `'json'`. Helper: `formatarData(dateStr)` converte `YYYY-MM-DD` → `DD/MM/YYYY`.
+- **Detecção automática de ex-membros na aba Defensorias** — `renderDefensorias` detecta "orphan ex-members": qualquer defensor cadastrado como titular via UI (Firestore) que não tenha mais DP ativa aparece automaticamente no accordion "Ex-membros", sem necessidade de editar o JSON. Lógica: `orphanExMembros = Object.keys(defHistorico).filter(k => !defensores[k] && !defCurrentDPs[k])`. Mariana Silva Paixão corrigida no JSON de `externo: true` para `externo: false, ativo: false`.
+- **Botão "+ Adicionar ao histórico" no modal de titulares** — botão no rodapé do modal de edição de titulares (antes de Cancelar/Salvar). Cria entrada de histórico passado em branco (`fim: ''`) sem fechar o titular atual ativo. Ordenação corrigida: `fim === null` (ativo) vai ao topo; `fim === ''` (histórico novo) vai ao final; datas preenchidas ordenadas por mais recente primeiro.
 
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 39 usuários** (2 admins + 37 viewers) no Firebase Auth + Firestore
 - **Integração do calendário com a aba Designações Semanais** — quando um afastamento cadastrado via calendário tiver substituto "ainda não definido", isso deve refletir na tabela semanal (célula da DP mostrando ausência sem cobertura). Decidido que será feito em sessão futura.
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
-- **Coleção `defensores_admin` no Firestore** — para gerenciar status ativo/ex-membro dos defensores via interface (planejado mas não solicitado ainda)
+- **Coleção `defensores_admin` no Firestore** — para gerenciar status ativo/ex-membro dos defensores via interface (planejado mas não solicitado ainda; ex-membros livres já detectados automaticamente via orphanExMembros)
 
 ### Decisões de arquitetura já tomadas
 - Sem automação do Diário Oficial — admin insere links manualmente
@@ -208,6 +212,7 @@ github-pages/
 - Formulário de afastamento dividido em duas fases: (1) cadastrar ausência sem Diário Oficial; (2) registrar substituto + portaria quando o diário sair. Portaria e link DO ficam dentro de cada designação por DP, não no nível do afastamento.
 - Edição de titulares não retroage: cada entrada tem data de início explícita; a resolução por data (`getTitularForDPOnDay`) garante que tabelas passadas não são afetadas por mudanças futuras.
 - Nomes de defensores em campo texto livre (não dropdown fixo) para acomodar defensores externos ou futuros.
+- Registros base do JSON podem ser "promovidos" ao Firestore pelo admin via ✏️ no modal do calendário. O campo `json_base_id` no Firestore vincula ao evento JSON original, que é suprimido da renderização após a promoção.
 
 ---
 
@@ -227,7 +232,9 @@ github-pages/
 ### Lógica de exibição no modal
 - Para cada DP do afastamento, os dias cobertos por substitutos definidos mostram o nome do substituto
 - Os dias do afastamento **não cobertos** por nenhum substituto mostram automaticamente "ainda não definido" (gap filling em `mergeAfastamentoFirestoreRecord`)
-- Registros do Firestore mostram botões ✏️/🗑️ no modal; registros dos JSONs mostram "base" (somente leitura)
+- Registros do Firestore mostram botões 🔍✏️🗑️; registros base (JSON) mostram 🔍✏️ (sem 🗑️)
+- Botão 🔍 visível para todos (admin e viewer); ✏️ e 🗑️ apenas para admins
+- Registros base cujo `json_base_id` consta em `jsonOverrideMap` são suprimidos (substituídos pelo Firestore)
 
 ### Validações no salvar (`salvarAfastamentoFirestore`)
 1. Defensor e datas do afastamento obrigatórios
@@ -255,9 +262,13 @@ github-pages/
 
 ### Modal de edição por DP
 - `abrirModalTitulares(dpKey)` — abre modal para uma DP específica, chamado pelo botão ✏️ na tabela Designações Atuais
-- `_renderEntradas(dpKey)` — renderiza cards em ordem reversa (vigente primeiro, históricos por mais recente). Cada card: nome (campo texto livre), início, fim, portaria de entrada, link DO entrada (`do_entrada`), portaria de saída, link DO saída (`do_saida`)
-- Botão "+ Adicionar" no topo — fecha o vigente atual (define `fim` = hoje) e cria nova entrada vigente
+- `_renderEntradas(dpKey)` — renderiza cards em ordem: vigente primeiro (`fim === null`), históricos por data mais recente, entradas em branco novas por último (`fim === ''`). Cada card: nome (campo texto livre), início, fim, portaria de entrada, link DO entrada (`do_entrada`), portaria de saída, link DO saída (`do_saida`)
+- Botão "+ Adicionar novo titular" no topo — fecha o vigente atual (define `fim` = hoje) e cria nova entrada vigente (`fim: null`)
+- Botão "+ Adicionar ao histórico" no rodapé (antes de Cancelar/Salvar) — cria entrada histórica em branco (`fim: ''`) sem fechar o titular atual
+- `_adicionarEntrada()` — lógica do botão do topo
+- `_adicionarHistorico()` — lógica do botão do rodapé
 - `_removerEntrada(idx)` — remove entrada (mínimo 1 obrigatório)
+- **Atenção:** `fim === null` = titular ativo; `fim === ''` = histórico novo em branco (ainda não preenchido); `fim === 'YYYY-MM-DD'` = histórico com data. A ordenação usa `=== null` (não `!fim`) para distinguir corretamente.
 
 ### Nomes de defensores
 - Campo de texto livre: aceita nomes de defensores do polo ou nomes externos
@@ -285,7 +296,9 @@ github-pages/
 ### Renderização da aba Defensorias (`renderDefensorias`)
 - Cards sem numeração, com label "Primeiro dia" e portarias
 - Portaria vira link clicável quando `do_entrada` ou `do_saida` estiver preenchido (abre em nova aba)
-- Accordion "Ex-membros" para entradas antigas com `fim` preenchido
+- Accordion "Ex-membros" para entradas antigas com `fim` preenchido — inclui dois grupos:
+  - `exMembros`: defensores do dicionário `defensores` com `externo: false, ativo: false`
+  - `orphanExMembros`: nomes livres (texto) em `defHistorico` que não constam em `defensores` e não têm DP ativa — detectados automaticamente, sem editar JSON
 - Tabela Designações Atuais com coluna ✏️ oculta por padrão (classe `cel-editar-dp`)
 - Ao final da função, chama `_aplicarModoEdicao()` para re-aplicar modo edição após rebuild do DOM
 
