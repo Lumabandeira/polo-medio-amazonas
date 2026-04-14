@@ -2495,14 +2495,68 @@
             return key;
         }
 
-        // Nomes para badges no calendário (chaves do objeto afastamentos)
-        const defensorNames = {
-            'icaro': 'Ícaro',
-            'jose': 'José Antônio',
-            'elton': 'Elton',
-            'eliaquim': 'Eliaquim',
-            'elaine': 'Elaine'
-        };
+        // Nomes e cores para badges no calendário — populados dinamicamente em buildDefensorNames()
+        let defensorNames = {};
+
+        // Paleta de cores para defensores sem CSS estático definido
+        const BADGE_PALETTE = [
+            '#3b82f6','#10b981','#f59e0b','#f97316','#a855f7',
+            '#ec4899','#14b8a6','#8b5cf6','#ef4444','#06b6d4',
+            '#84cc16','#0ea5e9'
+        ];
+        // Cores já definidas no CSS estático (não reinjetar)
+        const BADGE_CSS_KNOWN = { icaro:true, jose:true, elton:true, eliaquim:true, elaine:true };
+
+        function buildDefensorNames() {
+            if (!jsonDesignacoes) return;
+            defensorNames = {};
+            const extraStyles = [];
+            let paletteIdx = Object.keys(BADGE_CSS_KNOWN).length;
+
+            Object.entries(jsonDesignacoes.defensores).forEach(([key, info]) => {
+                const calKey = defensorCalKey(key);
+                defensorNames[calKey] = info.nome_curto || info.nome;
+                if (!BADGE_CSS_KNOWN[calKey]) {
+                    const color = BADGE_PALETTE[paletteIdx % BADGE_PALETTE.length];
+                    paletteIdx++;
+                    extraStyles.push(`.defensor-badge.${calKey} { background: ${color}; }`);
+                }
+            });
+
+            if (extraStyles.length > 0) {
+                let styleEl = document.getElementById('dynamic-badge-styles');
+                if (!styleEl) {
+                    styleEl = document.createElement('style');
+                    styleEl.id = 'dynamic-badge-styles';
+                    document.head.appendChild(styleEl);
+                }
+                styleEl.textContent = extraStyles.join('\n');
+            }
+        }
+
+        function populateDefensorDropdown() {
+            const select = document.getElementById('form-af-defensor');
+            if (!select || !jsonDesignacoes) return;
+            const defensores = jsonDesignacoes.defensores;
+
+            const ativos    = Object.entries(defensores).filter(([, v]) => !v.externo && v.ativo !== false);
+            const exMembros = Object.entries(defensores).filter(([, v]) => !v.externo && v.ativo === false);
+
+            let html = '<option value="">Selecionar...</option>';
+            html += '<optgroup label="Membros Ativos">';
+            ativos.forEach(([key, info]) => {
+                html += `<option value="${key}">${info.nome}</option>`;
+            });
+            html += '</optgroup>';
+            if (exMembros.length > 0) {
+                html += '<optgroup label="Ex-membros">';
+                exMembros.forEach(([key, info]) => {
+                    html += `<option value="${key}">${info.nome}</option>`;
+                });
+                html += '</optgroup>';
+            }
+            select.innerHTML = html;
+        }
 
         // afastamentos e detalhesAfastamentos são populados por loadJSONData()
         let afastamentos = {};
@@ -5198,6 +5252,10 @@
                 jsonAfastamentos = await resAf.json();
                 jsonDesignacoes  = await resDes.json();
                 _jsonDesignacoesBkDefensorias = JSON.parse(JSON.stringify(jsonDesignacoes.defensorias));
+
+                // Construir mapa de nomes/cores de badges e popular dropdown dinamicamente
+                buildDefensorNames();
+                populateDefensorDropdown();
 
                 // Reconstruir dados operacionais a partir dos JSONs
                 afastamentos = buildAfastamentosFromJSONRegistros(jsonAfastamentos.registros);
