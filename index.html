@@ -3471,9 +3471,9 @@
             const indices = historico.map((_, i) => i);
             indices.sort((a, b) => {
                 const ha = historico[a], hb = historico[b];
-                // Vigente (fim === null) sempre primeiro
-                if (!ha.fim && hb.fim) return -1;
-                if (ha.fim && !hb.fim) return 1;
+                // Vigente (fim === null) sempre primeiro; fim vazio ("") é histórico
+                if (ha.fim === null && hb.fim !== null) return -1;
+                if (ha.fim !== null && hb.fim === null) return 1;
                 // Entre passadas: mais recente primeiro
                 return (hb.inicio || '').localeCompare(ha.inicio || '');
             });
