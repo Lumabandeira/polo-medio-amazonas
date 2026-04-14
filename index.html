@@ -1767,6 +1767,96 @@
 
         .form-af-body { padding: 28px; }
 
+        /* Modal de visualização (somente leitura) */
+        .view-af-header {
+            background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+            color: white;
+            padding: 22px 28px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .view-af-header h2 { margin: 0; font-size: 1.4em; }
+
+        .view-af-body { padding: 24px 28px 28px; }
+
+        .view-af-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 22px;
+        }
+
+        .view-af-field { display: flex; flex-direction: column; gap: 4px; }
+        .view-af-field.full { grid-column: 1 / -1; }
+        .view-af-field > label {
+            font-size: 0.73em;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .view-af-field > span {
+            font-size: 0.95em;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .view-af-section-title {
+            font-weight: 700;
+            font-size: 0.88em;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 12px;
+        }
+
+        .view-af-dp-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+        }
+        .view-af-dp-nome {
+            font-weight: 700;
+            font-size: 0.93em;
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+        .view-af-sub-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px 14px;
+            padding: 10px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+        .view-af-sub-row:first-of-type { border-top: none; padding-top: 0; }
+        .view-af-sub-row .view-af-field > span { font-size: 0.9em; }
+        .view-af-portaria-row {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .btn-visualizar-af {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 7px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background .15s;
+        }
+        .btn-visualizar-af:hover { background: #dbeafe; }
+
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -2334,6 +2424,17 @@
         </div>
     </div>
 
+    <!-- Modal Visualizar Afastamento (somente leitura — admin e viewer) -->
+    <div id="view-af-overlay" class="form-af-overlay" onclick="fecharVisualizacaoAfastamento(event)">
+        <div class="form-af-content" onclick="event.stopPropagation()">
+            <div class="view-af-header">
+                <h2>👁️ Detalhes do Afastamento</h2>
+                <button class="modal-close" onclick="fecharVisualizacaoAfastamento()">×</button>
+            </div>
+            <div class="view-af-body" id="view-af-body"></div>
+        </div>
+    </div>
+
     <!-- Modal Editar Titulares por DP (admin) -->
     <div id="form-titulares-overlay" class="form-af-overlay" onclick="fecharModalTitulares(event)">
         <div class="form-af-content" onclick="event.stopPropagation()">
@@ -2730,18 +2831,18 @@
             dateInfo.innerHTML = `<strong>📅 Data:</strong> ${dia} de ${mesNome} de 2026`;
 
             const isAdmin = userRole === 'admin';
-            const acoesTh = isAdmin ? '<th style="width:80px">Ações</th>' : '';
 
             if (detalhes.length === 0) {
                 tableContainer.innerHTML = '<div class="no-data">Nenhum detalhe disponível para esta data.</div>';
             } else {
                 let html = `<table class="modal-table"><thead><tr>
                     <th>Defensor</th><th>Tipo</th><th>Defensoria Afetada</th>
-                    <th>Substituto</th><th>Diário Oficial</th><th>Processo</th>${acoesTh}
+                    <th>Substituto</th><th>Diário Oficial</th><th>Processo</th>
+                    <th style="width:90px">Ações</th>
                 </tr></thead><tbody>`;
 
                 const firestoreVistos = new Set();
-                const jsonBaseVistos  = new Set(); // evita duplicar linhas do mesmo evento JSON
+                const jsonBaseVistos  = new Set();
                 detalhes.forEach(item => {
                     // Suprime linhas base cujo evento JSON foi substituído por Firestore
                     if (!item.firestoreId && item.jsonEventoId && jsonOverrideMap[item.jsonEventoId]) return;
@@ -2754,27 +2855,37 @@
                         const label = edNum ? `Edição ${edNum[1]}` : 'Abrir PDF';
                         linkHtml = `<a href="${item.link}" target="_blank" style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap;">📄 ${label}</a>`;
                     }
-                    let acoesTd = '';
+
+                    // Botão 👁️ — visível para todos; aparece uma vez por afastamento único
+                    let btnVer = '';
+                    if (item.firestoreId && !firestoreVistos.has(item.firestoreId)) {
+                        btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes"
+                            onclick="abrirVisualizacaoAfastamento('firestore','${item.firestoreId}')">👁️</button>`;
+                    } else if (!item.firestoreId && item.jsonEventoId && !jsonBaseVistos.has(item.jsonEventoId)) {
+                        btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes"
+                            onclick="abrirVisualizacaoAfastamento('json','${item.jsonEventoId}')">👁️</button>`;
+                    }
+
+                    // Botões de edição — apenas admin
+                    let btnsAdmin = '';
                     if (isAdmin) {
                         if (item.firestoreId && !firestoreVistos.has(item.firestoreId)) {
-                            firestoreVistos.add(item.firestoreId);
-                            acoesTd = `<td style="white-space:nowrap">
-                                <button class="btn-acao-tabela btn-editar-af" title="Editar"
+                            btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar"
                                     onclick="abrirFormAfastamento('${item.firestoreId}',${mes},${dia})">✏️</button>
                                 <button class="btn-acao-tabela btn-deletar-af" title="Excluir"
-                                    onclick="confirmarDeletarAfastamento('${item.firestoreId}',${mes},${dia})">🗑️</button>
-                            </td>`;
+                                    onclick="confirmarDeletarAfastamento('${item.firestoreId}',${mes},${dia})">🗑️</button>`;
                         } else if (!item.firestoreId && item.jsonEventoId && !jsonBaseVistos.has(item.jsonEventoId)) {
-                            // Registro base ainda não substituído: oferece ✏️ para promover ao Firestore
-                            jsonBaseVistos.add(item.jsonEventoId);
-                            acoesTd = `<td style="white-space:nowrap">
-                                <button class="btn-acao-tabela btn-editar-af" title="Editar registro base"
-                                    onclick="abrirFormAfastamento(null,${mes},${dia},'${item.jsonEventoId}')">✏️</button>
-                            </td>`;
-                        } else {
-                            acoesTd = `<td><span style="font-size:0.72em;color:#94a3b8">${item.firestoreId ? '' : ''}</span></td>`;
+                            btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar"
+                                    onclick="abrirFormAfastamento(null,${mes},${dia},'${item.jsonEventoId}')">✏️</button>`;
                         }
                     }
+
+                    // Registra como visto após decidir os botões
+                    if (item.firestoreId) firestoreVistos.add(item.firestoreId);
+                    else if (item.jsonEventoId) jsonBaseVistos.add(item.jsonEventoId);
+
+                    const acoesTd = `<td style="white-space:nowrap;text-align:center">${btnVer}${btnsAdmin ? ' ' + btnsAdmin : ''}</td>`;
+
                     html += `<tr>
                         <td><strong>${item.defensor}</strong></td>
                         <td><span class="tipo-badge ${tipoClass}">${item.tipo}</span></td>
@@ -3153,6 +3264,153 @@
             if (event && event.target !== event.currentTarget &&
                 !event.target.classList.contains('modal-close')) return;
             document.getElementById('form-af-overlay').classList.remove('active');
+        }
+
+        // ── Formata "YYYY-MM-DD" → "DD/MM/YYYY" ──────────────────────────
+        function formatarData(dateStr) {
+            if (!dateStr) return '-';
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        // ── Modal de visualização (somente leitura) ───────────────────────
+        function fecharVisualizacaoAfastamento(event) {
+            if (event && event.target !== event.currentTarget &&
+                !event.target.classList.contains('modal-close')) return;
+            document.getElementById('view-af-overlay').classList.remove('active');
+        }
+
+        function abrirVisualizacaoAfastamento(tipo, id) {
+            const defs = jsonDesignacoes?.defensores || {};
+
+            let defensor, tipoLabel, tipoClass, dataInicio, dataFim, processo, dpsHtml;
+
+            if (tipo === 'firestore') {
+                const reg = afastamentosFirestoreMap[id];
+                if (!reg) { mostrarToast('❌ Registro não encontrado.', true); return; }
+
+                const defInfo = defs[reg.defensor] || {};
+                defensor  = defInfo.nome || reg.defensor;
+                tipoLabel = reg.tipo === 'outro'
+                    ? (reg.tipo_custom || 'Outro')
+                    : (TIPO_LABELS[reg.tipo] || reg.tipo);
+                dataInicio = reg.data_inicio;
+                dataFim    = reg.data_fim;
+                processo   = reg.processo_sei
+                    ? `${reg.processo_tipo || 'SEI'}: ${reg.processo_sei}`
+                    : '-';
+
+                dpsHtml = (reg.designacoes_dp || []).map(desig => {
+                    const dpLabel = dpDisplayLabel(desig.dp);
+                    const subs = (desig.substitutos || []).filter(s => s.substituto);
+                    if (!subs.length) {
+                        return `<div class="view-af-dp-card">
+                            <div class="view-af-dp-nome">${dpLabel}</div>
+                            <span style="color:#94a3b8;font-size:0.9em">Ainda não definido</span>
+                        </div>`;
+                    }
+                    const subsHtml = subs.map((sub, idx) => {
+                        const subNome = sub.substituto === '_outro'
+                            ? (sub.substituto_nome_externo || 'Externo')
+                            : (defs[sub.substituto]?.nome || sub.substituto);
+                        const portariaHtml = sub.portaria_url
+                            ? `<a href="${sub.portaria_url}" target="_blank" style="color:#3b82f6">📄 ${sub.portaria_numero || 'Abrir PDF'}</a>`
+                            : (sub.portaria_numero || '-');
+                        return `<div class="view-af-sub-row" style="${idx===0?'border-top:none;padding-top:0':''}">
+                            <div class="view-af-field"><label>Substituto</label><span>${subNome}</span></div>
+                            <div class="view-af-field"><label>Cobertura início</label><span>${formatarData(sub.data_inicio)}</span></div>
+                            <div class="view-af-field"><label>Cobertura fim</label><span>${formatarData(sub.data_fim)}</span></div>
+                            <div class="view-af-field full view-af-portaria-row"><label>Portaria</label><span>${portariaHtml}</span></div>
+                        </div>`;
+                    }).join('');
+                    return `<div class="view-af-dp-card">
+                        <div class="view-af-dp-nome">${dpLabel}</div>
+                        ${subsHtml}
+                    </div>`;
+                }).join('');
+
+            } else {
+                // Evento JSON base
+                const ev = jsonEventosMap[id];
+                if (!ev) { mostrarToast('❌ Evento não encontrado.', true); return; }
+
+                const defInfo = defs[ev.defensor] || {};
+                defensor  = defInfo.nome || ev.defensor;
+                tipoLabel = TIPO_LABELS[ev.tipo] || ev.tipo;
+                dataInicio = ev.data_inicio;
+                dataFim    = ev.data_fim;
+                processo   = ev.portaria?.sei
+                    ? `SEI: ${ev.portaria.sei}`
+                    : (ev.portaria?.numero || '-');
+
+                // Agrupa designações por DP (pode haver múltiplas por DP com datas diferentes)
+                const dpMap = {};
+                (ev.designacoes || []).forEach(des => {
+                    const dp = String(des.dp);
+                    if (!dpMap[dp]) dpMap[dp] = [];
+                    dpMap[dp].push(des);
+                });
+
+                dpsHtml = Object.entries(dpMap).map(([dp, desList]) => {
+                    const dpLabel = dpDisplayLabel(dp);
+                    const subsHtml = desList.map((des, idx) => {
+                        const subNome = des.substituto && defs[des.substituto]
+                            ? defs[des.substituto].nome
+                            : (des.substituto || 'Ainda não definido');
+                        const ini = des.data_inicio || ev.data_inicio;
+                        const fim = des.data_fim    || ev.data_fim;
+                        const portariaHtml = ev.portaria?.url
+                            ? `<a href="${ev.portaria.url}" target="_blank" style="color:#3b82f6">📄 ${ev.portaria.numero || 'Abrir PDF'}</a>`
+                            : (ev.portaria?.numero || '-');
+                        return `<div class="view-af-sub-row" style="${idx===0?'border-top:none;padding-top:0':''}">
+                            <div class="view-af-field"><label>Substituto</label><span>${subNome}</span></div>
+                            <div class="view-af-field"><label>Cobertura início</label><span>${formatarData(ini)}</span></div>
+                            <div class="view-af-field"><label>Cobertura fim</label><span>${formatarData(fim)}</span></div>
+                            <div class="view-af-field full view-af-portaria-row"><label>Portaria</label><span>${portariaHtml}</span></div>
+                        </div>`;
+                    }).join('');
+                    return `<div class="view-af-dp-card">
+                        <div class="view-af-dp-nome">${dpLabel}</div>
+                        ${subsHtml}
+                    </div>`;
+                }).join('');
+            }
+
+            tipoClass = tipoLabel === 'Férias' ? 'tipo-ferias'
+                      : tipoLabel === 'Folga'  ? 'tipo-folga'
+                      : 'tipo-licenca';
+
+            document.getElementById('view-af-body').innerHTML = `
+                <div class="view-af-info-grid">
+                    <div class="view-af-field">
+                        <label>Defensor Ausente</label>
+                        <span>${defensor}</span>
+                    </div>
+                    <div class="view-af-field">
+                        <label>Tipo</label>
+                        <span><span class="tipo-badge ${tipoClass}">${tipoLabel}</span></span>
+                    </div>
+                    <div class="view-af-field">
+                        <label>Data Início</label>
+                        <span>${formatarData(dataInicio)}</span>
+                    </div>
+                    <div class="view-af-field">
+                        <label>Data Fim</label>
+                        <span>${formatarData(dataFim)}</span>
+                    </div>
+                    <div class="view-af-field full">
+                        <label>Processo</label>
+                        <span>${processo}</span>
+                    </div>
+                </div>
+                <div class="view-af-section-title">Defensorias Afetadas</div>
+                ${dpsHtml || '<div style="color:#94a3b8;font-size:0.9em">Nenhuma DP registrada.</div>'}
+                <div class="form-actions" style="margin-top:20px;justify-content:flex-end">
+                    <button type="button" class="btn-salvar-form" onclick="fecharVisualizacaoAfastamento()">Fechar</button>
+                </div>`;
+
+            document.getElementById('view-af-overlay').classList.add('active');
         }
 
         // =====================================================================
