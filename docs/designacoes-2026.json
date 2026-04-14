@@ -12,7 +12,7 @@
     "elton":        { "nome": "Elton Dariva Staub",                    "nome_curto": "Elton Dariva",     "externo": false },
     "elaine":       { "nome": "Elaine Maria Sousa Frota",              "nome_curto": "Elaine Frota",     "externo": false, "ativo": false },
     "miguel":       { "nome": "Miguel Eduardo de Azevedo Martins Filho","nome_curto": "Miguel Martins",  "externo": false },
-    "mariana":      { "nome": "Mariana Silva Paixão",                  "nome_curto": "Mariana Paixão",   "externo": true  },
+    "mariana":      { "nome": "Mariana Silva Paixão",                  "nome_curto": "Mariana Paixão",   "externo": false, "ativo": false },
     "bruna-farias": { "nome": "Bruna Costa de Farias",                 "nome_curto": "Bruna Farias",     "externo": true  },
     "danielle":     { "nome": "Danielle Mascarenhas Cunha de Almeida", "nome_curto": "Danielle Almeida", "externo": true  },
     "oswaldo":      { "nome": "Oswaldo Machado Neto",                  "nome_curto": "Oswaldo Machado",  "externo": true  }

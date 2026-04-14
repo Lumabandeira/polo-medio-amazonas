@@ -5038,6 +5038,15 @@
             const internos   = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo !== false);
             const exMembros  = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo === false);
 
+            // Ex-membros "livres": cadastrados como texto no editor de titulares (Firestore),
+            // não constam no dicionário `defensores` e não têm mais nenhuma DP ativa.
+            // Permite que novos ex-membros apareçam automaticamente sem alterar o JSON.
+            const orphanExMembros = Object.keys(defHistorico).filter(defKey => {
+                if (defensores[defKey]) return false;      // já está no dicionário → tratado acima
+                if (defCurrentDPs[defKey]) return false;   // ainda tem DP ativa → não é ex-membro
+                return true;
+            });
+
             let html = `<h2>👥 Defensores Públicos</h2>`
                      + `<div class="stats-grid">`
                      + `<div class="stat-card"><h4>Total de Defensores</h4><div class="number">${internos.length}</div></div>`
@@ -5074,19 +5083,20 @@
                 html += '</ul></div>';
             });
 
-            if (exMembros.length > 0) {
+            if (exMembros.length > 0 || orphanExMembros.length > 0) {
                 html += `<button class="ex-membros-toggle" onclick="toggleExMembros(this)" aria-expanded="false">
                     <span class="toggle-arrow">▶</span> Ex-membros das Defensorias do Polo Médio Amazonas
                 </button>`;
                 html += `<div class="ex-membros-body">`;
-                exMembros.forEach(defKey => {
-                    const defInfo = defensores[defKey];
-                    const dpsHist = (defHistorico[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
-                    html += `<div class="defensor-card" style="opacity:0.72;border-left:4px solid var(--text-secondary);">`;
-                    html += `<h4 style="color:var(--text-secondary);">${esc(defInfo.nome)} <span style="font-size:0.8em;font-weight:400;">(ex-membro)</span></h4><ul>`;
+
+                // Função auxiliar: renderiza o card de um ex-membro
+                function renderExMembroCard(nome, dpsHist) {
+                    let card = `<div class="defensor-card" style="opacity:0.72;border-left:4px solid var(--text-secondary);">`;
+                    card += `<h4 style="color:var(--text-secondary);">${esc(nome)} <span style="font-size:0.8em;font-weight:400;">(ex-membro)</span></h4><ul>`;
                     if (dpsHist.length > 0) {
                         dpsHist.forEach(({ dpKey, inicio, fim, portaria_entrada, do_entrada, portaria_saida, do_saida }) => {
                             const dp = defensorias[dpKey];
+                            if (!dp) return;
                             const label = dp.nome.includes('(')
                                 ? esc(dp.nome)
                                 : `${esc(dp.nome)} (${esc(dp.area)})`;
@@ -5107,13 +5117,28 @@
                                 }
                                 detalhe += `</span>`;
                             }
-                            html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
+                            card += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
                         });
                     } else {
-                        html += '<li><em>Sem designações registradas</em></li>';
+                        card += '<li><em>Sem designações registradas</em></li>';
                     }
-                    html += '</ul></div>';
+                    card += '</ul></div>';
+                    return card;
+                }
+
+                // Ex-membros do JSON (ativo: false)
+                exMembros.forEach(defKey => {
+                    const nome = defensores[defKey].nome;
+                    const dpsHist = (defHistorico[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
+                    html += renderExMembroCard(nome, dpsHist);
                 });
+
+                // Ex-membros "livres" — cadastrados via UI como texto, sem DP ativa
+                orphanExMembros.sort().forEach(defKey => {
+                    const dpsHist = (defHistorico[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
+                    html += renderExMembroCard(defKey, dpsHist);
+                });
+
                 html += `</div>`;
             }
 
