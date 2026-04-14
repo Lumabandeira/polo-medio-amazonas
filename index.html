@@ -2444,9 +2444,13 @@
             </div>
             <div class="form-af-body">
                 <div id="form-titulares-body"></div>
-                <div class="form-actions" style="margin-top:20px">
-                    <button type="button" class="btn-cancelar-form" onclick="fecharModalTitulares()">Cancelar</button>
-                    <button type="button" id="btn-salvar-titulares" class="btn-salvar-form" onclick="salvarTitularesDp()">💾 Salvar Alterações</button>
+                <div class="form-actions" style="margin-top:20px;flex-wrap:wrap;gap:10px">
+                    <button type="button" class="tit-btn-adicionar" style="flex:1 1 auto;margin:0"
+                        onclick="_adicionarHistorico()">+ Adicionar ao histórico</button>
+                    <div style="display:flex;gap:10px;flex:1 1 auto;justify-content:flex-end">
+                        <button type="button" class="btn-cancelar-form" onclick="fecharModalTitulares()">Cancelar</button>
+                        <button type="button" id="btn-salvar-titulares" class="btn-salvar-form" onclick="salvarTitularesDp()">💾 Salvar Alterações</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3557,6 +3561,24 @@
             // Salvar valores atuais do DOM antes de re-render
             _sincronizarDomParaHistorico(_titDpKey);
 
+            _renderEntradas(_titDpKey);
+        }
+
+        function _adicionarHistorico() {
+            const dp = jsonDesignacoes.defensorias[_titDpKey];
+            if (!dp) return;
+            // Sincroniza DOM → memória antes de re-render (preserva o que o admin digitou)
+            _sincronizarDomParaHistorico(_titDpKey);
+            // Adiciona entrada já com fim vazio (= histórico, não titular ativo)
+            dp.historico_titulares.push({
+                defensor: null,
+                inicio: '',
+                fim: '',          // ← string vazia → badge "Histórico", não fecha o atual
+                portaria_entrada: null,
+                do_entrada: null,
+                portaria_saida: null,
+                do_saida: null
+            });
             _renderEntradas(_titDpKey);
         }
 
