@@ -175,7 +175,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 14/04/2026)
+## Estado atual do site (atualizado em 14/04/2026 — sessão 2)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -196,6 +196,7 @@ github-pages/
 - **Registros base (JSON) editáveis pelo admin no calendário** — botão ✏️ adicionado a registros "base" (vindos dos JSONs) no modal "Detalhes do Afastamento". Ao clicar, abre o formulário pré-populado com os dados do JSON. Ao salvar, cria registro no Firestore com campo `json_base_id` apontando para o evento JSON original, que é então suprimido da renderização. Globais: `jsonEventosMap` (id→evento) e `jsonOverrideMap` (jsonEventoId→firestoreId). Função auxiliar: `converterDesignacoesJSONParaFirestore(ev)`.
 - **Modal de visualização somente leitura no calendário** — ícone 🔍 no modal "Detalhes do Afastamento", visível para todos os usuários (admin e viewer). Abre modal "🔍 Detalhes do Afastamento" (cabeçalho azul) com: defensor, tipo, data início/fim do afastamento completo, processo SEI, e por DP: substituto, data início/fim de cobertura, portaria clicável. Funciona para registros base (JSON) e Firestore. Função: `abrirVisualizacaoAfastamento(tipo, id)` onde `tipo` é `'firestore'` ou `'json'`. Helper: `formatarData(dateStr)` converte `YYYY-MM-DD` → `DD/MM/YYYY`.
 - **Detecção automática de ex-membros na aba Defensorias** — `renderDefensorias` detecta "orphan ex-members": qualquer defensor cadastrado como titular via UI (Firestore) que não tenha mais DP ativa aparece automaticamente no accordion "Ex-membros", sem necessidade de editar o JSON. Lógica: `orphanExMembros = Object.keys(defHistorico).filter(k => !defensores[k] && !defCurrentDPs[k])`. Mariana Silva Paixão corrigida no JSON de `externo: true` para `externo: false, ativo: false`.
+- **Dropdown "Defensor Ausente" e badges do calendário dinâmicos** — `buildDefensorNames()` e `populateDefensorDropdown()` chamados em `loadJSONData()` após carregar os JSONs. O `<select id="form-af-defensor">` é montado automaticamente de `jsonDesignacoes.defensores` com dois `<optgroup>`: "Membros Ativos" e "Ex-membros". `defensorNames` (antes `const`, agora `let`) também é construído do JSON. Cores de badge novas geradas da `BADGE_PALETTE`; cores já definidas no CSS ficam em `BADGE_CSS_KNOWN` para não serem sobrescritas. Badge da **Mariana Paixão** fixado em `#ff69b4` (rosa Pantera Cor-de-Rosa) no CSS estático e adicionada ao `BADGE_CSS_KNOWN`.
 - **Botão "+ Adicionar ao histórico" no modal de titulares** — botão no rodapé do modal de edição de titulares (antes de Cancelar/Salvar). Cria entrada de histórico passado em branco (`fim: ''`) sem fechar o titular atual ativo. Ordenação corrigida: `fim === null` (ativo) vai ao topo; `fim === ''` (histórico novo) vai ao final; datas preenchidas ordenadas por mais recente primeiro.
 
 ### O que ainda falta implementar ⏳
