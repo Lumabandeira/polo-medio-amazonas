@@ -1657,7 +1657,7 @@
         .form-af-content {
             background: white;
             border-radius: 20px;
-            max-width: 680px;
+            max-width: 900px;
             width: 100%;
             margin: 40px auto;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
@@ -2073,6 +2073,24 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 10px;
+        }
+
+        .sub-top-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .sub-top-grid.com-datas {
+            grid-template-columns: 2fr 1fr 1fr;
+        }
+
+        .sub-grid-portaria {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .btn-add-sub {
@@ -3073,39 +3091,41 @@
                     <span class="sub-row-label">Substituto adicional — ${dpDisplayLabel(dpKey)}</span>
                     <button type="button" class="btn-remover-sub" onclick="this.closest('.sub-row').remove()">✕ Remover</button>
                 </div>` : ''}
-                <div class="form-group">
-                    <label>Substituto</label>
-                    <select class="sub-select" onchange="onSubstitutoChange(this)">
-                        <option value="">ainda não definido</option>
-                        ${_opcoesSubstituto(defensorAusente, subVal)}
-                    </select>
-                    <input type="text" class="sub-outro-nome"
-                        placeholder="Nome completo do defensor"
-                        style="display:${isOutro?'block':'none'};margin-top:8px"
-                        value="${subData?.substituto_nome_externo || ''}">
+                <div class="sub-top-grid${isDefinido ? ' com-datas' : ''}">
+                    <div class="form-group">
+                        <label>Substituto</label>
+                        <select class="sub-select" onchange="onSubstitutoChange(this)">
+                            <option value="">ainda não definido</option>
+                            ${_opcoesSubstituto(defensorAusente, subVal)}
+                        </select>
+                        <input type="text" class="sub-outro-nome"
+                            placeholder="Nome completo do defensor"
+                            style="display:${isOutro?'block':'none'};margin-top:8px"
+                            value="${subData?.substituto_nome_externo || ''}">
+                    </div>
+                    <div class="form-group sub-cobertura-inicio" style="display:${isDefinido?'block':'none'}">
+                        <label>Cobertura início</label>
+                        <input type="date" class="sub-data-inicio" value="${inicio}">
+                    </div>
+                    <div class="form-group sub-cobertura-fim" style="display:${isDefinido?'block':'none'}">
+                        <label>Cobertura fim</label>
+                        <input type="date" class="sub-data-fim" value="${fim}">
+                    </div>
                 </div>
                 <div class="sub-detalhes" style="display:${isDefinido?'block':'none'}">
-                    <div class="sub-grid-datas">
+                    <div class="sub-grid-portaria">
                         <div class="form-group">
-                            <label>Cobertura início</label>
-                            <input type="date" class="sub-data-inicio" value="${inicio}">
+                            <label>Número da Portaria</label>
+                            <input type="text" class="sub-portaria"
+                                placeholder="ex: Portaria nº 123/2026-GSPG/DPE/AM"
+                                value="${subData?.portaria_numero || ''}">
                         </div>
                         <div class="form-group">
-                            <label>Cobertura fim</label>
-                            <input type="date" class="sub-data-fim" value="${fim}">
+                            <label>Link do Diário Oficial (PDF)</label>
+                            <input type="url" class="sub-url"
+                                placeholder="https://diario.defensoria.am.def.br/..."
+                                value="${subData?.portaria_url || ''}">
                         </div>
-                    </div>
-                    <div class="form-group" style="margin-top:10px">
-                        <label>Número da Portaria</label>
-                        <input type="text" class="sub-portaria"
-                            placeholder="ex: Portaria nº 123/2026-GSPG/DPE/AM"
-                            value="${subData?.portaria_numero || ''}">
-                    </div>
-                    <div class="form-group" style="margin-top:10px">
-                        <label>Link do Diário Oficial (PDF)</label>
-                        <input type="url" class="sub-url"
-                            placeholder="https://diario.defensoria.am.def.br/..."
-                            value="${subData?.portaria_url || ''}">
                     </div>
                 </div>`;
             return row;
@@ -3175,15 +3195,24 @@
         }
 
         function onSubstitutoChange(selectEl) {
-            const row      = selectEl.closest('.sub-row');
-            const detalhes = row.querySelector('.sub-detalhes');
+            const row       = selectEl.closest('.sub-row');
+            const topGrid   = row.querySelector('.sub-top-grid');
+            const detalhes  = row.querySelector('.sub-detalhes');
             const outroNome = row.querySelector('.sub-outro-nome');
+            const cobInicio = row.querySelector('.sub-cobertura-inicio');
+            const cobFim    = row.querySelector('.sub-cobertura-fim');
             const val = selectEl.value;
             outroNome.style.display = val === '_outro' ? 'block' : 'none';
             if (val === '') {
-                detalhes.style.display = 'none';
+                topGrid.classList.remove('com-datas');
+                cobInicio.style.display = 'none';
+                cobFim.style.display    = 'none';
+                detalhes.style.display  = 'none';
             } else {
-                detalhes.style.display = 'block';
+                topGrid.classList.add('com-datas');
+                cobInicio.style.display = 'block';
+                cobFim.style.display    = 'block';
+                detalhes.style.display  = 'block';
                 const inicio = document.getElementById('form-af-inicio').value;
                 const fim    = document.getElementById('form-af-fim').value;
                 const si = row.querySelector('.sub-data-inicio');
