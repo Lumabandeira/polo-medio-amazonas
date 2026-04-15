@@ -175,7 +175,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 14/04/2026 — sessão 2)
+## Estado atual do site (atualizado em 15/04/2026 — sessão 3)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -186,7 +186,7 @@ github-pages/
 - **Coluna Diário Oficial no modal do calendário** — link clicável para o PDF ao clicar em dia com afastamento
 - **Aba Tabela Completa removida** — Calendário Visual é a aba principal
 - **Botões "Nova Aba" e "Sincronizar Planilha" removidos** — e todo código/CSS associado limpo
-- **1 usuário admin cadastrado** — bandeira.lkp@gmail.com (role: admin, nome: Luma) no Firestore
+- **2 usuários admin cadastrados** — bandeira.lkp@gmail.com (Luma) e fabiobastos@defensoria.am.def.br (Fábio Bastos) no Firebase Auth + Firestore com `role: "admin"`
 - **Calendário interativo para admins** — CRUD completo de afastamentos via Firestore (`afastamentos_admin`). Detalhes abaixo em "Arquitetura do calendário interativo".
 - **Datas de cobertura do substituto liberadas** — removidos os atributos `min`/`max` dos inputs e a lógica de clamping que forçava as datas para dentro do afastamento (causava bug de só permitir selecionar 1 dia). A validação agora ocorre apenas no momento de salvar, com mensagem de erro.
 - **Validação de sobreposição entre substitutos** — ao salvar, o sistema verifica se dois substitutos da mesma DP têm períodos de cobertura sobrepostos (inclusive dias iguais na fronteira). Exibe mensagem `❌ [Nome A] e [Nome B] (DP) têm períodos de cobertura sobrepostos.` e bloqueia o salvamento.
@@ -198,12 +198,16 @@ github-pages/
 - **Detecção automática de ex-membros na aba Defensorias** — `renderDefensorias` detecta "orphan ex-members": qualquer defensor cadastrado como titular via UI (Firestore) que não tenha mais DP ativa aparece automaticamente no accordion "Ex-membros", sem necessidade de editar o JSON. Lógica: `orphanExMembros = Object.keys(defHistorico).filter(k => !defensores[k] && !defCurrentDPs[k])`. Mariana Silva Paixão corrigida no JSON de `externo: true` para `externo: false, ativo: false`.
 - **Dropdown "Defensor Ausente" e badges do calendário dinâmicos** — `buildDefensorNames()` e `populateDefensorDropdown()` chamados em `loadJSONData()` após carregar os JSONs. O `<select id="form-af-defensor">` é montado automaticamente de `jsonDesignacoes.defensores` com dois `<optgroup>`: "Membros Ativos" e "Ex-membros". `defensorNames` (antes `const`, agora `let`) também é construído do JSON. Cores de badge novas geradas da `BADGE_PALETTE`; cores já definidas no CSS ficam em `BADGE_CSS_KNOWN` para não serem sobrescritas. Badge da **Mariana Paixão** fixado em `#ff69b4` (rosa Pantera Cor-de-Rosa) no CSS estático e adicionada ao `BADGE_CSS_KNOWN`.
 - **Botão "+ Adicionar ao histórico" no modal de titulares** — botão no rodapé do modal de edição de titulares (antes de Cancelar/Salvar). Cria entrada de histórico passado em branco (`fim: ''`) sem fechar o titular atual ativo. Ordenação corrigida: `fim === null` (ativo) vai ao topo; `fim === ''` (histórico novo) vai ao final; datas preenchidas ordenadas por mais recente primeiro.
+- **Dropdown de ex-membros inclui orphanExMembros** — `populateDefensorDropdown()` agora calcula ex-membros livres do Firestore (nomes em `historico_titulares` sem DP ativa que não constam em `defensores`) e os adiciona ao optgroup "Ex-membros". Também chamado ao final de `loadTitularesFirestore()`.
+- **Integração calendário ↔ Designações Semanais** — `loadAfastamentosFirestore()` agora chama `renderDesignacoes()` após `renderCalendar()`. Células de DP com titular ausente e substituto "ainda não definido" exibem indicador amarelo (`.sem-cobertura`: fundo `#fff8e1`, texto `#b45309`, itálico) com tooltip "Titular ausente — sem substituto definido". Substitutos definidos aparecem em itálico normalmente.
+- **Layout do formulário de afastamento reorganizado** — modal ampliado de 680px para 900px. Campos do topo em grid 4-col: Defensor (span 2) + Data Início + Data Fim na linha 1; Tipo + Processo (span 3) na linha 2. Dentro de cada substituto: Substituto + Cobertura início + Cobertura fim em grid 3-col (`.sub-top-grid` com classe `.com-datas` quando substituto selecionado); Portaria + Link DO lado a lado (`.sub-grid-portaria`).
 
 ### O que ainda falta implementar ⏳
-- **Cadastrar os outros 39 usuários** (2 admins + 37 viewers) no Firebase Auth + Firestore
-- **Integração do calendário com a aba Designações Semanais** — quando um afastamento cadastrado via calendário tiver substituto "ainda não definido", isso deve refletir na tabela semanal (célula da DP mostrando ausência sem cobertura). Decidido que será feito em sessão futura.
+- **Cadastrar os outros 38 usuários restantes** (1 admin + 37 viewers) no Firebase Auth + Firestore
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
-- **Coleção `defensores_admin` no Firestore** — para gerenciar status ativo/ex-membro dos defensores via interface (planejado mas não solicitado ainda; ex-membros livres já detectados automaticamente via orphanExMembros)
+
+### Descartado (não vale implementar)
+- **Coleção `defensores_admin` no Firestore** — descartado: ex-membros livres já detectados automaticamente via orphanExMembros; casos raros de inconsistência com o JSON não justificam a complexidade
 
 ### Decisões de arquitetura já tomadas
 - Sem automação do Diário Oficial — admin insere links manualmente
