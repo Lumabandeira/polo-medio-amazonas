@@ -1591,6 +1591,47 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             animation: fadeIn 0.3s;
         }
+        /* ─── Alerta de erro modal (centralizado, fecha só no clique) ─ */
+        #alerta-erro-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 6000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s;
+        }
+        #alerta-erro-overlay.visivel { display: flex; }
+        #alerta-erro-box {
+            background: #ef4444;
+            color: white;
+            padding: 28px 32px;
+            border-radius: 12px;
+            max-width: 480px;
+            width: calc(100% - 40px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        #alerta-erro-msg {
+            font-size: 1.05em;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+        }
+        #alerta-erro-btn {
+            background: white;
+            color: #ef4444;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+        #alerta-erro-btn:hover { transform: scale(1.05); }
         /* ── Calendário Admin ─────────────────────────────────── */
         .modal-admin-footer {
             margin-top: 20px;
@@ -2136,6 +2177,14 @@
 
 <!-- Toast de notificação -->
 <div id="toast"></div>
+
+<!-- Alerta de erro modal (centralizado, fecha só no clique) -->
+<div id="alerta-erro-overlay" onclick="if(event.target===this) fecharAlertaErro()">
+    <div id="alerta-erro-box" role="alertdialog" aria-modal="true">
+        <div id="alerta-erro-msg"></div>
+        <button id="alerta-erro-btn" onclick="fecharAlertaErro()">Fechar</button>
+    </div>
+</div>
 
 <body>
     <div class="container">
@@ -3817,26 +3866,26 @@
                 const firestoreId = document.getElementById('form-af-id').value;
                 const dados = coletarDadosFormulario();
                 if (!dados.defensor || !dados.data_inicio || !dados.data_fim) {
-                    mostrarToast('❌ Preencha defensor e datas.', true); return;
+                    mostrarAlertaErro('Preencha defensor e datas.'); return;
                 }
                 if (dados.data_fim < dados.data_inicio) {
-                    mostrarToast('❌ Data fim não pode ser anterior à data início.', true); return;
+                    mostrarAlertaErro('Data fim não pode ser anterior à data início.'); return;
                 }
                 if (dados.tipo === 'outro' && !dados.tipo_custom) {
-                    mostrarToast('❌ Especifique o motivo do afastamento.', true); return;
+                    mostrarAlertaErro('Especifique o motivo do afastamento.'); return;
                 }
                 // Validar datas de cobertura dos substitutos
                 for (const desig of (dados.designacoes_dp || [])) {
                     const dpNome = dpDisplayLabel(desig.dp);
                     for (const sub of (desig.substitutos || [])) {
                         if (sub.data_inicio && sub.data_inicio < dados.data_inicio) {
-                            mostrarToast('❌ O início da substituição não pode ser anterior ao início do afastamento (' + dados.data_inicio + ').', true); return;
+                            mostrarAlertaErro('O início da substituição não pode ser anterior ao início do afastamento (' + dados.data_inicio + ').'); return;
                         }
                         if (sub.data_fim && sub.data_fim > dados.data_fim) {
-                            mostrarToast('❌ O fim da substituição não pode ser posterior ao fim do afastamento (' + dados.data_fim + ').', true); return;
+                            mostrarAlertaErro('O fim da substituição não pode ser posterior ao fim do afastamento (' + dados.data_fim + ').'); return;
                         }
                         if (sub.data_inicio && sub.data_fim && sub.data_fim < sub.data_inicio) {
-                            mostrarToast('❌ A cobertura fim não pode ser anterior à cobertura início.', true); return;
+                            mostrarAlertaErro('A cobertura fim não pode ser anterior à cobertura início.'); return;
                         }
                     }
                     // Verificar sobreposição entre substitutos da mesma DP
@@ -3847,7 +3896,7 @@
                             if (a.data_inicio <= b.data_fim && b.data_inicio <= a.data_fim) {
                                 const nomeA = a.substituto === '_outro' ? (a.substituto_nome_externo || 'Externo') : ((jsonDesignacoes?.defensores || {})[a.substituto]?.nome_curto || a.substituto);
                                 const nomeB = b.substituto === '_outro' ? (b.substituto_nome_externo || 'Externo') : ((jsonDesignacoes?.defensores || {})[b.substituto]?.nome_curto || b.substituto);
-                                mostrarToast(`❌ ${nomeA} e ${nomeB} (${dpNome}) têm períodos de cobertura sobrepostos.`, true); return;
+                                mostrarAlertaErro(`${nomeA} e ${nomeB} (${dpNome}) têm períodos de cobertura sobrepostos.`); return;
                             }
                         }
                     }
@@ -5579,6 +5628,14 @@
             t.style.background  = erro ? '#ef4444' : '#1e293b';
             t.style.display     = 'block';
             setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
+
+        function mostrarAlertaErro(msg) {
+            document.getElementById('alerta-erro-msg').textContent = msg;
+            document.getElementById('alerta-erro-overlay').classList.add('visivel');
+        }
+        function fecharAlertaErro() {
+            document.getElementById('alerta-erro-overlay').classList.remove('visivel');
         }
 
         // =====================================================================
