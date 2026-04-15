@@ -1869,7 +1869,7 @@
 
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
             margin-bottom: 20px;
         }
@@ -2008,6 +2008,7 @@
         @media (max-width: 600px) {
             .form-grid { grid-template-columns: 1fr; }
             .form-group.form-full { grid-column: 1; }
+            .form-grid .form-group[style*="span"] { grid-column: 1; }
         }
 
         /* ── Seções de DP no formulário ──────────────────────── */
@@ -2393,7 +2394,7 @@
                     <input type="hidden" id="form-af-id">
                     <input type="hidden" id="form-af-json-base-id">
                     <div class="form-grid">
-                        <div class="form-group">
+                        <div class="form-group" style="grid-column: span 2">
                             <label>Defensor Ausente</label>
                             <select id="form-af-defensor" required onchange="onDefensorChange()">
                                 <option value="">Selecionar...</option>
@@ -2404,6 +2405,14 @@
                                 <option value="elaine">Elaine Maria Sousa Frota</option>
                                 <option value="miguel">Miguel Eduardo de A. M. Filho</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Data Início</label>
+                            <input type="date" id="form-af-inicio" min="2026-01-01" max="2026-12-31" required onchange="onDatasChange()">
+                        </div>
+                        <div class="form-group">
+                            <label>Data Fim</label>
+                            <input type="date" id="form-af-fim" min="2026-01-01" max="2026-12-31" required onchange="onDatasChange()">
                         </div>
                         <div class="form-group">
                             <label>Tipo</label>
@@ -2418,15 +2427,7 @@
                             <label>Especificar motivo</label>
                             <input type="text" id="form-af-tipo-outro" placeholder="ex: Cedido para outro órgão, Tratamento de saúde...">
                         </div>
-                        <div class="form-group">
-                            <label>Data Início</label>
-                            <input type="date" id="form-af-inicio" min="2026-01-01" max="2026-12-31" required onchange="onDatasChange()">
-                        </div>
-                        <div class="form-group">
-                            <label>Data Fim</label>
-                            <input type="date" id="form-af-fim" min="2026-01-01" max="2026-12-31" required onchange="onDatasChange()">
-                        </div>
-                        <div class="form-group form-full">
+                        <div class="form-group" style="grid-column: span 3">
                             <label>Processo</label>
                             <div style="display:flex;gap:8px;align-items:center;">
                                 <select id="form-af-processo-tipo" style="width:80px;padding:8px 6px;border:1px solid var(--border-color,#d1d5db);border-radius:8px;font-size:0.95em;background:#fff;color:var(--text-primary,#1f2937);flex-shrink:0;">
