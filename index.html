@@ -2541,9 +2541,29 @@
             const select = document.getElementById('form-af-defensor');
             if (!select || !jsonDesignacoes) return;
             const defensores = jsonDesignacoes.defensores;
+            const defensorias = jsonDesignacoes.defensorias || {};
 
             const ativos    = Object.entries(defensores).filter(([, v]) => !v.externo && v.ativo !== false);
             const exMembros = Object.entries(defensores).filter(([, v]) => !v.externo && v.ativo === false);
+
+            // Orphan ex-members: nomes livres em historico_titulares (Firestore) sem DP ativa
+            const defHistorico = {};
+            Object.keys(defensorias).forEach(dpKey => {
+                (defensorias[dpKey].historico_titulares || []).forEach(h => {
+                    if (!h.defensor || defensores[h.defensor]) return; // ignora chaves já no JSON
+                    if (!defHistorico[h.defensor]) defHistorico[h.defensor] = [];
+                    defHistorico[h.defensor].push(dpKey);
+                });
+            });
+            const defAtivosLivres = new Set();
+            Object.keys(defensorias).forEach(dpKey => {
+                (defensorias[dpKey].historico_titulares || []).forEach(h => {
+                    if (h.defensor && !defensores[h.defensor] && !h.fim) defAtivosLivres.add(h.defensor);
+                });
+            });
+            const orphanExMembros = Object.keys(defHistorico)
+                .filter(k => !defAtivosLivres.has(k))
+                .sort();
 
             let html = '<option value="">Selecionar...</option>';
             html += '<optgroup label="Membros Ativos">';
@@ -2551,10 +2571,14 @@
                 html += `<option value="${key}">${info.nome}</option>`;
             });
             html += '</optgroup>';
-            if (exMembros.length > 0) {
+            const todosExMembros = [
+                ...exMembros.map(([key, info]) => ({ value: key, label: info.nome })),
+                ...orphanExMembros.map(k => ({ value: k, label: k }))
+            ];
+            if (todosExMembros.length > 0) {
                 html += '<optgroup label="Ex-membros">';
-                exMembros.forEach(([key, info]) => {
-                    html += `<option value="${key}">${info.nome}</option>`;
+                todosExMembros.forEach(({ value, label }) => {
+                    html += `<option value="${value}">${label}</option>`;
                 });
                 html += '</optgroup>';
             }
@@ -2845,6 +2869,7 @@
                 renderDefensorias();
                 renderDesignacoes();
                 renderCalendar();
+                populateDefensorDropdown();
             } catch(e) {
                 console.warn('Firestore titulares_admin:', e.message);
             }
