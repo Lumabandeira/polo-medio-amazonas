@@ -4428,8 +4428,18 @@
 
             // Substituto registrado no detalhes (prioridade máxima)
             if (dpPrefix) {
-                const sub = dayDetails.find(d => d.defensoria && d.defensoria.startsWith(dpPrefix));
-                if (sub) {
+                // Filtrar entradas relevantes para esta DP, ignorando registros JSON
+                // que já foram sobrescritos por um registro Firestore (json_base_id).
+                const candidatos = dayDetails.filter(d =>
+                    d.defensoria && d.defensoria.startsWith(dpPrefix) &&
+                    !(!d.firestoreId && d.jsonEventoId && jsonOverrideMap[d.jsonEventoId])
+                );
+                if (candidatos.length > 0) {
+                    // Preferir entrada com substituto explicitamente definido
+                    // (evita que uma entrada JSON sem substituto mascare uma Firestore com substituto)
+                    const sub = candidatos.find(d =>
+                        d.substituto && d.substituto !== 'ainda não definido'
+                    ) || candidatos[0];
                     if (!sub.substituto || sub.substituto === 'ainda não definido') {
                         return { name: '—', isSub: false, semCobertura: true };
                     }

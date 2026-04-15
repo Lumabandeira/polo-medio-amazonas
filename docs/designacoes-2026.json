@@ -460,26 +460,6 @@
     },
 
     {
-      "id": "ev-019",
-      "defensor": "icaro",
-      "tipo": "ferias",
-      "data_inicio": "2026-04-06",
-      "data_fim": "2026-04-17",
-      "portaria": {
-        "numero": null,
-        "edicao": null,
-        "data": null,
-        "url": null,
-        "sei": "SGI 2600016"
-      },
-      "designacoes": [
-        { "dp": "1",  "substituto": null },
-        { "dp": "3",  "substituto": null },
-        { "dp": "11", "substituto": null }
-      ]
-    },
-
-    {
       "id": "ev-020",
       "defensor": "jose-antonio",
       "tipo": "ferias",
