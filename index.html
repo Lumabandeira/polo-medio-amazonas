@@ -207,6 +207,13 @@
             border-bottom: 1px solid var(--border-color);
         }
 
+        .sem-cobertura {
+            background-color: #fff8e1;
+            color: #b45309;
+            font-style: italic;
+            cursor: help;
+        }
+
         tr:hover {
             background: rgba(59, 130, 246, 0.05);
         }
@@ -4391,7 +4398,10 @@
             // Substituto registrado no detalhes (prioridade máxima)
             if (dpPrefix) {
                 const sub = dayDetails.find(d => d.defensoria && d.defensoria.startsWith(dpPrefix));
-                if (sub && sub.substituto) {
+                if (sub) {
+                    if (!sub.substituto || sub.substituto === 'ainda não definido') {
+                        return { name: '—', isSub: false, semCobertura: true };
+                    }
                     return { name: shortenDefensorName(sub.substituto), isSub: true };
                 }
             }
@@ -4451,9 +4461,18 @@
                 html += `<tr><td${rowClass ? ` class="${rowClass}"` : ''}>${dp.label}</td>`;
                 days.forEach(d => {
                     const isWeekday = d.getDay() >= 1 && d.getDay() <= 5;
-                    const cellClass = (active && dp.highlight && isWeekday) ? dp.highlight : '';
+                    const baseClass = (active && dp.highlight && isWeekday) ? dp.highlight : '';
                     const resp = getResponsibleForDPOnDay(dp, d.getMonth()+1, d.getDate());
-                    const cell = resp.isSub ? `<em title="Substituto">${resp.name}</em>` : resp.name;
+                    let cellClass = baseClass;
+                    let cell;
+                    if (resp.semCobertura && isWeekday) {
+                        cellClass = [baseClass, 'sem-cobertura'].filter(Boolean).join(' ');
+                        cell = `<span title="Titular ausente — sem substituto definido">—</span>`;
+                    } else if (resp.isSub) {
+                        cell = `<em title="Substituto">${resp.name}</em>`;
+                    } else {
+                        cell = resp.name;
+                    }
                     html += `<td${cellClass ? ` class="${cellClass}"` : ''}>${cell}</td>`;
                 });
                 html += '</tr>';
