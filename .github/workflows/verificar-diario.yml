@@ -1,9 +1,11 @@
 name: Verificar Diário Oficial DPE/AM
 
 on:
-  schedule:
-    # 06:00 em Manaus (UTC-4, sem horário de verão) = 10:00 UTC
-    - cron: '0 10 * * *'
+  # ⚠️ SCHEDULE DESATIVADO — o script tem um bug que trunca o index.html (max_tokens insuficiente
+  # para retornar HTML completo de ~250KB). Antes de religar o cron, a estratégia de atualização
+  # precisa ser redesenhada. Por enquanto, só execução manual via workflow_dispatch.
+  # schedule:
+  #   - cron: '0 10 * * *'  # 06:00 Manaus = 10:00 UTC
   workflow_dispatch:  # Permite rodar manualmente pelo botão "Run workflow"
 
 permissions:
