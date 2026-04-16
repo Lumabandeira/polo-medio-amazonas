@@ -4,6 +4,9 @@ docs/pdfs-cache/
 # ── Estado interno dos scripts Python ─────────────────────────────────────────
 docs/.estado-diario.json
 
+# ── Credenciais SMTP (gerado em runtime pelo GitHub Actions via secrets) ──────
+docs/config.json
+
 # ── Logs de execução local ─────────────────────────────────────────────────────
 docs/logs/
 
