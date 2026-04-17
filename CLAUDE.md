@@ -403,6 +403,39 @@ Requer `firebase-service-account.json` na raiz do projeto.
 
 ---
 
+## Backfill do calendário a partir do Diário Oficial estruturado (✅ EXECUTADO — 17/04/2026)
+
+### Contexto
+Em 17/04/2026 o calendário foi retroativamente populado com designações substitutas publicadas no DO desde janeiro/2026 que ainda não haviam sido registradas em `afastamentos_admin`. O processamento é **100% local (regex)**, sem custo de API.
+
+### Script: `backfill-calendario-do-estruturado.py`
+- Lê `docs/diario-oficial-completo-2026.json`, campo `portarias_estruturadas.trechos`
+- Parser regex parseia tanto "período de X a Y" quanto "dias A, B e C" e "nos períodos de X a Y e Z a W"
+- **Rejeita** trechos com apenas data de início ("a contar do dia X") — marca como "não parseados" para revisão manual
+- **Cruza revogações** (`TORNAR SEM EFEITO` / `CESSAR OS EFEITOS`) por `(número, ano)` da portaria citada + conjunto de incisos; remove designações revogadas do plano antes de gravar
+- **Resolve titular histórico** por data (right-exclusive: `inicio <= d < fim`), combinando `designacoes-2026.json` com overrides de `titulares_admin` no Firestore
+- Mapeia substituto: nome completo ou primeiro+último bate com um dos defensores do polo → `substituto: "abrev"`; caso contrário → `substituto: "_outro"` + `substituto_nome_externo: "Nome"`
+- **Filtra ano < 2026** (dezembro/2025 fica fora)
+- Merge vs. novo: se já existe afastamento do titular com período sobreposto → adiciona em `designacoes_dp[]`; caso contrário → cria novo com `tipo: "outro"`, `origem: "backfill-do-estruturado"`, `criado_por: "backfill@diario-estruturado"`
+- Dedup: se já há substituto registrado com mesmo `(substituto, data_inicio, data_fim)` na DP, pula
+- CLI: dry-run por padrão. `--commit` grava. `--no-firestore` roda sem Firestore (pendentes não classificados).
+
+### Resultado da execução (17/04/2026)
+- 50 afastamentos novos criados (tipo=outro)
+- 2 designações puladas por já estarem registradas no afastamento base `RW2HbSgEPAsuOFolDzRc` (folga Mariana Paixão 4ª e 9ª DP, 07-09/jan)
+- 3 removidas por revogação cruzada (Bruna 22-30/jan via Portaria 52/2026; Eliaquim 6ª+7ª DP 02-27/mar via Portaria 178/2026)
+- 3 removidas por ano < 2026 (Mariana dez/2025)
+- 2 não parseadas (Eliaquim 9ª DP a partir de 11/jan; Miguel 7ª DP a partir de 07/mar — só têm data início)
+- **1 pendente de revisão manual:** Eliaquim → 7ª DP 2026-03-01..2026-03-06 (Portaria 206/2026). Não gravada porque a 7ª DP não tem titular resolvido para 01/03 — o histórico local tem Elaine (fim=2026-03-01) e Miguel (inicio=2026-03-01), mas `titulares_admin` no Firestore não reflete essa transição. **Corrigir** atualizando `titulares_admin/7` no Firestore pela UI admin e depois registrando esse afastamento manualmente.
+
+### Quando reexecutar
+Sempre que `docs/diario-oficial-completo-2026.json` for atualizado com edições novas. O script é idempotente (dedup por `(defensor, data_inicio, data_fim, tipo)` e por substituto dentro de `designacoes_dp`), então rodar várias vezes é seguro.
+
+### Revogações — limitação conhecida
+As 10 revogações detectadas são **apenas logadas** no console, não aplicadas a afastamentos já no Firestore. Se uma portaria revogada já virou afastamento gravado anteriormente, revisar manualmente. O cruzamento automático só funciona no plano em memória antes da gravação.
+
+---
+
 ## Projeto 2 — Automação da aba "Diário Oficial" (⏳ PENDENTE — iniciar em 18/04/2026)
 
 ### Contexto e diferença para o Projeto 1
