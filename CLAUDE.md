@@ -321,7 +321,7 @@ O workflow roda diariamente às **06:00 de Manaus** (10:00 UTC) via `.github/wor
 1. **Scrape** da página pública do Diário Oficial da DPE/AM
 2. **Comparação** com `.estado-diario.json` (última edição processada, em cache via `actions/cache@v4`)
 3. Para cada edição nova: baixa PDF → extrai texto com `pdfplumber`
-4. **Pré-filtro por termos-gatilho** (`_extrair_trechos_relevantes`): procura no texto completo por "Polo Médio Amazonas", "Itacoatiara" e nomes completos dos 5 defensores titulares. Se nenhum termo aparece, pula a chamada ao Claude (custo zero). Caso contrário, extrai janelas de ±1500 chars em volta de cada menção e concatena (intervalos sobrepostos são mesclados). Isso resolve o bug original de enviar só `text[:15000]` — as designações do Polo Médio costumam aparecer em páginas tardias do PDF (40k+ chars).
+4. **Pré-filtro por termos-gatilho** (`_extrair_trechos_relevantes`): procura no texto completo pela frase fixa `Polo (do) Médio Amazonas` + primeiro+segundo nome de cada **titular vigente** (carregados dinamicamente de `docs/designacoes-2026.json` + Firestore `titulares_admin` em `inicializar_defensores_e_termos()`). Se nenhum termo aparece, pula a chamada ao Claude (custo zero). Caso contrário, extrai janelas de ±1500 chars em volta de cada menção e concatena (intervalos sobrepostos são mesclados). Isso resolve o bug original de enviar só `text[:15000]` — as designações do Polo Médio costumam aparecer em páginas tardias do PDF (40k+ chars). **Cidades e servidores foram removidos dos termos** — o DO designa "Nª Defensoria Pública do Estado do Amazonas", nunca pela cidade; servidores são escopo do Projeto 2 (abaixo). Quando um titular muda (ex.: Miguel assumiu DPs 6/7 no lugar de Elaine em 01/03/2026), a automação se atualiza sozinha na próxima execução, sem edição no script.
 5. Envia trechos ao **Claude Haiku 4.5** (`claude-haiku-4-5-20251001`, `max_tokens=2048`) com prompt que pede JSON agrupado por afastamento
 6. `salvar_afastamentos_firestore()` converte para o schema esperado pelo site (ver abaixo) e grava via `firebase-admin`
 7. E-mail automático com resumo dos afastamentos gravados (opcional, via SMTP)
@@ -378,7 +378,7 @@ Antes de inserir, `salvar_afastamentos_firestore` busca documentos com mesmo `(d
 - Secrets SMTP (opcionais): `SMTP_REMETENTE`, `SMTP_SENHA_APP`, `SMTP_DESTINATARIO`. Se ausentes, script loga warning e segue sem enviar e-mail.
 
 ### Arquivos-chave da automação
-- `verificar-diario-oficial.py` — script principal. Funções: `_extrair_trechos_relevantes`, `parse_designations`, `salvar_afastamentos_firestore`, `get_firestore_client`, `main`.
+- `verificar-diario-oficial.py` — script principal. Funções: `inicializar_defensores_e_termos`, `_carregar_titulares_vigentes`, `_construir_termos_gatilho`, `_extrair_trechos_relevantes`, `parse_designations`, `salvar_afastamentos_firestore`, `get_firestore_client`, `main`.
 - `processar-diario-completo.py` — script histórico/batch com Claude Sonnet (não roda no cron, só sob demanda)
 - `raspar-diario-2026.py` — raspador histórico de edições 2564–2629 (não roda no cron)
 - `criar-tarefa-agendada.ps1` — script PowerShell do agendador local (obsoleto, substituído pelo workflow GitHub Actions; tarefa `VerificarDiarioOficialDPE` está `Disabled`)
@@ -400,6 +400,45 @@ Requer `firebase-service-account.json` na raiz do projeto.
 - Execução com edição nova sem menção ao Polo Médio: **$0** (pré-filtro pula a chamada)
 - Execução com designação detectada: ~$0.004–0.008 por edição
 - Limite mensal: `LIMITE_CUSTO_USD = $2.00`. Ao atingir, envia e-mail e pausa automação até virar o mês.
+
+---
+
+## Projeto 2 — Automação da aba "Diário Oficial" (⏳ PENDENTE — iniciar em 18/04/2026)
+
+### Contexto e diferença para o Projeto 1
+
+O **Projeto 1** (acima) é estrito: detecta apenas afastamentos dos **5 titulares vigentes do Polo Médio** e grava em `afastamentos_admin` para aparecer no calendário do site. Os termos-gatilho são mínimos: `Polo Médio Amazonas` + primeiro+segundo nome dos titulares.
+
+O **Projeto 2** é amplo: vai popular uma nova aba **"Diário Oficial"** no site com **todas as portarias relevantes para o Polo Médio**, não apenas afastamentos de defensores. Exemplos de conteúdo desejado:
+
+- Designações/afastamentos de **servidores** lotados no polo (Natália Cristina, Fábio Bastos, Luma Karolyne, Luma Bandeira, Larice Bruce, Arnoud Lucas, Raquel Ferreira dos Santos, etc.)
+- Escalas de **plantão** que envolvam o Polo Médio
+- Atos de **coordenação regional** (portarias da GSPG/DPE-AM afetando a administração do polo)
+- Designações de **estagiários** e comissionados do polo
+- Qualquer outra portaria citando o polo ou seus integrantes, mesmo fora do escopo estrito de "afastamento + substituto"
+
+### Arquitetura planejada (a decidir na próxima sessão)
+
+- **Fonte:** `docs/diario-oficial-completo-2026.json` (novo arquivo) OU nova coleção Firestore (`diario_oficial_admin` ou equivalente). Decisão pendente — JSON versionado é mais simples; Firestore permite edição pela UI admin, mas exige CRUD próprio na interface.
+- **Termos-gatilho:** lista bem maior, incluindo:
+  - Frase fixa "Polo (do) Médio Amazonas"
+  - Cidades do polo: Itacoatiara, São Sebastião do Uatumã, Itapiranga, Urucurituba, Urucará, Silves
+  - Nomes dos titulares vigentes (reaproveitar `_carregar_titulares_vigentes()`)
+  - Nomes dos servidores do polo (fonte a definir — novo arquivo estático? coleção Firestore?)
+- **Modelo:** manter Claude Haiku 4.5, mas com prompt diferente (categoriza por tipo de ato em vez de extrair só afastamentos). Aumentar `max_tokens` conforme necessário.
+- **UI:** nova aba "Diário Oficial" no `index.html` com feed cronológico de portarias, filtros por tipo/mês, link direto pro PDF da edição.
+
+### Pré-requisitos antes de começar
+
+- Definir estrutura de dados final (schema do JSON ou da coleção Firestore)
+- Listar exaustivamente os servidores a serem monitorados (com grafias alternativas)
+- Decidir categorização (ex.: `afastamento`, `plantao`, `coordenacao`, `estagiario`, `outro`)
+- Avaliar impacto de custo — muitos termos-gatilho = mais janelas extraídas = mais tokens por edição. Revisar `LIMITE_CUSTO_USD` se necessário.
+
+### O que NÃO fazer (preservar Projeto 1)
+
+- **Não misturar** os termos-gatilho do Projeto 2 no script `verificar-diario-oficial.py`. Criar script separado (ex.: `verificar-diario-oficial-completo.py`) ou parametrizar com flag/env var para manter o Projeto 1 enxuto e barato.
+- **Não gravar em `afastamentos_admin`** — só o Projeto 1 escreve ali. O Projeto 2 precisa da sua própria coleção/arquivo para não poluir o calendário com plantões, servidores etc.
 
 ---
 

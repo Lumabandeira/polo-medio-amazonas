@@ -41,13 +41,12 @@ LIMITE_CUSTO_USD = 2.00  # Automação para se o custo mensal atingir este valor
 PRECO_ENTRADA_POR_TOKEN = 1.00 / 1_000_000   # $1.00 por milhão de tokens de entrada
 PRECO_SAIDA_POR_TOKEN   = 5.00 / 1_000_000   # $5.00 por milhão de tokens de saída
 
-DEFENSORES_POLO = {
-    "José Antônio Pereira da Silva":  {"abrev": "jose",     "dps": ["2ª DP", "8ª DP", "10ª DP"]},
-    "Ícaro Oliveira Avelar Costa":    {"abrev": "icaro",    "dps": ["1ª DP", "3ª DP", "11ª DP"]},
-    "Eliaquim Antunes de Souza":      {"abrev": "eliaquim", "dps": ["4ª DP", "9ª DP"]},
-    "Elton Dariva Staub":             {"abrev": "elton",    "dps": ["5ª DP", "12ª DP"]},
-    "Elaine Maria Sousa Frota":       {"abrev": "elaine",   "dps": ["6ª DP", "7ª DP"]},
-}
+# Preenchido dinamicamente em `inicializar_defensores_e_termos()` a partir de
+# docs/designacoes-2026.json + coleção Firestore `titulares_admin`.
+DEFENSORES_POLO: dict = {}
+
+DESIGNACOES_JSON = PROJECT_DIR / "docs" / "designacoes-2026.json"
+FIRESTORE_COLECAO_TITULARES = "titulares_admin"
 
 # ─── Logging ─────────────────────────────────────────────────────────────────
 
@@ -466,16 +465,124 @@ def extract_pdf_text(pdf_bytes: bytes) -> str:
 
 # ─── Análise com Claude ───────────────────────────────────────────────────────
 
-# Termos-gatilho: se nenhum aparece no PDF, pulamos a chamada ao Claude (custo zero)
-TERMOS_POLO_MEDIO = [
+# Termos-gatilho: se nenhum aparece no PDF, pulamos a chamada ao Claude (custo zero).
+# A lista é construída dinamicamente em `inicializar_defensores_e_termos()`:
+#   1. Frase fixa "Polo (do) Médio Amazonas"
+#   2. Primeiro + segundo nome de cada titular vigente (JSON + Firestore)
+# Cidades e servidores foram REMOVIDOS intencionalmente — o Diário Oficial
+# designa "Nª Defensoria Pública do Estado do Amazonas", nunca pela cidade,
+# e servidores são escopo de outra automação (ver CLAUDE.md, Projeto 2).
+TERMOS_POLO_MEDIO: list = [
     r"Polo\s+(?:do\s+)?M[eé]dio\s+Amazonas",
-    r"Itacoatiara",
-    r"Elton\s+Dariva",
-    r"Eliaquim\s+Antunes",
-    r"[ÍI]caro\s+Oliveira\s+Avelar",
-    r"Elaine\s+Maria\s+Sousa",
-    r"Jos[eé]\s+Ant[oô]nio\s+Pereira",
 ]
+
+
+def _carregar_titulares_vigentes() -> dict:
+    """
+    Lê `docs/designacoes-2026.json` e aplica overrides do Firestore
+    (`titulares_admin/{dpKey}`). Retorna dict no formato:
+        { "Nome Completo": {"abrev": "...", "dps": ["1ª DP", "3ª DP", ...]} }
+    contendo apenas titulares vigentes hoje (entrada com `fim is None`).
+    Membros inativos ou sem DP ativa são ignorados automaticamente.
+    """
+    if not DESIGNACOES_JSON.exists():
+        log.warning(f"Arquivo não encontrado: {DESIGNACOES_JSON}. "
+                    f"DEFENSORES_POLO ficará vazio.")
+        return {}
+
+    with open(DESIGNACOES_JSON, encoding="utf-8") as f:
+        data = json.load(f)
+
+    defensores = data.get("defensores", {})
+    defensorias = data.get("defensorias", {})
+
+    # Aplica overrides do Firestore (titulares_admin)
+    try:
+        db = get_firestore_client()
+        for snap in db.collection(FIRESTORE_COLECAO_TITULARES).stream():
+            dp_key = snap.id  # ex: "6"
+            doc = snap.to_dict() or {}
+            hist = doc.get("historico_titulares")
+            if hist and dp_key in defensorias:
+                defensorias[dp_key]["historico_titulares"] = hist
+                log.info(f"Override de titulares aplicado para DP {dp_key} "
+                         f"({len(hist)} entrada(s))")
+    except Exception as e:
+        log.warning(f"Falha ao ler overrides de titulares_admin: {e}. "
+                    f"Continuando apenas com o JSON.")
+
+    # Coleta titular vigente (fim is None) de cada DP
+    resultado: dict = {}
+    for dp_num, dp_info in defensorias.items():
+        hist = dp_info.get("historico_titulares", []) or []
+        vigente = next((h for h in hist if h.get("fim") is None), None)
+        if not vigente:
+            continue
+        def_key = (vigente.get("defensor") or "").strip()
+        if not def_key:
+            continue
+
+        info = defensores.get(def_key, {})
+        nome = (info.get("nome") or def_key).strip()
+        # Evita titular inativo mesmo que apareça como vigente por erro
+        if info.get("ativo") is False:
+            log.warning(f"DP {dp_num}: titular vigente {nome!r} está marcado "
+                        f"ativo=false no JSON. Incluindo mesmo assim.")
+
+        entrada = resultado.setdefault(nome, {"abrev": def_key, "dps": []})
+        entrada["dps"].append(f"{dp_num}ª DP")
+
+    # Ordena DPs por número dentro de cada defensor
+    for info in resultado.values():
+        info["dps"].sort(key=lambda s: int(re.match(r"\d+", s).group()))
+
+    return resultado
+
+
+def _construir_termos_gatilho(defensores: dict) -> list:
+    """
+    Gera regex (primeiro + segundo nome) para cada titular vigente.
+    Ex.: "Miguel Eduardo Martins Tavares" → r"Miguel\\s+Eduardo"
+    Usa re.escape para preservar acentos; o flag re.IGNORECASE é aplicado
+    em `_extrair_trechos_relevantes`.
+    """
+    termos = []
+    vistos = set()
+    for nome in defensores.keys():
+        partes = [p for p in nome.split() if len(p) > 2]  # descarta "de", "da"
+        if len(partes) < 2:
+            continue
+        chave = (partes[0].lower(), partes[1].lower())
+        if chave in vistos:
+            continue
+        vistos.add(chave)
+        termos.append(re.escape(partes[0]) + r"\s+" + re.escape(partes[1]))
+    return termos
+
+
+def inicializar_defensores_e_termos():
+    """
+    Popula DEFENSORES_POLO e TERMOS_POLO_MEDIO dinamicamente. Deve ser chamada
+    no início de `main()`, após o Firebase estar acessível.
+    """
+    global DEFENSORES_POLO, TERMOS_POLO_MEDIO
+
+    DEFENSORES_POLO = _carregar_titulares_vigentes()
+    if not DEFENSORES_POLO:
+        log.warning("Nenhum titular vigente carregado. A análise do Claude "
+                    "terá contexto vazio e pode não identificar afastamentos.")
+    else:
+        log.info(f"Titulares vigentes carregados ({len(DEFENSORES_POLO)}):")
+        for nome, info in DEFENSORES_POLO.items():
+            log.info(f"  • {nome} ({info['abrev']}) — {', '.join(info['dps'])}")
+
+    termos_dinamicos = _construir_termos_gatilho(DEFENSORES_POLO)
+    # Mantém a frase fixa como primeiro termo e anexa os dinâmicos
+    TERMOS_POLO_MEDIO = [
+        r"Polo\s+(?:do\s+)?M[eé]dio\s+Amazonas",
+    ] + termos_dinamicos
+    log.info(f"Termos-gatilho ativos ({len(TERMOS_POLO_MEDIO)}): "
+             f"{TERMOS_POLO_MEDIO}")
 
 
 def _extrair_trechos_relevantes(text: str, janela: int = 1500) -> str:
@@ -626,6 +733,13 @@ def main():
     log.info(f"Custo acumulado no mês ({_mes_atual()}): ${custo_atual:.4f} / ${LIMITE_CUSTO_USD:.2f}")
 
     if verificar_limite_custo(state):
+        return
+
+    # Carrega titulares vigentes + monta termos-gatilho dinamicamente
+    try:
+        inicializar_defensores_e_termos()
+    except Exception as e:
+        log.error(f"Falha ao inicializar defensores/termos: {e}", exc_info=True)
         return
 
     try:
