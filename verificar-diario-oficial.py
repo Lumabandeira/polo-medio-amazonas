@@ -361,23 +361,54 @@ def salvar_afastamentos_firestore(afastamentos: list, edition_url: str) -> list:
             )
             continue
 
-        designacoes_norm = []
+        # Schema Firestore esperado pelo site (form de edicao):
+        #   designacoes_dp: [{ dp, substitutos: [{ substituto, substituto_nome_externo,
+        #                     data_inicio, data_fim, portaria_numero, portaria_url }] }]
+        # substituto = abrev de defensor interno OU "_outro" (quando externo, com
+        # o nome real em substituto_nome_externo).
+        abrevs_internos = {v["abrev"] for v in DEFENSORES_POLO.values()}
+        portaria_numero = (af.get("portaria_numero") or "").strip()
+        processo_sei    = (af.get("processo_sei") or "").strip()
+
+        dp_map = {}
         for d in af.get("designacoes", []) or []:
             dp_num = str(d.get("dp_numero", "")).strip().replace("ª", "").replace("DP", "").strip()
+            if not dp_num:
+                continue
             sub_raw = (d.get("substituto") or "").strip()
-            sub = _mapear_defensor_abrev(sub_raw) if sub_raw else ""
-            if dp_num:
-                designacoes_norm.append({"dp": dp_num, "substituto": sub})
+            if sub_raw:
+                maybe_abrev = _mapear_defensor_abrev(sub_raw)
+                if maybe_abrev in abrevs_internos:
+                    substituto = maybe_abrev
+                    substituto_nome_externo = ""
+                else:
+                    substituto = "_outro"
+                    substituto_nome_externo = sub_raw
+            else:
+                substituto = ""
+                substituto_nome_externo = ""
+            dp_map.setdefault(dp_num, []).append({
+                "substituto":              substituto,
+                "substituto_nome_externo": substituto_nome_externo,
+                "data_inicio":             data_inicio,
+                "data_fim":                data_fim,
+                "portaria_numero":         portaria_numero,
+                "portaria_url":            edition_url,
+            })
+        designacoes_dp = [{"dp": dp, "substitutos": subs} for dp, subs in dp_map.items()]
 
         doc = {
             "defensor":        defensor_abrev,
             "tipo":            tipo_slug,
+            "tipo_custom":     "" if tipo_slug != "outro" else (af.get("tipo_custom") or "").strip(),
             "data_inicio":     data_inicio,
             "data_fim":        data_fim,
-            "portaria_numero": (af.get("portaria_numero") or "").strip(),
+            "processo_tipo":   "SEI" if processo_sei else "",
+            "processo_sei":    processo_sei,
+            "portaria_numero": portaria_numero,
             "portaria_url":    edition_url,
-            "portaria_sei":    (af.get("processo_sei") or "").strip(),
-            "designacoes":     designacoes_norm,
+            "portaria_sei":    processo_sei,  # compat com codigo antigo
+            "designacoes_dp":  designacoes_dp,
             "criado_por":      CRIADO_POR_AUTOMACAO,
             "criado_em":       firestore.SERVER_TIMESTAMP,
             "atualizado_por":  CRIADO_POR_AUTOMACAO,
@@ -387,7 +418,7 @@ def salvar_afastamentos_firestore(afastamentos: list, edition_url: str) -> list:
         _, ref = col.add(doc)
         log.info(
             f"✅ Afastamento gravado: id={ref.id} | {defensor_abrev} {tipo_slug} "
-            f"{data_inicio}→{data_fim} | {len(designacoes_norm)} designação(ões)"
+            f"{data_inicio}→{data_fim} | {len(designacoes_dp)} DP(s)"
         )
         criados.append({"id": ref.id, **doc})
 
@@ -435,12 +466,58 @@ def extract_pdf_text(pdf_bytes: bytes) -> str:
 
 # ─── Análise com Claude ───────────────────────────────────────────────────────
 
+# Termos-gatilho: se nenhum aparece no PDF, pulamos a chamada ao Claude (custo zero)
+TERMOS_POLO_MEDIO = [
+    r"Polo\s+(?:do\s+)?M[eé]dio\s+Amazonas",
+    r"Itacoatiara",
+    r"Elton\s+Dariva",
+    r"Eliaquim\s+Antunes",
+    r"[ÍI]caro\s+Oliveira\s+Avelar",
+    r"Elaine\s+Maria\s+Sousa",
+    r"Jos[eé]\s+Ant[oô]nio\s+Pereira",
+]
+
+
+def _extrair_trechos_relevantes(text: str, janela: int = 1500) -> str:
+    """
+    Encontra todas as mencoes ao Polo Medio no texto (termos-gatilho) e
+    devolve a concatenacao de janelas de +-`janela` caracteres em volta de cada
+    mencao, com intervalos sobrepostos mesclados. Se nada for encontrado,
+    devolve string vazia.
+    """
+    posicoes = set()
+    for termo in TERMOS_POLO_MEDIO:
+        for m in re.finditer(termo, text, re.IGNORECASE):
+            posicoes.add(m.start())
+    if not posicoes:
+        return ""
+    intervalos = sorted(
+        (max(0, p - janela), min(len(text), p + janela)) for p in posicoes
+    )
+    merged = []
+    for ini, fim in intervalos:
+        if merged and ini <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], fim))
+        else:
+            merged.append([ini, fim])
+    return "\n\n[...corte...]\n\n".join(text[i:f] for i, f in merged)
+
+
 def parse_designations(text: str, state: dict) -> dict:
     """
     Usa Claude para identificar designações do Polo Médio no texto do PDF.
     Agrupa por afastamento (defensor + período + tipo) com lista de designações.
+    Pre-filtra o texto por termos-gatilho para reduzir tokens e custo.
     """
-    log.info("Analisando texto com Claude API…")
+    trechos = _extrair_trechos_relevantes(text)
+    if not trechos:
+        log.info("PDF sem menção a termos do Polo Médio. Pulando chamada ao Claude.")
+        return {"tem_designacoes": False, "afastamentos": []}
+
+    log.info(
+        f"Trechos relevantes extraidos: {len(trechos)} caracteres "
+        f"(de {len(text)} totais). Analisando com Claude API…"
+    )
     client = Anthropic()
 
     defensores_str = "\n".join(
@@ -488,8 +565,8 @@ REGRAS:
 - tipo em minúsculas, sem acento, valores fixos: ferias, folga, licenca_especial, outro
 - Se não identificar algum campo, use string vazia "" (não use null)
 
-TEXTO DO DIÁRIO OFICIAL:
-{text[:15000]}""",
+TRECHOS RELEVANTES DO DIÁRIO OFICIAL (janelas de contexto em volta de menções ao Polo Médio):
+{trechos}""",
         }],
     )
 

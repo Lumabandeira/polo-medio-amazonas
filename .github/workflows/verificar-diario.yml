@@ -1,11 +1,8 @@
 name: Verificar Diário Oficial DPE/AM
 
 on:
-  # ⚠️ SCHEDULE ainda desativado até validarmos a nova estratégia (gravação direta no Firestore,
-  # sem tocar no index.html). Rode manualmente via workflow_dispatch pelo menos uma vez com
-  # sucesso antes de descomentar o cron abaixo.
-  # schedule:
-  #   - cron: '0 10 * * *'  # 06:00 Manaus = 10:00 UTC
+  schedule:
+    - cron: '0 10 * * *'  # 06:00 Manaus = 10:00 UTC
   workflow_dispatch:  # Permite rodar manualmente pelo botão "Run workflow"
 
 permissions:

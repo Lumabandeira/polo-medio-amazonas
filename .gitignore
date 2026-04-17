@@ -10,6 +10,10 @@ docs/config.json
 # ── Credencial Firebase Admin (usada pelo script do Diário Oficial) ───────────
 firebase-service-account.json
 
+# ── Scripts de teste manual (não versionar) ───────────────────────────────────
+test-firestore-write.py
+test-edicao-*.py
+
 # ── Logs de execução local ─────────────────────────────────────────────────────
 docs/logs/
 

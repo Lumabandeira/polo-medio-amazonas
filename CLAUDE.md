@@ -309,56 +309,97 @@ github-pages/
 
 ---
 
-## Automação do Diário Oficial via GitHub Actions (⚠️ EM PAUSA — bug crítico — sessão 4 em 16/04/2026)
+## Automação do Diário Oficial via GitHub Actions (✅ ATIVA — sessão 5 em 17/04/2026)
 
-### Status atual: schedule desativado, aguardando refatoração do script
+### Status atual: cron diário rodando, gravação direta no Firestore
 
-Em 16/04/2026, configuramos um workflow do GitHub Actions (`.github/workflows/verificar-diario.yml`) para automatizar a execução diária de `verificar-diario-oficial.py` às 06:00 de Manaus (10:00 UTC), substituindo a tarefa agendada local do Windows (que só roda com o computador de casa ligado). O primeiro teste manual detectou um **bug crítico no script** e a automação foi desativada.
+Em 17/04/2026 refizemos a automação para gravar os afastamentos detectados **direto no Firestore** (coleção `afastamentos_admin`), em vez de editar o `index.html` como antes. Isso eliminou o bug catastrófico de truncamento que destruiu o site no incidente de 16/04 (run #2: 4595 linhas deletadas em `index.html`, revertido em [`6d79bbe`](https://github.com/Lumabandeira/polo-medio-amazonas/commit/6d79bbe)).
 
-### O que já está pronto ✅
-- Workflow YAML criado e funcional: checkout, setup Python 3.12, install deps (`requests pdfplumber beautifulsoup4 anthropic`), cache do `.estado-diario.json` via `actions/cache@v4`, geração de `docs/config.json` em runtime via Secrets, execução do script, commit/push automático
-- Secret `ANTHROPIC_API_KEY` configurado em https://github.com/Lumabandeira/polo-medio-amazonas/settings/secrets/actions (secrets SMTP `SMTP_REMETENTE`/`SMTP_SENHA_APP`/`SMTP_DESTINATARIO` NÃO foram criados — opcional, script loga warning e segue sem e-mail)
-- `docs/config.json` removido do tracking do git e adicionado ao `.gitignore` (commit [`d7388ca`](https://github.com/Lumabandeira/polo-medio-amazonas/commit/d7388ca)). Arquivo local preservado.
-- Opção "Allow creating new API keys in default workspace" ativada no Claude Console (Luma é admin do workspace individual, plano API)
-- Ubuntu runner consegue executar o script de ponta a ponta (run #2 completou, exit 0)
+O workflow roda diariamente às **06:00 de Manaus** (10:00 UTC) via `.github/workflows/verificar-diario.yml`. A tarefa agendada local do Windows (`VerificarDiarioOficialDPE`) foi **desabilitada permanentemente**.
 
-### O bug descoberto 🚨
-A função `update_index_html()` em `verificar-diario-oficial.py` (linha 325) envia o `index.html` inteiro (~250KB / ~80K tokens) para o Claude Haiku 4.5 com `max_tokens=8192` e pede que retorne o HTML completo com as designações novas inseridas. Como 8K tokens de saída é muito menor que o HTML de saída (~80K tokens), a resposta sai **truncada**. A única validação é `"<!DOCTYPE" in result` (linha 384), que passa mesmo com o arquivo mutilado. O script sobrescreve `index.html` com o fragmento e commita.
+### Arquitetura da automação
+1. **Scrape** da página pública do Diário Oficial da DPE/AM
+2. **Comparação** com `.estado-diario.json` (última edição processada, em cache via `actions/cache@v4`)
+3. Para cada edição nova: baixa PDF → extrai texto com `pdfplumber`
+4. **Pré-filtro por termos-gatilho** (`_extrair_trechos_relevantes`): procura no texto completo por "Polo Médio Amazonas", "Itacoatiara" e nomes completos dos 5 defensores titulares. Se nenhum termo aparece, pula a chamada ao Claude (custo zero). Caso contrário, extrai janelas de ±1500 chars em volta de cada menção e concatena (intervalos sobrepostos são mesclados). Isso resolve o bug original de enviar só `text[:15000]` — as designações do Polo Médio costumam aparecer em páginas tardias do PDF (40k+ chars).
+5. Envia trechos ao **Claude Haiku 4.5** (`claude-haiku-4-5-20251001`, `max_tokens=2048`) com prompt que pede JSON agrupado por afastamento
+6. `salvar_afastamentos_firestore()` converte para o schema esperado pelo site (ver abaixo) e grava via `firebase-admin`
+7. E-mail automático com resumo dos afastamentos gravados (opcional, via SMTP)
 
-**Incidente no run #2 (commit [`e1f5600`](https://github.com/Lumabandeira/polo-medio-amazonas/commit/e1f5600)):** 4595 linhas deletadas, apenas 19 restaram (índice caiu de 5658 para 1081 linhas). Revertido imediatamente em [`6d79bbe`](https://github.com/Lumabandeira/polo-medio-amazonas/commit/6d79bbe). Schedule cron comentado em [`1d6ba74`](https://github.com/Lumabandeira/polo-medio-amazonas/commit/1d6ba74) — só `workflow_dispatch` (manual) continua ativo.
+### Schema Firestore real (importante — diferente do schema simplificado antigo)
+O site usa duas estruturas. O formulário de edição popula seus campos via `designacoes_dp` (novo); o render do calendário lê ambos por compat. **Sempre grave no formato novo:**
 
-**Nota:** o mesmo bug existe na tarefa agendada local do Windows. Se nunca causou dano nas execuções locais anteriores, foi por sorte — nenhuma edição processada lá tinha designação do Polo Médio que acionasse `update_index_html`.
+```
+afastamentos_admin/{id}
+  defensor:         "elton"                ← abrev
+  tipo:             "ferias" | "folga" | "licenca_especial" | "outro"
+  tipo_custom:      ""                     ← texto livre quando tipo=="outro"
+  data_inicio:      "YYYY-MM-DD"
+  data_fim:         "YYYY-MM-DD"
+  processo_tipo:    "SEI" | "SGI" | ""
+  processo_sei:     "25.0.000..."
+  portaria_numero:  "Portaria nº .../2026-GSPG/DPE/AM"
+  portaria_url:     "https://..."          ← PDF do Diário Oficial
+  portaria_sei:     "..."                  ← compat com código antigo (mesmo valor de processo_sei)
+  designacoes_dp: [
+    {
+      dp: "5",
+      substitutos: [
+        {
+          substituto:              "eliaquim" | "_outro" | "",
+          substituto_nome_externo: ""       ← usado quando substituto=="_outro"
+          data_inicio:             "YYYY-MM-DD",  ← cobertura
+          data_fim:                "YYYY-MM-DD",
+          portaria_numero:         "...",
+          portaria_url:            "..."
+        }
+      ]
+    }
+  ]
+  criado_por:     "automacao@github-actions" | email do admin
+  criado_em:      timestamp
+  atualizado_por: ...
+  atualizado_em:  timestamp
+  origem:         "automacao-diario-oficial" (quando vem do script)
+```
 
-### ⏳ Pendente para próxima sessão (em casa)
+O campo antigo `designacoes: [{ dp, substituto }]` ainda é lido pelo site por compat, mas o formulário de edição só popula campos via `designacoes_dp` — se gravar só no antigo, o admin abre o modal de editar e vê "ainda não definido" em vez do substituto.
 
-1. **Desativar a tarefa agendada do Windows no PC de casa** (risco: rodar às 6h e destruir o site novamente):
-   ```powershell
-   Disable-ScheduledTask -TaskName "VerificarDiarioOficialDPE"
-   ```
-   Ou: abrir "Agendador de Tarefas" → localizar `VerificarDiarioOficialDPE` → Desabilitar.
+### Mapeamento de substitutos (interno vs. externo)
+- Se o substituto detectado pelo Claude bate (por nome completo ou primeiro+último nome) com um dos 5 titulares do polo → grava `substituto: "abrev"` e `substituto_nome_externo: ""`
+- Caso contrário → grava `substituto: "_outro"` e `substituto_nome_externo: "Nome completo"` (assim o formulário de edição seleciona "Outro" no dropdown e preenche o nome no campo livre)
 
-2. **Escolher e implementar a estratégia de correção do script:**
-   - **Opção A (recomendada):** script escreve direto no Firestore (coleção `afastamentos_admin`), aproveitando a infra existente do site. Requer criar Service Account do Firebase Admin SDK, baixar JSON da credencial, adicionar como Secret `FIREBASE_SERVICE_ACCOUNT` no GitHub, e substituir `update_index_html()` por chamadas ao Firestore via `firebase-admin`. Site já lê de `afastamentos_admin` em tempo real, sem rebuild necessário.
-   - **Opção B:** script grava em `docs/afastamentos-auto-2026.json`, site carrega esse JSON junto com `afastamentos-2026.json` e `designacoes-2026.json` existentes. Menos infra que A, mas cria terceira fonte de dados além do JSON base e do Firestore.
-   - **Opção C (mais rápida de implementar):** remover a chamada `update_index_html()` — script só detecta designações novas e manda e-mail com os dados estruturados; Luma entra na UI como admin e cadastra manualmente via calendário. Zero risco, mas mantém fricção manual.
+### Dedup
+Antes de inserir, `salvar_afastamentos_firestore` busca documentos com mesmo `(defensor, data_inicio, data_fim, tipo)`. Se já existe, pula. Previne duplicação caso o script reprocesse uma edição.
 
-3. **Depois do fix, religar o schedule cron** descomentando as 2 linhas em `.github/workflows/verificar-diario.yml`:
-   ```yaml
-   # schedule:
-   #   - cron: '0 10 * * *'
-   ```
+### Configuração necessária
+- **Secret `ANTHROPIC_API_KEY`** em https://github.com/Lumabandeira/polo-medio-amazonas/settings/secrets/actions
+- **Secret `FIREBASE_SERVICE_ACCOUNT`** (JSON completo da service account Firebase Admin, baixado em https://console.firebase.google.com/project/polo-medio-as/settings/serviceaccounts/adminsdk)
+- Secrets SMTP (opcionais): `SMTP_REMETENTE`, `SMTP_SENHA_APP`, `SMTP_DESTINATARIO`. Se ausentes, script loga warning e segue sem enviar e-mail.
 
 ### Arquivos-chave da automação
-- `verificar-diario-oficial.py` — script com bug (funções críticas: `update_index_html` linha 325, `parse_designations` linha 263, `main` linha 418)
+- `verificar-diario-oficial.py` — script principal. Funções: `_extrair_trechos_relevantes`, `parse_designations`, `salvar_afastamentos_firestore`, `get_firestore_client`, `main`.
 - `processar-diario-completo.py` — script histórico/batch com Claude Sonnet (não roda no cron, só sob demanda)
 - `raspar-diario-2026.py` — raspador histórico de edições 2564–2629 (não roda no cron)
-- `criar-tarefa-agendada.ps1` — script PowerShell do agendador local (obsoleto, substituído pelo workflow GitHub Actions)
-- `.github/workflows/verificar-diario.yml` — workflow GitHub Actions (schedule comentado, apenas manual)
-- `docs/.estado-diario.json` — estado persistente (última edição processada, custo acumulado mensal). No Actions: cache via `actions/cache@v4`. Local: disco, gitignored.
-- `docs/config.json` — credenciais SMTP. Local: preservado. GitHub Actions: gerado em runtime via Secrets e deletado antes do commit. Gitignored.
+- `criar-tarefa-agendada.ps1` — script PowerShell do agendador local (obsoleto, substituído pelo workflow GitHub Actions; tarefa `VerificarDiarioOficialDPE` está `Disabled`)
+- `.github/workflows/verificar-diario.yml` — workflow GitHub Actions (schedule ativo + workflow_dispatch manual). Instala `firebase-admin` e injeta `FIREBASE_SERVICE_ACCOUNT` via env.
+- `docs/.estado-diario.json` — estado persistente. No Actions: cache. Local: disco. Gitignored.
+- `docs/config.json` — SMTP. Gerado em runtime via Secrets no Actions; gitignored.
+- `firebase-service-account.json` — credencial local para rodar o script manualmente. Gitignored.
 
-### Restrição do sistema nos scripts Python
-Durante esta sessão, o sistema sinalizou que esses scripts Python/PowerShell devem ser tratados como código restrito — Claude pode analisar e explicar comportamento, mas NÃO pode editar/melhorar/aumentar os scripts diretamente. Tudo que foi feito nesta sessão (gitignore, YAML, commits) foi em arquivos novos ou em config, não nos `.py`. Para implementar a correção na próxima sessão, será necessário: (a) Luma autorizar explicitamente edição dos scripts, ou (b) Luma editar os scripts manualmente com instruções/blocos de código passados por Claude.
+### Rodar localmente (teste/debug)
+```bash
+py -m pip install firebase-admin requests pdfplumber beautifulsoup4 anthropic
+set ANTHROPIC_API_KEY=sk-ant-...
+py verificar-diario-oficial.py
+```
+Requer `firebase-service-account.json` na raiz do projeto.
+
+### Custos (Claude Haiku 4.5, preços conservadores no script)
+- Entrada: $1/M tokens; Saída: $5/M tokens
+- Execução com edição nova sem menção ao Polo Médio: **$0** (pré-filtro pula a chamada)
+- Execução com designação detectada: ~$0.004–0.008 por edição
+- Limite mensal: `LIMITE_CUSTO_USD = $2.00`. Ao atingir, envia e-mail e pausa automação até virar o mês.
 
 ---
 
