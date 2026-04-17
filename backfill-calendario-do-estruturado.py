@@ -20,6 +20,8 @@ import sys
 from pathlib import Path
 from datetime import date, datetime
 
+sys.stdout.reconfigure(encoding="utf-8")
+
 PROJECT_DIR      = Path(__file__).parent
 DO_JSON          = PROJECT_DIR / "docs" / "diario-oficial-completo-2026.json"
 DESIGNACOES_JSON = PROJECT_DIR / "docs" / "designacoes-2026.json"
@@ -381,10 +383,33 @@ def _parse_iso(s: str) -> date | None:
         return None
 
 
+def _json_evento_cobre_sub(eventos_json: list, defensor: str, dp: str,
+                            d_ini: date, d_fim: date,
+                            sub_abrev: str | None) -> bool:
+    """
+    True se algum evento JSON para este defensor/período já registra o par
+    (dp, sub_abrev) com substituto não-nulo — significa duplicata, não criar.
+    """
+    if not sub_abrev or sub_abrev == "_outro":
+        return False
+    for ev in eventos_json:
+        if ev.get("defensor") != defensor:
+            continue
+        ei = _parse_iso(ev.get("data_inicio", ""))
+        ef = _parse_iso(ev.get("data_fim", ""))
+        if not ei or not ef or not overlap(ei, ef, d_ini, d_fim):
+            continue
+        for d in ev.get("designacoes", []):
+            if str(d.get("dp")) == str(dp) and d.get("substituto") == sub_abrev:
+                return True
+    return False
+
+
 # ─── Planejamento de ações ───────────────────────────────────────────────────
 
 def planejar_acoes(dados_do: list, defensores: dict, defensorias: dict,
-                   afastamentos_por_defensor: dict | None) -> dict:
+                   afastamentos_por_defensor: dict | None,
+                   eventos_json: list | None = None) -> dict:
     """
     Faz o parsing e planeja ações. Retorna:
       {
@@ -481,6 +506,17 @@ def planejar_acoes(dados_do: list, defensores: dict, defensorias: dict,
                         if item["substituto_abrev"] == titular_abrev:
                             item["tipo"]   = "self-assign"
                             item["motivo"] = "Substituto = titular (designação inicial, não é afastamento)"
+                            plano["acoes"].append(item)
+                            continue
+
+                        # Se o par (dp, substituto) já está em um evento JSON,
+                        # não cria registro duplicado no Firestore.
+                        if eventos_json and _json_evento_cobre_sub(
+                            eventos_json, titular_abrev, dp, d_ini, d_fim,
+                            item.get("substituto_abrev")
+                        ):
+                            item["tipo"]   = "skip-json"
+                            item["motivo"] = "Substituto já registrado no evento JSON"
                             plano["acoes"].append(item)
                             continue
 
@@ -607,7 +643,7 @@ def imprimir_relatorio(plano: dict, commit: bool, usou_firestore: bool) -> None:
     print("=" * 88)
 
     contagem = {"merge": 0, "novo": 0, "sem-titular": 0, "self-assign": 0,
-                "novo-pendente-firestore": 0}
+                "novo-pendente-firestore": 0, "skip-json": 0}
     for a in plano["acoes"]:
         contagem[a["tipo"]] = contagem.get(a["tipo"], 0) + 1
 
@@ -620,6 +656,7 @@ def imprimir_relatorio(plano: dict, commit: bool, usou_firestore: bool) -> None:
     print(f"  • Revogações (TORNAR/CESSAR) ....... {len(plano['revogacoes']):>3}")
     print(f"  • Removidos por ano < {ANO_MINIMO} ........ {len(plano.get('filtrados_por_ano', [])):>3}")
     print(f"  • Removidos por revogação .......... {len(plano.get('removidos_por_revogacao', [])):>3}")
+    print(f"  • Já no JSON (ignorado) ............. {contagem['skip-json']:>3}")
     print(f"  • Trechos não parseados ............ {len(plano['nao_parseadas']):>3}")
 
     def _linha_acao(a):
@@ -635,6 +672,7 @@ def imprimir_relatorio(plano: dict, commit: bool, usou_firestore: bool) -> None:
         ("novo-pendente-firestore", "⏳ PENDENTES (Firestore não consultado)"),
         ("sem-titular",  "⚠️  SEM TITULAR RESOLVIDO — revisar manualmente"),
         ("self-assign",  "↺ AUTO-DESIGNAÇÃO — ignorado"),
+        ("skip-json",    "✅ JÁ NO JSON — ignorado (substituto já registrado no evento JSON)"),
     ]:
         items = [a for a in plano["acoes"] if a["tipo"] == categoria]
         if not items:
@@ -696,7 +734,7 @@ def gravar_firestore(plano: dict, db) -> None:
     merged  = 0
 
     for item in plano["acoes"]:
-        if item["tipo"] not in ("merge", "novo"):
+        if item["tipo"] != "merge":
             continue
 
         sub_abrev = item.get("substituto_abrev") or "_outro"
@@ -746,32 +784,63 @@ def gravar_firestore(plano: dict, db) -> None:
             print(f"  🔀 MERGED  {item['afastamento_id']}: {sub_abrev} → {item['dp']}ª DP "
                   f"{item['data_inicio']}..{item['data_fim']}")
 
-        else:  # novo
-            doc = {
-                "defensor":        item["titular_abrev"],
-                "tipo":            "outro",
-                "tipo_custom":     "",
-                "data_inicio":     item["data_inicio"],
-                "data_fim":        item["data_fim"],
-                "processo_tipo":   "SEI" if item["processo_sei"] else "",
-                "processo_sei":    item["processo_sei"],
-                "portaria_numero": item["portaria_numero"],
-                "portaria_url":    item["edicao_url"],
-                "portaria_sei":    item["processo_sei"],
-                "designacoes_dp": [{
-                    "dp":          item["dp"],
-                    "substitutos": [novo_sub],
-                }],
-                "criado_por":     CRIADO_POR,
-                "criado_em":      firestore.SERVER_TIMESTAMP,
-                "atualizado_por": CRIADO_POR,
-                "atualizado_em":  firestore.SERVER_TIMESTAMP,
-                "origem":         ORIGEM,
-            }
-            _, ref = col.add(doc)
-            criados += 1
-            print(f"  ➕ CRIADO  {ref.id}: {item['titular_abrev']} outro "
-                  f"{item['data_inicio']}..{item['data_fim']}  [{item['dp']}ª DP ← {sub_abrev}]")
+    # Novos: agrupa por (titular, data_inicio, data_fim, portaria_numero)
+    # para criar UM doc com todas as DPs do mesmo afastamento.
+    grupos_novos: dict[tuple, list] = {}
+    for item in plano["acoes"]:
+        if item["tipo"] != "novo":
+            continue
+        key = (
+            item["titular_abrev"],
+            item["data_inicio"],
+            item["data_fim"],
+            item.get("portaria_numero", ""),
+        )
+        grupos_novos.setdefault(key, []).append(item)
+
+    for (titular, di, df, portaria), items in grupos_novos.items():
+        item0 = items[0]
+
+        # Monta designacoes_dp agrupando por DP (dedup interno já feito por dedup_plano)
+        dp_map: dict[str, dict] = {}
+        for it in items:
+            dp = it["dp"]
+            if dp not in dp_map:
+                dp_map[dp] = {"dp": dp, "substitutos": []}
+            s_abrev = it.get("substituto_abrev") or "_outro"
+            s_ext   = "" if s_abrev != "_outro" else it.get("substituto_nome", "")
+            dp_map[dp]["substitutos"].append({
+                "substituto":              s_abrev,
+                "substituto_nome_externo": s_ext,
+                "data_inicio":             it["data_inicio"],
+                "data_fim":                it["data_fim"],
+                "portaria_numero":         it["portaria_numero"],
+                "portaria_url":            it["edicao_url"],
+            })
+
+        doc = {
+            "defensor":        titular,
+            "tipo":            "outro",
+            "tipo_custom":     "",
+            "data_inicio":     di,
+            "data_fim":        df,
+            "processo_tipo":   "SEI" if item0["processo_sei"] else "",
+            "processo_sei":    item0["processo_sei"],
+            "portaria_numero": portaria,
+            "portaria_url":    item0["edicao_url"],
+            "portaria_sei":    item0["processo_sei"],
+            "designacoes_dp":  list(dp_map.values()),
+            "criado_por":      CRIADO_POR,
+            "criado_em":       firestore.SERVER_TIMESTAMP,
+            "atualizado_por":  CRIADO_POR,
+            "atualizado_em":   firestore.SERVER_TIMESTAMP,
+            "origem":          ORIGEM,
+        }
+        _, ref = col.add(doc)
+        criados += 1
+        dps_str = ", ".join(f"{dp}ª" for dp in dp_map)
+        print(f"  ➕ CRIADO  {ref.id}: {titular} outro {di}..{df}  "
+              f"[DP(s): {dps_str}]")
 
     print(f"\n  Total: {criados} criado(s), {merged} merge(s).")
 
@@ -796,8 +865,10 @@ def main():
     with open(DO_JSON, encoding="utf-8") as f:
         dados_do = json.load(f)
     design = carregar_designacoes_json()
-    defensores  = design.get("defensores", {}) or {}
-    defensorias = design.get("defensorias", {}) or {}
+    defensores   = design.get("defensores", {}) or {}
+    defensorias  = design.get("defensorias", {}) or {}
+    eventos_json = design.get("eventos") or []
+    print(f"📋 {len(eventos_json)} evento(s) JSON carregados (base para dedup).")
 
     afastamentos_por_defensor: dict | None = None
     db = None
@@ -815,7 +886,8 @@ def main():
             afastamentos_por_defensor = None
             db = None
 
-    plano = planejar_acoes(dados_do, defensores, defensorias, afastamentos_por_defensor)
+    plano = planejar_acoes(dados_do, defensores, defensorias,
+                           afastamentos_por_defensor, eventos_json)
     plano = filtrar_ano_minimo(plano, ANO_MINIMO)
     plano = aplicar_revogacoes(plano)
     plano = dedup_plano(plano)
