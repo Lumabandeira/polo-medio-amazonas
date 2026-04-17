@@ -7,6 +7,9 @@ docs/.estado-diario.json
 # ── Credenciais SMTP (gerado em runtime pelo GitHub Actions via secrets) ──────
 docs/config.json
 
+# ── Credencial Firebase Admin (usada pelo script do Diário Oficial) ───────────
+firebase-service-account.json
+
 # ── Logs de execução local ─────────────────────────────────────────────────────
 docs/logs/
 

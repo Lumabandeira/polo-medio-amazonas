@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Verificador automático do Diário Oficial da DPE/AM
-Detecta novas designações do Polo Médio Amazonas e atualiza o site.
-Executa diariamente às 6h via Agendador de Tarefas do Windows.
+Detecta novas designações do Polo Médio Amazonas e grava no Firestore.
+Executa diariamente via GitHub Actions.
 """
 
 import os
@@ -20,14 +20,20 @@ from email.mime.multipart import MIMEMultipart
 from bs4 import BeautifulSoup
 from anthropic import Anthropic
 
+import firebase_admin
+from firebase_admin import credentials, firestore
+
 # ─── Configuração ────────────────────────────────────────────────────────────
 
 PROJECT_DIR = Path(__file__).parent
-INDEX_HTML  = PROJECT_DIR / "index.html"
 STATE_FILE  = PROJECT_DIR / "docs" / ".estado-diario.json"
 CONFIG_FILE = PROJECT_DIR / "docs" / "config.json"
 LOGS_DIR    = PROJECT_DIR / "docs" / "logs"
 DIARIO_URL  = "https://diario.defensoria.am.def.br/"
+
+FIREBASE_PROJECT_ID = "polo-medio-as"
+FIRESTORE_COLECAO   = "afastamentos_admin"
+CRIADO_POR_AUTOMACAO = "automacao@github-actions"
 
 LIMITE_CUSTO_USD = 2.00  # Automação para se o custo mensal atingir este valor
 
@@ -183,7 +189,7 @@ def registrar_uso(state: dict, tokens_entrada: int, tokens_saida: int) -> float:
 def verificar_limite_custo(state: dict) -> bool:
     """
     Retorna True se o limite de custo foi atingido (automação deve parar).
-    Envia WhatsApp e marca como pausada se necessário.
+    Envia e-mail e marca como pausada se necessário.
     """
     custo = state.get("custo", {})
 
@@ -217,6 +223,175 @@ def verificar_limite_custo(state: dict) -> bool:
         return True
 
     return False
+
+# ─── Firebase / Firestore ────────────────────────────────────────────────────
+
+_firestore_client = None
+
+
+def get_firestore_client():
+    """
+    Inicializa o Firebase Admin SDK (idempotente) e retorna o cliente Firestore.
+
+    Credencial lida em ordem de precedência:
+      1. Env var FIREBASE_SERVICE_ACCOUNT  (JSON string — usado no GitHub Actions)
+      2. Env var GOOGLE_APPLICATION_CREDENTIALS  (caminho de arquivo — padrão gcloud)
+      3. Arquivo local PROJECT_DIR / 'firebase-service-account.json'
+    """
+    global _firestore_client
+    if _firestore_client is not None:
+        return _firestore_client
+
+    if not firebase_admin._apps:
+        cred = None
+        sa_json = os.environ.get("FIREBASE_SERVICE_ACCOUNT", "").strip()
+        if sa_json:
+            cred_info = json.loads(sa_json)
+            cred = credentials.Certificate(cred_info)
+        else:
+            sa_path_env = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
+            candidates = [
+                Path(sa_path_env) if sa_path_env else None,
+                PROJECT_DIR / "firebase-service-account.json",
+            ]
+            for p in candidates:
+                if p and p.exists():
+                    cred = credentials.Certificate(str(p))
+                    break
+        if cred is None:
+            raise RuntimeError(
+                "Credencial do Firebase não encontrada. "
+                "Defina FIREBASE_SERVICE_ACCOUNT (JSON) ou coloque "
+                "firebase-service-account.json na raiz do projeto."
+            )
+        firebase_admin.initialize_app(cred, {"projectId": FIREBASE_PROJECT_ID})
+        log.info(f"Firebase Admin inicializado (projeto: {FIREBASE_PROJECT_ID})")
+
+    _firestore_client = firestore.client()
+    return _firestore_client
+
+
+def _mapear_defensor_abrev(nome: str) -> str:
+    """Mapeia nome completo → abrev. Se não achar, devolve o nome como está."""
+    if not nome:
+        return ""
+    alvo = nome.strip().lower()
+    for nome_completo, dados in DEFENSORES_POLO.items():
+        if nome_completo.lower() == alvo:
+            return dados["abrev"]
+    # tenta por primeiro + último nome
+    partes_alvo = alvo.split()
+    for nome_completo, dados in DEFENSORES_POLO.items():
+        partes = nome_completo.lower().split()
+        if partes_alvo and partes_alvo[0] == partes[0] and partes_alvo[-1] == partes[-1]:
+            return dados["abrev"]
+    return nome.strip()
+
+
+_TIPO_MAP = {
+    "férias": "ferias", "ferias": "ferias",
+    "folga": "folga", "folgas": "folga",
+    "licença especial": "licenca_especial",
+    "licenca especial": "licenca_especial",
+    "licença": "licenca_especial",
+}
+
+
+def _mapear_tipo(tipo: str) -> str:
+    if not tipo:
+        return "outro"
+    return _TIPO_MAP.get(tipo.strip().lower(), "outro")
+
+
+def _normalizar_data(data: str) -> str:
+    """Aceita DD/MM/AAAA ou YYYY-MM-DD e devolve YYYY-MM-DD. '' se inválido."""
+    if not data:
+        return ""
+    data = data.strip()
+    m = re.match(r"^(\d{4})-(\d{2})-(\d{2})$", data)
+    if m:
+        return data
+    m = re.match(r"^(\d{1,2})/(\d{1,2})/(\d{4})$", data)
+    if m:
+        d, mth, y = m.groups()
+        return f"{y}-{int(mth):02d}-{int(d):02d}"
+    return ""
+
+
+def salvar_afastamentos_firestore(afastamentos: list, edition_url: str) -> list:
+    """
+    Grava cada afastamento como um documento em `afastamentos_admin`.
+    Retorna lista dos documentos criados (com id) para uso em notificações.
+
+    Dedup simples: antes de inserir, busca documentos com mesmo
+    (defensor, data_inicio, data_fim, tipo). Se existir, pula.
+    """
+    if not afastamentos:
+        return []
+
+    db = get_firestore_client()
+    col = db.collection(FIRESTORE_COLECAO)
+    criados = []
+
+    for af in afastamentos:
+        defensor_abrev = _mapear_defensor_abrev(af.get("defensor_ausente", ""))
+        tipo_slug      = _mapear_tipo(af.get("tipo", ""))
+        data_inicio    = _normalizar_data(af.get("data_inicio", ""))
+        data_fim       = _normalizar_data(af.get("data_fim", ""))
+
+        if not defensor_abrev or not data_inicio or not data_fim:
+            log.warning(
+                f"Afastamento descartado (campos obrigatórios faltando): "
+                f"defensor={defensor_abrev!r} inicio={data_inicio!r} fim={data_fim!r}"
+            )
+            continue
+
+        # Dedup
+        existentes = list(
+            col.where("defensor", "==", defensor_abrev)
+               .where("data_inicio", "==", data_inicio)
+               .where("data_fim", "==", data_fim)
+               .where("tipo", "==", tipo_slug)
+               .limit(1).stream()
+        )
+        if existentes:
+            log.info(
+                f"Afastamento já existe no Firestore (id={existentes[0].id}): "
+                f"{defensor_abrev} {tipo_slug} {data_inicio}→{data_fim}. Pulando."
+            )
+            continue
+
+        designacoes_norm = []
+        for d in af.get("designacoes", []) or []:
+            dp_num = str(d.get("dp_numero", "")).strip().replace("ª", "").replace("DP", "").strip()
+            sub_raw = (d.get("substituto") or "").strip()
+            sub = _mapear_defensor_abrev(sub_raw) if sub_raw else ""
+            if dp_num:
+                designacoes_norm.append({"dp": dp_num, "substituto": sub})
+
+        doc = {
+            "defensor":        defensor_abrev,
+            "tipo":            tipo_slug,
+            "data_inicio":     data_inicio,
+            "data_fim":        data_fim,
+            "portaria_numero": (af.get("portaria_numero") or "").strip(),
+            "portaria_url":    edition_url,
+            "portaria_sei":    (af.get("processo_sei") or "").strip(),
+            "designacoes":     designacoes_norm,
+            "criado_por":      CRIADO_POR_AUTOMACAO,
+            "criado_em":       firestore.SERVER_TIMESTAMP,
+            "atualizado_por":  CRIADO_POR_AUTOMACAO,
+            "atualizado_em":   firestore.SERVER_TIMESTAMP,
+            "origem":          "automacao-diario-oficial",
+        }
+        _, ref = col.add(doc)
+        log.info(
+            f"✅ Afastamento gravado: id={ref.id} | {defensor_abrev} {tipo_slug} "
+            f"{data_inicio}→{data_fim} | {len(designacoes_norm)} designação(ões)"
+        )
+        criados.append({"id": ref.id, **doc})
+
+    return criados
 
 # ─── Busca de edições ─────────────────────────────────────────────────────────
 
@@ -261,7 +436,10 @@ def extract_pdf_text(pdf_bytes: bytes) -> str:
 # ─── Análise com Claude ───────────────────────────────────────────────────────
 
 def parse_designations(text: str, state: dict) -> dict:
-    """Usa Claude para identificar designações do Polo Médio no texto do PDF."""
+    """
+    Usa Claude para identificar designações do Polo Médio no texto do PDF.
+    Agrupa por afastamento (defensor + período + tipo) com lista de designações.
+    """
     log.info("Analisando texto com Claude API…")
     client = Anthropic()
 
@@ -272,42 +450,49 @@ def parse_designations(text: str, state: dict) -> dict:
 
     msg = client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=1024,
+        max_tokens=2048,
         messages=[{
             "role": "user",
             "content": f"""Analise este texto do Diário Oficial da Defensoria Pública do Estado do Amazonas.
 
-Identifique APENAS designações/substituições do **Polo Médio Amazonas** (também chamado "Polo do Médio Amazonas").
+Identifique APENAS designações/substituições/afastamentos do **Polo Médio Amazonas** (também chamado "Polo do Médio Amazonas").
 
 Defensores titulares do Polo Médio e suas DPs:
 {defensores_str}
 
+Agrupe por AFASTAMENTO: um afastamento é a ausência de UM defensor em UM período por UM motivo (férias, folga, licença especial). Um mesmo afastamento pode gerar várias designações de substitutos (uma por DP do titular).
+
 Retorne SOMENTE um JSON válido com esta estrutura:
 {{
   "tem_designacoes": true,
-  "designacoes": [
+  "afastamentos": [
     {{
       "defensor_ausente": "Nome completo do titular ausente",
-      "defensor_substituto": "Nome completo do substituto",
-      "dp_numero": "2",
-      "dp_nome": "2ª Defensoria Pública do Polo Médio Amazonas",
-      "periodo_inicio": "DD/MM/AAAA",
-      "periodo_fim": "DD/MM/AAAA",
-      "tipo": "Férias|Folga|Licença Especial",
-      "processo_sei": "número ou null"
+      "tipo": "ferias|folga|licenca_especial|outro",
+      "data_inicio": "YYYY-MM-DD",
+      "data_fim": "YYYY-MM-DD",
+      "portaria_numero": "Portaria nº 123/2026-GSPG/DPE/AM ou vazio",
+      "processo_sei": "número SEI/SGI ou vazio",
+      "designacoes": [
+        {{"dp_numero": "5", "substituto": "Nome completo do substituto"}}
+      ]
     }}
   ]
 }}
 
-Se não houver designações do Polo Médio, retorne:
-{{"tem_designacoes": false, "designacoes": []}}
+Se não houver afastamentos do Polo Médio, retorne:
+{{"tem_designacoes": false, "afastamentos": []}}
+
+REGRAS:
+- Datas SEMPRE no formato YYYY-MM-DD (ex: 2026-05-15)
+- tipo em minúsculas, sem acento, valores fixos: ferias, folga, licenca_especial, outro
+- Se não identificar algum campo, use string vazia "" (não use null)
 
 TEXTO DO DIÁRIO OFICIAL:
 {text[:15000]}""",
         }],
     )
 
-    # Registrar uso
     total = registrar_uso(state, msg.usage.input_tokens, msg.usage.output_tokens)
     save_state(state)
 
@@ -315,103 +500,39 @@ TEXTO DO DIÁRIO OFICIAL:
     m = re.search(r"\{.*\}", raw, re.DOTALL)
     if m:
         try:
-            return json.loads(m.group())
+            data = json.loads(m.group())
+            # retrocompat: aceita "designacoes" no nível raiz (formato antigo)
+            if "afastamentos" not in data and "designacoes" in data:
+                data["afastamentos"] = data.pop("designacoes")
+            return data
         except json.JSONDecodeError:
             log.warning("Resposta do Claude não é JSON válido")
-    return {"tem_designacoes": False, "designacoes": []}
+    return {"tem_designacoes": False, "afastamentos": []}
 
-# ─── Atualização do index.html ────────────────────────────────────────────────
+# ─── Notificação pós-gravação ────────────────────────────────────────────────
 
-def update_index_html(designacoes: list, edition_url: str, state: dict):
-    """Usa Claude para inserir as novas designações no index.html."""
-    if not designacoes:
+def notificar_afastamentos_gravados(criados: list, edition_url: str, custo_total: float):
+    """Envia e-mail com o resumo dos afastamentos gravados no Firestore."""
+    if not criados:
         return
-
-    log.info(f"Atualizando index.html com {len(designacoes)} designação(ões)…")
-    client = Anthropic()
-
-    with open(INDEX_HTML, encoding="utf-8") as f:
-        html = f.read()
-
-    # Backup
-    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-    backup = PROJECT_DIR / f"index.backup-{ts}.html"
-    backup.write_text(html, encoding="utf-8")
-    log.info(f"Backup criado: {backup.name}")
-
-    designacoes_json = json.dumps(designacoes, ensure_ascii=False, indent=2)
-    nomes_curtos = {n: d["abrev"] for n, d in DEFENSORES_POLO.items()}
-
-    msg = client.messages.create(
-        model="claude-haiku-4-5-20251001",
-        max_tokens=8192,
-        messages=[{
-            "role": "user",
-            "content": f"""Você deve inserir novas designações no index.html do site Polo Médio Amazonas 2026.
-
-NOVAS DESIGNAÇÕES (publicadas em {edition_url}):
-{designacoes_json}
-
-Nomes curtos dos defensores no JavaScript:
-{json.dumps(nomes_curtos, ensure_ascii=False)}
-
-REGRAS DE ATUALIZAÇÃO:
-1. Aba "Tabela Completa": adicione linhas HTML na tabela do mês correspondente (siga o formato das linhas existentes)
-2. Objeto `detalhesAfastamentosRaw` no JS: adicione entrada no array do mês correto
-3. Objeto `afastamentos` no JS: adicione o nome curto do defensor nos dias do período
-4. Tabela individual do defensor (aba "Detalhes"): adicione a linha correspondente
-
-REGRAS GERAIS:
-- Não altere NADA além do necessário para inserir as novas designações
-- Mantenha a formatação e indentação existentes
-- Insira datas em ordem cronológica
-
-HTML ATUAL DO SITE:
-{html}
-
-Retorne APENAS o HTML completo atualizado, sem explicações, sem blocos de código markdown.""",
-        }],
+    resumo = "\n".join(
+        f"  • {c['defensor']} ({c['tipo']}) "
+        f"de {c['data_inicio']} a {c['data_fim']} "
+        f"— {len(c.get('designacoes', []))} designação(ões)"
+        for c in criados
     )
-
-    # Registrar uso
-    total = registrar_uso(state, msg.usage.input_tokens, msg.usage.output_tokens)
-    save_state(state)
-
-    result = msg.content[0].text.strip()
-    result = re.sub(r"^```html?\n?", "", result)
-    result = re.sub(r"\n?```$", "", result)
-
-    if "<!DOCTYPE" in result or "<html" in result:
-        INDEX_HTML.write_text(result, encoding="utf-8")
-        log.info("✅ index.html atualizado com sucesso")
-
-        # Notificação e-mail — site atualizado
-        resumo = "\n".join(
-            f"  • {d['defensor_ausente']} ({d['tipo']}) — {d['dp_nome']} "
-            f"de {d['periodo_inicio']} a {d['periodo_fim']}"
-            for d in designacoes
+    send_email(
+        assunto="Novos afastamentos detectados e gravados no site",
+        corpo=(
+            f"A automação gravou {len(criados)} afastamento(s) no Firestore.\n\n"
+            f"Edição do Diário Oficial: {edition_url.split('/')[-1]}\n"
+            f"Link do PDF: {edition_url}\n\n"
+            f"Afastamentos:\n{resumo}\n\n"
+            f"O site (https://lumabandeira.github.io/polo-medio-amazonas/) "
+            f"reflete os novos dados assim que a página for recarregada.\n\n"
+            f"Custo acumulado no mês: ${custo_total:.4f} / ${LIMITE_CUSTO_USD:.2f}"
         )
-        send_email(
-            assunto="Site atualizado — novas designações detectadas",
-            corpo=(
-                f"O site do Polo Médio Amazonas foi atualizado automaticamente.\n\n"
-                f"Edição do Diário Oficial: {edition_url.split('/')[-1]}\n\n"
-                f"Designações encontradas:\n{resumo}\n\n"
-                f"Custo acumulado no mês: ${total:.4f} / ${LIMITE_CUSTO_USD:.2f}"
-            )
-        )
-    else:
-        log.error("❌ Resposta inválida do Claude. index.html não foi alterado.")
-        log.error(f"   Primeiros 300 chars: {result[:300]}")
-        send_email(
-            assunto="ERRO — Falha ao atualizar o site",
-            corpo=(
-                f"Designações foram detectadas no Diário Oficial, "
-                f"mas houve falha ao atualizar o site.\n\n"
-                f"Edição: {edition_url.split('/')[-1]}\n"
-                f"Verifique o log em: docs/logs/"
-            )
-        )
+    )
 
 # ─── Principal ────────────────────────────────────────────────────────────────
 
@@ -427,7 +548,6 @@ def main():
     custo_atual = state.get("custo", {}).get("total_usd", 0.0)
     log.info(f"Custo acumulado no mês ({_mes_atual()}): ${custo_atual:.4f} / ${LIMITE_CUSTO_USD:.2f}")
 
-    # ── Verificar limite de custo antes de qualquer coisa ──
     if verificar_limite_custo(state):
         return
 
@@ -447,13 +567,12 @@ def main():
 
         log.info(f"{len(new_editions)} edição(ões) nova(s): {[e['numero'] for e in new_editions]}")
 
-        any_updated = False
+        total_criados = 0
 
         for edition in reversed(new_editions):  # Mais antiga primeiro
             num = edition["numero"]
             log.info(f"─── Edição {num} ───────────────────────────────")
 
-            # Verificar custo antes de cada chamada à API
             if verificar_limite_custo(state):
                 log.warning("Processamento interrompido por limite de custo.")
                 break
@@ -471,21 +590,24 @@ def main():
                 log.info(f"Edição {num}: {len(text)} caracteres extraídos do PDF")
                 result = parse_designations(text, state)
 
-                # Checar custo após parse
                 if verificar_limite_custo(state):
                     log.warning("Processamento interrompido por limite de custo após análise.")
                     break
 
                 if result.get("tem_designacoes"):
-                    desigs = result["designacoes"]
-                    log.info(f"Edição {num}: {len(desigs)} designação(ões) encontrada(s)!")
-                    for d in desigs:
+                    afastamentos = result.get("afastamentos", [])
+                    log.info(f"Edição {num}: {len(afastamentos)} afastamento(s) detectado(s)")
+                    for af in afastamentos:
                         log.info(
-                            f"  → {d['defensor_ausente']} | sub: {d['defensor_substituto']} "
-                            f"| {d['dp_nome']} | {d['periodo_inicio']}–{d['periodo_fim']} | {d['tipo']}"
+                            f"  → {af.get('defensor_ausente')} | {af.get('tipo')} "
+                            f"| {af.get('data_inicio')}→{af.get('data_fim')} "
+                            f"| {len(af.get('designacoes', []))} DP(s)"
                         )
-                    update_index_html(desigs, edition["url"], state)
-                    any_updated = True
+                    criados = salvar_afastamentos_firestore(afastamentos, edition["url"])
+                    if criados:
+                        custo_total = state.get("custo", {}).get("total_usd", 0.0)
+                        notificar_afastamentos_gravados(criados, edition["url"], custo_total)
+                        total_criados += len(criados)
                 else:
                     log.info(f"Edição {num}: sem designações do Polo Médio Amazonas")
 
@@ -506,10 +628,10 @@ def main():
                     )
                 )
 
-        if any_updated:
-            log.info("🎉 Site atualizado com as novas designações!")
+        if total_criados:
+            log.info(f"🎉 {total_criados} afastamento(s) gravado(s) no Firestore.")
         else:
-            log.info("Nenhuma atualização necessária.")
+            log.info("Nenhum afastamento novo para gravar.")
 
     except Exception as e:
         msg_erro = f"Erro geral: {e}"
