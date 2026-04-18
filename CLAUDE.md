@@ -144,6 +144,9 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 ```
 index.html                          ← site completo (único arquivo do site)
 CLAUDE.md                           ← este arquivo
+limpar-backfill.py                  ← limpeza de registros duplicados/fragmentados do backfill
+backfill-calendario-do-estruturado.py ← backfill histórico do DO (100% regex, sem API)
+verificar-diario-oficial.py         ← automação diária (cron GitHub Actions)
 docs/
 ├── INDEX.md                        ← índice de todos os arquivos docs/
 ├── defensores/
@@ -175,7 +178,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 15/04/2026 — sessão 3)
+## Estado atual do site (atualizado em 18/04/2026 — sessão 6)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -212,7 +215,7 @@ github-pages/
 ### Decisões de arquitetura já tomadas
 - Sem automação do Diário Oficial — admin insere links manualmente
 - Sem migração de hospedagem — continua no GitHub Pages
-- JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) = base imutável pela UI. Coleções `afastamentos_admin` e `titulares_admin` no Firestore = registros adicionados/editados pelo admin. Mesclados em memória ao carregar (Firestore sobrescreve JSON).
+- JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) = base de referência. **Todos os eventos do `designacoes-2026.json` foram promovidos ao Firestore via UI admin em 18/04/2026** — o Firestore é agora a fonte única de verdade para o calendário. Registros JSON que ainda não têm override no Firestore continuam sendo exibidos normalmente (o site mescla os dois em memória), mas a intenção é que o admin promova qualquer registro que precise de correção.
 - Função `syncFromSheets()` removida definitivamente
 - Formulário de afastamento dividido em duas fases: (1) cadastrar ausência sem Diário Oficial; (2) registrar substituto + portaria quando o diário sair. Portaria e link DO ficam dentro de cada designação por DP, não no nível do afastamento.
 - Edição de titulares não retroage: cada entrada tem data de início explícita; a resolução por data (`getTitularForDPOnDay`) garante que tabelas passadas não são afetadas por mudanças futuras.
@@ -403,10 +406,10 @@ Requer `firebase-service-account.json` na raiz do projeto.
 
 ---
 
-## Backfill do calendário a partir do Diário Oficial estruturado (✅ EXECUTADO — 17/04/2026)
+## Backfill do calendário a partir do Diário Oficial estruturado (✅ EXECUTADO e CORRIGIDO — 17–18/04/2026)
 
 ### Contexto
-Em 17/04/2026 o calendário foi retroativamente populado com designações substitutas publicadas no DO desde janeiro/2026 que ainda não haviam sido registradas em `afastamentos_admin`. O processamento é **100% local (regex)**, sem custo de API.
+Em 17/04/2026 o calendário foi retroativamente populado com designações substitutas publicadas no DO desde janeiro/2026. Em 18/04/2026 foram corrigidos dois bugs no script e executada uma limpeza dos registros incorretos gerados na primeira execução.
 
 ### Script: `backfill-calendario-do-estruturado.py`
 - Lê `docs/diario-oficial-completo-2026.json`, campo `portarias_estruturadas.trechos`
@@ -416,23 +419,38 @@ Em 17/04/2026 o calendário foi retroativamente populado com designações subst
 - **Resolve titular histórico** por data (right-exclusive: `inicio <= d < fim`), combinando `designacoes-2026.json` com overrides de `titulares_admin` no Firestore
 - Mapeia substituto: nome completo ou primeiro+último bate com um dos defensores do polo → `substituto: "abrev"`; caso contrário → `substituto: "_outro"` + `substituto_nome_externo: "Nome"`
 - **Filtra ano < 2026** (dezembro/2025 fica fora)
-- Merge vs. novo: se já existe afastamento do titular com período sobreposto → adiciona em `designacoes_dp[]`; caso contrário → cria novo com `tipo: "outro"`, `origem: "backfill-do-estruturado"`, `criado_por: "backfill@diario-estruturado"`
+- **`_json_evento_cobre_sub`** — pula qualquer par (dp, substituto) já registrado nos `eventos` do `designacoes-2026.json` (evita duplicatas em relação ao JSON base)
+- Merge vs. novo: se já existe afastamento do titular com período sobreposto no Firestore → merge em `designacoes_dp[]`; caso contrário → cria **um único doc** com todas as DPs do mesmo afastamento agrupadas (`tipo: "outro"`, `origem: "backfill-do-estruturado"`)
 - Dedup: se já há substituto registrado com mesmo `(substituto, data_inicio, data_fim)` na DP, pula
 - CLI: dry-run por padrão. `--commit` grava. `--no-firestore` roda sem Firestore (pendentes não classificados).
 
-### Resultado da execução (17/04/2026)
-- 50 afastamentos novos criados (tipo=outro)
-- 2 designações puladas por já estarem registradas no afastamento base `RW2HbSgEPAsuOFolDzRc` (folga Mariana Paixão 4ª e 9ª DP, 07-09/jan)
-- 3 removidas por revogação cruzada (Bruna 22-30/jan via Portaria 52/2026; Eliaquim 6ª+7ª DP 02-27/mar via Portaria 178/2026)
-- 3 removidas por ano < 2026 (Mariana dez/2025)
+### Bugs corrigidos em 18/04/2026
+1. **Duplicatas do JSON** — o script não consultava os `eventos` do `designacoes-2026.json` ao decidir se criava registro novo, gerando duplicatas de substitutos já definidos no JSON. Corrigido com `_json_evento_cobre_sub`.
+2. **Fragmentação por DP** — criava 1 doc Firestore por DP em vez de 1 doc com todas as DPs do mesmo afastamento. Corrigido agrupando itens `"novo"` por `(titular, data_inicio, data_fim, portaria)` antes de gravar.
+
+### Script de limpeza: `limpar-backfill.py`
+Executa **após** o backfill para corrigir registros incorretos existentes no Firestore:
+1. **Duplicatas do JSON** — docs de backfill cujos (dp, substituto) já estão no JSON → **deleta**
+2. **Docs fragmentados** — múltiplos docs de 1-DP para o mesmo afastamento → **consolida** em 1 doc com todas as DPs
+3. **Docs mistos** — parte duplicata + parte nova → **atualiza** removendo só as entradas duplicadas
+4. Docs com dados genuinamente novos → **sem ação**
+
+**Resultado da limpeza executada em 18/04/2026:** 36 docs deletados, 6 consolidados.
+
+Uso: `py limpar-backfill.py` (dry-run) / `py limpar-backfill.py --commit` (aplica).
+
+### Resultado total do backfill (após limpeza)
+- **8 registros** no Firestore com `origem: "backfill-do-estruturado"` (dados genuinamente novos, não presentes no JSON)
+- Todos os eventos do JSON promovidos ao Firestore pelo admin via UI em 18/04/2026
+- Correção manual de sobreposição na 2ª DP de José Antônio (Bruna 22-25/jan + Daniel 26-30/jan, via Portaria 52/2026 que revogou a Portaria 41/2026)
+- **1 pendente de revisão manual:** Eliaquim → 7ª DP 2026-03-01..2026-03-06 (Portaria 206/2026). Não gravada porque a 7ª DP não tinha titular resolvido para 01/03. Corrigir: atualizar `titulares_admin/7` pela UI admin e registrar o afastamento manualmente.
 - 2 não parseadas (Eliaquim 9ª DP a partir de 11/jan; Miguel 7ª DP a partir de 07/mar — só têm data início)
-- **1 pendente de revisão manual:** Eliaquim → 7ª DP 2026-03-01..2026-03-06 (Portaria 206/2026). Não gravada porque a 7ª DP não tem titular resolvido para 01/03 — o histórico local tem Elaine (fim=2026-03-01) e Miguel (inicio=2026-03-01), mas `titulares_admin` no Firestore não reflete essa transição. **Corrigir** atualizando `titulares_admin/7` no Firestore pela UI admin e depois registrando esse afastamento manualmente.
 
 ### Quando reexecutar
-Sempre que `docs/diario-oficial-completo-2026.json` for atualizado com edições novas. O script é idempotente (dedup por `(defensor, data_inicio, data_fim, tipo)` e por substituto dentro de `designacoes_dp`), então rodar várias vezes é seguro.
+Sempre que `docs/diario-oficial-completo-2026.json` for atualizado com edições novas. O script é idempotente (dedup por `(defensor, data_inicio, data_fim, tipo)` e por substituto dentro de `designacoes_dp`). Rodar `limpar-backfill.py` após cada execução com `--commit` é recomendado para limpar eventuais fragmentações.
 
 ### Revogações — limitação conhecida
-As 10 revogações detectadas são **apenas logadas** no console, não aplicadas a afastamentos já no Firestore. Se uma portaria revogada já virou afastamento gravado anteriormente, revisar manualmente. O cruzamento automático só funciona no plano em memória antes da gravação.
+Revogações detectadas são **apenas removidas do plano em memória** antes de gravar — não são aplicadas retroativamente a afastamentos já no Firestore. Se uma portaria revogada já virou afastamento gravado anteriormente, revisar manualmente.
 
 ---
 
