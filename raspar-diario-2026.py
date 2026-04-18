@@ -39,15 +39,20 @@ ANCORAS = {
     2622: date(2026, 3, 30),
     2623: date(2026, 3, 31),
     2624: date(2026, 4,  1),
-    2625: date(2026, 4,  2),
-    2626: date(2026, 4,  3),
-    2627: date(2026, 4,  6),
-    2628: date(2026, 4,  7),
-    2629: date(2026, 4,  8),
+    2625: date(2026, 4,  6),  # corrigido: real = 06/04
+    2626: date(2026, 4,  7),  # corrigido: real = 07/04
+    2627: date(2026, 4,  8),
+    2628: date(2026, 4,  9),
+    2629: date(2026, 4, 10),
+    2630: date(2026, 4, 13),
+    2631: date(2026, 4, 14),
+    2632: date(2026, 4, 15),
+    2633: date(2026, 4, 16),
+    2634: date(2026, 4, 17),
 }
 
-EDICAO_MIN  = 2564
-EDICAO_MAX  = 2629
+EDICAO_MIN  = 2627
+EDICAO_MAX  = 2636
 TERMO_BUSCA = "polo médio"
 
 SESSION = requests.Session()
@@ -160,9 +165,16 @@ def extrair_portarias_polo_medio(texto: str) -> list[str]:
 # ─── Geração de relatório ─────────────────────────────────────────────────────
 
 def salvar_json(resultados: list):
+    existentes = {}
+    if SAIDA_JSON.exists():
+        with open(SAIDA_JSON, encoding="utf-8") as f:
+            existentes = {e["edicao"]: e for e in json.load(f)}
+    for r in resultados:
+        existentes[r["edicao"]] = r
+    merged = sorted(existentes.values(), key=lambda e: e["edicao"])
     with open(SAIDA_JSON, "w", encoding="utf-8") as f:
-        json.dump(resultados, f, indent=2, ensure_ascii=False)
-    print(f"  → JSON: {SAIDA_JSON}")
+        json.dump(merged, f, indent=2, ensure_ascii=False)
+    print(f"  → JSON: {SAIDA_JSON} ({len(merged)} edições total)")
 
 
 def salvar_markdown(resultados: list):

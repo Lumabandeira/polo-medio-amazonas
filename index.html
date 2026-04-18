@@ -2942,6 +2942,7 @@
                         jsonDesignacoes.defensorias[dpKey].historico_titulares = doc.data().historico_titulares;
                     }
                 });
+                _atualizarNomesVaga();
                 renderDefensorias();
                 renderDesignacoes();
                 renderCalendar();
@@ -2949,6 +2950,27 @@
             } catch(e) {
                 console.warn('Firestore titulares_admin:', e.message);
             }
+        }
+
+        // Registra labels legíveis para chaves de DPs vagas (ex: "dp12-vaga" → "12ª DP (vaga)")
+        function _atualizarNomesVaga() {
+            if (!jsonDesignacoes?.defensorias) return;
+            const dpsPorChave = {};
+            Object.entries(jsonDesignacoes.defensorias).forEach(([dpKey, dp]) => {
+                (dp.historico_titulares || []).forEach(h => {
+                    if (!h.defensor || jsonDesignacoes.defensores[h.defensor]) return;
+                    const calKey = defensorCalKey(h.defensor);
+                    if (!dpsPorChave[calKey]) dpsPorChave[calKey] = new Set();
+                    dpsPorChave[calKey].add(dpKey);
+                });
+            });
+            Object.entries(dpsPorChave).forEach(([calKey, dps]) => {
+                if (defensorNames[calKey]) return;
+                const lista = [...dps].sort((a, b) => +a - +b);
+                defensorNames[calKey] = lista.length === 1
+                    ? `${lista[0]}ª DP (vaga)`
+                    : `DP ${lista.join('/')} (vaga)`;
+            });
         }
 
         async function reloadTitularesData() {
@@ -4070,7 +4092,7 @@
                     monthData[day].forEach(defensor => {
                         const badge = document.createElement('div');
                         badge.className = `defensor-badge ${defensor}`;
-                        badge.textContent = defensorNames[defensor];
+                        badge.textContent = defensorNames[defensor] || defensor;
                         markers.appendChild(badge);
                     });
                 }

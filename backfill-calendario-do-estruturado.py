@@ -102,6 +102,16 @@ def _runs_consecutivos(dias: list[int]) -> list[tuple[int, int]]:
     return runs
 
 
+# Regex para período que cruza meses: "12 de março de 2026 a 10 de abril de 2026"
+_CROSS_PERIOD_RE = re.compile(
+    r'(\d+)[ºo°]?\s+de\s+(janeiro|fevereiro|mar[çc]o|abril|maio|junho|julho|agosto|'
+    r'setembro|outubro|novembro|dezembro)(?:\s+de\s+(\d{4}))?'
+    r'\s+a\s+(\d+)[ºo°]?\s+de\s+(janeiro|fevereiro|mar[çc]o|abril|maio|junho|julho|agosto|'
+    r'setembro|outubro|novembro|dezembro)(?:\s+de\s+(\d{4}))?',
+    re.IGNORECASE,
+)
+
+
 def parse_date_ranges(trecho: str, ano_default: int = 2026) -> list[tuple[date, date]]:
     """
     Extrai todas as faixas (início, fim) do trecho, cobrindo:
@@ -109,6 +119,7 @@ def parse_date_ranges(trecho: str, ano_default: int = 2026) -> list[tuple[date, 
       - "nos dias A, B e C de <mês> de 2026"
       - "nos períodos de X a Y de <mês> e Z a W de <mês>"
       - "dias 3, 4, 5, 6 e 8 de março" (descontínuos → 2 runs)
+      - "12 de março de 2026 a 10 de abril de 2026" (cross-month)
 
     Descarta trechos com "a contar do dia" ou "a partir do dia" (só início).
     """
@@ -121,7 +132,31 @@ def parse_date_ranges(trecho: str, ano_default: int = 2026) -> list[tuple[date, 
     ano = int(m_ano.group(1)) if m_ano else ano_default
 
     ranges: list[tuple[date, date]] = []
+    matched_spans: list[tuple[int, int]] = []
+
+    # Passo 1: períodos cross-month ("X de MÊS_A a Y de MÊS_B")
+    for m in _CROSS_PERIOD_RE.finditer(t):
+        dia_ini  = int(m.group(1))
+        mes_ini  = MES_MAP.get(m.group(2).lower().replace("ç", "c"))
+        ano_ini  = int(m.group(3)) if m.group(3) else ano
+        dia_fim  = int(m.group(4))
+        mes_fim  = MES_MAP.get(m.group(5).lower().replace("ç", "c"))
+        ano_fim  = int(m.group(6)) if m.group(6) else ano
+        if not mes_ini or not mes_fim:
+            continue
+        try:
+            d_ini = date(ano_ini, mes_ini, dia_ini)
+            d_fim = date(ano_fim, mes_fim, dia_fim)
+            if d_fim >= d_ini:
+                ranges.append((d_ini, d_fim))
+                matched_spans.append((m.start(), m.end()))
+        except ValueError:
+            continue
+
+    # Passo 2: padrões dentro do mesmo mês, ignorando posições já cobertas
     for m in _DIAS_MESES_RE.finditer(t):
+        if any(s <= m.start() < e for s, e in matched_spans):
+            continue
         seq = m.group(1)
         mes_nome = m.group(2).lower().replace("ç", "c")
         mes = MES_MAP.get(mes_nome)
@@ -434,7 +469,7 @@ def planejar_acoes(dados_do: list, defensores: dict, defensorias: dict,
             if not isinstance(port, dict):
                 continue
             cats = port.get("categorias") or []
-            if "designacoes" not in cats and "substituicao" not in cats:
+            if not any(c in cats for c in ("designacoes", "substituicao", "polo_medio", "defensor")):
                 continue
             portaria_numero = (port.get("numero") or "").strip()
             processo_sei    = (port.get("sei") or "").strip()

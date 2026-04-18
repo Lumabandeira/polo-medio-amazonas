@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import sys, io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 """
 Processador de Diários Oficiais — DPE/AM 2026
 Polo Médio Amazonas
@@ -216,10 +219,10 @@ def extrair_texto_pdf(caminho: Path) -> str:
         return f"[Erro na extração: {e}]"
 
 
-def tem_palavra_chave(texto: str) -> bool:
+def tem_palavra_chave(texto: str, kws: list) -> bool:
     """Verifica se o texto contém ao menos uma palavra-chave relevante."""
     texto_lower = texto.lower()
-    for kw in keywords:
+    for kw in kws:
         if kw.lower() in texto_lower:
             return True
     return False
