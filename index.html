@@ -3133,18 +3133,17 @@
         }
 
         // Retorna opções de substituto excluindo o defensor ausente
+        // Inclui apenas membros ativos do polo — qualquer outro vai em "Outro"
         function _opcoesSubstituto(defensorAusente, subSelecionado) {
             const defs = jsonDesignacoes?.defensores || {};
-            const ativos = [], exMembros = [];
-            Object.entries(defs).forEach(([k, v]) => {
-                if (k === defensorAusente || v.externo) return;
-                const n = v.nome_curto || v.nome || k;
-                const opt = `<option value="${k}"${k===subSelecionado?' selected':''}>${n}</option>`;
-                (v.ativo === false ? exMembros : ativos).push(opt);
-            });
-            const grupos = ativos.join('') +
-                (exMembros.length ? `<optgroup label="Ex-membros">${exMembros.join('')}</optgroup>` : '');
-            return grupos + `<option value="_outro"${subSelecionado==='_outro'?' selected':''}>Outro (digitar nome)</option>`;
+            const opts = Object.entries(defs)
+                .filter(([k, v]) => k !== defensorAusente && v.ativo !== false && !v.externo)
+                .map(([k, v]) => {
+                    const n = v.nome_curto || v.nome || k;
+                    return `<option value="${k}"${k===subSelecionado?' selected':''}>${n}</option>`;
+                })
+                .join('');
+            return opts + `<option value="_outro"${subSelecionado==='_outro'?' selected':''}>Outro (digitar nome)</option>`;
         }
 
         // Cria uma linha de substituto dentro de uma DP
@@ -3202,7 +3201,20 @@
                 </div>`;
             if (subVal) {
                 const sel = row.querySelector('.sub-select');
-                if (sel) sel.value = subVal;
+                if (sel) {
+                    sel.value = subVal;
+                    if (sel.value !== subVal) {
+                        // Valor não existe nas opções (ex: ex-membro) → tratar como Outro
+                        sel.value = '_outro';
+                        const nomeInput = row.querySelector('.sub-outro-nome');
+                        if (nomeInput) {
+                            const defs = jsonDesignacoes?.defensores || {};
+                            nomeInput.value = subData?.substituto_nome_externo ||
+                                defs[subVal]?.nome || subVal;
+                            nomeInput.style.display = 'block';
+                        }
+                    }
+                }
             }
             return row;
         }

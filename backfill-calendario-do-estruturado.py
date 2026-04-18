@@ -455,7 +455,7 @@ def planejar_acoes(dados_do: list, defensores: dict, defensorias: dict,
     Se afastamentos_por_defensor for None (modo --no-firestore), pula merge.
     """
     plano = {"acoes": [], "revogacoes": [], "nao_parseadas": []}
-    abrevs_validos = set(defensores.keys())
+    abrevs_validos = {k for k, v in defensores.items() if v.get("ativo") is not False and not v.get("externo")}
 
     for ed in dados_do:
         edicao_num = ed.get("edicao")
