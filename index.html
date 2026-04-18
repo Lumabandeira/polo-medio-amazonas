@@ -3201,6 +3201,10 @@
                         </div>
                     </div>
                 </div>`;
+            if (subVal) {
+                const sel = row.querySelector('.sub-select');
+                if (sel) sel.value = subVal;
+            }
             return row;
         }
 
