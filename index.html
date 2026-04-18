@@ -3134,18 +3134,17 @@
 
         // Retorna opções de substituto excluindo o defensor ausente
         function _opcoesSubstituto(defensorAusente, subSelecionado) {
-            const polo = [
-                {v:'icaro',        n:'Ícaro Avelar'},
-                {v:'jose-antonio', n:'José Antônio'},
-                {v:'eliaquim',     n:'Eliaquim Antunes'},
-                {v:'elton',        n:'Elton Dariva'},
-                {v:'elaine',       n:'Elaine Frota'},
-                {v:'miguel',       n:'Miguel Martins'},
-            ];
-            return polo
-                .filter(d => d.v !== defensorAusente)
-                .map(({v,n}) => `<option value="${v}"${v===subSelecionado?' selected':''}>${n}</option>`)
-                .join('') + `<option value="_outro"${subSelecionado==='_outro'?' selected':''}>Outro (digitar nome)</option>`;
+            const defs = jsonDesignacoes?.defensores || {};
+            const ativos = [], exMembros = [];
+            Object.entries(defs).forEach(([k, v]) => {
+                if (k === defensorAusente || v.externo) return;
+                const n = v.nome_curto || v.nome || k;
+                const opt = `<option value="${k}"${k===subSelecionado?' selected':''}>${n}</option>`;
+                (v.ativo === false ? exMembros : ativos).push(opt);
+            });
+            const grupos = ativos.join('') +
+                (exMembros.length ? `<optgroup label="Ex-membros">${exMembros.join('')}</optgroup>` : '');
+            return grupos + `<option value="_outro"${subSelecionado==='_outro'?' selected':''}>Outro (digitar nome)</option>`;
         }
 
         // Cria uma linha de substituto dentro de uma DP
