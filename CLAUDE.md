@@ -178,7 +178,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 18/04/2026 — sessão 6)
+## Estado atual do site (atualizado em 19/04/2026 — sessão 7)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -443,8 +443,10 @@ Uso: `py limpar-backfill.py` (dry-run) / `py limpar-backfill.py --commit` (aplic
 - **8 registros** no Firestore com `origem: "backfill-do-estruturado"` (dados genuinamente novos, não presentes no JSON)
 - Todos os eventos do JSON promovidos ao Firestore pelo admin via UI em 18/04/2026
 - Correção manual de sobreposição na 2ª DP de José Antônio (Bruna 22-25/jan + Daniel 26-30/jan, via Portaria 52/2026 que revogou a Portaria 41/2026)
-- **1 pendente de revisão manual:** Eliaquim → 7ª DP 2026-03-01..2026-03-06 (Portaria 206/2026). Não gravada porque a 7ª DP não tinha titular resolvido para 01/03. Corrigir: atualizar `titulares_admin/7` pela UI admin e registrar o afastamento manualmente.
-- 2 não parseadas (Eliaquim 9ª DP a partir de 11/jan; Miguel 7ª DP a partir de 07/mar — só têm data início)
+- ~~**1 pendente de revisão manual:** Eliaquim → 7ª DP 2026-03-01..2026-03-06 (Portaria 206/2026)~~ ✅ Registrado manualmente em 19/04/2026
+- ~~2 não parseadas (Eliaquim 9ª DP a partir de 11/jan; Miguel 7ª DP a partir de 07/mar)~~ ✅ Registradas manualmente em 19/04/2026
+  - Eliaquim → 9ª DP: 11/01/2026 a 21/04/2026 (Portaria 4/2026; cessado pela Portaria 370/2026)
+  - Miguel → 7ª DP: a partir de 07/03/2026 (Portaria 206/2026)
 
 ### Quando reexecutar
 Sempre que `docs/diario-oficial-completo-2026.json` for atualizado com edições novas. O script é idempotente (dedup por `(defensor, data_inicio, data_fim, tipo)` e por substituto dentro de `designacoes_dp`). Rodar `limpar-backfill.py` após cada execução com `--commit` é recomendado para limpar eventuais fragmentações.
