@@ -178,7 +178,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 19/04/2026 — sessão 7)
+## Estado atual do site (atualizado em 19/04/2026 — sessão 8)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -208,6 +208,13 @@ github-pages/
 - **Dropdown de substituto dinâmico e com fallback** — `_opcoesSubstituto()` agora lê `jsonDesignacoes.defensores` e lista apenas membros com `ativo !== false` (sem ex-membros). Qualquer defensor de fora do polo usa "Outro (digitar nome)". `_criarSubstitutoRow` tem fallback: se o valor salvo no Firestore não bate com nenhuma opção ativa, converte automaticamente para `"_outro"` e resolve o nome via `jsonDesignacoes.defensores[key].nome`.
 - **`getTitularForDPOnDay` com intervalo inclusivo** — comparação corrigida de `date < fim` para `date <= fim`. O campo "ÚLTIMO DIA" no modal de titulares é agora corretamente o último dia em que o defensor está vigente (inclusivo em ambas as pontas). **Atenção:** o script Python `titular_em_data` no backfill ainda usa `d < fim` (right-exclusive) — se reexecutar o backfill, verificar se algum titular de fim de período está sendo mal resolvido.
 - **Backfill `abrevs_validos` restrito a membros ativos** — `backfill-calendario-do-estruturado.py` agora só reconhece como substituto interno membros com `ativo !== false` e sem `externo: true`. Ex-membros como "oswaldo" viram `substituto: "_outro"` + `substituto_nome_externo`.
+- **Badges de vaga ordenados por último no calendário** — `renderCalendar()` ordena o array do dia antes de renderizar badges: chaves que contêm `"vaga"` vão ao final, evitando espaço em branco entre defensores reais.
+- **Modal de detalhes: datas inline** — células Defensor e Substituto exibem o período em cinza abaixo do nome (`font-size:0.8em; white-space:nowrap`). Campos adicionados em todos os `push()` para `detalhesAfastamentos`: `afastamento_inicio`, `afastamento_fim`, `sub_inicio`, `sub_fim`.
+- **Modal de detalhes: ícones de ação verticais** — coluna Ações usa `display:flex; flex-direction:column` em vez de inline, empilhando 🔍 ✏️ 🗑️.
+- **Modal de detalhes: células mescladas por afastamento** — itens agrupados por `firestoreId`/`jsonEventoId` antes de renderizar; colunas Defensor, Tipo e Ações recebem `rowspan=N` na primeira linha do grupo; linhas seguintes omitem essas colunas.
+- **Modal de detalhes: separador azul entre grupos** — classe `.grupo-inicio` aplicada na primeira `<tr>` de cada grupo (exceto o primeiro). CSS usa `box-shadow: inset 0 2px 0 0 #1e3a8a` para contornar o `border-collapse` da tabela.
+- **Nova aba "Lista de Substituições"** — aba entre Calendário e Resumo de Afastamentos. Função `renderListaSubstituicoes()` lê `afastamentosFirestoreMap` + `jsonEventosMap` (respeitando `jsonOverrideMap`), agrupa por mês de `data_inicio`, ordena por data→defensor, renderiza tabela com rowspan e separador azul (mesmo formato do modal). Botões 🔍 ✏️ 🗑️ funcionam; sem botão "+ Novo Afastamento". `confirmarDeletarAfastamento` corrigido para aceitar `mes=null, dia=null` (não reabre modal quando chamado da lista). Chamada automática em `loadAfastamentosFirestore()` e `showTab('lista-substituicoes')`.
+- **Aba "Resumo de Afastamentos" dinamizada** — antes era HTML estático e desatualizado. Agora o conteúdo é gerado por `renderDetalhesAfastamentos()` que lê os mesmos dados do calendário. Agrupa por defensor (ordem do JSON, ativos primeiro) e por mês de início. Formato: `🔵 Nome completo` / bullet por mês com lista de "Tipo DD-DD/MM". Mapa `DEFENSOR_EMOJI` com chaves corretas do JSON (`jose-antonio`, `miguel`, etc.). Chamada automática em `loadAfastamentosFirestore()` e `showTab('detalhes')`.
 
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 38 usuários restantes** (1 admin + 37 viewers) no Firebase Auth + Firestore
