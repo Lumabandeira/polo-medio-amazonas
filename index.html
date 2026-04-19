@@ -2735,7 +2735,9 @@
                             defensor: defNome, tipo: tipoLabel,
                             defensoria: dpLabel, substituto: subNome,
                             processo, link,
-                            jsonEventoId: ev.id // identifica origem para edição e supressão
+                            jsonEventoId: ev.id, // identifica origem para edição e supressão
+                            afastamento_inicio: ev.data_inicio, afastamento_fim: ev.data_fim,
+                            sub_inicio: startStr, sub_fim: endStr
                         });
                         cur.setDate(cur.getDate() + 1);
                     }
@@ -2848,7 +2850,10 @@
                             detalhesAfastamentos[m][d].push({
                                 defensor: defNome, tipo: tipoLabel,
                                 defensoria: dpLabel, substituto: subNome,
-                                processo, link, firestoreId: reg.id
+                                processo, link, firestoreId: reg.id,
+                                afastamento_inicio: reg.data_inicio, afastamento_fim: reg.data_fim,
+                                sub_inicio: sub.data_inicio || reg.data_inicio,
+                                sub_fim: sub.data_fim || reg.data_fim
                             });
                             c.setDate(c.getDate() + 1);
                         }
@@ -2865,7 +2870,9 @@
                             detalhesAfastamentos[m][d].push({
                                 defensor: defNome, tipo: tipoLabel,
                                 defensoria: dpLabel, substituto: 'ainda não definido',
-                                processo, link: '', firestoreId: reg.id
+                                processo, link: '', firestoreId: reg.id,
+                                afastamento_inicio: reg.data_inicio, afastamento_fim: reg.data_fim,
+                                sub_inicio: null, sub_fim: null
                             });
                         }
                         c.setDate(c.getDate() + 1);
@@ -2886,7 +2893,9 @@
                             defensor: defNome, tipo: tipoLabel,
                             defensoria: dpLabel,
                             substituto: subInfo.nome_curto || des.substituto || '',
-                            processo, link: reg.portaria_url || '', firestoreId: reg.id
+                            processo, link: reg.portaria_url || '', firestoreId: reg.id,
+                            afastamento_inicio: reg.data_inicio, afastamento_fim: reg.data_fim,
+                            sub_inicio: reg.data_inicio, sub_fim: reg.data_fim
                         });
                     });
                     cur.setDate(cur.getDate() + 1);
@@ -2901,7 +2910,9 @@
                     detalhesAfastamentos[m][d].push({
                         defensor: defNome, tipo: tipoLabel,
                         defensoria: '—', substituto: '',
-                        processo, link: '', firestoreId: reg.id
+                        processo, link: '', firestoreId: reg.id,
+                        afastamento_inicio: reg.data_inicio, afastamento_fim: reg.data_fim,
+                        sub_inicio: null, sub_fim: null
                     });
                     cur.setDate(cur.getDate() + 1);
                 }
@@ -3070,11 +3081,17 @@
 
                     const acoesTd = `<td style="white-space:nowrap;text-align:center">${btnVer}${btnsAdmin ? ' ' + btnsAdmin : ''}</td>`;
 
+                    const afDatas = item.afastamento_inicio
+                        ? `<br><span style="font-size:0.8em;color:#6b7280;font-weight:normal">${formatarData(item.afastamento_inicio)} – ${formatarData(item.afastamento_fim)}</span>`
+                        : '';
+                    const subDatas = item.sub_inicio && item.substituto && item.substituto !== 'ainda não definido'
+                        ? `<br><span style="font-size:0.8em;color:#6b7280">${formatarData(item.sub_inicio)} – ${formatarData(item.sub_fim)}</span>`
+                        : '';
                     html += `<tr>
-                        <td><strong>${item.defensor}</strong></td>
+                        <td><strong>${item.defensor}</strong>${afDatas}</td>
                         <td><span class="tipo-badge ${tipoClass}">${item.tipo}</span></td>
                         <td>${item.defensoria}</td>
-                        <td>${item.substituto || '-'}</td>
+                        <td>${item.substituto || '-'}${subDatas}</td>
                         <td>${linkHtml}</td>
                         <td>${item.processo || '-'}</td>
                         ${acoesTd}
