@@ -2755,7 +2755,7 @@
             for (const h of dp.historico_titulares) {
                 const s = new Date(h.inicio + 'T12:00:00');
                 const e = h.fim ? new Date(h.fim + 'T12:00:00') : new Date(2027, 0, 1);
-                if (date >= s && date < e) return h.defensor; // null = vaga
+                if (date >= s && date <= e) return h.defensor; // null = vaga
             }
             return undefined;
         }
