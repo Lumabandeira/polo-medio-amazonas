@@ -2231,6 +2231,7 @@
             <button class="tab-button active" onclick="showTab('designacoes')">📋 Defensorias</button>
             <button class="tab-button" onclick="showTab('designacoes-periodo')">📅 Designações semanais</button>
             <button class="tab-button" onclick="showTab('calendario')">📅 Calendário</button>
+            <button class="tab-button" onclick="showTab('lista-substituicoes')">📋 Lista de Substituições</button>
             <button class="tab-button" onclick="showTab('detalhes')">📊 Detalhes de Afastamentos</button>
             <button id="tab-btn-diario" class="tab-button" onclick="showTab('diario-oficial')">📰 Diário Oficial</button>
         </div>
@@ -2309,6 +2310,16 @@
                 </div>
 
                 <div id="calendar-container"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Lista de Substituições -->
+        <div id="lista-substituicoes" class="tab-content">
+            <div class="card">
+                <h2>📋 Lista de Substituições</h2>
+                <div id="lista-substituicoes-container">
+                    <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
+                </div>
             </div>
         </div>
 
@@ -2935,6 +2946,7 @@
                 });
                 renderCalendar();
                 renderDesignacoes();
+                renderListaSubstituicoes();
             } catch(e) {
                 console.warn('Firestore afastamentos_admin:', e.message);
             }
@@ -4015,7 +4027,7 @@
                 await db.collection('afastamentos_admin').doc(firestoreId).delete();
                 mostrarToast('✅ Afastamento excluído.');
                 await reloadAfastamentosData();
-                openModal(mes, dia);
+                if (mes && dia) openModal(mes, dia);
             } catch(e) {
                 mostrarToast('❌ Erro ao excluir: ' + e.message, true);
             }
@@ -4079,6 +4091,9 @@
             if (tabName === 'calendario') {
                 renderCalendar();
             }
+            if (tabName === 'lista-substituicoes') {
+                renderListaSubstituicoes();
+            }
             
             // Se abrir a aba de designações semanais, garantir que Janeiro está visível
             if (tabName === 'designacoes-periodo') {
@@ -4088,6 +4103,170 @@
                     removeWeekendHighlightsFromRows();
                 }, 200);
             }
+        }
+
+        function renderListaSubstituicoes() {
+            const container = document.getElementById('lista-substituicoes-container');
+            if (!container) return;
+
+            const defs = jsonDesignacoes?.defensores || {};
+            const isAdmin = userRole === 'admin';
+
+            // Coleta todos os afastamentos de ambas as fontes
+            const registros = [];
+
+            // Firestore
+            Object.values(afastamentosFirestoreMap).forEach(reg => {
+                registros.push({ origem: 'firestore', reg });
+            });
+
+            // JSON (não sobrescritos)
+            Object.values(jsonEventosMap).forEach(ev => {
+                if (jsonOverrideMap[ev.id]) return;
+                registros.push({ origem: 'json', reg: ev });
+            });
+
+            if (registros.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-secondary);">Nenhum afastamento registrado.</p>';
+                return;
+            }
+
+            // Ordena por data_inicio, depois por nome do defensor
+            registros.sort((a, b) => {
+                const dA = a.reg.data_inicio || '';
+                const dB = b.reg.data_inicio || '';
+                if (dA !== dB) return dA.localeCompare(dB);
+                const nA = (defs[a.reg.defensor]?.nome_curto || a.reg.defensor || '').toLowerCase();
+                const nB = (defs[b.reg.defensor]?.nome_curto || b.reg.defensor || '').toLowerCase();
+                return nA.localeCompare(nB);
+            });
+
+            // Agrupa por mês de início
+            const porMes = {};
+            registros.forEach(item => {
+                const inicio = item.reg.data_inicio || '';
+                if (!inicio) return;
+                const mesNum = parseInt(inicio.split('-')[1], 10);
+                if (!porMes[mesNum]) porMes[mesNum] = [];
+                porMes[mesNum].push(item);
+            });
+
+            let html = '';
+            Object.keys(porMes).sort((a, b) => +a - +b).forEach(mesNum => {
+                html += `<h3 style="margin:28px 0 12px;color:var(--primary-color);border-bottom:2px solid var(--primary-color);padding-bottom:6px">${months[mesNum - 1]} 2026</h3>`;
+                html += `<div style="overflow-x:auto"><table class="modal-table"><thead><tr>
+                    <th>Defensor</th><th>Tipo</th><th>Defensoria Afetada</th>
+                    <th>Substituto</th><th>Diário Oficial</th><th>Processo</th>
+                    <th style="width:80px">Ações</th>
+                </tr></thead><tbody>`;
+
+                porMes[mesNum].forEach(({ origem, reg }, regIdx) => {
+                    // Resolve campos comuns
+                    let defNome, tipoLabel, processo, firestoreId, jsonEventoId;
+                    let linhas = []; // { dp, subNome, subInicio, subFim, link }
+
+                    if (origem === 'firestore') {
+                        const defInfo = defs[reg.defensor] || {};
+                        defNome = defInfo.nome_curto || reg.defensor;
+                        tipoLabel = reg.tipo === 'outro' ? (reg.tipo_custom || 'Outro') : (TIPO_LABELS[reg.tipo] || reg.tipo || 'Folga');
+                        const pNum = reg.processo_sei || reg.portaria_sei || '';
+                        const pTipo = reg.processo_tipo || '';
+                        processo = pNum ? (pTipo ? pTipo + ': ' + pNum : pNum) : '';
+                        firestoreId = reg.id;
+
+                        const desigDp = reg.designacoes_dp;
+                        const desigOld = reg.designacoes || [];
+                        if (desigDp && desigDp.length > 0) {
+                            desigDp.forEach(desig => {
+                                const dpLabel = dpDisplayLabel(desig.dp);
+                                const subs = desig.substitutos || [];
+                                if (subs.length === 0) {
+                                    linhas.push({ dp: dpLabel, subNome: 'ainda não definido', subInicio: null, subFim: null, link: '' });
+                                } else {
+                                    subs.forEach(sub => {
+                                        const sn = sub.substituto === '_outro'
+                                            ? (sub.substituto_nome_externo || 'Externo')
+                                            : (defs[sub.substituto]?.nome_curto || sub.substituto || 'ainda não definido');
+                                        linhas.push({ dp: dpLabel, subNome: sn || 'ainda não definido', subInicio: sub.data_inicio || reg.data_inicio, subFim: sub.data_fim || reg.data_fim, link: sub.portaria_url || '' });
+                                    });
+                                }
+                            });
+                        } else if (desigOld.length > 0) {
+                            desigOld.forEach(des => {
+                                const subInfo = defs[des.substituto] || {};
+                                linhas.push({ dp: dpDisplayLabel(des.dp), subNome: subInfo.nome_curto || des.substituto || '', subInicio: reg.data_inicio, subFim: reg.data_fim, link: reg.portaria_url || '' });
+                            });
+                        } else {
+                            linhas.push({ dp: '—', subNome: '', subInicio: null, subFim: null, link: '' });
+                        }
+                    } else {
+                        const ev = reg;
+                        const defInfo = defs[ev.defensor] || {};
+                        defNome = defInfo.nome_curto || ev.defensor;
+                        tipoLabel = TIPO_LABELS[ev.tipo] || ev.tipo;
+                        processo = ev.portaria?.sei || ev.portaria?.numero || '';
+                        jsonEventoId = ev.id;
+                        (ev.designacoes || []).forEach(des => {
+                            const subNome = des.substituto && defs[des.substituto] ? (defs[des.substituto].nome_curto || defs[des.substituto].nome) : '';
+                            linhas.push({ dp: dpDisplayLabel(des.dp), subNome, subInicio: des.data_inicio || ev.data_inicio, subFim: des.data_fim || ev.data_fim, link: ev.portaria?.url || '' });
+                        });
+                        if (linhas.length === 0) linhas.push({ dp: '—', subNome: '', subInicio: null, subFim: null, link: '' });
+                    }
+
+                    const span = linhas.length;
+                    const tipoClass = tipoLabel === 'Férias' ? 'tipo-ferias' : tipoLabel === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
+                    const afDatas = reg.data_inicio ? `<br><span style="font-size:0.8em;color:#6b7280;font-weight:normal;white-space:nowrap">${formatarData(reg.data_inicio)} – ${formatarData(reg.data_fim)}</span>` : '';
+
+                    let btnVer = '';
+                    if (firestoreId) btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes" onclick="abrirVisualizacaoAfastamento('firestore','${firestoreId}')">🔍</button>`;
+                    else if (jsonEventoId) btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes" onclick="abrirVisualizacaoAfastamento('json','${jsonEventoId}')">🔍</button>`;
+
+                    let btnsAdmin = '';
+                    if (isAdmin) {
+                        if (firestoreId) {
+                            btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar" onclick="abrirFormAfastamento('${firestoreId}',null,null)">✏️</button>
+                                <button class="btn-acao-tabela btn-deletar-af" title="Excluir" onclick="confirmarDeletarAfastamento('${firestoreId}',null,null)">🗑️</button>`;
+                        } else if (jsonEventoId) {
+                            btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar" onclick="abrirFormAfastamento(null,null,null,'${jsonEventoId}')">✏️</button>`;
+                        }
+                    }
+
+                    const acoesTd = `<td rowspan="${span}" style="text-align:center;vertical-align:middle"><div style="display:flex;flex-direction:column;align-items:center;gap:4px">${btnVer}${btnsAdmin}</div></td>`;
+                    const sepClass = regIdx > 0 ? ' grupo-inicio' : '';
+
+                    linhas.forEach((linha, idx) => {
+                        const linkHtml = linha.link
+                            ? (() => { const edNum = linha.link.match(/Edicao_(\d+)/i); const label = edNum ? `Edição ${edNum[1]}` : 'Abrir PDF'; return `<a href="${linha.link}" target="_blank" style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap;">📄 ${label}</a>`; })()
+                            : '-';
+                        const subDatas = linha.subInicio && linha.subNome && linha.subNome !== 'ainda não definido'
+                            ? `<br><span style="font-size:0.8em;color:#6b7280;white-space:nowrap">${formatarData(linha.subInicio)} – ${formatarData(linha.subFim)}</span>`
+                            : '';
+
+                        if (idx === 0) {
+                            html += `<tr class="${sepClass.trim()}">
+                                <td rowspan="${span}" style="vertical-align:middle"><strong>${defNome}</strong>${afDatas}</td>
+                                <td rowspan="${span}" style="vertical-align:middle;text-align:center"><span class="tipo-badge ${tipoClass}">${tipoLabel}</span></td>
+                                <td>${linha.dp}</td>
+                                <td>${linha.subNome || '-'}${subDatas}</td>
+                                <td>${linkHtml}</td>
+                                <td>${processo || '-'}</td>
+                                ${acoesTd}
+                            </tr>`;
+                        } else {
+                            html += `<tr>
+                                <td>${linha.dp}</td>
+                                <td>${linha.subNome || '-'}${subDatas}</td>
+                                <td>${linkHtml}</td>
+                                <td>${processo || '-'}</td>
+                            </tr>`;
+                        }
+                    });
+                });
+
+                html += '</tbody></table></div>';
+            });
+
+            container.innerHTML = html;
         }
 
         function changeMonth(direction) {
