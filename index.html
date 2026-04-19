@@ -3036,66 +3036,87 @@
                     <th style="width:90px">Ações</th>
                 </tr></thead><tbody>`;
 
-                const firestoreVistos = new Set();
-                const jsonBaseVistos  = new Set();
-                detalhes.forEach(item => {
-                    // Suprime linhas base cujo evento JSON foi substituído por Firestore
-                    if (!item.firestoreId && item.jsonEventoId && jsonOverrideMap[item.jsonEventoId]) return;
+                // Filtra itens suprimidos e agrupa por afastamento para rowspan
+                const itensFiltrados = detalhes.filter(item =>
+                    !(!item.firestoreId && item.jsonEventoId && jsonOverrideMap[item.jsonEventoId])
+                );
 
-                    const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' :
-                                     item.tipo === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
-                    let linkHtml = '-';
-                    if (item.link) {
-                        const edNum = item.link.match(/Edicao_(\d+)/i);
-                        const label = edNum ? `Edição ${edNum[1]}` : 'Abrir PDF';
-                        linkHtml = `<a href="${item.link}" target="_blank" style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap;">📄 ${label}</a>`;
+                // Agrupa itens consecutivos pelo mesmo ID de afastamento
+                const grupos = [];
+                itensFiltrados.forEach(item => {
+                    const chave = item.firestoreId || item.jsonEventoId || null;
+                    const ultimo = grupos[grupos.length - 1];
+                    if (ultimo && ultimo.chave === chave) {
+                        ultimo.itens.push(item);
+                    } else {
+                        grupos.push({ chave, itens: [item] });
                     }
+                });
 
-                    // Botão 🔍 — visível para todos; aparece uma vez por afastamento único
-                    let btnVer = '';
-                    if (item.firestoreId && !firestoreVistos.has(item.firestoreId)) {
-                        btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes"
-                            onclick="abrirVisualizacaoAfastamento('firestore','${item.firestoreId}')">🔍</button>`;
-                    } else if (!item.firestoreId && item.jsonEventoId && !jsonBaseVistos.has(item.jsonEventoId)) {
-                        btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes"
-                            onclick="abrirVisualizacaoAfastamento('json','${item.jsonEventoId}')">🔍</button>`;
-                    }
-
-                    // Botões de edição — apenas admin
-                    let btnsAdmin = '';
-                    if (isAdmin) {
-                        if (item.firestoreId && !firestoreVistos.has(item.firestoreId)) {
-                            btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar"
-                                    onclick="abrirFormAfastamento('${item.firestoreId}',${mes},${dia})">✏️</button>
-                                <button class="btn-acao-tabela btn-deletar-af" title="Excluir"
-                                    onclick="confirmarDeletarAfastamento('${item.firestoreId}',${mes},${dia})">🗑️</button>`;
-                        } else if (!item.firestoreId && item.jsonEventoId && !jsonBaseVistos.has(item.jsonEventoId)) {
-                            btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar"
-                                    onclick="abrirFormAfastamento(null,${mes},${dia},'${item.jsonEventoId}')">✏️</button>`;
+                grupos.forEach(grupo => {
+                    const span = grupo.itens.length;
+                    grupo.itens.forEach((item, idx) => {
+                        const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' :
+                                         item.tipo === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
+                        let linkHtml = '-';
+                        if (item.link) {
+                            const edNum = item.link.match(/Edicao_(\d+)/i);
+                            const label = edNum ? `Edição ${edNum[1]}` : 'Abrir PDF';
+                            linkHtml = `<a href="${item.link}" target="_blank" style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap;">📄 ${label}</a>`;
                         }
-                    }
 
-                    // Registra como visto após decidir os botões
-                    if (item.firestoreId) firestoreVistos.add(item.firestoreId);
-                    else if (item.jsonEventoId) jsonBaseVistos.add(item.jsonEventoId);
+                        const subDatas = item.sub_inicio && item.substituto && item.substituto !== 'ainda não definido'
+                            ? `<br><span style="font-size:0.8em;color:#6b7280;white-space:nowrap">${formatarData(item.sub_inicio)} – ${formatarData(item.sub_fim)}</span>`
+                            : '';
 
-                    const acoesTd = `<td style="text-align:center"><div style="display:flex;flex-direction:column;align-items:center;gap:4px">${btnVer}${btnsAdmin ? btnsAdmin : ''}</div></td>`;
+                        // Células mescladas: só na primeira linha do grupo
+                        if (idx === 0) {
+                            const afDatas = item.afastamento_inicio
+                                ? `<br><span style="font-size:0.8em;color:#6b7280;font-weight:normal;white-space:nowrap">${formatarData(item.afastamento_inicio)} – ${formatarData(item.afastamento_fim)}</span>`
+                                : '';
 
-                    const afDatas = item.afastamento_inicio
-                        ? `<br><span style="font-size:0.8em;color:#6b7280;font-weight:normal;white-space:nowrap">${formatarData(item.afastamento_inicio)} – ${formatarData(item.afastamento_fim)}</span>`
-                        : '';
-                    const subDatas = item.sub_inicio && item.substituto && item.substituto !== 'ainda não definido'
-                        ? `<br><span style="font-size:0.8em;color:#6b7280;white-space:nowrap">${formatarData(item.sub_inicio)} – ${formatarData(item.sub_fim)}</span>`
-                        : '';
-                    html += `<tr>
-                        <td><strong>${item.defensor}</strong>${afDatas}</td>
-                        <td><span class="tipo-badge ${tipoClass}">${item.tipo}</span></td>
-                        <td>${item.defensoria}</td>
-                        <td>${item.substituto || '-'}${subDatas}</td>
-                        <td>${linkHtml}</td>
-                        <td>${item.processo || '-'}</td>
-                        ${acoesTd}
-                    </tr>`;
+                            let btnVer = '';
+                            if (item.firestoreId) {
+                                btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes"
+                                    onclick="abrirVisualizacaoAfastamento('firestore','${item.firestoreId}')">🔍</button>`;
+                            } else if (item.jsonEventoId) {
+                                btnVer = `<button class="btn-visualizar-af" title="Visualizar detalhes"
+                                    onclick="abrirVisualizacaoAfastamento('json','${item.jsonEventoId}')">🔍</button>`;
+                            }
+
+                            let btnsAdmin = '';
+                            if (isAdmin) {
+                                if (item.firestoreId) {
+                                    btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar"
+                                            onclick="abrirFormAfastamento('${item.firestoreId}',${mes},${dia})">✏️</button>
+                                        <button class="btn-acao-tabela btn-deletar-af" title="Excluir"
+                                            onclick="confirmarDeletarAfastamento('${item.firestoreId}',${mes},${dia})">🗑️</button>`;
+                                } else if (item.jsonEventoId) {
+                                    btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar"
+                                            onclick="abrirFormAfastamento(null,${mes},${dia},'${item.jsonEventoId}')">✏️</button>`;
+                                }
+                            }
+
+                            const acoesTd = `<td rowspan="${span}" style="text-align:center;vertical-align:middle"><div style="display:flex;flex-direction:column;align-items:center;gap:4px">${btnVer}${btnsAdmin}</div></td>`;
+
+                            html += `<tr>
+                                <td rowspan="${span}" style="vertical-align:middle"><strong>${item.defensor}</strong>${afDatas}</td>
+                                <td rowspan="${span}" style="vertical-align:middle;text-align:center"><span class="tipo-badge ${tipoClass}">${item.tipo}</span></td>
+                                <td>${item.defensoria}</td>
+                                <td>${item.substituto || '-'}${subDatas}</td>
+                                <td>${linkHtml}</td>
+                                <td>${item.processo || '-'}</td>
+                                ${acoesTd}
+                            </tr>`;
+                        } else {
+                            html += `<tr>
+                                <td>${item.defensoria}</td>
+                                <td>${item.substituto || '-'}${subDatas}</td>
+                                <td>${linkHtml}</td>
+                                <td>${item.processo || '-'}</td>
+                            </tr>`;
+                        }
+                    });
                 });
                 html += '</tbody></table>';
                 tableContainer.innerHTML = html;
