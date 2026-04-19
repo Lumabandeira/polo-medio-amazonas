@@ -2232,7 +2232,7 @@
             <button class="tab-button" onclick="showTab('designacoes-periodo')">📅 Designações semanais</button>
             <button class="tab-button" onclick="showTab('calendario')">📅 Calendário</button>
             <button class="tab-button" onclick="showTab('lista-substituicoes')">📋 Lista de Substituições</button>
-            <button class="tab-button" onclick="showTab('detalhes')">📊 Detalhes de Afastamentos</button>
+            <button class="tab-button" onclick="showTab('detalhes')">📊 Resumo de Afastamentos</button>
             <button id="tab-btn-diario" class="tab-button" onclick="showTab('diario-oficial')">📰 Diário Oficial</button>
         </div>
 
@@ -2326,41 +2326,10 @@
         <!-- Tab: Detalhes de Afastamentos -->
         <div id="detalhes" class="tab-content">
             <div class="card">
-                <h2>📊 Resumo de Afastamentos por Defensor</h2>
-                
-                <h3>🔵 Ícaro Oliveira Avelar Costa</h3>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li><strong>Fevereiro:</strong> Folga 11-13/02, Folga 19-20/02</li>
-                    <li><strong>Abril:</strong> Férias 06-17/04</li>
-                </ul>
-
-                <h3>🟢 José Antônio Pereira da Silva</h3>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li><strong>Janeiro:</strong> Folga 07-09/01, Licença Especial 12-21/01, Férias 22/01-03/02</li>
-                    <li><strong>Fevereiro:</strong> Licença Especial 04-13/02, Folga 19/02, Folga 20/02</li>
-                    <li><strong>Junho:</strong> Férias 08-25/06</li>
-                    <li><strong>Setembro:</strong> Folga 04/09, Férias 08-25/09</li>
-                    <li><strong>Novembro-Dezembro:</strong> Férias 23/11-04/12, Licença Especial 09-18/12</li>
-                </ul>
-
-                <h3>🟡 Elton Dariva Staub</h3>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li><strong>Janeiro:</strong> Folga 20/01, Férias 21-30/01</li>
-                    <li><strong>Fevereiro:</strong> Folga 23-25/02</li>
-                    <li><strong>Março:</strong> Férias 02-13/03, Férias 16-27/03, Folga 30/03, Folga 31/03-01/04</li>
-                    <li><strong>Abril:</strong> Folga 31/03-01/04</li>
-                </ul>
-
-                <h3>🟠 Eliaquim Antunes de Souza</h3>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li><strong>Janeiro:</strong> Folga 23/01, Férias 26/01-04/02</li>
-                    <li><strong>Fevereiro:</strong> Férias 26/01-04/02, Folga 05/02</li>
-                </ul>
-
-                <h3>🟣 Elaine Maria Sousa Frota</h3>
-                <ul style="margin-left: 20px; margin-bottom: 20px;">
-                    <li><strong>Março:</strong> Férias 02-27/03</li>
-                </ul>
+                <h2>📊 Resumo de Afastamentos</h2>
+                <div id="detalhes-container">
+                    <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
+                </div>
             </div>
         </div>
 
@@ -2947,6 +2916,7 @@
                 renderCalendar();
                 renderDesignacoes();
                 renderListaSubstituicoes();
+                renderDetalhesAfastamentos();
             } catch(e) {
                 console.warn('Firestore afastamentos_admin:', e.message);
             }
@@ -4094,6 +4064,9 @@
             if (tabName === 'lista-substituicoes') {
                 renderListaSubstituicoes();
             }
+            if (tabName === 'detalhes') {
+                renderDetalhesAfastamentos();
+            }
             
             // Se abrir a aba de designações semanais, garantir que Janeiro está visível
             if (tabName === 'designacoes-periodo') {
@@ -4103,6 +4076,97 @@
                     removeWeekendHighlightsFromRows();
                 }, 200);
             }
+        }
+
+        // Formata período de afastamento: "DD-DD/MM" (mesmo mês) ou "DD/MM–DD/MM" (meses diferentes)
+        function _formatPeriodoAf(inicio, fim) {
+            if (!inicio) return '';
+            const [, mI, dI] = inicio.split('-');
+            if (!fim || inicio === fim) return `${dI}/${mI}`;
+            const [, mF, dF] = fim.split('-');
+            if (mI === mF) return `${dI}-${dF}/${mI}`;
+            return `${dI}/${mI}–${dF}/${mF}`;
+        }
+
+        const DEFENSOR_EMOJI = {
+            icaro: '🔵', jose: '🟢', elton: '🟡',
+            eliaquim: '🟠', elaine: '🟣', mariana: '🩷'
+        };
+
+        function renderDetalhesAfastamentos() {
+            const container = document.getElementById('detalhes-container');
+            if (!container) return;
+
+            const defs = jsonDesignacoes?.defensores || {};
+
+            // Coleta todos os afastamentos (mesma lógica das outras abas)
+            const registros = [];
+            Object.values(afastamentosFirestoreMap).forEach(reg => registros.push(reg));
+            Object.values(jsonEventosMap).forEach(ev => {
+                if (!jsonOverrideMap[ev.id]) registros.push(ev);
+            });
+
+            if (registros.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-secondary);">Nenhum afastamento registrado.</p>';
+                return;
+            }
+
+            // Agrupa por defensor, ignorando vagas
+            const porDefensor = {};
+            registros.forEach(reg => {
+                const defKey = reg.defensor || '';
+                if (!defKey || defKey.includes('vaga')) return;
+                if (!porDefensor[defKey]) porDefensor[defKey] = [];
+                porDefensor[defKey].push(reg);
+            });
+
+            // Ordena defensores pela ordem definida no JSON (ativos primeiro, depois pela chave)
+            const ordemDefs = Object.keys(defs).filter(k => defs[k].ativo !== false && !defs[k].externo);
+            const outrosDefs = Object.keys(porDefensor).filter(k => !ordemDefs.includes(k));
+            const defsordenados = [...ordemDefs.filter(k => porDefensor[k]), ...outrosDefs];
+
+            let html = '';
+            defsordenados.forEach(defKey => {
+                const afasts = porDefensor[defKey];
+                if (!afasts || afasts.length === 0) return;
+
+                const defInfo = defs[defKey] || {};
+                const nomeCompleto = defInfo.nome || defKey;
+                const emoji = DEFENSOR_EMOJI[defKey] || '⚫';
+
+                // Agrupa afastamentos por mês de início
+                const porMes = {};
+                afasts.forEach(reg => {
+                    const inicio = reg.data_inicio || '';
+                    if (!inicio) return;
+                    const mesNum = parseInt(inicio.split('-')[1], 10);
+                    if (!porMes[mesNum]) porMes[mesNum] = [];
+                    porMes[mesNum].push(reg);
+                });
+
+                html += `<h3 style="margin-top:24px;margin-bottom:8px">${emoji} ${nomeCompleto}</h3>`;
+                html += `<ul style="margin-left:20px;margin-bottom:20px">`;
+
+                Object.keys(porMes).sort((a, b) => +a - +b).forEach(mesNum => {
+                    const mesNome = months[mesNum - 1];
+                    const itens = porMes[mesNum]
+                        .sort((a, b) => (a.data_inicio || '').localeCompare(b.data_inicio || ''))
+                        .map(reg => {
+                            const tipoLabel = reg.tipo === 'outro'
+                                ? (reg.tipo_custom || 'Outro')
+                                : (TIPO_LABELS[reg.tipo] || reg.tipo || reg.portaria?.sei && 'Folga' || '');
+                            const periodo = _formatPeriodoAf(reg.data_inicio, reg.data_fim);
+                            return `${tipoLabel} ${periodo}`.trim();
+                        })
+                        .filter(Boolean)
+                        .join(', ');
+                    html += `<li><strong>${mesNome}:</strong> ${itens}</li>`;
+                });
+
+                html += `</ul>`;
+            });
+
+            container.innerHTML = html || '<p style="color:var(--text-secondary)">Nenhum afastamento encontrado.</p>';
         }
 
         function renderListaSubstituicoes() {
