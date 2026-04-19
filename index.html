@@ -3079,7 +3079,7 @@
                     if (item.firestoreId) firestoreVistos.add(item.firestoreId);
                     else if (item.jsonEventoId) jsonBaseVistos.add(item.jsonEventoId);
 
-                    const acoesTd = `<td style="white-space:nowrap;text-align:center">${btnVer}${btnsAdmin ? ' ' + btnsAdmin : ''}</td>`;
+                    const acoesTd = `<td style="text-align:center"><div style="display:flex;flex-direction:column;align-items:center;gap:4px">${btnVer}${btnsAdmin ? btnsAdmin : ''}</div></td>`;
 
                     const afDatas = item.afastamento_inicio
                         ? `<br><span style="font-size:0.8em;color:#6b7280;font-weight:normal;white-space:nowrap">${formatarData(item.afastamento_inicio)} – ${formatarData(item.afastamento_fim)}</span>`
