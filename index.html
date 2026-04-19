@@ -399,6 +399,10 @@
             background: rgba(59, 130, 246, 0.05);
         }
 
+        .modal-table tr.grupo-inicio td {
+            border-top: 2px solid #1e3a8a;
+        }
+
         .tipo-badge {
             display: inline-block;
             padding: 4px 10px;
@@ -3053,8 +3057,9 @@
                     }
                 });
 
-                grupos.forEach(grupo => {
+                grupos.forEach((grupo, grupoIdx) => {
                     const span = grupo.itens.length;
+                    const sepClass = grupoIdx > 0 ? ' grupo-inicio' : '';
                     grupo.itens.forEach((item, idx) => {
                         const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' :
                                          item.tipo === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
@@ -3099,7 +3104,7 @@
 
                             const acoesTd = `<td rowspan="${span}" style="text-align:center;vertical-align:middle"><div style="display:flex;flex-direction:column;align-items:center;gap:4px">${btnVer}${btnsAdmin}</div></td>`;
 
-                            html += `<tr>
+                            html += `<tr class="${sepClass.trim()}">
                                 <td rowspan="${span}" style="vertical-align:middle"><strong>${item.defensor}</strong>${afDatas}</td>
                                 <td rowspan="${span}" style="vertical-align:middle;text-align:center"><span class="tipo-badge ${tipoClass}">${item.tipo}</span></td>
                                 <td>${item.defensoria}</td>
