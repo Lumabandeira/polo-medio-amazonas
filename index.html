@@ -4104,7 +4104,12 @@
                 markers.className = 'day-markers';
                 
                 if (hasAfastamento) {
-                    monthData[day].forEach(defensor => {
+                    const sorted = [...monthData[day]].sort((a, b) => {
+                        const aVaga = a.includes('vaga') ? 1 : 0;
+                        const bVaga = b.includes('vaga') ? 1 : 0;
+                        return aVaga - bVaga;
+                    });
+                    sorted.forEach(defensor => {
                         const badge = document.createElement('div');
                         badge.className = `defensor-badge ${defensor}`;
                         badge.textContent = defensorNames[defensor] || defensor;
