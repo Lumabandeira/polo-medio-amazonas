@@ -1912,6 +1912,160 @@
         }
         .btn-visualizar-af:hover { background: #dbeafe; }
 
+        /* ── Sino de notificações ─────────────────────────────────────────── */
+        .btn-sino {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3em;
+            position: relative;
+            padding: 4px 6px;
+            line-height: 1;
+            border-radius: 8px;
+            transition: background .15s;
+        }
+        .btn-sino:hover { background: #f3f4f6; }
+        .badge-sino {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #ef4444;
+            color: white;
+            border-radius: 10px;
+            font-size: 0.5em;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            padding: 0 4px;
+            line-height: 1;
+        }
+
+        /* ── Painel lateral de notificações ───────────────────────────────── */
+        .notif-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.45);
+            z-index: 1100;
+            animation: fadeIn 0.2s;
+        }
+        .notif-overlay.active {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .notif-panel {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            overflow-y: auto;
+            box-shadow: -4px 0 28px rgba(0,0,0,0.18);
+            display: flex;
+            flex-direction: column;
+            animation: slideFromRight 0.25s;
+        }
+        @keyframes slideFromRight {
+            from { transform: translateX(100%); }
+            to   { transform: translateX(0); }
+        }
+        .notif-panel-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .notif-panel-header h3 { margin: 0; font-size: 1.05em; }
+        .notif-panel-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 32px; height: 32px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+        }
+        .notif-panel-close:hover { background: rgba(255,255,255,0.35); }
+        .notif-panel-body { padding: 16px; flex: 1; }
+        .notif-grupo-titulo {
+            font-size: 0.82em;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-bottom: 1px solid #dbeafe;
+            padding-bottom: 5px;
+            margin: 18px 0 10px;
+        }
+        .notif-grupo-titulo:first-child { margin-top: 0; }
+        .notif-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 13px 15px;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+        .notif-item.precisa-revisao {
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+        }
+        .notif-item-titulo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+        .notif-item-detalhe {
+            font-size: 0.85em;
+            color: #374151;
+            margin-bottom: 2px;
+        }
+        .notif-item-portaria {
+            font-size: 0.8em;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+        .notif-revisao-alerta {
+            font-size: 0.82em;
+            color: #92400e;
+            background: #fef3c7;
+            padding: 4px 8px;
+            border-radius: 5px;
+            margin-top: 7px;
+        }
+        .notif-acoes {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .notif-btn {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.83em;
+            font-weight: 600;
+            transition: background .15s;
+        }
+        .notif-btn-editar  { background: #eff6ff; color: #1d4ed8; }
+        .notif-btn-editar:hover  { background: #dbeafe; }
+        .notif-btn-dispensar { background: #f3f4f6; color: #374151; }
+        .notif-btn-dispensar:hover { background: #e5e7eb; }
+        .notif-vazia {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 48px 20px;
+            font-size: 1em;
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -2316,7 +2470,12 @@
         <!-- Tab: Lista de Substituições -->
         <div id="lista-substituicoes" class="tab-content">
             <div class="card">
-                <h2>📋 Lista de Substituições</h2>
+                <h2 style="display:flex;align-items:center;justify-content:space-between">
+                    <span>📋 Lista de Substituições</span>
+                    <button id="btn-sino" class="btn-sino" style="display:none" onclick="abrirPainelNotificacoes()" title="Notificações da automação">
+                        🔔<span id="badge-sino" class="badge-sino" style="display:none">0</span>
+                    </button>
+                </h2>
                 <div style="margin-bottom:16px">
                     <label for="filtro-lista-dp" style="font-weight:600;margin-right:8px;color:var(--text-primary)">Filtrar por DP:</label>
                     <select id="filtro-lista-dp" onchange="filtroListaDP = this.value || null; renderListaSubstituicoes()" style="padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95em;color:var(--text-primary);background:#fff;cursor:pointer">
@@ -2537,6 +2696,19 @@
     </div>
 
     <!-- Modal para Detalhes -->
+    <!-- Painel de notificações da automação -->
+    <div id="notif-overlay" class="notif-overlay" onclick="fecharPainelNotificacoes(event)">
+        <div class="notif-panel" onclick="event.stopPropagation()">
+            <div class="notif-panel-header">
+                <h3>🔔 Notificações da Automação</h3>
+                <button class="notif-panel-close" onclick="fecharPainelNotificacoes()">×</button>
+            </div>
+            <div class="notif-panel-body" id="notif-panel-body">
+                <p class="notif-vazia">⏳ Carregando...</p>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
@@ -4023,6 +4195,7 @@
 
         let currentMonth = 0; // Janeiro = 0
         let filtroListaDP = null;
+        let notificacoesData = [];
 
         function filterByMonth(month) {
             // Ocultar todas as seções de mês
@@ -4186,6 +4359,111 @@
             });
 
             container.innerHTML = html || '<p style="color:var(--text-secondary)">Nenhum afastamento encontrado.</p>';
+        }
+
+        // ── Notificações da automação ──────────────────────────────────────
+        async function carregarNotificacoesAutomacao() {
+            if (userRole !== 'admin') return;
+            try {
+                const snapshot = await db.collection('afastamentos_admin')
+                    .where('origem', '==', 'automacao-diario-oficial')
+                    .get();
+                notificacoesData = [];
+                snapshot.forEach(doc => {
+                    const reg = { id: doc.id, ...doc.data() };
+                    if (reg.lido !== true) notificacoesData.push(reg);
+                });
+                _atualizarBadgeSino();
+            } catch(e) {
+                console.warn('Erro ao carregar notificações:', e.message);
+            }
+        }
+
+        function _atualizarBadgeSino() {
+            const btn   = document.getElementById('btn-sino');
+            const badge = document.getElementById('badge-sino');
+            if (!btn || !badge) return;
+            if (userRole !== 'admin') return;
+            btn.style.display = '';
+            const count = notificacoesData.length;
+            badge.textContent = count;
+            badge.style.display = count > 0 ? '' : 'none';
+        }
+
+        function abrirPainelNotificacoes() {
+            const overlay = document.getElementById('notif-overlay');
+            const body    = document.getElementById('notif-panel-body');
+            if (!overlay || !body) return;
+            const defs = jsonDesignacoes?.defensores || {};
+
+            if (notificacoesData.length === 0) {
+                body.innerHTML = '<p class="notif-vazia">✅ Nenhuma notificação pendente.</p>';
+            } else {
+                // Agrupa por edição do DO, mais recente primeiro
+                const grupos = {};
+                notificacoesData.forEach(reg => {
+                    const edicao  = reg.edicao_do || '—';
+                    const dataPub = reg.data_publicacao_do || '';
+                    const key = dataPub + '|' + edicao;
+                    if (!grupos[key]) grupos[key] = { edicao, dataPub, itens: [] };
+                    grupos[key].itens.push(reg);
+                });
+                const gruposOrdenados = Object.values(grupos).sort((a, b) =>
+                    b.dataPub.localeCompare(a.dataPub));
+
+                let html = '';
+                gruposOrdenados.forEach(grupo => {
+                    const dataFmt = grupo.dataPub ? formatarData(grupo.dataPub) : '—';
+                    html += `<div class="notif-grupo-titulo">📅 Publicado em ${dataFmt} · Edição ${grupo.edicao}</div>`;
+                    grupo.itens.forEach(reg => {
+                        const defInfo  = defs[reg.defensor] || {};
+                        const defNome  = defInfo.nome || reg.defensor || '—';
+                        const tipoLabel = reg.tipo === 'outro'
+                            ? (reg.tipo_custom || 'Outro')
+                            : (TIPO_LABELS[reg.tipo] || reg.tipo || '—');
+                        const dataInicio = reg.data_inicio ? formatarData(reg.data_inicio) : '—';
+                        const dataFim    = reg.data_fim    ? formatarData(reg.data_fim)    : 'sem data fim';
+                        const dps = (reg.designacoes_dp || []).map(d => d.dp + 'ª DP').join(', ') || '—';
+                        const precisaRevisao = reg.precisa_revisao === true;
+                        const editBtn = reg.id
+                            ? `<button class="notif-btn notif-btn-editar" onclick="abrirFormAfastamento('${reg.id}',null,null);fecharPainelNotificacoes()">✏️ Editar</button>`
+                            : '';
+                        html += `
+                        <div class="notif-item${precisaRevisao ? ' precisa-revisao' : ''}">
+                            <div class="notif-item-titulo">
+                                <span>${precisaRevisao ? '✋' : '🤖'}</span>
+                                <span>${defNome}</span>
+                            </div>
+                            <div class="notif-item-detalhe">${dps} · ${tipoLabel}</div>
+                            <div class="notif-item-detalhe">${dataInicio} – ${dataFim}</div>
+                            ${reg.portaria_numero ? `<div class="notif-item-portaria">${reg.portaria_numero}</div>` : ''}
+                            ${precisaRevisao ? `<div class="notif-revisao-alerta">⚠️ ${reg.motivo_revisao || 'requer ajuste manual'}</div>` : ''}
+                            <div class="notif-acoes">
+                                ${editBtn}
+                                <button class="notif-btn notif-btn-dispensar" onclick="dispensarNotificacao('${reg.id}')">🗑️ Dispensar</button>
+                            </div>
+                        </div>`;
+                    });
+                });
+                body.innerHTML = html;
+            }
+            overlay.classList.add('active');
+        }
+
+        function fecharPainelNotificacoes(event) {
+            if (event && event.target !== document.getElementById('notif-overlay')) return;
+            document.getElementById('notif-overlay')?.classList.remove('active');
+        }
+
+        async function dispensarNotificacao(id) {
+            try {
+                await db.collection('afastamentos_admin').doc(id).update({ lido: true });
+                notificacoesData = notificacoesData.filter(r => r.id !== id);
+                _atualizarBadgeSino();
+                abrirPainelNotificacoes(); // re-renderiza o painel
+            } catch(e) {
+                mostrarToast('❌ Erro ao dispensar: ' + e.message, true);
+            }
         }
 
         function renderListaSubstituicoes() {
@@ -5848,6 +6126,7 @@
 
             // Se os JSONs já carregaram antes da autenticação, carregar dados do Firestore agora
             if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); }
+            carregarNotificacoesAutomacao();
         }
 
         // ── Login ──────────────────────────────────────────────────────────
