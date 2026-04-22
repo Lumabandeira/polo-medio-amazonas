@@ -317,7 +317,12 @@ def _normalizar_data(data: str) -> str:
     return ""
 
 
-def salvar_afastamentos_firestore(afastamentos: list, edition_url: str) -> list:
+def salvar_afastamentos_firestore(
+    afastamentos: list,
+    edition_url: str,
+    edition_num: str = "",
+    data_publicacao_do: str = "",
+) -> list:
     """
     Grava cada afastamento como um documento em `afastamentos_admin`.
     Retorna lista dos documentos criados (com id) para uso em notificações.
@@ -338,12 +343,15 @@ def salvar_afastamentos_firestore(afastamentos: list, edition_url: str) -> list:
         data_inicio    = _normalizar_data(af.get("data_inicio", ""))
         data_fim       = _normalizar_data(af.get("data_fim", ""))
 
-        if not defensor_abrev or not data_inicio or not data_fim:
+        if not defensor_abrev or not data_inicio:
             log.warning(
                 f"Afastamento descartado (campos obrigatórios faltando): "
                 f"defensor={defensor_abrev!r} inicio={data_inicio!r} fim={data_fim!r}"
             )
             continue
+
+        precisa_revisao = not data_fim
+        motivo_revisao  = "sem data fim — designação aberta (\"a contar do dia X\")" if precisa_revisao else ""
 
         # Dedup
         existentes = list(
@@ -397,22 +405,27 @@ def salvar_afastamentos_firestore(afastamentos: list, edition_url: str) -> list:
         designacoes_dp = [{"dp": dp, "substitutos": subs} for dp, subs in dp_map.items()]
 
         doc = {
-            "defensor":        defensor_abrev,
-            "tipo":            tipo_slug,
-            "tipo_custom":     "" if tipo_slug != "outro" else (af.get("tipo_custom") or "").strip(),
-            "data_inicio":     data_inicio,
-            "data_fim":        data_fim,
-            "processo_tipo":   "SEI" if processo_sei else "",
-            "processo_sei":    processo_sei,
-            "portaria_numero": portaria_numero,
-            "portaria_url":    edition_url,
-            "portaria_sei":    processo_sei,  # compat com codigo antigo
-            "designacoes_dp":  designacoes_dp,
-            "criado_por":      CRIADO_POR_AUTOMACAO,
-            "criado_em":       firestore.SERVER_TIMESTAMP,
-            "atualizado_por":  CRIADO_POR_AUTOMACAO,
-            "atualizado_em":   firestore.SERVER_TIMESTAMP,
-            "origem":          "automacao-diario-oficial",
+            "defensor":          defensor_abrev,
+            "tipo":              tipo_slug,
+            "tipo_custom":       "" if tipo_slug != "outro" else (af.get("tipo_custom") or "").strip(),
+            "data_inicio":       data_inicio,
+            "data_fim":          data_fim,
+            "processo_tipo":     "SEI" if processo_sei else "",
+            "processo_sei":      processo_sei,
+            "portaria_numero":   portaria_numero,
+            "portaria_url":      edition_url,
+            "portaria_sei":      processo_sei,  # compat com codigo antigo
+            "designacoes_dp":    designacoes_dp,
+            "criado_por":        CRIADO_POR_AUTOMACAO,
+            "criado_em":         firestore.SERVER_TIMESTAMP,
+            "atualizado_por":    CRIADO_POR_AUTOMACAO,
+            "atualizado_em":     firestore.SERVER_TIMESTAMP,
+            "origem":            "automacao-diario-oficial",
+            "lido":              False,
+            "edicao_do":         str(edition_num),
+            "data_publicacao_do": data_publicacao_do,
+            "precisa_revisao":   precisa_revisao,
+            "motivo_revisao":    motivo_revisao,
         }
         _, ref = col.add(doc)
         log.info(
@@ -436,15 +449,22 @@ def get_latest_editions() -> list:
     for a in soup.find_all("a", href=True):
         href = a["href"]
         if ".pdf" in href.lower() and "Edicao_" in href:
-            m = re.search(r"Edicao_(\d+)-(\d{4})", href)
+            m = re.search(r"Edicao_(\d+)-(\d{4})(?:_(\d{8}))?", href)
             if m:
                 num = int(m.group(1))
+                ano = m.group(2)
                 url = href if href.startswith("http") else f"https://diario.defensoria.am.def.br{href}"
+                # Data no formato DDMMYYYY → YYYY-MM-DD
+                data_pub = ""
+                if m.group(3):
+                    d_str = m.group(3)
+                    data_pub = f"{ano}-{d_str[2:4]}-{d_str[:2]}"
                 if num not in editions:
-                    editions[num] = url
+                    editions[num] = {"url": url, "data_publicacao": data_pub}
 
     return sorted(
-        [{"numero": n, "url": u} for n, u in editions.items()],
+        [{"numero": n, "url": d["url"], "data_publicacao": d["data_publicacao"]}
+         for n, d in editions.items()],
         key=lambda x: x["numero"],
         reverse=True,
     )
@@ -671,6 +691,8 @@ REGRAS:
 - Datas SEMPRE no formato YYYY-MM-DD (ex: 2026-05-15)
 - tipo em minúsculas, sem acento, valores fixos: ferias, folga, licenca_especial, outro
 - Se não identificar algum campo, use string vazia "" (não use null)
+- Se a designação for "a contar do dia X" SEM data final explícita, use `"data_fim": ""` — NÃO invente uma data
+- Inclua o afastamento mesmo sem data fim; o sistema sinalizará para revisão manual
 
 TRECHOS RELEVANTES DO DIÁRIO OFICIAL (janelas de contexto em volta de menções ao Polo Médio):
 {trechos}""",
@@ -794,7 +816,12 @@ def main():
                             f"| {af.get('data_inicio')}→{af.get('data_fim')} "
                             f"| {len(af.get('designacoes', []))} DP(s)"
                         )
-                    criados = salvar_afastamentos_firestore(afastamentos, edition["url"])
+                    criados = salvar_afastamentos_firestore(
+                        afastamentos,
+                        edition["url"],
+                        edition_num=edition["numero"],
+                        data_publicacao_do=edition.get("data_publicacao", ""),
+                    )
                     if criados:
                         custo_total = state.get("custo", {}).get("total_usd", 0.0)
                         notificar_afastamentos_gravados(criados, edition["url"], custo_total)
