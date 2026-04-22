@@ -2317,6 +2317,24 @@
         <div id="lista-substituicoes" class="tab-content">
             <div class="card">
                 <h2>📋 Lista de Substituições</h2>
+                <div style="margin-bottom:16px">
+                    <label for="filtro-lista-dp" style="font-weight:600;margin-right:8px;color:var(--text-primary)">Filtrar por DP:</label>
+                    <select id="filtro-lista-dp" onchange="filtroListaDP = this.value || null; renderListaSubstituicoes()" style="padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95em;color:var(--text-primary);background:#fff;cursor:pointer">
+                        <option value="">Todas as DPs</option>
+                        <option value="1">1ª DP</option>
+                        <option value="2">2ª DP</option>
+                        <option value="3">3ª DP</option>
+                        <option value="4">4ª DP</option>
+                        <option value="5">5ª DP</option>
+                        <option value="6">6ª DP</option>
+                        <option value="7">7ª DP</option>
+                        <option value="8">8ª DP</option>
+                        <option value="9">9ª DP</option>
+                        <option value="10">10ª DP</option>
+                        <option value="11">11ª DP</option>
+                        <option value="12">12ª DP</option>
+                    </select>
+                </div>
                 <div id="lista-substituicoes-container">
                     <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
                 </div>
@@ -4004,6 +4022,7 @@
         }
 
         let currentMonth = 0; // Janeiro = 0
+        let filtroListaDP = null;
 
         function filterByMonth(month) {
             // Ocultar todas as seções de mês
@@ -4195,8 +4214,25 @@
                 return;
             }
 
+            // Filtra por DP se selecionado
+            const dpFiltrada = filtroListaDP;
+            const registrosFiltrados = dpFiltrada ? registros.filter(({ origem, reg }) => {
+                if (origem === 'firestore') {
+                    const desigDp = reg.designacoes_dp || [];
+                    const desigOld = reg.designacoes || [];
+                    return desigDp.some(d => String(d.dp) === dpFiltrada) || desigOld.some(d => String(d.dp) === dpFiltrada);
+                } else {
+                    return (reg.designacoes || []).some(d => String(d.dp) === dpFiltrada);
+                }
+            }) : registros;
+
+            if (registrosFiltrados.length === 0) {
+                container.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-secondary);">Nenhum afastamento encontrado para a DP selecionada.</p>';
+                return;
+            }
+
             // Ordena por data_inicio, depois por nome do defensor
-            registros.sort((a, b) => {
+            registrosFiltrados.sort((a, b) => {
                 const dA = a.reg.data_inicio || '';
                 const dB = b.reg.data_inicio || '';
                 if (dA !== dB) return dA.localeCompare(dB);
@@ -4207,7 +4243,7 @@
 
             // Agrupa por mês de início
             const porMes = {};
-            registros.forEach(item => {
+            registrosFiltrados.forEach(item => {
                 const inicio = item.reg.data_inicio || '';
                 if (!inicio) return;
                 const mesNum = parseInt(inicio.split('-')[1], 10);
