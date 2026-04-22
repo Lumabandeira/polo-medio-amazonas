@@ -45,11 +45,11 @@ titulares_admin/{dpKey}   ← histórico de titulares editado pelo admin (por DP
   atualizado_por: "email@..."
   atualizado_em: timestamp
 
-afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendário
+afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendário ou automação
   defensor: "elton"       ← chave do defensor (mesmo padrão dos JSONs)
   tipo: "ferias" | "folga" | "licenca_especial"
   data_inicio: "2026-04-15"
-  data_fim: "2026-04-20"
+  data_fim: "2026-04-20"   ← pode ser "" quando automação grava designação aberta ("a contar do dia X")
   portaria_numero: "Portaria nº 123/2026-GSPG/DPE/AM"
   portaria_url: "https://..."   ← link do PDF do Diário Oficial
   portaria_sei: "26.0.000..."
@@ -58,6 +58,12 @@ afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendári
   criado_em: timestamp
   atualizado_por: "email@..."
   atualizado_em: timestamp
+  origem: "automacao-diario-oficial"   ← presente apenas em registros da automação
+  lido: false              ← false = aparece no sino; true = dispensado pelo admin
+  edicao_do: "2606"        ← número da edição do DO que originou o registro
+  data_publicacao_do: "2026-03-06"  ← data de publicação da edição (YYYY-MM-DD)
+  precisa_revisao: true    ← true quando data_fim está vazia (designação aberta)
+  motivo_revisao: "sem data fim — designação aberta (\"a contar do dia X\")"
 ```
 
 > **Nota:** Os dados dos JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) continuam sendo a base. A coleção `afastamentos_admin` contém apenas os registros adicionados/editados pelo admin via interface. Os dois são mesclados em memória ao carregar a página.
@@ -178,7 +184,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 19/04/2026 — sessão 8)
+## Estado atual do site (atualizado em 22/04/2026 — sessão 9)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -215,6 +221,9 @@ github-pages/
 - **Modal de detalhes: separador azul entre grupos** — classe `.grupo-inicio` aplicada na primeira `<tr>` de cada grupo (exceto o primeiro). CSS usa `box-shadow: inset 0 2px 0 0 #1e3a8a` para contornar o `border-collapse` da tabela.
 - **Nova aba "Lista de Substituições"** — aba entre Calendário e Resumo de Afastamentos. Função `renderListaSubstituicoes()` lê `afastamentosFirestoreMap` + `jsonEventosMap` (respeitando `jsonOverrideMap`), agrupa por mês de `data_inicio`, ordena por data→defensor, renderiza tabela com rowspan e separador azul (mesmo formato do modal). Botões 🔍 ✏️ 🗑️ funcionam; sem botão "+ Novo Afastamento". `confirmarDeletarAfastamento` corrigido para aceitar `mes=null, dia=null` (não reabre modal quando chamado da lista). Chamada automática em `loadAfastamentosFirestore()` e `showTab('lista-substituicoes')`.
 - **Aba "Resumo de Afastamentos" dinamizada** — antes era HTML estático e desatualizado. Agora o conteúdo é gerado por `renderDetalhesAfastamentos()` que lê os mesmos dados do calendário. Agrupa por defensor (ordem do JSON, ativos primeiro) e por mês de início. Formato: `🔵 Nome completo` / bullet por mês com lista de "Tipo DD-DD/MM". Mapa `DEFENSOR_EMOJI` com chaves corretas do JSON (`jose-antonio`, `miguel`, etc.). Chamada automática em `loadAfastamentosFirestore()` e `showTab('detalhes')`.
+- **Filtro por DP na aba Lista de Substituições** — `<select id="filtro-lista-dp">` com opções "Todas as DPs" + "1ª DP" … "12ª DP". Variável global `filtroListaDP`. Ao filtrar, `renderListaSubstituicoes()` mantém o **registro inteiro** (todas as DPs do afastamento) quando qualquer DP do registro bate com o filtro — preserva o contexto do afastamento completo. Registros sem match são ocultados; meses sem match some do render.
+- **Sino 🔔 de notificações da automação** — botão `#btn-sino` ao lado do título "📋 Lista de Substituições" (visível apenas para admins). Badge vermelho com contagem de não lidos. Ao clicar, abre painel lateral deslizante (`#notif-overlay` / `.notif-panel`) com feed de registros com `origem: "automacao-diario-oficial"` e `lido !== true`, agrupados por edição do DO (mais recente primeiro). Cada item mostra: ✋ se `precisa_revisao: true`, 🤖 caso contrário; defensor, DPs, tipo, período, portaria, motivo de revisão. Botões: [✏️ Editar] abre formulário; [🗑️ Dispensar] seta `lido: true` no Firestore e remove do badge. Variável global `notificacoesData[]`. Funções: `carregarNotificacoesAutomacao()`, `_atualizarBadgeSino()`, `abrirPainelNotificacoes()`, `fecharPainelNotificacoes()`, `dispensarNotificacao(id)`. Chamada em `mostrarSiteAutenticado()` após login.
+- **Automação atualizada (`verificar-diario-oficial.py`)** — grava `lido: false`, `edicao_do`, `data_publicacao_do` em todos os registros novos. Data de publicação extraída da URL da edição (regex `Edicao_NNN-AAAA_DDMMAAAA`). Designações "a contar do dia X" sem data fim agora **gravadas** com `precisa_revisao: true` + `motivo_revisao` em vez de descartadas. Prompt do Claude atualizado para retornar `data_fim: ""` nesses casos. Ciclo completo: automação grava → sino aparece → admin revisa → dispensa ou edita.
 
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 38 usuários restantes** (1 admin + 37 viewers) no Firebase Auth + Firestore
