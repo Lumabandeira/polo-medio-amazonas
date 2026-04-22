@@ -228,7 +228,6 @@ github-pages/
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 38 usuários restantes** (1 admin + 37 viewers) no Firebase Auth + Firestore
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
-- **Corrigir dado do afastamento do Elton (doc `7JmGc1Db0blVuM7kJ6tm`)** — backfill gravou `substituto: "oswaldo"` (chave de ex-membro) em vez de `substituto: "_outro"` + `substituto_nome_externo`. O formulário exibe corretamente via fallback, mas o dado armazenado está errado. Corrigir: abrir o afastamento no calendário → confirmar que aparece "Outro" + nome → salvar.
 
 ### Descartado (não vale implementar)
 - **Coleção `defensores_admin` no Firestore** — descartado: ex-membros livres já detectados automaticamente via orphanExMembros; casos raros de inconsistência com o JSON não justificam a complexidade
