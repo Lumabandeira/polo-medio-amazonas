@@ -4130,6 +4130,7 @@
                 for (const desig of (dados.designacoes_dp || [])) {
                     const dpNome = dpDisplayLabel(desig.dp);
                     for (const sub of (desig.substitutos || [])) {
+                        if (!sub.substituto) continue;
                         if (sub.data_inicio && sub.data_inicio < dados.data_inicio) {
                             mostrarAlertaErro('O início da substituição não pode ser anterior ao início do afastamento (' + dados.data_inicio + ').'); return;
                         }
