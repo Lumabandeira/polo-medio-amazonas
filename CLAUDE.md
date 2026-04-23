@@ -152,7 +152,8 @@ index.html                          ← site completo (único arquivo do site)
 CLAUDE.md                           ← este arquivo
 limpar-backfill.py                  ← limpeza de registros duplicados/fragmentados do backfill
 backfill-calendario-do-estruturado.py ← backfill histórico do DO (100% regex, sem API)
-verificar-diario-oficial.py         ← automação diária (cron GitHub Actions)
+verificar-diario-oficial.py         ← Projeto 1: afastamentos de titulares → Firestore (06:00 Manaus)
+verificar-diario-completo.py        ← Projeto 2: todas as portarias → JSON (04:00 Manaus)
 docs/
 ├── INDEX.md                        ← índice de todos os arquivos docs/
 ├── defensores/
@@ -184,7 +185,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 22/04/2026 — sessão 9)
+## Estado atual do site (atualizado em 22/04/2026 — sessão 10)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -224,10 +225,13 @@ github-pages/
 - **Filtro por DP na aba Lista de Substituições** — `<select id="filtro-lista-dp">` com opções "Todas as DPs" + "1ª DP" … "12ª DP". Variável global `filtroListaDP`. Ao filtrar, `renderListaSubstituicoes()` mantém o **registro inteiro** (todas as DPs do afastamento) quando qualquer DP do registro bate com o filtro — preserva o contexto do afastamento completo. Registros sem match são ocultados; meses sem match some do render.
 - **Sino 🔔 de notificações da automação** — botão `#btn-sino` ao lado do título "📋 Lista de Substituições" (visível apenas para admins). Badge vermelho com contagem de não lidos. Ao clicar, abre painel lateral deslizante (`#notif-overlay` / `.notif-panel`) com feed de registros com `origem: "automacao-diario-oficial"` e `lido !== true`, agrupados por edição do DO (mais recente primeiro). Cada item mostra: ✋ se `precisa_revisao: true`, 🤖 caso contrário; defensor, DPs, tipo, período, portaria, motivo de revisão. Botões: [✏️ Editar] abre formulário; [🗑️ Dispensar] seta `lido: true` no Firestore e remove do badge. Variável global `notificacoesData[]`. Funções: `carregarNotificacoesAutomacao()`, `_atualizarBadgeSino()`, `abrirPainelNotificacoes()`, `fecharPainelNotificacoes()`, `dispensarNotificacao(id)`. Chamada em `mostrarSiteAutenticado()` após login.
 - **Automação atualizada (`verificar-diario-oficial.py`)** — grava `lido: false`, `edicao_do`, `data_publicacao_do` em todos os registros novos. Data de publicação extraída da URL da edição (regex `Edicao_NNN-AAAA_DDMMAAAA`). Designações "a contar do dia X" sem data fim agora **gravadas** com `precisa_revisao: true` + `motivo_revisao` em vez de descartadas. Prompt do Claude atualizado para retornar `data_fim: ""` nesses casos. Ciclo completo: automação grava → sino aparece → admin revisa → dispensa ou edita.
+- **Projeto 2 — Automação completa do Diário Oficial (`verificar-diario-completo.py`)** — script independente do Projeto 1. Termos-gatilho amplos: "Polo Médio Amazonas" + 6 cidades + 5 servidores (Luma Karolyne Pantoja Bandeira, Fábio Bastos de Souza, Natália Cristina de Moraes, Arnoud Lucas Andrade da Silva, Larice Bruce Pereira) + titulares vigentes do JSON. Extrai e categoriza **todas** as portarias relevantes (não só afastamentos) e atualiza `docs/diario-oficial-completo-2026.json`. Usa API key separada (`ANTHROPIC_API_KEY_COMPLETO`) para rastrear custos independentemente. Limit mensal: $5,00. Workflow `.github/workflows/verificar-diario-completo.yml` roda às **04:00 de Manaus** (08:00 UTC). Na primeira execução, inicializa estado a partir da edição mais recente do JSON (17/04/2026) sem reprocessar histórico. Testado em 22/04/2026 — sucesso em 25s, sem custo (sem edições novas).
 
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 38 usuários restantes** (1 admin + 37 viewers) no Firebase Auth + Firestore
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
+- **Botão "Plantão"** — nova seção na landing page com escala de plantão de defensores e servidores. Arquitetura a definir na próxima sessão (dados estáticos no HTML? JSON? Firestore?).
+- **Botão "Escala de Férias"** (futuro) — calendário visual de férias da equipe (defensores + servidores). Ideia: grid anual/mensal mostrando períodos de férias de cada pessoa. Arquitetura a definir.
 
 ### Descartado (não vale implementar)
 - **Coleção `defensores_admin` no Firestore** — descartado: ex-membros livres já detectados automaticamente via orphanExMembros; casos raros de inconsistência com o JSON não justificam a complexidade
@@ -476,42 +480,49 @@ Revogações detectadas são **apenas removidas do plano em memória** antes de 
 
 ---
 
-## Projeto 2 — Automação da aba "Diário Oficial" (⏳ PENDENTE — iniciar em 18/04/2026)
+## Projeto 2 — Automação da aba "Diário Oficial" (✅ IMPLEMENTADO — sessão 10 em 22/04/2026)
 
 ### Contexto e diferença para o Projeto 1
 
-O **Projeto 1** (acima) é estrito: detecta apenas afastamentos dos **5 titulares vigentes do Polo Médio** e grava em `afastamentos_admin` para aparecer no calendário do site. Os termos-gatilho são mínimos: `Polo Médio Amazonas` + primeiro+segundo nome dos titulares.
+O **Projeto 1** (`verificar-diario-oficial.py`) é estrito: detecta apenas afastamentos dos titulares vigentes e grava no Firestore (`afastamentos_admin`). Roda às 06:00 de Manaus. API key: `ANTHROPIC_API_KEY`. Limite: $2,00/mês.
 
-O **Projeto 2** é amplo: vai popular uma nova aba **"Diário Oficial"** no site com **todas as portarias relevantes para o Polo Médio**, não apenas afastamentos de defensores. Exemplos de conteúdo desejado:
+O **Projeto 2** (`verificar-diario-completo.py`) é amplo: detecta **todas** as portarias relevantes ao polo (defensores, servidores, cidades) e atualiza `docs/diario-oficial-completo-2026.json`. Roda às 04:00 de Manaus. API key: `ANTHROPIC_API_KEY_COMPLETO`. Limite: $5,00/mês. Os dois projetos são **totalmente independentes**.
 
-- Designações/afastamentos de **servidores** lotados no polo (Natália Cristina, Fábio Bastos, Luma Karolyne, Luma Bandeira, Larice Bruce, Arnoud Lucas, Raquel Ferreira dos Santos, etc.)
-- Escalas de **plantão** que envolvam o Polo Médio
-- Atos de **coordenação regional** (portarias da GSPG/DPE-AM afetando a administração do polo)
-- Designações de **estagiários** e comissionados do polo
-- Qualquer outra portaria citando o polo ou seus integrantes, mesmo fora do escopo estrito de "afastamento + substituto"
+### Arquitetura implementada
 
-### Arquitetura planejada (a decidir na próxima sessão)
+- **Script:** `verificar-diario-completo.py`
+- **Saída:** `docs/diario-oficial-completo-2026.json` (lido diretamente pelo site via `fetch()`)
+- **Estado:** `docs/.estado-diario-completo.json` (cache independente no Actions)
+- **Workflow:** `.github/workflows/verificar-diario-completo.yml`
+- **Secrets necessários:** `ANTHROPIC_API_KEY_COMPLETO` (obrigatório) + `SMTP_*` (opcionais)
+- **Não precisa de `FIREBASE_SERVICE_ACCOUNT`** — sem escrita no Firestore
 
-- **Fonte:** `docs/diario-oficial-completo-2026.json` (novo arquivo) OU nova coleção Firestore (`diario_oficial_admin` ou equivalente). Decisão pendente — JSON versionado é mais simples; Firestore permite edição pela UI admin, mas exige CRUD próprio na interface.
-- **Termos-gatilho:** lista bem maior, incluindo:
-  - Frase fixa "Polo (do) Médio Amazonas"
-  - Cidades do polo: Itacoatiara, São Sebastião do Uatumã, Itapiranga, Urucurituba, Urucará, Silves
-  - Nomes dos titulares vigentes (reaproveitar `_carregar_titulares_vigentes()`)
-  - Nomes dos servidores do polo (fonte a definir — novo arquivo estático? coleção Firestore?)
-- **Modelo:** manter Claude Haiku 4.5, mas com prompt diferente (categoriza por tipo de ato em vez de extrair só afastamentos). Aumentar `max_tokens` conforme necessário.
-- **UI:** nova aba "Diário Oficial" no `index.html` com feed cronológico de portarias, filtros por tipo/mês, link direto pro PDF da edição.
+### Termos-gatilho (amplos)
+1. `"Polo\s+(?:do\s+)?Médio\s+Amazonas"` — frase fixa
+2. Cidades: Itacoatiara, São Sebastião do Uatumã, Itapiranga, Urucurituba, Urucará, Silves
+3. Servidores (primeiro+segundo nome): Luma Karolyne, Fábio Bastos, Natália Cristina, Arnoud Lucas, Larice Bruce
+4. Titulares vigentes (carregados do `designacoes-2026.json`)
 
-### Pré-requisitos antes de começar
+### Prompt Claude (categorização)
+Extrai `numero`, `sei`, `sgi`, `categorias[]`, `trechos[]`, `resumo` de cada portaria relevante.
+Categorias: `polo_medio`, `defensor`, `servidor`, `substituicao`, `nomeacao_diretoria`, `comarca`, `projeto`, `plantao`, `coordenacao`, `designacoes`.
 
-- Definir estrutura de dados final (schema do JSON ou da coleção Firestore)
-- Listar exaustivamente os servidores a serem monitorados (com grafias alternativas)
-- Decidir categorização (ex.: `afastamento`, `plantao`, `coordenacao`, `estagiario`, `outro`)
-- Avaliar impacto de custo — muitos termos-gatilho = mais janelas extraídas = mais tokens por edição. Revisar `LIMITE_CUSTO_USD` se necessário.
+### Lógica de atualização do JSON
+- Primeira execução: inicializa `ultima_edicao` a partir do maior número de edição já presente no JSON (17/04/2026) — não reprocessa histórico
+- Edição já existente no JSON: mescla portarias novas (dedup por número de portaria)
+- Edição nova: cria entrada completa com `edicao`, `data`, `data_formatada`, `url`, `portarias_estruturadas`
+- Commit automático do JSON pelo workflow quando houver portarias novas
+
+### Rodar localmente (teste/debug)
+```bash
+py -m pip install requests pdfplumber beautifulsoup4 anthropic
+set ANTHROPIC_API_KEY_COMPLETO=sk-ant-...
+py verificar-diario-completo.py
+```
 
 ### O que NÃO fazer (preservar Projeto 1)
-
-- **Não misturar** os termos-gatilho do Projeto 2 no script `verificar-diario-oficial.py`. Criar script separado (ex.: `verificar-diario-oficial-completo.py`) ou parametrizar com flag/env var para manter o Projeto 1 enxuto e barato.
-- **Não gravar em `afastamentos_admin`** — só o Projeto 1 escreve ali. O Projeto 2 precisa da sua própria coleção/arquivo para não poluir o calendário com plantões, servidores etc.
+- **Não misturar** os scripts — cada um tem seu próprio workflow, estado e API key
+- **Não gravar em `afastamentos_admin`** — só o Projeto 1 escreve ali
 
 ---
 
