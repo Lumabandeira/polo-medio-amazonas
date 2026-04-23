@@ -1,0 +1,85 @@
+name: Verificar Diário Oficial Completo DPE/AM
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # 04:00 Manaus = 08:00 UTC (Manaus é UTC-4, sem horário de verão)
+  workflow_dispatch:  # Permite rodar manualmente pelo botão "Run workflow"
+
+permissions:
+  contents: write  # Necessário para commit/push do JSON atualizado
+
+concurrency:
+  group: verificar-diario-completo
+  cancel-in-progress: false
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pdfplumber beautifulsoup4 anthropic
+
+      - name: Restaurar estado (.estado-diario-completo.json) da execução anterior
+        uses: actions/cache@v4
+        with:
+          path: docs/.estado-diario-completo.json
+          key: estado-diario-completo-${{ github.run_id }}
+          restore-keys: |
+            estado-diario-completo-
+
+      - name: Gerar docs/config.json a partir dos Secrets
+        env:
+          SMTP_REMETENTE: ${{ secrets.SMTP_REMETENTE }}
+          SMTP_SENHA_APP: ${{ secrets.SMTP_SENHA_APP }}
+          SMTP_DESTINATARIO: ${{ secrets.SMTP_DESTINATARIO }}
+        run: |
+          mkdir -p docs
+          python <<'PY'
+          import json, os
+          config = {
+              "email": {
+                  "remetente":    os.environ.get("SMTP_REMETENTE", ""),
+                  "senha_app":    os.environ.get("SMTP_SENHA_APP", ""),
+                  "destinatario": os.environ.get("SMTP_DESTINATARIO", ""),
+                  "smtp_server":  "smtp.gmail.com",
+                  "smtp_port":    587,
+              }
+          }
+          with open("docs/config.json", "w", encoding="utf-8") as f:
+              json.dump(config, f, indent=2, ensure_ascii=False)
+          PY
+
+      - name: Executar verificação completa do Diário Oficial
+        env:
+          ANTHROPIC_API_KEY_COMPLETO: ${{ secrets.ANTHROPIC_API_KEY_COMPLETO }}
+        run: python verificar-diario-completo.py
+
+      - name: Limpar arquivos temporários antes do commit
+        run: |
+          rm -f docs/config.json
+
+      - name: Commit e push se houver alterações no JSON
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add docs/diario-oficial-completo-2026.json
+
+          if git diff --staged --quiet; then
+            echo "Nenhuma portaria nova. JSON não alterado."
+          else
+            git commit -m "chore: atualiza diário oficial completo ($(date -u +'%Y-%m-%d'))"
+            git push
+          fi
