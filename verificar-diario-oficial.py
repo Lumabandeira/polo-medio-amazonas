@@ -33,6 +33,7 @@ DIARIO_URL  = "https://diario.defensoria.am.def.br/"
 
 FIREBASE_PROJECT_ID = "polo-medio-as"
 FIRESTORE_COLECAO   = "afastamentos_admin"
+FIRESTORE_COLECAO_REMOCOES  = "remocoes_admin"
 CRIADO_POR_AUTOMACAO = "automacao@github-actions"
 
 LIMITE_CUSTO_USD = 2.00  # Automação para se o custo mensal atingir este valor
@@ -436,6 +437,146 @@ def salvar_afastamentos_firestore(
 
     return criados
 
+# ─── Concurso de Remoção ──────────────────────────────────────────────────────
+
+def _texto_tem_remocao_polo_medio(text: str) -> bool:
+    """Verifica se o PDF contém resultado de concurso de remoção afetando o Polo Médio."""
+    tem_concurso = any(re.search(t, text, re.IGNORECASE) for t in TERMOS_REMOCAO)
+    if not tem_concurso:
+        return False
+    return bool(re.search(r"Polo\s+(?:do\s+)?M[eé]dio\s+Amazonas", text, re.IGNORECASE))
+
+
+def _extrair_trechos_remocao(text: str, janela: int = 4000) -> str:
+    """Extrai janelas de contexto em torno de menções a Concurso de Remoção."""
+    posicoes = set()
+    for termo in TERMOS_REMOCAO:
+        for m in re.finditer(termo, text, re.IGNORECASE):
+            posicoes.add(m.start())
+    if not posicoes:
+        return ""
+    intervalos = sorted(
+        (max(0, p - 500), min(len(text), p + janela)) for p in posicoes
+    )
+    merged = []
+    for ini, fim in intervalos:
+        if merged and ini <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], fim))
+        else:
+            merged.append([ini, fim])
+    return "\n\n[...corte...]\n\n".join(text[i:f] for i, f in merged)
+
+
+def parse_remocao(text: str, state: dict) -> dict:
+    """
+    Usa Claude para extrair dados de concurso de remoção que afete o Polo Médio.
+    Retorna dict com tem_remocao, portaria_numero, concurso, data_vigencia,
+    saindo[] e chegando[].
+    """
+    trechos = _extrair_trechos_remocao(text)
+    if not trechos:
+        return {"tem_remocao": False}
+
+    log.info(
+        f"Trechos de remoção extraídos: {len(trechos)} caracteres. Analisando com Claude…"
+    )
+    client = Anthropic()
+
+    msg = client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=2048,
+        messages=[{
+            "role": "user",
+            "content": f"""Analise este texto do Diário Oficial da Defensoria Pública do Estado do Amazonas.
+
+Identifique se há resultado de **Concurso de Remoção** de Defensores Públicos que afete o **Polo do Médio Amazonas** (também chamado "Polo Médio Amazonas").
+
+Retorne SOMENTE um JSON válido:
+{{
+  "tem_remocao": true,
+  "portaria_numero": "Portaria nº 602/2026-GDPG/DPE/AM",
+  "concurso": "4º Concurso de Remoção de 2026",
+  "data_vigencia": "2026-05-02",
+  "saindo": [
+    {{"defensor": "Nome Completo", "dp_no_polo": "2ª Defensoria Pública do Polo do Médio Amazonas", "dp_destino": "2ª Defensoria Pública do Polo do Rio Negro Solimões"}}
+  ],
+  "chegando": [
+    {{"defensor": "Nome Completo", "dp_origem": "5ª Defensoria Pública do Polo do Baixo Amazonas", "dp_no_polo": "5ª Defensoria Pública do Polo do Médio Amazonas"}}
+  ]
+}}
+
+Se não houver concurso de remoção afetando o Polo Médio Amazonas:
+{{"tem_remocao": false}}
+
+REGRAS:
+- data_vigencia em formato YYYY-MM-DD (ex: "2026-05-02")
+- Se a data não estiver explícita, use string vazia ""
+- Inclua APENAS defensores cujo ORIGEM ou DESTINO seja uma DP do Polo do Médio Amazonas
+- saindo: defensores para quem a DP de ORIGEM é do Polo Médio Amazonas
+- chegando: defensores para quem a DP de DESTINO é do Polo Médio Amazonas
+
+TRECHOS DO DIÁRIO OFICIAL:
+{trechos}""",
+        }],
+    )
+
+    total = registrar_uso(state, msg.usage.input_tokens, msg.usage.output_tokens)
+    save_state(state)
+
+    raw = msg.content[0].text
+    m = re.search(r"\{.*\}", raw, re.DOTALL)
+    if m:
+        try:
+            return json.loads(m.group())
+        except json.JSONDecodeError:
+            log.warning("Resposta do Claude (remoção) não é JSON válido")
+    return {"tem_remocao": False}
+
+
+def salvar_remocao_firestore(
+    data: dict,
+    edition_url: str,
+    edition_num: str = "",
+    data_publicacao_do: str = "",
+) -> dict | None:
+    """
+    Grava resultado de concurso de remoção em `remocoes_admin`.
+    Dedup por portaria_numero.
+    """
+    portaria_numero = (data.get("portaria_numero") or "").strip()
+    if not portaria_numero:
+        log.warning("Remoção sem número de portaria — descartada")
+        return None
+
+    db = get_firestore_client()
+    col = db.collection(FIRESTORE_COLECAO_REMOCOES)
+
+    existentes = list(col.where("portaria_numero", "==", portaria_numero).limit(1).stream())
+    if existentes:
+        log.info(f"Remoção já gravada (portaria={portaria_numero!r}). Pulando.")
+        return None
+
+    doc = {
+        "portaria_numero": portaria_numero,
+        "portaria_url":    edition_url,
+        "edicao_do":       str(edition_num),
+        "data_publicacao": data_publicacao_do,
+        "data_vigencia":   (_normalizar_data(data.get("data_vigencia") or "") or ""),
+        "concurso":        (data.get("concurso") or "").strip(),
+        "saindo":          data.get("saindo") or [],
+        "chegando":        data.get("chegando") or [],
+        "lido":            False,
+        "origem":          "automacao-diario-oficial",
+        "criado_por":      CRIADO_POR_AUTOMACAO,
+        "criado_em":       firestore.SERVER_TIMESTAMP,
+    }
+    _, ref = col.add(doc)
+    log.info(
+        f"✅ Concurso de remoção gravado: id={ref.id} | {portaria_numero} "
+        f"| {len(doc['saindo'])} saindo / {len(doc['chegando'])} chegando"
+    )
+    return {"id": ref.id, **doc}
+
 # ─── Busca de edições ─────────────────────────────────────────────────────────
 
 def get_latest_editions() -> list:
@@ -494,6 +635,10 @@ def extract_pdf_text(pdf_bytes: bytes) -> str:
 # e servidores são escopo de outra automação (ver CLAUDE.md, Projeto 2).
 TERMOS_POLO_MEDIO: list = [
     r"Polo\s+(?:do\s+)?M[eé]dio\s+Amazonas",
+]
+
+TERMOS_REMOCAO: list = [
+    r"[Cc]oncurso\s+de\s+[Rr]emo[çc][ãa]o",
 ]
 
 
@@ -828,6 +973,26 @@ def main():
                         total_criados += len(criados)
                 else:
                     log.info(f"Edição {num}: sem designações do Polo Médio Amazonas")
+
+                # Detecção de concurso de remoção (independente dos afastamentos normais)
+                if _texto_tem_remocao_polo_medio(text) and not verificar_limite_custo(state):
+                    log.info(f"Edição {num}: texto contém Concurso de Remoção. Analisando…")
+                    result_rem = parse_remocao(text, state)
+                    if result_rem.get("tem_remocao"):
+                        remocao_criada = salvar_remocao_firestore(
+                            result_rem,
+                            edition["url"],
+                            edition_num=edition["numero"],
+                            data_publicacao_do=edition.get("data_publicacao", ""),
+                        )
+                        if remocao_criada:
+                            log.info(
+                                f"🔄 Remoção gravada: {remocao_criada.get('portaria_numero')} "
+                                f"| {len(remocao_criada.get('saindo', []))} saindo "
+                                f"/ {len(remocao_criada.get('chegando', []))} chegando"
+                            )
+                    else:
+                        log.info(f"Edição {num}: Polo Médio não afetado no concurso de remoção.")
 
                 state["ultima_edicao"] = max(state.get("ultima_edicao", 0), num)
                 if num not in state.get("edicoes_processadas", []):
