@@ -5874,6 +5874,21 @@
                 return null;
             }
 
+            // Retorna a próxima entrada futura (inicio > hoje, fim === null) de uma DP
+            function getFutureTitular(dpKey) {
+                const dp = defensorias[dpKey];
+                if (!dp) return null;
+                let next = null;
+                for (const h of dp.historico_titulares) {
+                    if (!h.defensor || h.fim !== null) continue;
+                    const s = new Date(h.inicio + 'T12:00:00');
+                    if (s > today) {
+                        if (!next || s < new Date(next.inicio + 'T12:00:00')) next = h;
+                    }
+                }
+                return next;
+            }
+
             // Mapa: defKey -> lista de { dpKey, inicio, fim } (histórico completo)
             const defHistorico = {};
             Object.keys(defensorias).forEach(dpKey => {
@@ -5891,6 +5906,16 @@
                 if (tit) { if (!defCurrentDPs[tit]) defCurrentDPs[tit] = []; defCurrentDPs[tit].push(dpKey); }
             });
 
+            // DPs com designação futura por defensor (inicio > hoje, fim === null)
+            const defFutureDPs = {};
+            Object.keys(defensorias).forEach(dpKey => {
+                const fut = getFutureTitular(dpKey);
+                if (fut && fut.defensor) {
+                    if (!defFutureDPs[fut.defensor]) defFutureDPs[fut.defensor] = [];
+                    defFutureDPs[fut.defensor].push({ dpKey, inicio: fut.inicio, portaria_entrada: fut.portaria_entrada || null, do_entrada: fut.do_entrada || null });
+                }
+            });
+
             const internos   = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo !== false);
             const exMembros  = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo === false);
 
@@ -5900,6 +5925,7 @@
             const orphanExMembros = Object.keys(defHistorico).filter(defKey => {
                 if (defensores[defKey]) return false;      // já está no dicionário → tratado acima
                 if (defCurrentDPs[defKey]) return false;   // ainda tem DP ativa → não é ex-membro
+                if (defFutureDPs[defKey]) return false;    // designação futura (efeito futuro) → não é ex-membro
                 return true;
             });
 
@@ -5934,8 +5960,48 @@
                         html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
                     });
                 } else {
-                    html += '<li><em>Sem designação atual</em></li>';
+                    const futDps = (defFutureDPs[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
+                    if (futDps.length > 0) {
+                        futDps.forEach(({ dpKey: fdpKey, inicio: finicio, portaria_entrada: fprt, do_entrada: fdo }) => {
+                            const fdp = defensorias[fdpKey];
+                            const flabel = fdp.nome.includes('(') ? esc(fdp.nome) : `${esc(fdp.nome)} (${esc(fdp.area)})`;
+                            const s = `color:var(--text-secondary);font-size:0.82em;`;
+                            let detalhe = `<br><span style="${s}">A partir de ${fmtDate(finicio)}`;
+                            if (fprt) {
+                                detalhe += fdo
+                                    ? ` — <a href="${esc(fdo)}" target="_blank" rel="noopener" style="color:var(--primary-color)">${esc(fprt)}</a>`
+                                    : ` — ${esc(fprt)}`;
+                            }
+                            detalhe += `</span>`;
+                            html += `<li style="line-height:1.8;font-style:italic;">${flabel}${detalhe}</li>`;
+                        });
+                    } else {
+                        html += '<li><em>Sem designação atual</em></li>';
+                    }
                 }
+                html += '</ul></div>';
+            });
+
+            // Membros futuros "livres": cadastrados como texto via UI, sem DP ativa hoje mas com designação futura
+            const orphanFutureMembros = Object.keys(defFutureDPs)
+                .filter(defKey => !defensores[defKey] && !defCurrentDPs[defKey])
+                .sort();
+            orphanFutureMembros.forEach(defKey => {
+                const futDps = defFutureDPs[defKey].sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
+                html += `<div class="defensor-card" style="border-left:4px solid #f59e0b;opacity:0.9"><h4 style="color:#92400e;">${esc(defKey)} <span style="font-size:0.8em;font-weight:400;">(designação futura)</span></h4><ul>`;
+                futDps.forEach(({ dpKey: fdpKey, inicio: finicio, portaria_entrada: fprt, do_entrada: fdo }) => {
+                    const fdp = defensorias[fdpKey];
+                    const flabel = fdp.nome.includes('(') ? esc(fdp.nome) : `${esc(fdp.nome)} (${esc(fdp.area)})`;
+                    const s = `color:var(--text-secondary);font-size:0.82em;`;
+                    let detalhe = `<br><span style="${s}">A partir de ${fmtDate(finicio)}`;
+                    if (fprt) {
+                        detalhe += fdo
+                            ? ` — <a href="${esc(fdo)}" target="_blank" rel="noopener" style="color:var(--primary-color)">${esc(fprt)}</a>`
+                            : ` — ${esc(fprt)}`;
+                    }
+                    detalhe += `</span>`;
+                    html += `<li style="line-height:1.8;font-style:italic;">${flabel}${detalhe}</li>`;
+                });
                 html += '</ul></div>';
             });
 
@@ -6007,8 +6073,14 @@
                 const dp  = defensorias[dpKey];
                 const tit = getCurrentTitular(dpKey);
                 const titNome = tit ? esc(defensores[tit]?.nome || tit) : '<em>(Vaga)</em>';
+                const fut = getFutureTitular(dpKey);
+                const futNomeRaw = fut ? (defensores[fut.defensor]?.nome || fut.defensor) : null;
+                const titAtualRaw = tit ? (defensores[tit]?.nome || tit) : null;
+                const futNote = (futNomeRaw && futNomeRaw !== titAtualRaw)
+                    ? `<br><span style="color:var(--text-secondary);font-size:0.8em;font-style:italic;">A partir de ${fmtDate(fut.inicio)}: ${esc(futNomeRaw)}</span>`
+                    : '';
                 const btnEdit = isAdmin ? `<td class="cel-editar-dp" style="display:none"><button class="btn-editar" style="padding:4px 8px;font-size:0.8em;" onclick="abrirModalTitulares('${dpKey}')">✏️</button></td>` : '';
-                tableHtml += `<tr><td>${esc(dp.nome)}</td><td style="white-space:nowrap">${titNome}</td><td>${esc(dp.area)}</td>${btnEdit}</tr>`;
+                tableHtml += `<tr><td>${esc(dp.nome)}</td><td style="white-space:nowrap">${titNome}${futNote}</td><td>${esc(dp.area)}</td>${btnEdit}</tr>`;
             });
             tableHtml += '</tbody></table></div>';
             document.getElementById('defensorias-table-content').innerHTML = tableHtml;
