@@ -1925,6 +1925,22 @@
             transition: background .15s;
         }
         .btn-sino:hover { background: #f3f4f6; }
+        /* Sino de remoção — posicionado na barra de abas */
+        .btn-sino-remocao {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.05em;
+            position: relative;
+            padding: 4px 5px;
+            line-height: 1;
+            border-radius: 8px;
+            transition: background .15s;
+            align-self: center;
+            flex: 0 0 auto;
+            margin: 0 2px 0 -6px;
+        }
+        .btn-sino-remocao:hover { background: rgba(59,130,246,0.12); }
         .badge-sino {
             position: absolute;
             top: -2px;
@@ -2383,6 +2399,9 @@
 
         <div class="tabs">
             <button class="tab-button active" onclick="showTab('designacoes')">📋 Defensorias</button>
+            <button id="btn-sino-remocao" class="btn-sino-remocao" style="display:none" onclick="abrirPainelRemocao()" title="Notificações de Concurso de Remoção">
+                🔔<span id="badge-sino-remocao" class="badge-sino" style="display:none">0</span>
+            </button>
             <button class="tab-button" onclick="showTab('designacoes-periodo')">📅 Designações semanais</button>
             <button class="tab-button" onclick="showTab('calendario')">📅 Calendário</button>
             <button class="tab-button" onclick="showTab('lista-substituicoes')">📋 Lista de Substituições</button>
@@ -2696,7 +2715,7 @@
     </div>
 
     <!-- Modal para Detalhes -->
-    <!-- Painel de notificações da automação -->
+    <!-- Painel de notificações da automação (afastamentos) -->
     <div id="notif-overlay" class="notif-overlay" onclick="fecharPainelNotificacoes(event)">
         <div class="notif-panel" onclick="event.stopPropagation()">
             <div class="notif-panel-header">
@@ -2704,6 +2723,19 @@
                 <button class="notif-panel-close" onclick="fecharPainelNotificacoes()">×</button>
             </div>
             <div class="notif-panel-body" id="notif-panel-body">
+                <p class="notif-vazia">⏳ Carregando...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Painel de notificações de Concurso de Remoção -->
+    <div id="notif-remocao-overlay" class="notif-overlay" onclick="fecharPainelRemocao(event)">
+        <div class="notif-panel" onclick="event.stopPropagation()">
+            <div class="notif-panel-header" style="background:linear-gradient(135deg,#b45309,#f59e0b)">
+                <h3>🔄 Concurso de Remoção</h3>
+                <button class="notif-panel-close" onclick="fecharPainelRemocao()">×</button>
+            </div>
+            <div class="notif-panel-body" id="notif-remocao-body">
                 <p class="notif-vazia">⏳ Carregando...</p>
             </div>
         </div>
@@ -4366,25 +4398,31 @@
         // ── Notificações da automação ──────────────────────────────────────
         async function carregarNotificacoesAutomacao() {
             if (userRole !== 'admin') return;
+            // Fetches independentes: falha em um não bloqueia o outro
             try {
-                const [snapAfast, snapRem] = await Promise.all([
-                    db.collection('afastamentos_admin').where('origem', '==', 'automacao-diario-oficial').get(),
-                    db.collection('remocoes_admin').where('origem', '==', 'automacao-diario-oficial').get(),
-                ]);
+                const snap = await db.collection('afastamentos_admin')
+                    .where('origem', '==', 'automacao-diario-oficial').get();
                 notificacoesData = [];
-                snapAfast.forEach(doc => {
+                snap.forEach(doc => {
                     const reg = { id: doc.id, ...doc.data() };
                     if (reg.lido !== true) notificacoesData.push(reg);
                 });
+            } catch(e) {
+                console.warn('Erro ao carregar notificações de afastamento:', e.message);
+            }
+            try {
+                const snap = await db.collection('remocoes_admin')
+                    .where('origem', '==', 'automacao-diario-oficial').get();
                 remocaoNotifData = [];
-                snapRem.forEach(doc => {
+                snap.forEach(doc => {
                     const reg = { id: doc.id, ...doc.data() };
                     if (reg.lido !== true) remocaoNotifData.push(reg);
                 });
-                _atualizarBadgeSino();
             } catch(e) {
-                console.warn('Erro ao carregar notificações:', e.message);
+                console.warn('Erro ao carregar notificações de remoção:', e.message);
             }
+            _atualizarBadgeSino();
+            _atualizarBadgeSinoRemocao();
         }
 
         function _atualizarBadgeSino() {
@@ -4393,7 +4431,18 @@
             if (!btn || !badge) return;
             if (userRole !== 'admin') return;
             btn.style.display = '';
-            const count = notificacoesData.length + remocaoNotifData.length;
+            const count = notificacoesData.length;
+            badge.textContent = count;
+            badge.style.display = count > 0 ? '' : 'none';
+        }
+
+        function _atualizarBadgeSinoRemocao() {
+            const btn   = document.getElementById('btn-sino-remocao');
+            const badge = document.getElementById('badge-sino-remocao');
+            if (!btn || !badge) return;
+            if (userRole !== 'admin') return;
+            btn.style.display = '';
+            const count = remocaoNotifData.length;
             badge.textContent = count;
             badge.style.display = count > 0 ? '' : 'none';
         }
@@ -4404,93 +4453,157 @@
             if (!overlay || !body) return;
             const defs = jsonDesignacoes?.defensores || {};
 
-            const totalNotifs = notificacoesData.length + remocaoNotifData.length;
-            if (totalNotifs === 0) {
+            if (notificacoesData.length === 0) {
                 body.innerHTML = '<p class="notif-vazia">✅ Nenhuma notificação pendente.</p>';
             } else {
-                let html = '';
+                const grupos = {};
+                notificacoesData.forEach(reg => {
+                    const edicao  = reg.edicao_do || '—';
+                    const dataPub = reg.data_publicacao_do || '';
+                    const key = dataPub + '|' + edicao;
+                    if (!grupos[key]) grupos[key] = { edicao, dataPub, itens: [] };
+                    grupos[key].itens.push(reg);
+                });
+                const gruposOrdenados = Object.values(grupos).sort((a, b) =>
+                    b.dataPub.localeCompare(a.dataPub));
 
-                // ── Seção: Concursos de Remoção ──
-                if (remocaoNotifData.length > 0) {
-                    const remsOrdenadas = [...remocaoNotifData].sort((a, b) =>
-                        (b.data_publicacao || '').localeCompare(a.data_publicacao || ''));
-                    remsOrdenadas.forEach(reg => {
-                        const dataFmt  = reg.data_publicacao ? formatarData(reg.data_publicacao) : '—';
-                        const vigFmt   = reg.data_vigencia   ? formatarData(reg.data_vigencia)   : '—';
-                        const pdfLink  = reg.portaria_url
-                            ? `<a href="${reg.portaria_url}" target="_blank" rel="noopener" style="color:var(--primary-color)">${reg.portaria_numero || 'Ver portaria'}</a>`
-                            : (reg.portaria_numero || '—');
-                        const saindo   = (reg.saindo   || []).map(s => `<li>⬆️ <strong>${esc(s.defensor)}</strong> — ${esc(s.dp_no_polo)} → ${esc(s.dp_destino)}</li>`).join('');
-                        const chegando = (reg.chegando || []).map(s => `<li>⬇️ <strong>${esc(s.defensor)}</strong> — ${esc(s.dp_origem)} → ${esc(s.dp_no_polo)}</li>`).join('');
+                let html = '';
+                gruposOrdenados.forEach(grupo => {
+                    const dataFmt = grupo.dataPub ? formatarData(grupo.dataPub) : '—';
+                    html += `<div class="notif-grupo-titulo">📅 Publicado em ${dataFmt} · Edição ${grupo.edicao}</div>`;
+                    grupo.itens.forEach(reg => {
+                        const defInfo  = defs[reg.defensor] || {};
+                        const defNome  = defInfo.nome || reg.defensor || '—';
+                        const tipoLabel = reg.tipo === 'outro'
+                            ? (reg.tipo_custom || 'Outro')
+                            : (TIPO_LABELS[reg.tipo] || reg.tipo || '—');
+                        const dataInicio = reg.data_inicio ? formatarData(reg.data_inicio) : '—';
+                        const dataFim    = reg.data_fim    ? formatarData(reg.data_fim)    : 'sem data fim';
+                        const dps = (reg.designacoes_dp || []).map(d => d.dp + 'ª DP').join(', ') || '—';
+                        const precisaRevisao = reg.precisa_revisao === true;
+                        const editBtn = reg.id
+                            ? `<button class="notif-btn notif-btn-editar" onclick="abrirFormAfastamento('${reg.id}',null,null);fecharPainelNotificacoes()">✏️ Editar</button>`
+                            : '';
                         html += `
-                        <div class="notif-grupo-titulo">📅 Publicado em ${dataFmt} · Edição ${reg.edicao_do || '—'}</div>
-                        <div class="notif-item" style="border-left:4px solid #f59e0b;">
+                        <div class="notif-item${precisaRevisao ? ' precisa-revisao' : ''}">
                             <div class="notif-item-titulo">
-                                <span>🔄</span>
-                                <span>${esc(reg.concurso || 'Concurso de Remoção')}</span>
+                                <span>${precisaRevisao ? '✋' : '🤖'}</span>
+                                <span>${defNome}</span>
                             </div>
-                            <div class="notif-item-detalhe">Vigência: ${vigFmt}</div>
-                            <div class="notif-item-portaria">${pdfLink}</div>
-                            ${saindo   ? `<ul style="margin:6px 0 2px 12px;font-size:0.87em;line-height:1.7">${saindo}</ul>`   : ''}
-                            ${chegando ? `<ul style="margin:2px 0 6px 12px;font-size:0.87em;line-height:1.7">${chegando}</ul>` : ''}
+                            <div class="notif-item-detalhe">${dps} · ${tipoLabel}</div>
+                            <div class="notif-item-detalhe">${dataInicio} – ${dataFim}</div>
+                            ${reg.portaria_numero ? `<div class="notif-item-portaria">${reg.portaria_numero}</div>` : ''}
+                            ${precisaRevisao ? `<div class="notif-revisao-alerta">⚠️ ${reg.motivo_revisao || 'requer ajuste manual'}</div>` : ''}
                             <div class="notif-acoes">
-                                <button class="notif-btn notif-btn-dispensar" onclick="dispensarRemocao('${reg.id}')">🗑️ Dispensar</button>
+                                ${editBtn}
+                                <button class="notif-btn notif-btn-dispensar" onclick="dispensarNotificacao('${reg.id}')">🗑️ Dispensar</button>
                             </div>
                         </div>`;
                     });
-                }
-
-                // ── Seção: Afastamentos detectados pela automação ──
-                if (notificacoesData.length > 0) {
-                    const grupos = {};
-                    notificacoesData.forEach(reg => {
-                        const edicao  = reg.edicao_do || '—';
-                        const dataPub = reg.data_publicacao_do || '';
-                        const key = dataPub + '|' + edicao;
-                        if (!grupos[key]) grupos[key] = { edicao, dataPub, itens: [] };
-                        grupos[key].itens.push(reg);
-                    });
-                    const gruposOrdenados = Object.values(grupos).sort((a, b) =>
-                        b.dataPub.localeCompare(a.dataPub));
-
-                    gruposOrdenados.forEach(grupo => {
-                        const dataFmt = grupo.dataPub ? formatarData(grupo.dataPub) : '—';
-                        html += `<div class="notif-grupo-titulo">📅 Publicado em ${dataFmt} · Edição ${grupo.edicao}</div>`;
-                        grupo.itens.forEach(reg => {
-                            const defInfo  = defs[reg.defensor] || {};
-                            const defNome  = defInfo.nome || reg.defensor || '—';
-                            const tipoLabel = reg.tipo === 'outro'
-                                ? (reg.tipo_custom || 'Outro')
-                                : (TIPO_LABELS[reg.tipo] || reg.tipo || '—');
-                            const dataInicio = reg.data_inicio ? formatarData(reg.data_inicio) : '—';
-                            const dataFim    = reg.data_fim    ? formatarData(reg.data_fim)    : 'sem data fim';
-                            const dps = (reg.designacoes_dp || []).map(d => d.dp + 'ª DP').join(', ') || '—';
-                            const precisaRevisao = reg.precisa_revisao === true;
-                            const editBtn = reg.id
-                                ? `<button class="notif-btn notif-btn-editar" onclick="abrirFormAfastamento('${reg.id}',null,null);fecharPainelNotificacoes()">✏️ Editar</button>`
-                                : '';
-                            html += `
-                            <div class="notif-item${precisaRevisao ? ' precisa-revisao' : ''}">
-                                <div class="notif-item-titulo">
-                                    <span>${precisaRevisao ? '✋' : '🤖'}</span>
-                                    <span>${defNome}</span>
-                                </div>
-                                <div class="notif-item-detalhe">${dps} · ${tipoLabel}</div>
-                                <div class="notif-item-detalhe">${dataInicio} – ${dataFim}</div>
-                                ${reg.portaria_numero ? `<div class="notif-item-portaria">${reg.portaria_numero}</div>` : ''}
-                                ${precisaRevisao ? `<div class="notif-revisao-alerta">⚠️ ${reg.motivo_revisao || 'requer ajuste manual'}</div>` : ''}
-                                <div class="notif-acoes">
-                                    ${editBtn}
-                                    <button class="notif-btn notif-btn-dispensar" onclick="dispensarNotificacao('${reg.id}')">🗑️ Dispensar</button>
-                                </div>
-                            </div>`;
-                        });
-                    });
-                }
-
+                });
                 body.innerHTML = html;
             }
             overlay.classList.add('active');
+        }
+
+        function abrirPainelRemocao() {
+            const overlay = document.getElementById('notif-remocao-overlay');
+            const body    = document.getElementById('notif-remocao-body');
+            if (!overlay || !body) return;
+
+            if (remocaoNotifData.length === 0) {
+                body.innerHTML = '<p class="notif-vazia">✅ Nenhuma notificação pendente.</p>';
+            } else {
+                const remsOrdenadas = [...remocaoNotifData].sort((a, b) =>
+                    (b.data_publicacao || '').localeCompare(a.data_publicacao || ''));
+                let html = '';
+                remsOrdenadas.forEach(reg => {
+                    const dataFmt  = reg.data_publicacao ? formatarData(reg.data_publicacao) : '—';
+                    const vigFmt   = reg.data_vigencia   ? formatarData(reg.data_vigencia)   : '—';
+                    const pdfLink  = reg.portaria_url
+                        ? `<a href="${reg.portaria_url}" target="_blank" rel="noopener" style="color:#b45309">${esc(reg.portaria_numero || 'Ver portaria')}</a>`
+                        : esc(reg.portaria_numero || '—');
+                    const saindo   = (reg.saindo   || []).map(s =>
+                        `<li>⬆️ <strong>${esc(s.defensor)}</strong> · ${esc(s.dp_no_polo)} → ${esc(s.dp_destino)}</li>`).join('');
+                    const chegando = (reg.chegando || []).map(s =>
+                        `<li>⬇️ <strong>${esc(s.defensor)}</strong> · ${esc(s.dp_origem)} → ${esc(s.dp_no_polo)}</li>`).join('');
+                    const temChegando = (reg.chegando || []).length > 0;
+                    html += `
+                    <div class="notif-grupo-titulo">📅 Publicado em ${dataFmt} · Edição ${esc(reg.edicao_do || '—')}</div>
+                    <div class="notif-item" style="border-left:4px solid #f59e0b;">
+                        <div class="notif-item-titulo"><span>🔄</span><span>${esc(reg.concurso || 'Concurso de Remoção')}</span></div>
+                        <div class="notif-item-detalhe">Vigência: <strong>${vigFmt}</strong></div>
+                        <div class="notif-item-portaria">${pdfLink}</div>
+                        ${saindo   ? `<ul style="margin:6px 0 2px 12px;font-size:0.87em;line-height:1.8">${saindo}</ul>`   : ''}
+                        ${chegando ? `<ul style="margin:2px 0 6px 12px;font-size:0.87em;line-height:1.8">${chegando}</ul>` : ''}
+                        <div class="notif-acoes">
+                            ${temChegando ? `<button class="notif-btn notif-btn-editar" onclick="aplicarRemocaoAoSite('${reg.id}')">✅ Aplicar ao site</button>` : ''}
+                            <button class="notif-btn notif-btn-dispensar" onclick="dispensarRemocao('${reg.id}')">🗑️ Dispensar</button>
+                        </div>
+                    </div>`;
+                });
+                body.innerHTML = html;
+            }
+            overlay.classList.add('active');
+        }
+
+        function fecharPainelRemocao(event) {
+            if (event && event.target !== document.getElementById('notif-remocao-overlay')) return;
+            document.getElementById('notif-remocao-overlay')?.classList.remove('active');
+        }
+
+        async function aplicarRemocaoAoSite(id) {
+            const reg = remocaoNotifData.find(r => r.id === id);
+            if (!reg) return;
+            const vigencia = reg.data_vigencia;
+            if (!vigencia) { mostrarToast('❌ Data de vigência não definida.', true); return; }
+
+            // Calcula fim do titular atual = dia anterior à vigência
+            const vigDate = new Date(vigencia + 'T12:00:00');
+            vigDate.setDate(vigDate.getDate() - 1);
+            const fimAnterior = vigDate.toISOString().split('T')[0];
+
+            const chegando = reg.chegando || [];
+            if (chegando.length === 0) { mostrarToast('⚠️ Nenhum defensor em "chegando".', true); return; }
+
+            let aplicados = 0, erros = 0;
+            for (const item of chegando) {
+                const m = (item.dp_no_polo || '').match(/^(\d+)/);
+                if (!m) { erros++; continue; }
+                const dpKey = m[1];
+                const dp = defensorias[dpKey];
+                if (!dp) { erros++; continue; }
+
+                // Cópia profunda do histórico em memória
+                const hist = JSON.parse(JSON.stringify(dp.historico_titulares || []));
+                // Fecha titular ativo atual
+                const activeIdx = hist.findIndex(h => h.fim === null);
+                if (activeIdx >= 0) hist[activeIdx].fim = fimAnterior;
+                // Insere novo titular
+                hist.push({
+                    defensor: item.defensor,
+                    inicio: vigencia,
+                    fim: null,
+                    portaria_entrada: reg.portaria_numero || '',
+                    do_entrada: reg.portaria_url || '',
+                    portaria_saida: null,
+                    do_saida: null,
+                });
+                try {
+                    await db.collection('titulares_admin').doc(dpKey).set(
+                        { historico_titulares: hist, atualizado_por: 'aplicar-remocao' },
+                        { merge: true }
+                    );
+                    aplicados++;
+                } catch(e) { erros++; console.error('Erro ao salvar DP', dpKey, e); }
+            }
+
+            if (aplicados > 0) {
+                mostrarToast(`✅ ${aplicados} DP(s) atualizadas. Atualizando o site...`);
+                await loadTitularesFirestore();
+            }
+            if (erros > 0) mostrarToast(`⚠️ ${erros} DP(s) não puderam ser atualizadas.`, true);
+            fecharPainelRemocao();
         }
 
         function fecharPainelNotificacoes(event) {
@@ -4513,8 +4626,8 @@
             try {
                 await db.collection('remocoes_admin').doc(id).update({ lido: true });
                 remocaoNotifData = remocaoNotifData.filter(r => r.id !== id);
-                _atualizarBadgeSino();
-                abrirPainelNotificacoes();
+                _atualizarBadgeSinoRemocao();
+                abrirPainelRemocao();
             } catch(e) {
                 mostrarToast('❌ Erro ao dispensar: ' + e.message, true);
             }
