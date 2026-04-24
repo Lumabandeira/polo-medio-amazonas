@@ -4445,6 +4445,9 @@
             const count = remocaoNotifData.length;
             badge.textContent = count;
             badge.style.display = count > 0 ? '' : 'none';
+            // Camuflado quando sem pendências, visível quando há notificações
+            btn.style.color  = count > 0 ? '' : 'var(--bg-color)';
+            btn.style.cursor = count > 0 ? 'pointer' : 'default';
         }
 
         function abrirPainelNotificacoes() {
