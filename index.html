@@ -4537,7 +4537,8 @@
                         ${saindo   ? `<ul style="margin:6px 0 2px 12px;font-size:0.87em;line-height:1.8">${saindo}</ul>`   : ''}
                         ${chegando ? `<ul style="margin:2px 0 6px 12px;font-size:0.87em;line-height:1.8">${chegando}</ul>` : ''}
                         <div class="notif-acoes">
-                            ${temChegando ? `<button class="notif-btn notif-btn-editar" onclick="aplicarRemocaoAoSite('${reg.id}')">✅ Aplicar ao site</button>` : ''}
+                            <button class="notif-btn notif-btn-editar" onclick="editarRemocao('${reg.id}')">✏️ Editar</button>
+                            ${temChegando ? `<button class="notif-btn notif-btn-editar" onclick="aplicarRemocaoAoSite('${reg.id}')" style="background:#dcfce7;color:#166534">✅ Aplicar ao site</button>` : ''}
                             <button class="notif-btn notif-btn-dispensar" onclick="dispensarRemocao('${reg.id}')">🗑️ Dispensar</button>
                         </div>
                     </div>`;
@@ -4550,6 +4551,79 @@
         function fecharPainelRemocao(event) {
             if (event && event.target !== document.getElementById('notif-remocao-overlay')) return;
             document.getElementById('notif-remocao-overlay')?.classList.remove('active');
+        }
+
+        function editarRemocao(id) {
+            const reg = remocaoNotifData.find(r => r.id === id);
+            if (!reg) return;
+            const body = document.getElementById('notif-remocao-body');
+            if (!body) return;
+
+            const vigencia = reg.data_vigencia || '';
+            const chegando = reg.chegando || [];
+            const s = 'width:100%;padding:7px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9em;box-sizing:border-box';
+
+            let rowsHtml = chegando.map((item, i) => {
+                const dpNum = (item.dp_no_polo || '').match(/^(\d+)/)?.[1] || '';
+                return `
+                <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
+                    <input type="number" id="rem-dp-${i}" value="${dpNum}" min="1" max="12"
+                        style="width:60px;padding:7px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9em;text-align:center"
+                        placeholder="DP">
+                    <input type="text" id="rem-def-${i}" value="${esc(item.defensor || '')}"
+                        style="flex:1;padding:7px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9em"
+                        placeholder="Nome do defensor">
+                </div>`;
+            }).join('');
+
+            if (rowsHtml === '') rowsHtml = `
+                <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
+                    <input type="number" id="rem-dp-0" min="1" max="12"
+                        style="width:60px;padding:7px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9em;text-align:center" placeholder="DP">
+                    <input type="text" id="rem-def-0"
+                        style="flex:1;padding:7px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9em" placeholder="Nome do defensor">
+                </div>`;
+
+            body.innerHTML = `
+            <div style="padding:4px 0">
+                <p style="font-weight:600;margin-bottom:14px;color:#92400e">✏️ Editar notificação</p>
+                <label style="font-size:0.83em;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:4px">Data de vigência</label>
+                <input type="date" id="rem-vigencia" value="${vigencia}" style="${s};margin-bottom:14px">
+                <label style="font-size:0.83em;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:6px">Chegando ao polo (DP · Nome do defensor)</label>
+                <div id="rem-chegando-rows">${rowsHtml}</div>
+                <div class="notif-acoes" style="margin-top:14px">
+                    <button class="notif-btn notif-btn-editar" onclick="salvarEdicaoRemocao('${id}', ${Math.max(chegando.length, 1)})">💾 Salvar</button>
+                    <button class="notif-btn notif-btn-dispensar" onclick="abrirPainelRemocao()">❌ Cancelar</button>
+                </div>
+            </div>`;
+        }
+
+        async function salvarEdicaoRemocao(id, numRows) {
+            const reg = remocaoNotifData.find(r => r.id === id);
+            if (!reg) return;
+
+            const vigencia = document.getElementById('rem-vigencia')?.value?.trim() || '';
+            const chegando = [];
+            for (let i = 0; i < numRows; i++) {
+                const dpNum  = (document.getElementById(`rem-dp-${i}`)?.value  || '').trim();
+                const defNome = (document.getElementById(`rem-def-${i}`)?.value || '').trim();
+                if (!dpNum || !defNome) continue;
+                chegando.push({
+                    defensor:   defNome,
+                    dp_no_polo: `${dpNum}ª Defensoria Pública do Polo do Médio Amazonas`,
+                    dp_origem:  reg.chegando?.[i]?.dp_origem || '',
+                });
+            }
+
+            try {
+                await db.collection('remocoes_admin').doc(id).update({ data_vigencia: vigencia, chegando });
+                const idx = remocaoNotifData.findIndex(r => r.id === id);
+                if (idx >= 0) { remocaoNotifData[idx].data_vigencia = vigencia; remocaoNotifData[idx].chegando = chegando; }
+                mostrarToast('✅ Notificação atualizada.');
+                abrirPainelRemocao();
+            } catch(e) {
+                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+            }
         }
 
         async function aplicarRemocaoAoSite(id) {
