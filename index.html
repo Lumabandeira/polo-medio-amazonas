@@ -1917,14 +1917,17 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.3em;
+            font-size: 1.05em;
             position: relative;
-            padding: 4px 6px;
+            padding: 4px 5px;
             line-height: 1;
             border-radius: 8px;
             transition: background .15s;
+            align-self: center;
+            flex: 0 0 auto;
+            margin: 0 2px 0 -6px;
         }
-        .btn-sino:hover { background: #f3f4f6; }
+        .btn-sino:hover { background: rgba(59,130,246,0.12); }
         /* Sino de remoção — posicionado na barra de abas */
         .btn-sino-remocao {
             background: none;
@@ -2405,6 +2408,9 @@
             <button class="tab-button" onclick="showTab('designacoes-periodo')">📅 Designações semanais</button>
             <button class="tab-button" onclick="showTab('calendario')">📅 Calendário</button>
             <button class="tab-button" onclick="showTab('lista-substituicoes')">📋 Lista de Substituições</button>
+            <button id="btn-sino" class="btn-sino" style="display:none" onclick="abrirPainelNotificacoes()" title="Notificações da automação">
+                🔔<span id="badge-sino" class="badge-sino" style="display:none">0</span>
+            </button>
             <button class="tab-button" onclick="showTab('detalhes')">📊 Resumo de Afastamentos</button>
             <button id="tab-btn-diario" class="tab-button" onclick="showTab('diario-oficial')">📰 Diário Oficial</button>
         </div>
@@ -2489,12 +2495,7 @@
         <!-- Tab: Lista de Substituições -->
         <div id="lista-substituicoes" class="tab-content">
             <div class="card">
-                <h2 style="display:flex;align-items:center;justify-content:space-between">
-                    <span>📋 Lista de Substituições</span>
-                    <button id="btn-sino" class="btn-sino" style="display:none" onclick="abrirPainelNotificacoes()" title="Notificações da automação">
-                        🔔<span id="badge-sino" class="badge-sino" style="display:none">0</span>
-                    </button>
-                </h2>
+                <h2>📋 Lista de Substituições</h2>
                 <div style="margin-bottom:16px">
                     <label for="filtro-lista-dp" style="font-weight:600;margin-right:8px;color:var(--text-primary)">Filtrar por DP:</label>
                     <select id="filtro-lista-dp" onchange="filtroListaDP = this.value || null; renderListaSubstituicoes()" style="padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.95em;color:var(--text-primary);background:#fff;cursor:pointer">
