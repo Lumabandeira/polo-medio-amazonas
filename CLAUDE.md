@@ -64,6 +64,20 @@ afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendári
   data_publicacao_do: "2026-03-06"  ← data de publicação da edição (YYYY-MM-DD)
   precisa_revisao: true    ← true quando data_fim está vazia (designação aberta)
   motivo_revisao: "sem data fim — designação aberta (\"a contar do dia X\")"
+
+remocoes_admin/{id}   ← portarias de Concurso de Remoção detectadas pela automação
+  portaria_numero: "Portaria nº 602/2026-GDPG/DPE/AM"
+  portaria_url: "https://..."     ← PDF do Diário Oficial
+  concurso: "Concurso de Remoção nº 1/2026"
+  data_vigencia: "2026-05-02"     ← data a partir da qual a remoção tem efeito
+  saindo: [{ dp: "1", defensor: "Nome completo" }, ...]
+  chegando: [{ dp: "1", defensor: "Nome completo" }, ...]
+  origem: "automacao-diario-oficial"
+  lido: false              ← false = aparece no sino de remoção; true = dispensado
+  edicao_do: "2640"
+  data_publicacao_do: "2026-04-15"
+  criado_por: "automacao@github-actions"
+  criado_em: timestamp
 ```
 
 > **Nota:** Os dados dos JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) continuam sendo a base. A coleção `afastamentos_admin` contém apenas os registros adicionados/editados pelo admin via interface. Os dois são mesclados em memória ao carregar a página.
@@ -71,7 +85,7 @@ afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendári
 ### Regras de segurança do Firestore
 - Leitura: apenas usuários autenticados
 - Escrita: apenas usuários com `role == "admin"`
-- Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`
+- Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`, `remocoes_admin`
 
 ### Como funciona o login no site
 1. Página carrega → overlay de login cobre tudo
@@ -185,7 +199,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 23/04/2026 — sessão 11)
+## Estado atual do site (atualizado em 24/04/2026 — sessão 12)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -223,7 +237,10 @@ github-pages/
 - **Nova aba "Lista de Substituições"** — aba entre Calendário e Resumo de Afastamentos. Função `renderListaSubstituicoes()` lê `afastamentosFirestoreMap` + `jsonEventosMap` (respeitando `jsonOverrideMap`), agrupa por mês de `data_inicio`, ordena por data→defensor, renderiza tabela com rowspan e separador azul (mesmo formato do modal). Botões 🔍 ✏️ 🗑️ funcionam; sem botão "+ Novo Afastamento". `confirmarDeletarAfastamento` corrigido para aceitar `mes=null, dia=null` (não reabre modal quando chamado da lista). Chamada automática em `loadAfastamentosFirestore()` e `showTab('lista-substituicoes')`.
 - **Aba "Resumo de Afastamentos" dinamizada** — antes era HTML estático e desatualizado. Agora o conteúdo é gerado por `renderDetalhesAfastamentos()` que lê os mesmos dados do calendário. Agrupa por defensor (ordem do JSON, ativos primeiro) e por mês de início. Formato: `🔵 Nome completo` / bullet por mês com lista de "Tipo DD-DD/MM". Mapa `DEFENSOR_EMOJI` com chaves corretas do JSON (`jose-antonio`, `miguel`, etc.). Chamada automática em `loadAfastamentosFirestore()` e `showTab('detalhes')`.
 - **Filtro por DP na aba Lista de Substituições** — `<select id="filtro-lista-dp">` com opções "Todas as DPs" + "1ª DP" … "12ª DP". Variável global `filtroListaDP`. Ao filtrar, `renderListaSubstituicoes()` mantém o **registro inteiro** (todas as DPs do afastamento) quando qualquer DP do registro bate com o filtro — preserva o contexto do afastamento completo. Registros sem match são ocultados; meses sem match some do render.
-- **Sino 🔔 de notificações da automação** — botão `#btn-sino` ao lado do título "📋 Lista de Substituições" (visível apenas para admins). Badge vermelho com contagem de não lidos. Ao clicar, abre painel lateral deslizante (`#notif-overlay` / `.notif-panel`) com feed de registros com `origem: "automacao-diario-oficial"` e `lido !== true`, agrupados por edição do DO (mais recente primeiro). Cada item mostra: ✋ se `precisa_revisao: true`, 🤖 caso contrário; defensor, DPs, tipo, período, portaria, motivo de revisão. Botões: [✏️ Editar] abre formulário; [🗑️ Dispensar] seta `lido: true` no Firestore e remove do badge. Variável global `notificacoesData[]`. Funções: `carregarNotificacoesAutomacao()`, `_atualizarBadgeSino()`, `abrirPainelNotificacoes()`, `fecharPainelNotificacoes()`, `dispensarNotificacao(id)`. Chamada em `mostrarSiteAutenticado()` após login.
+- **Sino 🔔 de notificações da automação (afastamentos)** — botão `#btn-sino` na **barra de abas**, ao lado da aba "📋 Lista de Substituições" (visível apenas para admins). **Camouflado** quando sem pendências (`opacity:0; pointer-events:none`); exibe badge vermelho com contagem quando há registros não lidos. Ao clicar, abre painel lateral (`#notif-overlay` / `.notif-panel`) com registros `origem:"automacao-diario-oficial"` e `lido !== true`, agrupados por edição do DO. Cada item: ✋ se `precisa_revisao:true`, 🤖 caso contrário; defensor, DPs, tipo, período, portaria, motivo. Botões: [✏️ Editar] abre formulário pré-populado; [🗑️ Dispensar] grava `lido:true`. Global: `notificacoesData[]`. Funções: `carregarNotificacoesAutomacao()`, `_atualizarBadgeSino()`, `abrirPainelNotificacoes()`, `fecharPainelNotificacoes()`, `dispensarNotificacao(id)`. **Posição atual:** movido do `<h2>` da aba para a barra de abas em 24/04/2026 (commit `382c90e`). **Nota CSS:** `color` não afeta emoji 🔔 — camouflagem feita com `opacity`, não `color`.
+- **Sino 🔔 de Concurso de Remoção** — botão `#btn-sino-remocao` na **barra de abas**, ao lado da aba "📋 Defensorias". Mesma lógica de camouflage por opacity. Lê coleção `remocoes_admin` (onde `origem:"automacao-diario-oficial"` e `lido !== true`). Painel `#notif-remocao-overlay` com cabeçalho âmbar (`#b45309`). Exibe: número da portaria, data de vigência, lista de DPs (quem sai e quem chega). Botões: [✏️ Editar] + [🗑️ Dispensar] (sem "Aplicar ao site"). Funções: `_atualizarBadgeSinoRemocao()`, `abrirPainelRemocao()`, `fecharPainelRemocao()`, `editarRemocao(id)`, `salvarEdicaoRemocao(id, numRows)`, `dispensarRemocao(id)`. Global: `remocaoNotifData[]`. **`carregarNotificacoesAutomacao()` usa try/catch independentes** para cada coleção (evita que falha em `remocoes_admin` apague dados de `afastamentos_admin`).
+- **Detecção de membros com efeito futuro** — defensores com início de designação após hoje (`inicio > today && fim === null`) são detectados por `getFutureTitular(dpKey)` e mapeados em `defFutureDPs`. O filtro `orphanExMembros` exclui quem está em `defFutureDPs`, evitando que apareçam como ex-defensores antes da vigência. A aba Defensorias exibe esses membros como "futuros" nos cards das DPs.
+- **Automação de Concurso de Remoção (`verificar-diario-oficial.py`)** — novas funções: `_texto_tem_remocao_polo_medio(text)` (pré-filtro por regex), `_extrair_trechos_remocao(text)`, `parse_remocao(text, state)` (usa Claude Haiku para extrair portaria, data de vigência, saindo[], chegando[]), `salvar_remocao_firestore(data, ...)` (grava em `remocoes_admin` com dedup por `portaria_numero`). Constante `FIRESTORE_COLECAO_REMOCOES = "remocoes_admin"`. Roda após o bloco de afastamentos no `main()`.
 - **Automação atualizada (`verificar-diario-oficial.py`)** — grava `lido: false`, `edicao_do`, `data_publicacao_do` em todos os registros novos. Data de publicação extraída da URL da edição (regex `Edicao_NNN-AAAA_DDMMAAAA`). Designações "a contar do dia X" sem data fim agora **gravadas** com `precisa_revisao: true` + `motivo_revisao` em vez de descartadas. Prompt do Claude atualizado para retornar `data_fim: ""` nesses casos. Ciclo completo: automação grava → sino aparece → admin revisa → dispensa ou edita.
 - **Projeto 2 — Automação completa do Diário Oficial (`verificar-diario-completo.py`)** — script independente do Projeto 1. Termos-gatilho amplos: "Polo Médio Amazonas" + 6 cidades + 5 servidores (Luma Karolyne Pantoja Bandeira, Fábio Bastos de Souza, Natália Cristina de Moraes, Arnoud Lucas Andrade da Silva, Larice Bruce Pereira) + titulares vigentes do JSON. Extrai e categoriza **todas** as portarias relevantes (não só afastamentos) e atualiza `docs/diario-oficial-completo-2026.json`. Usa API key separada (`ANTHROPIC_API_KEY_COMPLETO`) para rastrear custos independentemente. Limit mensal: $5,00. Workflow `.github/workflows/verificar-diario-completo.yml` roda às **04:00 de Manaus** (08:00 UTC). Na primeira execução, inicializa estado a partir da edição mais recente do JSON (17/04/2026) sem reprocessar histórico. Testado em 22/04/2026 — sucesso em 25s, sem custo (sem edições novas).
 - **Bug corrigido — validação de datas no formulário de afastamento** — substitutos "ainda não definido" tinham inputs de data ocultos com valores obsoletos no DOM, bloqueando indevidamente o salvamento (ex: cobertura fim = 31/05 quando afastamento fim = 30/05). Corrigido com `if (!sub.substituto) continue;` no loop de validação (`salvarAfastamentoFirestore`, linha ~4133 do index.html). Commit `5522829`.
@@ -233,6 +250,7 @@ github-pages/
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
 - **Botão "Plantão"** — nova seção na landing page com escala de plantão de defensores e servidores. Arquitetura a definir na próxima sessão (dados estáticos no HTML? JSON? Firestore?).
 - **Botão "Escala de Férias"** (futuro) — calendário visual de férias da equipe (defensores + servidores). Ideia: grid anual/mensal mostrando períodos de férias de cada pessoa. Arquitetura a definir.
+- **Primeiro teste real da automação de remoção** — a coleção `remocoes_admin` ainda não tem documentos reais. A Portaria 602/2026 (remoção que motivou o desenvolvimento) é anterior à feature; decidiu-se aguardar a próxima portaria de Concurso de Remoção que afete o Polo Médio Amazonas para validar o fluxo completo.
 
 ### Descartado (não vale implementar)
 - **Coleção `defensores_admin` no Firestore** — descartado: ex-membros livres já detectados automaticamente via orphanExMembros; casos raros de inconsistência com o JSON não justificam a complexidade
