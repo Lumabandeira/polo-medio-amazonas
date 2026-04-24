@@ -4434,6 +4434,8 @@
             const count = notificacoesData.length;
             badge.textContent = count;
             badge.style.display = count > 0 ? '' : 'none';
+            btn.style.opacity       = count > 0 ? '1' : '0';
+            btn.style.pointerEvents = count > 0 ? '' : 'none';
         }
 
         function _atualizarBadgeSinoRemocao() {
