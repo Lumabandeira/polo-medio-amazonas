@@ -2288,5 +2288,77 @@
         "resumo": "2ª Alteração da escala de plantão 2º trimestre/2026: Polo Médio Amazonas com Eliaquim, José Antônio, Ícaro, Miguel e Elton; servidores Larice, Natália, Fábio, Luma e Arnoud"
       }
     ]
+  },
+  {
+    "edicao": 2636,
+    "data": "",
+    "data_formatada": "",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/04/Edicao_2636-2026__publicada_em_23_abril_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 602/2026-GDPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "3ª Defensoria Pública do Polo do Médio Solimões",
+          "6ª Defensoria Pública do Polo do Médio Solimões",
+          "11º José Antonio Pereira da Silva - Defensoria Pública do Polo do Médio Amazonas - Defensoria Pública do Polo do Rio Negro",
+          "13ª Isabela do Amaral Sales - Defensoria Pública do Polo do Médio Amazonas - Defensoria Pública do Polo do Rio Negro Solimões",
+          "14º Elton Dariva Staub - Defensoria Pública do Polo do Médio Amazonas - Defensoria Pública do Polo do Rio Negro Solimões",
+          "17ª Thays Lidianne Campos de Azevedo Pereira - Defensoria Pública do Polo do Médio Solimões - Defensoria Pública do Polo do Médio Amazonas"
+        ],
+        "resumo": "Concurso de Remoção de 2026 com vagas para defensores públicos no Polo do Médio Amazonas e Polo do Médio Solimões"
+      },
+      {
+        "numero": "Portaria Nº 603/2026-GDPG/DPE/AM",
+        "sei": "26.0.000004934-3",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "servidor",
+          "comarca"
+        ],
+        "trechos": [
+          "II - AUTORIZAR o deslocamento de Edival Nunes Guilherme, Assessor Tecnico II DPE-1, Marcos Leão dos Santos, Assistente Técnico em Tecnologia da Informação de Defensoria, nos trechos Manaus/Itacoatiara/Manaus, no período de 23 a 24 de abril de 2026, a fim de prestarem apoio técnico na Ação Itinerante 12ª Edição Fenapred – Indígena Rio Urubu, em Itacoatiara-AM",
+          "III - AUTORIZAR o deslocamento de Aldener Maciel da Silva, Auxiliar I de Defensoria, nos trechos Manaus/Itacoatiara/Manaus, no período de 23 a 24 de abril de 2026, a fim de conduzir o defensor público e os servidores públicos ao município de Itacoatiara-AM"
+        ],
+        "resumo": "Autoriza deslocamento de defensor e servidores para Itacoatiara em 23-24 de abril de 2026 para ação itinerante Fenapred Indígena Rio Urubu"
+      },
+      {
+        "numero": "Portaria Nº 604/2026-GDPG/DPE/AM",
+        "sei": "26.0.000005211-5",
+        "sgi": "1467",
+        "categorias": [
+          "defensor",
+          "servidor",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Danilo Germano Ribeiro Penha, Defensor Público 2ª Classe, Adrieida de Souza Maklouf Teixeira, Assessora Jurídica DPE-3, Edilene Lopes Barbosa, Assessora Técnica I DPE-2,Mario dos Santos Cruz, Assessor Técnico I DPE-2, Reinaldo Oliveira Machado Gonzaga, Assessor de Defensor Público DPE-3, Lana Catiane Furtado da Rocha, Assessora Técnica II DPE-1, João Coelho de Souza, Assessor Jurídico DPE-3, Thiago Aparecido Coutinho, Assistente Técnico de Defensoria, Danielle Soares da Costa, Assessora Técnico I DPE-2, nos trechos Manaus/Itacoatiara/Manaus, no período de 23 a 24 de abril de 2026, a fim de realizarem a Ação Itinerante 12ª Edição Fenapred – Indígena Rio Urubu, em Itacoatiara-AM"
+        ],
+        "resumo": "Autoriza deslocamento de defensor público e múltiplos servidores para Itacoatiara em 23-24 de abril de 2026 para realizar Ação Itinerante Fenapred Indígena Rio Urubu"
+      },
+      {
+        "numero": "TERMO DE COOPERAÇÃO TÉCNICA Nº 08/2026-DPE/AM",
+        "sei": "26.0.000004233-0",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "PARTÍCIPES: DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS – DPE/AM e o MUNICÍPIO DE URUCARÁ/AM",
+          "OBJETO: O presente Termo de Cooperação Técnica tem como objeto estabelecer a cooperação mútua entre as partes, visando à implantação de um Posto de Atendimento da Defensoria Pública do Estado do Amazonas no Município de Urucará/AM"
+        ],
+        "resumo": "Termo de cooperação técnica com o município de Urucará para implantação de Posto de Atendimento da DPE/AM"
+      }
+    ]
   }
 ]
