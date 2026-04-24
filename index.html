@@ -4446,8 +4446,8 @@
             badge.textContent = count;
             badge.style.display = count > 0 ? '' : 'none';
             // Camuflado quando sem pendências, visível quando há notificações
-            btn.style.color  = count > 0 ? '' : 'var(--bg-color)';
-            btn.style.cursor = count > 0 ? 'pointer' : 'default';
+            btn.style.opacity       = count > 0 ? '1' : '0';
+            btn.style.pointerEvents = count > 0 ? '' : 'none';
         }
 
         function abrirPainelNotificacoes() {
