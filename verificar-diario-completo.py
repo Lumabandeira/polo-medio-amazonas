@@ -299,6 +299,13 @@ def get_latest_editions() -> list:
     r.raise_for_status()
     soup = BeautifulSoup(r.content, "html.parser")
 
+    _MESES_PT = {
+        "janeiro": "01", "fevereiro": "02", "março": "03", "marco": "03",
+        "abril": "04", "maio": "05", "junho": "06", "julho": "07",
+        "agosto": "08", "setembro": "09", "outubro": "10",
+        "novembro": "11", "dezembro": "12",
+    }
+
     editions = {}
     for a in soup.find_all("a", href=True):
         href = a["href"]
@@ -310,8 +317,18 @@ def get_latest_editions() -> list:
                 url = href if href.startswith("http") else f"https://diario.defensoria.am.def.br{href}"
                 data_pub = ""
                 if m.group(3):
+                    # Formato antigo: Edicao_NNNN-AAAA_DDMMAAAA
                     d_str = m.group(3)
                     data_pub = f"{ano}-{d_str[2:4]}-{d_str[:2]}"
+                else:
+                    # Formato novo: Edicao_NNNN-AAAA__publicada_em_DD_mes_de_AAAA
+                    m2 = re.search(r"publicada_em_(\d{1,2})_([a-zA-Z\u00c0-\u00ff]+)_de_(\d{4})", href, re.IGNORECASE)
+                    if m2:
+                        dia = m2.group(1).zfill(2)
+                        mes = _MESES_PT.get(m2.group(2).lower(), "")
+                        ano2 = m2.group(3)
+                        if mes:
+                            data_pub = f"{ano2}-{mes}-{dia}"
                 if num not in editions:
                     editions[num] = {"url": url, "data_publicacao": data_pub}
 
@@ -502,6 +519,10 @@ def atualizar_json_diario(
         log.info(f"Edição {num} criada no JSON.")
     else:
         log.info(f"Edição {num} já existe no JSON. Mesclando portarias.")
+        if not entry.get("data") and data_pub:
+            entry["data"] = data_pub
+            entry["data_formatada"] = _formatar_data(data_pub)
+            log.info(f"Edição {num}: data preenchida retroativamente → {data_pub}")
 
     # Dedup por número de portaria
     existentes = {p.get("numero", "").strip() for p in entry.get("portarias_estruturadas", [])}

@@ -586,6 +586,13 @@ def get_latest_editions() -> list:
     r.raise_for_status()
     soup = BeautifulSoup(r.content, "html.parser")
 
+    _MESES_PT = {
+        "janeiro": "01", "fevereiro": "02", "março": "03", "marco": "03",
+        "abril": "04", "maio": "05", "junho": "06", "julho": "07",
+        "agosto": "08", "setembro": "09", "outubro": "10",
+        "novembro": "11", "dezembro": "12",
+    }
+
     editions = {}
     for a in soup.find_all("a", href=True):
         href = a["href"]
@@ -598,8 +605,18 @@ def get_latest_editions() -> list:
                 # Data no formato DDMMYYYY → YYYY-MM-DD
                 data_pub = ""
                 if m.group(3):
+                    # Formato antigo: Edicao_NNNN-AAAA_DDMMAAAA
                     d_str = m.group(3)
                     data_pub = f"{ano}-{d_str[2:4]}-{d_str[:2]}"
+                else:
+                    # Formato novo: Edicao_NNNN-AAAA__publicada_em_DD_mes_de_AAAA
+                    m2 = re.search(r"publicada_em_(\d{1,2})_([a-zA-Z\u00c0-\u00ff]+)_de_(\d{4})", href, re.IGNORECASE)
+                    if m2:
+                        dia = m2.group(1).zfill(2)
+                        mes = _MESES_PT.get(m2.group(2).lower(), "")
+                        ano2 = m2.group(3)
+                        if mes:
+                            data_pub = f"{ano2}-{mes}-{dia}"
                 if num not in editions:
                     editions[num] = {"url": url, "data_publicacao": data_pub}
 
