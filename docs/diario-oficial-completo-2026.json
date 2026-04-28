@@ -2385,5 +2385,71 @@
         "resumo": "Designa defensoras públicas para atuar em audiências na comarca de Itacoatiara nos dias 14-17 de abril de 2026, com atribuição de adicional por audiências realizadas"
       }
     ]
+  },
+  {
+    "edicao": 2638,
+    "data": "2026-04-27",
+    "data_formatada": "27/04/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/04/Edicao_2638-2026__publicada_em_27_abril_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 384/2026-GSPG/DPE/AM",
+        "sei": "26.0.000004378-7",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR a Defensora Pública de 3ª Classe Yáskara Xavier Luciano Lucena para atuar nas audiências designadas para os dias 14 a 16 de abril de 2026, na 1ª Vara da Comarca de Itacoatiara, conforme Anexo Único",
+          "I - DESIGNAR a Defensora Pública de 4ª Classe Érica Andrade de Oliveira para atuar nas audiências designadas para o dia 17 de abril de 2026, na 1ª Vara da Comarca de Itacoatiara, conforme Anexo Único"
+        ],
+        "resumo": "Designa defensoras públicas para atuar em audiências na Comarca de Itacoatiara entre 14 e 17 de abril de 2026"
+      },
+      {
+        "numero": "Portaria Nº 231/2026-GDPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "substituicao",
+          "coordenacao"
+        ],
+        "trechos": [
+          "Portaria n.º 231/2026-GDPG/DPE/AM, Ano 12, Edição 2.601, pág. 10, datada de 27 de fevereiro de 2026, que delegou ao Subdefensor Público Geral, as funções de organização e designação de membros para substituição em casos de férias, folgas, licenças e demais casos de afastamentos previstos em lei"
+        ],
+        "resumo": "Delegou funções de organização e designação de membros para substituição em casos de afastamentos nos Polos do Interior"
+      },
+      {
+        "numero": "Portaria Nº 559/2025-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "CESSAR OS EFEITOS, a contar do dia 02 de maio de 2026, do inciso III da Portaria nº 559/2025-GSPG/DPE/AM, publicada no dia 08 de julho de 2025, Ano 11, Edição 2447 Pág. 18 de 32, quanto à designação do Defensor Público de 4ª Classe José Antônio Pereira da Silva para atuar, a contar do dia 28 de junho de 2025, na 8ª Defensoria Pública do Polo Médio Amazonas"
+        ],
+        "resumo": "Cessação de efeitos da designação de José Antônio Pereira da Silva na 8ª Defensoria Pública do Polo Médio Amazonas a partir de 02 de maio de 2026"
+      },
+      {
+        "numero": "Portaria Nº 422/2025-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "CESSAR OS EFEITOS, a contar do dia 02 de maio de 2026, do inciso IV da Portaria nº 422/2025-GSPG/DPE/AM, publicada no dia 27 de maio de 2025, Ano 11, Edição 2421 Pág. 7 de 15, quanto à designação do Defensor Público de 4ª Classe José Antônio Pereira da Silva para atuar a contar do dia 19 de junho de 2025, na 10ª Defensoria Pública do Polo Médio Amazonas"
+        ],
+        "resumo": "Cessação de efeitos da designação de José Antônio Pereira da Silva na 10ª Defensoria Pública do Polo Médio Amazonas a partir de 02 de maio de 2026"
+      }
+    ]
   }
 ]
