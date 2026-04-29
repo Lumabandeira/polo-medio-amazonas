@@ -2451,5 +2451,61 @@
         "resumo": "Cessação de efeitos da designação de José Antônio Pereira da Silva na 10ª Defensoria Pública do Polo Médio Amazonas a partir de 02 de maio de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2639,
+    "data": "2026-04-28",
+    "data_formatada": "28/04/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/04/Edicao_2639-2026__publicada_em_28_abril_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 378/2026-GSPG/DPE/AM",
+        "sei": "26.0.000004607-7",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3ª Classe Oswaldo Machado Neto, para atuar nas Sessões de Julgamento do Tribunal do Júri da 1ª Vara da Comarca de Itacoatiara nos dias 12 a 14 de maio de 2026, conforme Anexo Único;",
+          "II - ATRIBUIR ao Defensor Público mencionado neste ato, por dia trabalhado, 1 (um) dia de licença compensatória por acumulação de acervo processual, nos mesmos termos dispostos no art. 1º do Ato Normativo 5/2025/GDPG/DPE/AM;",
+          "III - ENQUADRAR a atuação do membro mencionado neste ato como 1 (uma) designação especial, por dia trabalhado, para fins de promoção, na forma do inciso IV do art. 17 da Resolução n.º 004/2018-CSDPE/AM;",
+          "IV - DETERMINAR a atuação do membro mencionado no Anexo Único como critério de elegibilidade para meritocracia, nos termos do art. 2º, inciso V, da Resolução nº 027/2025-CSDPE/AM."
+        ],
+        "resumo": "Designa Oswaldo Machado Neto para atuar nas Sessões de Julgamento do Tribunal do Júri da comarca de Itacoatiara nos dias 12 a 14 de maio de 2026"
+      },
+      {
+        "numero": "Portaria Nº 330/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao",
+          "plantao"
+        ],
+        "trechos": [
+          "Escala de substituição Polo Rio Negro-Solimões Polo do Médio Amazonas / Polo do Médio Solimões Polo do Baixo Amazonas / Polo do Médio Madeira Polo do Madeira Maués e",
+          "XV - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de afastamento, impedimento, suspeição, denegação de atendimento e licença médica de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção:"
+        ],
+        "resumo": "Estabelece escala de substituição automática entre polos do interior, incluindo o Polo Médio Amazonas, para cobertura de afastamentos e impedimentos"
+      },
+      {
+        "numero": "Portaria Nº 332/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005506-8",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, a contar do dia 30 de abril de 2026, do inciso IV da Portaria nº 206/2026-GSPG/DPE/AM, publicada no dia 06 de março de 2026, Ano 12, Edição 2606 Pág. 10 de 32, quanto à designação do Defensor Público de 3ª Classe Miguel Eduardo de Azevedo Martins Filho para atuar, a contar do dia 07 de março de 2026, na 7ª Defensoria Pública do Polo Médio Amazonas (São Sebastião do Uatumã);",
+          "II - CESSAR OS EFEITOS, a contar do dia 30 de abril de 2026, do inciso V da Portaria nº 422/2025-GSPG/DPE/AM, publicada no dia 27 de maio de 2025, Ano 11, Edição 2421 Pág. 7 de 15, quanto à designação do Defensor Público de 4ª Classe Ícaro Oliveira de Avelar Costa para atuar, a contar do dia 20 de maio de 2025, na 11ª Defensoria Pública do Polo Médio Amazonas (Silves);"
+        ],
+        "resumo": "Cessa as designações de Miguel Eduardo de Azevedo Martins Filho na 7ª Defensoria do Polo Médio Amazonas (São Sebastião do Uatumã) e Ícaro Oliveira de Avelar Costa na 11ª Defensoria do Polo Médio Amazonas (Silves)"
+      }
+    ]
   }
 ]
