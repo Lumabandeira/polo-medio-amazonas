@@ -65,17 +65,19 @@ afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendári
   precisa_revisao: true    ← true quando data_fim está vazia (designação aberta)
   motivo_revisao: "sem data fim — designação aberta (\"a contar do dia X\")"
 
-remocoes_admin/{id}   ← portarias de Concurso de Remoção detectadas pela automação
-  portaria_numero: "Portaria nº 602/2026-GDPG/DPE/AM"
+remocoes_admin/{id}   ← portarias de Concurso de Remoção OU cessação de designação
+  tipo: "cessacao_designacao"  ← presente apenas em cessações; ausente = concurso de remoção
+  portaria_numero: "Portaria nº 602/2026-GDPG/DPE/AM"  ← portaria cessadora (para cessações)
+  portaria_cessada: "Portaria nº 206/2026-GSPG/DPE/AM" ← portaria cujos efeitos foram cessados (só em cessações)
   portaria_url: "https://..."     ← PDF do Diário Oficial
-  concurso: "Concurso de Remoção nº 1/2026"
-  data_vigencia: "2026-05-02"     ← data a partir da qual a remoção tem efeito
-  saindo: [{ dp: "1", defensor: "Nome completo" }, ...]
-  chegando: [{ dp: "1", defensor: "Nome completo" }, ...]
+  concurso: "Concurso de Remoção nº 1/2026"  ← vazio em cessações
+  data_vigencia: "2026-05-02"     ← para cessações: último dia de vigência da designação cessada
+  saindo: [{ dp: "1", defensor: "Nome completo" }, ...]   ← em cessações: DP ficará vaga
+  chegando: [{ dp: "1", defensor: "Nome completo" }, ...]  ← vazio em cessações
   origem: "automacao-diario-oficial"
-  lido: false              ← false = aparece no sino de remoção; true = dispensado
+  lido: false              ← false = aparece no sino; true = dispensado
   edicao_do: "2640"
-  data_publicacao_do: "2026-04-15"
+  data_publicacao: "2026-04-15"
   criado_por: "automacao@github-actions"
   criado_em: timestamp
 ```
@@ -199,7 +201,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 24/04/2026 — sessão 12)
+## Estado atual do site (atualizado em 29/04/2026 — sessão 13)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -238,7 +240,10 @@ github-pages/
 - **Aba "Resumo de Afastamentos" dinamizada** — antes era HTML estático e desatualizado. Agora o conteúdo é gerado por `renderDetalhesAfastamentos()` que lê os mesmos dados do calendário. Agrupa por defensor (ordem do JSON, ativos primeiro) e por mês de início. Formato: `🔵 Nome completo` / bullet por mês com lista de "Tipo DD-DD/MM". Mapa `DEFENSOR_EMOJI` com chaves corretas do JSON (`jose-antonio`, `miguel`, etc.). Chamada automática em `loadAfastamentosFirestore()` e `showTab('detalhes')`.
 - **Filtro por DP na aba Lista de Substituições** — `<select id="filtro-lista-dp">` com opções "Todas as DPs" + "1ª DP" … "12ª DP". Variável global `filtroListaDP`. Ao filtrar, `renderListaSubstituicoes()` mantém o **registro inteiro** (todas as DPs do afastamento) quando qualquer DP do registro bate com o filtro — preserva o contexto do afastamento completo. Registros sem match são ocultados; meses sem match some do render.
 - **Sino 🔔 de notificações da automação (afastamentos)** — botão `#btn-sino` na **barra de abas**, ao lado da aba "📋 Lista de Substituições" (visível apenas para admins). **Camouflado** quando sem pendências (`opacity:0; pointer-events:none`); exibe badge vermelho com contagem quando há registros não lidos. Ao clicar, abre painel lateral (`#notif-overlay` / `.notif-panel`) com registros `origem:"automacao-diario-oficial"` e `lido !== true`, agrupados por edição do DO. Cada item: ✋ se `precisa_revisao:true`, 🤖 caso contrário; defensor, DPs, tipo, período, portaria, motivo. Botões: [✏️ Editar] abre formulário pré-populado; [🗑️ Dispensar] grava `lido:true`. Global: `notificacoesData[]`. Funções: `carregarNotificacoesAutomacao()`, `_atualizarBadgeSino()`, `abrirPainelNotificacoes()`, `fecharPainelNotificacoes()`, `dispensarNotificacao(id)`. **Posição atual:** movido do `<h2>` da aba para a barra de abas em 24/04/2026 (commit `382c90e`). **Nota CSS:** `color` não afeta emoji 🔔 — camouflagem feita com `opacity`, não `color`.
-- **Sino 🔔 de Concurso de Remoção** — botão `#btn-sino-remocao` na **barra de abas**, ao lado da aba "📋 Defensorias". Mesma lógica de camouflage por opacity. Lê coleção `remocoes_admin` (onde `origem:"automacao-diario-oficial"` e `lido !== true`). Painel `#notif-remocao-overlay` com cabeçalho âmbar (`#b45309`). Exibe: número da portaria, data de vigência, lista de DPs (quem sai e quem chega). Botões: [✏️ Editar] + [🗑️ Dispensar] (sem "Aplicar ao site"). Funções: `_atualizarBadgeSinoRemocao()`, `abrirPainelRemocao()`, `fecharPainelRemocao()`, `editarRemocao(id)`, `salvarEdicaoRemocao(id, numRows)`, `dispensarRemocao(id)`. Global: `remocaoNotifData[]`. **`carregarNotificacoesAutomacao()` usa try/catch independentes** para cada coleção (evita que falha em `remocoes_admin` apague dados de `afastamentos_admin`).
+- **Sino 🔔 de Alterações de Titularidade** — botão `#btn-sino-remocao` na **barra de abas**, ao lado da aba "📋 Defensorias". Mesma lógica de camouflage por opacity. Lê coleção `remocoes_admin` (onde `origem:"automacao-diario-oficial"` e `lido !== true`). Painel `#notif-remocao-overlay` com cabeçalho âmbar (`#b45309`), título "🔔 Alterações de Titularidade". Renderiza dois tipos de registro (campo `tipo` do Firestore):
+  - **`tipo: "cessacao_designacao"`** (borda vermelha, ícone 🏛️): portarias que cessam efeitos de designações anteriores → DP ficará vaga. Exibe: defensor saindo, DP, último dia de vigência, portaria cessada. Sem botão Editar; apenas [🗑️ Dispensar] + lembrete para atualizar titulares na aba Defensorias.
+  - **Sem `tipo` / tipo ausente** (borda âmbar, ícone 🔄): Concurso de Remoção. Exibe: portaria, vigência, quem sai e quem chega. Botões: [✏️ Editar] + [🗑️ Dispensar].
+  - Funções: `_atualizarBadgeSinoRemocao()`, `abrirPainelRemocao()`, `fecharPainelRemocao()`, `editarRemocao(id)`, `salvarEdicaoRemocao(id, numRows)`, `dispensarRemocao(id)`. Global: `remocaoNotifData[]`. **`carregarNotificacoesAutomacao()` usa try/catch independentes** para cada coleção (evita que falha em `remocoes_admin` apague dados de `afastamentos_admin`).
 - **Detecção de membros com efeito futuro** — defensores com início de designação após hoje (`inicio > today && fim === null`) são detectados por `getFutureTitular(dpKey)` e mapeados em `defFutureDPs`. O filtro `orphanExMembros` exclui quem está em `defFutureDPs`, evitando que apareçam como ex-defensores antes da vigência. A aba Defensorias exibe esses membros como "futuros" nos cards das DPs.
 - **Automação de Concurso de Remoção (`verificar-diario-oficial.py`)** — novas funções: `_texto_tem_remocao_polo_medio(text)` (pré-filtro por regex), `_extrair_trechos_remocao(text)`, `parse_remocao(text, state)` (usa Claude Haiku para extrair portaria, data de vigência, saindo[], chegando[]), `salvar_remocao_firestore(data, ...)` (grava em `remocoes_admin` com dedup por `portaria_numero`). Constante `FIRESTORE_COLECAO_REMOCOES = "remocoes_admin"`. Roda após o bloco de afastamentos no `main()`.
 - **Automação atualizada (`verificar-diario-oficial.py`)** — grava `lido: false`, `edicao_do`, `data_publicacao_do` em todos os registros novos. Data de publicação extraída da URL da edição (regex `Edicao_NNN-AAAA_DDMMAAAA`). Designações "a contar do dia X" sem data fim agora **gravadas** com `precisa_revisao: true` + `motivo_revisao` em vez de descartadas. Prompt do Claude atualizado para retornar `data_fim: ""` nesses casos. Ciclo completo: automação grava → sino aparece → admin revisa → dispensa ou edita.
@@ -250,7 +255,7 @@ github-pages/
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
 - **Botão "Plantão"** — nova seção na landing page com escala de plantão de defensores e servidores. Arquitetura a definir na próxima sessão (dados estáticos no HTML? JSON? Firestore?).
 - **Botão "Escala de Férias"** (futuro) — calendário visual de férias da equipe (defensores + servidores). Ideia: grid anual/mensal mostrando períodos de férias de cada pessoa. Arquitetura a definir.
-- **Primeiro teste real da automação de remoção** — a coleção `remocoes_admin` ainda não tem documentos reais. A Portaria 602/2026 (remoção que motivou o desenvolvimento) é anterior à feature; decidiu-se aguardar a próxima portaria de Concurso de Remoção que afete o Polo Médio Amazonas para validar o fluxo completo.
+- **Primeiro teste real da automação de remoção/cessação** — Em 28/04/2026 (edição 2639), a automação detectou duas portarias de cessação de efeitos (Miguel 7ª DP e Ícaro 11ª DP), mas as interpretou incorretamente como afastamentos (gravadas em `afastamentos_admin`). O bug foi corrigido na sessão 13 (commit `dc3bc96`). As duas notificações erradas precisam ser manualmente dispensadas pelo admin no sino 🔔 de afastamentos. Os titulares da 7ª e 11ª DP devem ser atualizados na aba Defensorias (fim = 30/04/2026 para Miguel e Ícaro). A próxima portaria de cessação/remoção que afete o polo validará o fluxo corrigido.
 
 ### Descartado (não vale implementar)
 - **Coleção `defensores_admin` no Firestore** — descartado: ex-membros livres já detectados automaticamente via orphanExMembros; casos raros de inconsistência com o JSON não justificam a complexidade
@@ -368,8 +373,8 @@ O workflow roda diariamente às **06:00 de Manaus** (10:00 UTC) via `.github/wor
 2. **Comparação** com `.estado-diario.json` (última edição processada, em cache via `actions/cache@v4`)
 3. Para cada edição nova: baixa PDF → extrai texto com `pdfplumber`
 4. **Pré-filtro por termos-gatilho** (`_extrair_trechos_relevantes`): procura no texto completo pela frase fixa `Polo (do) Médio Amazonas` + primeiro+segundo nome de cada **titular vigente** (carregados dinamicamente de `docs/designacoes-2026.json` + Firestore `titulares_admin` em `inicializar_defensores_e_termos()`). Se nenhum termo aparece, pula a chamada ao Claude (custo zero). Caso contrário, extrai janelas de ±1500 chars em volta de cada menção e concatena (intervalos sobrepostos são mesclados). Isso resolve o bug original de enviar só `text[:15000]` — as designações do Polo Médio costumam aparecer em páginas tardias do PDF (40k+ chars). **Cidades e servidores foram removidos dos termos** — o DO designa "Nª Defensoria Pública do Estado do Amazonas", nunca pela cidade; servidores são escopo do Projeto 2 (abaixo). Quando um titular muda (ex.: Miguel assumiu DPs 6/7 no lugar de Elaine em 01/03/2026), a automação se atualiza sozinha na próxima execução, sem edição no script.
-5. Envia trechos ao **Claude Haiku 4.5** (`claude-haiku-4-5-20251001`, `max_tokens=2048`) com prompt que pede JSON agrupado por afastamento
-6. `salvar_afastamentos_firestore()` converte para o schema esperado pelo site (ver abaixo) e grava via `firebase-admin`
+5. Envia trechos ao **Claude Haiku 4.5** (`claude-haiku-4-5-20251001`, `max_tokens=2048`) com prompt que pede JSON com dois arrays: `afastamentos` (ausências com substituto) e `cessacoes` (portarias que "cessam efeitos" / "tornam sem efeito" designações anteriores — DP ficará vaga). Portarias de cessação **não** geram afastamentos.
+6. `salvar_afastamentos_firestore()` grava afastamentos em `afastamentos_admin`; `salvar_cessacoes_firestore()` grava cessações em `remocoes_admin` com `tipo:"cessacao_designacao"` e dedup por `portaria_cessada`.
 7. E-mail automático com resumo dos afastamentos gravados (opcional, via SMTP)
 
 ### Schema Firestore real (importante — diferente do schema simplificado antigo)
