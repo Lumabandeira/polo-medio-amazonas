@@ -2402,7 +2402,7 @@
 
         <div class="tabs">
             <button class="tab-button active" onclick="showTab('designacoes')">📋 Defensorias</button>
-            <button id="btn-sino-remocao" class="btn-sino-remocao" style="display:none" onclick="abrirPainelRemocao()" title="Notificações de Concurso de Remoção">
+            <button id="btn-sino-remocao" class="btn-sino-remocao" style="display:none" onclick="abrirPainelRemocao()" title="Notificações de Alterações de Titularidade">
                 🔔<span id="badge-sino-remocao" class="badge-sino" style="display:none">0</span>
             </button>
             <button class="tab-button" onclick="showTab('designacoes-periodo')">📅 Designações semanais</button>
@@ -2733,7 +2733,7 @@
     <div id="notif-remocao-overlay" class="notif-overlay" onclick="fecharPainelRemocao(event)">
         <div class="notif-panel" onclick="event.stopPropagation()">
             <div class="notif-panel-header" style="background:linear-gradient(135deg,#b45309,#f59e0b)">
-                <h3>🔄 Concurso de Remoção</h3>
+                <h3>🔔 Alterações de Titularidade</h3>
                 <button class="notif-panel-close" onclick="fecharPainelRemocao()">×</button>
             </div>
             <div class="notif-panel-body" id="notif-remocao-body">
@@ -4524,29 +4524,51 @@
                     (b.data_publicacao || '').localeCompare(a.data_publicacao || ''));
                 let html = '';
                 remsOrdenadas.forEach(reg => {
-                    const dataFmt  = reg.data_publicacao ? formatarData(reg.data_publicacao) : '—';
-                    const vigFmt   = reg.data_vigencia   ? formatarData(reg.data_vigencia)   : '—';
-                    const pdfLink  = reg.portaria_url
+                    const dataFmt = reg.data_publicacao ? formatarData(reg.data_publicacao) : '—';
+                    const vigFmt  = reg.data_vigencia   ? formatarData(reg.data_vigencia)   : '—';
+                    const pdfLink = reg.portaria_url
                         ? `<a href="${reg.portaria_url}" target="_blank" rel="noopener" style="color:#b45309">${esc(reg.portaria_numero || 'Ver portaria')}</a>`
                         : esc(reg.portaria_numero || '—');
-                    const saindo   = (reg.saindo   || []).map(s =>
-                        `<li>⬆️ <strong>${esc(s.defensor)}</strong> · ${esc(s.dp_no_polo)} → ${esc(s.dp_destino)}</li>`).join('');
-                    const chegando = (reg.chegando || []).map(s =>
-                        `<li>⬇️ <strong>${esc(s.defensor)}</strong> · ${esc(s.dp_origem)} → ${esc(s.dp_no_polo)}</li>`).join('');
-                    const temChegando = (reg.chegando || []).length > 0;
-                    html += `
-                    <div class="notif-grupo-titulo">📅 Publicado em ${dataFmt} · Edição ${esc(reg.edicao_do || '—')}</div>
-                    <div class="notif-item" style="border-left:4px solid #f59e0b;">
-                        <div class="notif-item-titulo"><span>🔄</span><span>${esc(reg.concurso || 'Concurso de Remoção')}</span></div>
-                        <div class="notif-item-detalhe">Vigência: <strong>${vigFmt}</strong></div>
-                        <div class="notif-item-portaria">${pdfLink}</div>
-                        ${saindo   ? `<ul style="margin:6px 0 2px 12px;font-size:0.87em;line-height:1.8">${saindo}</ul>`   : ''}
-                        ${chegando ? `<ul style="margin:2px 0 6px 12px;font-size:0.87em;line-height:1.8">${chegando}</ul>` : ''}
-                        <div class="notif-acoes">
-                            <button class="notif-btn notif-btn-editar" onclick="editarRemocao('${reg.id}')">✏️ Editar</button>
-                            <button class="notif-btn notif-btn-dispensar" onclick="dispensarRemocao('${reg.id}')">🗑️ Dispensar</button>
-                        </div>
-                    </div>`;
+
+                    if (reg.tipo === 'cessacao_designacao') {
+                        const dps = (reg.saindo || []).map(s => {
+                            const ordinal = s.dp ? `${s.dp}ª DP` : '—';
+                            return `<li>⚠️ <strong>${esc(s.defensor)}</strong> · ${ordinal} ficará vaga</li>`;
+                        }).join('');
+                        const portariaCessadaLink = reg.portaria_url
+                            ? `<a href="${reg.portaria_url}" target="_blank" rel="noopener" style="color:#b45309">${esc(reg.portaria_cessada || 'Ver portaria cessada')}</a>`
+                            : esc(reg.portaria_cessada || '—');
+                        html += `
+                        <div class="notif-grupo-titulo">📅 Publicado em ${dataFmt} · Edição ${esc(reg.edicao_do || '—')}</div>
+                        <div class="notif-item" style="border-left:4px solid #dc2626;">
+                            <div class="notif-item-titulo"><span>🏛️</span><span>Cessação de designação</span></div>
+                            <div class="notif-item-detalhe">Último dia de vigência: <strong>${vigFmt}</strong></div>
+                            <div class="notif-item-portaria" style="font-size:0.82em;color:#6b7280">Portaria cessada: ${portariaCessadaLink}</div>
+                            ${dps ? `<ul style="margin:6px 0 6px 12px;font-size:0.87em;line-height:1.8">${dps}</ul>` : ''}
+                            <div class="notif-item-detalhe" style="font-size:0.82em;color:#6b7280;margin-top:4px">Atualize os titulares na aba Defensorias.</div>
+                            <div class="notif-acoes">
+                                <button class="notif-btn notif-btn-dispensar" onclick="dispensarRemocao('${reg.id}')">🗑️ Dispensar</button>
+                            </div>
+                        </div>`;
+                    } else {
+                        const saindo   = (reg.saindo   || []).map(s =>
+                            `<li>⬆️ <strong>${esc(s.defensor)}</strong> · ${esc(s.dp_no_polo)} → ${esc(s.dp_destino)}</li>`).join('');
+                        const chegando = (reg.chegando || []).map(s =>
+                            `<li>⬇️ <strong>${esc(s.defensor)}</strong> · ${esc(s.dp_origem)} → ${esc(s.dp_no_polo)}</li>`).join('');
+                        html += `
+                        <div class="notif-grupo-titulo">📅 Publicado em ${dataFmt} · Edição ${esc(reg.edicao_do || '—')}</div>
+                        <div class="notif-item" style="border-left:4px solid #f59e0b;">
+                            <div class="notif-item-titulo"><span>🔄</span><span>${esc(reg.concurso || 'Concurso de Remoção')}</span></div>
+                            <div class="notif-item-detalhe">Vigência: <strong>${vigFmt}</strong></div>
+                            <div class="notif-item-portaria">${pdfLink}</div>
+                            ${saindo   ? `<ul style="margin:6px 0 2px 12px;font-size:0.87em;line-height:1.8">${saindo}</ul>`   : ''}
+                            ${chegando ? `<ul style="margin:2px 0 6px 12px;font-size:0.87em;line-height:1.8">${chegando}</ul>` : ''}
+                            <div class="notif-acoes">
+                                <button class="notif-btn notif-btn-editar" onclick="editarRemocao('${reg.id}')">✏️ Editar</button>
+                                <button class="notif-btn notif-btn-dispensar" onclick="dispensarRemocao('${reg.id}')">🗑️ Dispensar</button>
+                            </div>
+                        </div>`;
+                    }
                 });
                 body.innerHTML = html;
             }

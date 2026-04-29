@@ -437,6 +437,88 @@ def salvar_afastamentos_firestore(
 
     return criados
 
+# ─── Cessação de efeitos de designação ───────────────────────────────────────
+
+def salvar_cessacoes_firestore(
+    cessacoes: list,
+    edition_url: str,
+    edition_num: str = "",
+    data_publicacao_do: str = "",
+) -> list:
+    """
+    Grava cessações de efeitos de designação em `remocoes_admin`
+    com tipo="cessacao_designacao". Cada portaria_cessada única vira um doc.
+    Dedup por (tipo, portaria_cessada).
+    """
+    if not cessacoes:
+        return []
+
+    db = get_firestore_client()
+    col = db.collection(FIRESTORE_COLECAO_REMOCOES)
+    criados = []
+
+    # Agrupa cessações pela portaria que está sendo cessada
+    from collections import defaultdict
+    por_portaria = defaultdict(list)
+    for cess in cessacoes:
+        chave = (cess.get("portaria_cessada") or "").strip() or f"dp{cess.get('dp_numero','?')}"
+        por_portaria[chave].append(cess)
+
+    for portaria_cessada, itens in por_portaria.items():
+        # Dedup
+        existentes = list(
+            col.where("tipo", "==", "cessacao_designacao")
+               .where("portaria_cessada", "==", portaria_cessada)
+               .limit(1).stream()
+        )
+        if existentes:
+            log.info(f"Cessação já gravada (portaria_cessada={portaria_cessada!r}). Pulando.")
+            continue
+
+        # Monta saindo[] a partir dos itens do grupo
+        saindo = []
+        data_vigencia = ""
+        portaria_cessadora = ""
+        for item in itens:
+            dp = str(item.get("dp_numero") or "").strip()
+            defensor = (item.get("defensor") or "").strip()
+            if dp and defensor:
+                saindo.append({"dp": dp, "defensor": defensor})
+            if not data_vigencia:
+                data_vigencia = _normalizar_data(item.get("data_fim_designacao") or "")
+            if not portaria_cessadora:
+                portaria_cessadora = (item.get("portaria_cessadora") or "").strip()
+
+        if not saindo:
+            log.warning(f"Cessação sem DPs/defensores válidos — descartada: {portaria_cessada!r}")
+            continue
+
+        doc = {
+            "tipo":              "cessacao_designacao",
+            "portaria_cessada":  portaria_cessada,
+            "portaria_numero":   portaria_cessadora,
+            "portaria_url":      edition_url,
+            "data_vigencia":     data_vigencia,
+            "concurso":          "",
+            "saindo":            saindo,
+            "chegando":          [],
+            "lido":              False,
+            "origem":            "automacao-diario-oficial",
+            "edicao_do":         str(edition_num),
+            "data_publicacao":   data_publicacao_do,
+            "criado_por":        CRIADO_POR_AUTOMACAO,
+            "criado_em":         firestore.SERVER_TIMESTAMP,
+        }
+        _, ref = col.add(doc)
+        log.info(
+            f"✅ Cessação gravada: id={ref.id} | portaria_cessada={portaria_cessada!r} "
+            f"| {len(saindo)} DP(s) ficando vaga(s)"
+        )
+        criados.append({"id": ref.id, **doc})
+
+    return criados
+
+
 # ─── Concurso de Remoção ──────────────────────────────────────────────────────
 
 def _texto_tem_remocao_polo_medio(text: str) -> bool:
@@ -796,12 +878,13 @@ def parse_designations(text: str, state: dict) -> dict:
     """
     Usa Claude para identificar designações do Polo Médio no texto do PDF.
     Agrupa por afastamento (defensor + período + tipo) com lista de designações.
+    Também detecta cessações de efeitos de designações anteriores.
     Pre-filtra o texto por termos-gatilho para reduzir tokens e custo.
     """
     trechos = _extrair_trechos_relevantes(text)
     if not trechos:
         log.info("PDF sem menção a termos do Polo Médio. Pulando chamada ao Claude.")
-        return {"tem_designacoes": False, "afastamentos": []}
+        return {"tem_designacoes": False, "afastamentos": [], "cessacoes": []}
 
     log.info(
         f"Trechos relevantes extraidos: {len(trechos)} caracteres "
@@ -821,7 +904,7 @@ def parse_designations(text: str, state: dict) -> dict:
             "role": "user",
             "content": f"""Analise este texto do Diário Oficial da Defensoria Pública do Estado do Amazonas.
 
-Identifique APENAS designações/substituições/afastamentos do **Polo Médio Amazonas** (também chamado "Polo do Médio Amazonas").
+Identifique designações/substituições/afastamentos do **Polo Médio Amazonas** (também chamado "Polo do Médio Amazonas").
 
 Defensores titulares do Polo Médio e suas DPs:
 {defensores_str}
@@ -843,11 +926,20 @@ Retorne SOMENTE um JSON válido com esta estrutura:
         {{"dp_numero": "5", "substituto": "Nome completo do substituto"}}
       ]
     }}
+  ],
+  "cessacoes": [
+    {{
+      "defensor": "Nome completo do titular cuja designação foi cessada",
+      "dp_numero": "7",
+      "portaria_cessada": "Portaria nº 206/2026-GSPG/DPE/AM",
+      "portaria_cessadora": "Portaria nº 321/2026-GSPG/DPE/AM ou vazio",
+      "data_fim_designacao": "YYYY-MM-DD"
+    }}
   ]
 }}
 
-Se não houver afastamentos do Polo Médio, retorne:
-{{"tem_designacoes": false, "afastamentos": []}}
+Se não houver afastamentos nem cessações do Polo Médio, retorne:
+{{"tem_designacoes": false, "afastamentos": [], "cessacoes": []}}
 
 REGRAS:
 - Datas SEMPRE no formato YYYY-MM-DD (ex: 2026-05-15)
@@ -855,6 +947,15 @@ REGRAS:
 - Se não identificar algum campo, use string vazia "" (não use null)
 - Se a designação for "a contar do dia X" SEM data final explícita, use `"data_fim": ""` — NÃO invente uma data
 - Inclua o afastamento mesmo sem data fim; o sistema sinalizará para revisão manual
+
+IMPORTANTE — NÃO coloque em `afastamentos`:
+- Portarias que "TORNAM SEM EFEITO", "CESSAM OS EFEITOS" ou "REVOGAM" designações anteriores
+  → Essas são **cessações de efeitos**: coloque-as em `cessacoes` (a DP ficará vaga)
+- Portarias de Concurso de Remoção (tratadas separadamente)
+
+Para cessações: `portaria_cessada` é a portaria ANTIGA cujos efeitos estão sendo encerrados;
+`portaria_cessadora` é a portaria da presente edição que determina a cessação (pode ser vazia);
+`data_fim_designacao` é o ÚLTIMO DIA de vigência da designação cessada.
 
 TRECHOS RELEVANTES DO DIÁRIO OFICIAL (janelas de contexto em volta de menções ao Polo Médio):
 {trechos}""",
@@ -872,10 +973,11 @@ TRECHOS RELEVANTES DO DIÁRIO OFICIAL (janelas de contexto em volta de menções
             # retrocompat: aceita "designacoes" no nível raiz (formato antigo)
             if "afastamentos" not in data and "designacoes" in data:
                 data["afastamentos"] = data.pop("designacoes")
+            data.setdefault("cessacoes", [])
             return data
         except json.JSONDecodeError:
             log.warning("Resposta do Claude não é JSON válido")
-    return {"tem_designacoes": False, "afastamentos": []}
+    return {"tem_designacoes": False, "afastamentos": [], "cessacoes": []}
 
 # ─── Notificação pós-gravação ────────────────────────────────────────────────
 
@@ -990,6 +1092,23 @@ def main():
                         total_criados += len(criados)
                 else:
                     log.info(f"Edição {num}: sem designações do Polo Médio Amazonas")
+
+                # Cessações de efeitos de designação (detectadas junto com afastamentos)
+                cessacoes = result.get("cessacoes", [])
+                if cessacoes and not verificar_limite_custo(state):
+                    log.info(f"Edição {num}: {len(cessacoes)} cessação(ões) de designação detectada(s)")
+                    for cess in cessacoes:
+                        log.info(
+                            f"  → cessação: {cess.get('defensor')} | DP {cess.get('dp_numero')} "
+                            f"| portaria cessada: {cess.get('portaria_cessada')} "
+                            f"| fim: {cess.get('data_fim_designacao')}"
+                        )
+                    salvar_cessacoes_firestore(
+                        cessacoes,
+                        edition["url"],
+                        edition_num=edition["numero"],
+                        data_publicacao_do=edition.get("data_publicacao", ""),
+                    )
 
                 # Detecção de concurso de remoção (independente dos afastamentos normais)
                 if _texto_tem_remocao_polo_medio(text) and not verificar_limite_custo(state):
