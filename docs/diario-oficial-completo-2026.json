@@ -2507,5 +2507,59 @@
         "resumo": "Cessa as designações de Miguel Eduardo de Azevedo Martins Filho na 7ª Defensoria do Polo Médio Amazonas (São Sebastião do Uatumã) e Ícaro Oliveira de Avelar Costa na 11ª Defensoria do Polo Médio Amazonas (Silves)"
       }
     ]
+  },
+  {
+    "edicao": 2640,
+    "data": "2026-04-29",
+    "data_formatada": "29/04/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/04/Edicao_2640-2026__publicada_em_29_abril_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 413/2026-GSPG/DPE/AM",
+        "sei": "26.0.000003208-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "nomeacao_diretoria",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, apenas no período de 22 a 30 de abril de 2026, a FGD-6 (Coordenadoria do Interior), nos termos da Lei n.º 4.831 de 13 de maio de 2019, concedida ao Defensor Público Ícaro Oliveira Avelar Costa;",
+          "II - DESIGNAR, no período de 22 a 30 de abril de 2026, o Defensor Público José Antônio Pereira da Silva como Coordenador do Polo do Médio Amazonas, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019."
+        ],
+        "resumo": "Cessa FGD-6 de Ícaro Oliveira Avelar Costa e designa José Antônio Pereira da Silva como Coordenador do Polo do Médio Amazonas (22-30/04/2026)"
+      },
+      {
+        "numero": "Portaria Nº 414/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005611-0",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "nomeacao_diretoria"
+        ],
+        "trechos": [
+          "VI - DESIGNAR, a contar do dia 01 de maio de 2026, a Defensora Pública Emilly Bianca Ferreira dos Santos como Coordenadora do Polo do Médio Amazonas, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019;"
+        ],
+        "resumo": "Designa Emilly Bianca Ferreira dos Santos como Coordenadora do Polo do Médio Amazonas com FGD-6 (a partir de 01/05/2026)"
+      },
+      {
+        "numero": "Portaria Nº 418/2026-GSPG/DPE/AM",
+        "sei": "26.0.000004378-7",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - DESIGNAR o Defensor Público de 3ª Classe Daniel Bettanin e Silva para atuar nas audiências designadas para os dias 28 a 30 de abril de 2026, na 2ª Vara da Comarca de Itacoatiara, conforme Anexo Único;",
+          "II - ATRIBUIR ao Defensor Público mencionado, o adicional previsto no art. 31, XI, da Lei n.º 4.077/2014, com redação dada pela Lei n.º 4.831/2019, no valor correspondente ao nível 1, do Anexo XII da mesma lei, a cada 04 (quatro) audiências realizadas."
+        ],
+        "resumo": "Designa Daniel Bettanin e Silva para atuar em audiências na 2ª Vara da Comarca de Itacoatiara (28-30/04/2026) com adicional de nível 1"
+      }
+    ]
   }
 ]
