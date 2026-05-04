@@ -202,7 +202,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 04/05/2026 — sessão 15)
+## Estado atual do site (atualizado em 04/05/2026 — sessão 16)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -265,6 +265,8 @@ github-pages/
 - **Limpar titulares_admin das DPs 1, 2, 5 no Firestore** — admin deve abrir o modal ✏️ de cada uma e salvar novamente para que os novos defensores sejam gravados com as chaves corretas (`enio`, `thays`, `emilly`) em vez do nome completo como texto livre.
 - ~~**Dispensar notificações erradas do sino 🔔 de afastamentos**~~ ✅ Já dispensadas (confirmado em 04/05/2026 — não aparecem mais no painel).
 - ~~**Excluir afastamentos do José Antônio no Firestore**~~ ✅ Deletado via script em 04/05/2026 — doc `CpewjdQkUjofHP3xVe9v` (férias 08–25/jun) removido da coleção `afastamentos_admin`. Era o único registro futuro no Firestore.
+- **Comportamento da 7ª DP (SSU) na aba Designações Semanais** — mostra "—" em vez de "dp7-vaga" como as DPs 8–12. Isso ocorre porque o site usa o JSON (que tem `defensor: null`) em vez do Firestore (que tem `dp7-vaga`). Comportamento correto — significa DP vaga. Miguel NÃO está mais vinculado à 7ª DP (Firestore tem `fim: 2026-04-29` para ele; `dp7-vaga` vigente desde 2026-04-30).
+- ~~**Afastamento do Miguel com 7ª DP indevida**~~ ✅ Corrigido em 04/05/2026 — o registro de Tratamento de Saúde (02/05–09/06) foi criado quando Miguel ainda era titular de 6ª e 7ª DPs. O formulário de edição recalcula DPs pelos titulares atuais (só mostra 6ª DP). Admin abriu o ✏️ e salvou → Firestore sobrescrito sem a 7ª DP.
 
 ### Descartado (não vale implementar)
 - **Coleção `defensores_admin` no Firestore** — descartado: ex-membros livres já detectados automaticamente via orphanExMembros; casos raros de inconsistência com o JSON não justificam a complexidade
