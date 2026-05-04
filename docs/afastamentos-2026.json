@@ -25,7 +25,7 @@
     { "id": "af-014", "defensor": "elton",        "tipo": "ferias",          "data_inicio": "2026-03-02", "data_fim": "2026-03-13", "observacao": null },
     { "id": "af-015", "defensor": "elton",        "tipo": "ferias",          "data_inicio": "2026-03-16", "data_fim": "2026-03-27", "observacao": null },
     { "id": "af-016", "defensor": "elton",        "tipo": "folga",           "data_inicio": "2026-03-30", "data_fim": "2026-03-30", "observacao": null },
-    { "id": "af-017", "defensor": "elton",        "tipo": "folga",           "data_inicio": "2026-03-31", "data_fim": "2026-04-01", "observacao": null },
+    { "id": "af-017", "defensor": "elton",        "tipo": "folga",           "data_inicio": "2026-03-31", "data_fim": "2026-04-01", "observacao": null }
 
   ]
 }
