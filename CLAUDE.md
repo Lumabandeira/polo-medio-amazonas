@@ -4,7 +4,8 @@
 
 Site HTML responsivo (`index.html`) para gerenciar designações semanais e ausências dos Defensores Públicos do Polo Médio Amazonas em 2026. Tecnologias: HTML5, CSS3, JavaScript vanilla. Publicado via GitHub Pages em https://lumabandeira.github.io/polo-medio-amazonas/
 
-- **5 defensores ativos**, **12 Defensorias Públicas**
+- **6 defensores ativos** (Ênio · Thays · Ícaro · Eliaquim · Emilly · Miguel), **12 Defensorias Públicas**
+- DPs 1–6 ocupadas; DPs 7–12 vagas desde 02/05/2026 (Concurso de Remoção)
 - Regra central: alternância semanal obrigatória entre **Grupo A** e **Grupo B**
 
 ---
@@ -201,7 +202,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 29/04/2026 — sessão 13)
+## Estado atual do site (atualizado em 04/05/2026 — sessão 14)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -249,13 +250,19 @@ github-pages/
 - **Automação atualizada (`verificar-diario-oficial.py`)** — grava `lido: false`, `edicao_do`, `data_publicacao_do` em todos os registros novos. Data de publicação extraída da URL da edição (regex `Edicao_NNN-AAAA_DDMMAAAA`). Designações "a contar do dia X" sem data fim agora **gravadas** com `precisa_revisao: true` + `motivo_revisao` em vez de descartadas. Prompt do Claude atualizado para retornar `data_fim: ""` nesses casos. Ciclo completo: automação grava → sino aparece → admin revisa → dispensa ou edita.
 - **Projeto 2 — Automação completa do Diário Oficial (`verificar-diario-completo.py`)** — script independente do Projeto 1. Termos-gatilho amplos: "Polo Médio Amazonas" + 6 cidades + 5 servidores (Luma Karolyne Pantoja Bandeira, Fábio Bastos de Souza, Natália Cristina de Moraes, Arnoud Lucas Andrade da Silva, Larice Bruce Pereira) + titulares vigentes do JSON. Extrai e categoriza **todas** as portarias relevantes (não só afastamentos) e atualiza `docs/diario-oficial-completo-2026.json`. Usa API key separada (`ANTHROPIC_API_KEY_COMPLETO`) para rastrear custos independentemente. Limit mensal: $5,00. Workflow `.github/workflows/verificar-diario-completo.yml` roda às **04:00 de Manaus** (08:00 UTC). Na primeira execução, inicializa estado a partir da edição mais recente do JSON (17/04/2026) sem reprocessar histórico. Testado em 22/04/2026 — sucesso em 25s, sem custo (sem edições novas).
 - **Bug corrigido — validação de datas no formulário de afastamento** — substitutos "ainda não definido" tinham inputs de data ocultos com valores obsoletos no DOM, bloqueando indevidamente o salvamento (ex: cobertura fim = 31/05 quando afastamento fim = 30/05). Corrigido com `if (!sub.substituto) continue;` no loop de validação (`salvarAfastamentoFirestore`, linha ~4133 do index.html). Commit `5522829`.
+- **Concurso de Remoção — 3 novos defensores assumiram em 02/05/2026** — Ênio Jorge Lima Barbalho Junior (1ª DP), Thays Lidianne Campos de Azevedo Pereira (2ª DP) e Emilly Bianca Ferreira dos Santos (5ª DP). Adicionados ao dicionário `defensores` no JSON com chaves `enio`, `thays`, `emilly`. José Antônio Pereira da Silva e Elton Dariva Staub marcados `ativo: false` (sem DPs no polo → accordion Ex-membros). DPs 7ª a 11ª marcadas vagas a partir de 02/05/2026 em `historico_titulares` (fim: "2026-05-02", entrada `defensor: null` subsequente). 12ª DP já estava vaga desde 06/04/2026. Commits `5ac5a0a` e `89f23f0`.
+- **Bug corrigido — `getCurrentTitular` e `getTitularForDPOnDay` retornavam primeira entrada, não a mais recente** — quando dois registros sobrepostos cobriam a data atual (ex.: entrada antiga com `fim: null` + nova entrada com `inicio: "2026-05-02"` também `fim: null`), a função retornava a entrada mais antiga. Corrigido: ambas agora percorrem todo o array e retornam a entrada com o `inicio` mais recente entre as válidas. Commit `5ac5a0a`.
+- **`orphanCurrentMembros` — defensores do Firestore com nome como texto livre** — quando um novo defensor é cadastrado via admin UI (titulares_admin) antes de existir no JSON, o Firestore guarda o nome completo como string (não a chave do JSON). A renderização da aba Defensorias agora detecta quem tem DP ativa mas não consta no dicionário `defensores` e exibe o card normalmente. Commit `61bb356`.
+- **Lista unificada `allAtivos` ordenada por DP (1ª → 6ª)** — `renderDefensorias` agora constrói um array único fundindo `internos` (dicionário JSON) e `orphanCurrentMembros` (Firestore texto livre), ordenado pela menor DP atual de cada defensor. Elimina duplicação e garante exibição na ordem correta. `allAtivos.length` usado no contador "Total de Defensores". Commit `760f628`.
+- **Atenção — titulares_admin no Firestore para DPs 1, 2, 5** — provavelmente armazenam os novos defensores como nome completo (texto livre) em vez das chaves JSON (`enio`, `thays`, `emilly`), pois foram cadastrados antes do JSON ser atualizado. O site exibe corretamente via `orphanCurrentMembros`, mas para limpar o histórico o admin deve abrir o modal ✏️ dessas DPs e salvar novamente — o sistema vai reescrever com as chaves corretas.
 
 ### O que ainda falta implementar ⏳
 - **Cadastrar os outros 36 usuários restantes** (1 admin + 35 viewers) no Firebase Auth + Firestore — Larice Bruce e José Antônio já cadastrados em 23/04/2026
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
 - **Botão "Plantão"** — nova seção na landing page com escala de plantão de defensores e servidores. Arquitetura a definir na próxima sessão (dados estáticos no HTML? JSON? Firestore?).
 - **Botão "Escala de Férias"** (futuro) — calendário visual de férias da equipe (defensores + servidores). Ideia: grid anual/mensal mostrando períodos de férias de cada pessoa. Arquitetura a definir.
-- **Primeiro teste real da automação de remoção/cessação** — Em 28/04/2026 (edição 2639), a automação detectou duas portarias de cessação de efeitos (Miguel 7ª DP e Ícaro 11ª DP), mas as interpretou incorretamente como afastamentos (gravadas em `afastamentos_admin`). O bug foi corrigido na sessão 13 (commit `dc3bc96`). As duas notificações erradas precisam ser manualmente dispensadas pelo admin no sino 🔔 de afastamentos. Os titulares da 7ª e 11ª DP devem ser atualizados na aba Defensorias (fim = 30/04/2026 para Miguel e Ícaro). A próxima portaria de cessação/remoção que afete o polo validará o fluxo corrigido.
+- **Limpar titulares_admin das DPs 1, 2, 5 no Firestore** — admin deve abrir o modal ✏️ de cada uma e salvar novamente para que os novos defensores sejam gravados com as chaves corretas (`enio`, `thays`, `emilly`) em vez do nome completo como texto livre.
+- **Dispensar notificações erradas do sino 🔔 de afastamentos** — as duas notificações geradas erroneamente em 28/04/2026 (cessações de Miguel 7ª DP e Ícaro 11ª DP interpretadas como afastamentos) ainda precisam ser dispensadas manualmente pelo admin.
 
 ### Descartado (não vale implementar)
 - **Coleção `defensores_admin` no Firestore** — descartado: ex-membros livres já detectados automaticamente via orphanExMembros; casos raros de inconsistência com o JSON não justificam a complexidade
