@@ -262,7 +262,7 @@ github-pages/
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
 - **Botão "Plantão"** — nova seção na landing page com escala de plantão de defensores e servidores. Arquitetura a definir na próxima sessão (dados estáticos no HTML? JSON? Firestore?).
 - **Botão "Escala de Férias"** (futuro) — calendário visual de férias da equipe (defensores + servidores). Ideia: grid anual/mensal mostrando períodos de férias de cada pessoa. Arquitetura a definir.
-- **Limpar titulares_admin das DPs 1, 2, 5 no Firestore** — admin deve abrir o modal ✏️ de cada uma e salvar novamente para que os novos defensores sejam gravados com as chaves corretas (`enio`, `thays`, `emilly`) em vez do nome completo como texto livre.
+- ~~**Limpar titulares_admin das DPs 1, 2, 5 no Firestore**~~ ✅ Concluído em 04/05/2026 — admin reabriu o modal ✏️ de cada DP e salvou; chaves corretas (`enio`, `thays`, `emilly`) gravadas no Firestore.
 - ~~**Dispensar notificações erradas do sino 🔔 de afastamentos**~~ ✅ Já dispensadas (confirmado em 04/05/2026 — não aparecem mais no painel).
 - ~~**Excluir afastamentos do José Antônio no Firestore**~~ ✅ Deletado via script em 04/05/2026 — doc `CpewjdQkUjofHP3xVe9v` (férias 08–25/jun) removido da coleção `afastamentos_admin`. Era o único registro futuro no Firestore.
 - **Comportamento da 7ª DP (SSU) na aba Designações Semanais** — mostra "—" em vez de "dp7-vaga" como as DPs 8–12. Isso ocorre porque o site usa o JSON (que tem `defensor: null`) em vez do Firestore (que tem `dp7-vaga`). Comportamento correto — significa DP vaga. Miguel NÃO está mais vinculado à 7ª DP (Firestore tem `fim: 2026-04-29` para ele; `dp7-vaga` vigente desde 2026-04-30).
