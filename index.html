@@ -6208,20 +6208,35 @@
                 return true;
             });
 
+            // Unifica defensores do dicionário + do Firestore, ordenados pela menor DP (1ª→6ª)
+            const allAtivos = [];
+            internos.forEach(defKey => {
+                const defInfo = defensores[defKey];
+                const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
+                const futDps = (defFutureDPs[defKey] || []);
+                // Pular se já aparece via orphanCurrentMembros (nome completo no Firestore)
+                if (!dps.length && !futDps.length) {
+                    if (orphanCurrentMembros.some(ok => ok === defInfo.nome || ok === defInfo.nome_curto)) return;
+                }
+                const minDp = dps.length ? Math.min(...dps.map(Number))
+                            : futDps.length ? Math.min(...futDps.map(f => parseInt(f.dpKey))) : 999;
+                allAtivos.push({ key: defKey, nome: defInfo.nome, dps, futDps, minDp });
+            });
+            orphanCurrentMembros.forEach(defKey => {
+                const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
+                const minDp = dps.length ? Math.min(...dps.map(Number)) : 999;
+                allAtivos.push({ key: defKey, nome: defKey, dps, futDps: [], minDp });
+            });
+            allAtivos.sort((a, b) => a.minDp - b.minDp);
+
             let html = `<h2>👥 Defensores Públicos</h2>`
                      + `<div class="stats-grid">`
-                     + `<div class="stat-card"><h4>Total de Defensores</h4><div class="number">${internos.length + orphanCurrentMembros.length}</div></div>`
+                     + `<div class="stat-card"><h4>Total de Defensores</h4><div class="number">${allAtivos.length}</div></div>`
                      + `<div class="stat-card"><h4>Total de Defensorias</h4><div class="number">12</div></div>`
                      + `</div>`;
 
-            internos.forEach((defKey, i) => {
-                const defInfo = defensores[defKey];
-                const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
-                // Pular se já aparece via orphanCurrentMembros (mesmo defensor, nome completo no Firestore)
-                if (dps.length === 0 && !(defFutureDPs[defKey] || []).length) {
-                    if (orphanCurrentMembros.some(ok => ok === defInfo.nome || ok === defInfo.nome_curto)) return;
-                }
-                html += `<div class="defensor-card"><h4>${esc(defInfo.nome)}</h4><ul>`;
+            allAtivos.forEach(({ key: defKey, nome: defNome, dps, futDps }) => {
+                html += `<div class="defensor-card"><h4>${esc(defNome)}</h4><ul>`;
                 if (dps.length > 0) {
                     dps.forEach(dpKey => {
                         const dp = defensorias[dpKey];
@@ -6242,50 +6257,23 @@
                         }
                         html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
                     });
-                } else {
-                    const futDps = (defFutureDPs[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
-                    if (futDps.length > 0) {
-                        futDps.forEach(({ dpKey: fdpKey, inicio: finicio, portaria_entrada: fprt, do_entrada: fdo }) => {
-                            const fdp = defensorias[fdpKey];
-                            const flabel = fdp.nome.includes('(') ? esc(fdp.nome) : `${esc(fdp.nome)} (${esc(fdp.area)})`;
-                            const s = `color:var(--text-secondary);font-size:0.82em;`;
-                            let detalhe = `<br><span style="${s}">A partir de ${fmtDate(finicio)}`;
-                            if (fprt) {
-                                detalhe += fdo
-                                    ? ` — <a href="${esc(fdo)}" target="_blank" rel="noopener" style="color:var(--primary-color)">${esc(fprt)}</a>`
-                                    : ` — ${esc(fprt)}`;
-                            }
-                            detalhe += `</span>`;
-                            html += `<li style="line-height:1.8;font-style:italic;">${flabel}${detalhe}</li>`;
-                        });
-                    } else {
-                        html += '<li><em>Sem designação atual</em></li>';
-                    }
-                }
-                html += '</ul></div>';
-            });
-
-            // Membros atuais "livres" — nome vem como texto do Firestore, sem chave no dicionário
-            orphanCurrentMembros.forEach(defKey => {
-                const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
-                html += `<div class="defensor-card"><h4>${esc(defKey)}</h4><ul>`;
-                dps.forEach(dpKey => {
-                    const dp = defensorias[dpKey];
-                    const label = dp.nome.includes('(') ? esc(dp.nome) : `${esc(dp.nome)} (${esc(dp.area)})`;
-                    const hist = (defHistorico[defKey] || []).find(h => h.dpKey === dpKey && !h.fim);
-                    const s = `color:var(--text-secondary);font-size:0.82em;`;
-                    let detalhe = '';
-                    if (hist) {
-                        detalhe += `<br><span style="${s}">Primeiro dia: ${fmtDate(hist.inicio)}`;
-                        if (hist.portaria_entrada) {
-                            detalhe += hist.do_entrada
-                                ? ` — <a href="${esc(hist.do_entrada)}" target="_blank" rel="noopener" style="color:var(--primary-color)">${esc(hist.portaria_entrada)}</a>`
-                                : ` — ${esc(hist.portaria_entrada)}`;
+                } else if (futDps.length > 0) {
+                    futDps.sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey)).forEach(({ dpKey: fdpKey, inicio: finicio, portaria_entrada: fprt, do_entrada: fdo }) => {
+                        const fdp = defensorias[fdpKey];
+                        const flabel = fdp.nome.includes('(') ? esc(fdp.nome) : `${esc(fdp.nome)} (${esc(fdp.area)})`;
+                        const s = `color:var(--text-secondary);font-size:0.82em;`;
+                        let detalhe = `<br><span style="${s}">A partir de ${fmtDate(finicio)}`;
+                        if (fprt) {
+                            detalhe += fdo
+                                ? ` — <a href="${esc(fdo)}" target="_blank" rel="noopener" style="color:var(--primary-color)">${esc(fprt)}</a>`
+                                : ` — ${esc(fprt)}`;
                         }
                         detalhe += `</span>`;
-                    }
-                    html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
-                });
+                        html += `<li style="line-height:1.8;font-style:italic;">${flabel}${detalhe}</li>`;
+                    });
+                } else {
+                    html += '<li><em>Sem designação atual</em></li>';
+                }
                 html += '</ul></div>';
             });
 
