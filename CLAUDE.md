@@ -202,7 +202,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 04/05/2026 — sessão 14)
+## Estado atual do site (atualizado em 04/05/2026 — sessão 15)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -254,6 +254,7 @@ github-pages/
 - **Bug corrigido — `getCurrentTitular` e `getTitularForDPOnDay` retornavam primeira entrada, não a mais recente** — quando dois registros sobrepostos cobriam a data atual (ex.: entrada antiga com `fim: null` + nova entrada com `inicio: "2026-05-02"` também `fim: null`), a função retornava a entrada mais antiga. Corrigido: ambas agora percorrem todo o array e retornam a entrada com o `inicio` mais recente entre as válidas. Commit `5ac5a0a`.
 - **`orphanCurrentMembros` — defensores do Firestore com nome como texto livre** — quando um novo defensor é cadastrado via admin UI (titulares_admin) antes de existir no JSON, o Firestore guarda o nome completo como string (não a chave do JSON). A renderização da aba Defensorias agora detecta quem tem DP ativa mas não consta no dicionário `defensores` e exibe o card normalmente. Commit `61bb356`.
 - **Lista unificada `allAtivos` ordenada por DP (1ª → 6ª)** — `renderDefensorias` agora constrói um array único fundindo `internos` (dicionário JSON) e `orphanCurrentMembros` (Firestore texto livre), ordenado pela menor DP atual de cada defensor. Elimina duplicação e garante exibição na ordem correta. `allAtivos.length` usado no contador "Total de Defensores". Commit `760f628`.
+- **Bug corrigido — placeholders `dpX-vaga` inflavam o contador de defensores** — chaves no formato `dp7-vaga` … `dp12-vaga` (geradas por `_atualizarNomesVaga()` para DPs vagas) eram incluídas em `orphanCurrentMembros` e faziam o total aparecer como 12 em vez de 6. Corrigido adicionando filtro `!/^dp\d+-vaga$/i.test(defKey)` na construção de `orphanCurrentMembros` (`renderDefensorias`, linha ~6198). Commit `6ff2deb`.
 - **Atenção — titulares_admin no Firestore para DPs 1, 2, 5** — provavelmente armazenam os novos defensores como nome completo (texto livre) em vez das chaves JSON (`enio`, `thays`, `emilly`), pois foram cadastrados antes do JSON ser atualizado. O site exibe corretamente via `orphanCurrentMembros`, mas para limpar o histórico o admin deve abrir o modal ✏️ dessas DPs e salvar novamente — o sistema vai reescrever com as chaves corretas.
 
 ### O que ainda falta implementar ⏳
