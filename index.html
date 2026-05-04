@@ -6217,6 +6217,10 @@
             internos.forEach((defKey, i) => {
                 const defInfo = defensores[defKey];
                 const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
+                // Pular se já aparece via orphanCurrentMembros (mesmo defensor, nome completo no Firestore)
+                if (dps.length === 0 && !(defFutureDPs[defKey] || []).length) {
+                    if (orphanCurrentMembros.some(ok => ok === defInfo.nome || ok === defInfo.nome_curto)) return;
+                }
                 html += `<div class="defensor-card"><h4>${esc(defInfo.nome)}</h4><ul>`;
                 if (dps.length > 0) {
                     dps.forEach(dpKey => {

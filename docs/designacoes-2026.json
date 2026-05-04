@@ -7,9 +7,9 @@
 
   "defensores": {
     "icaro":        { "nome": "Ícaro Oliveira Avelar Costa",           "nome_curto": "Ícaro Avelar",     "externo": false },
-    "jose-antonio": { "nome": "José Antônio Pereira da Silva",         "nome_curto": "José Antônio",     "externo": false },
+    "jose-antonio": { "nome": "José Antônio Pereira da Silva",         "nome_curto": "José Antônio",     "externo": false, "ativo": false },
     "eliaquim":     { "nome": "Eliaquim Antunes de Souza",             "nome_curto": "Eliaquim Antunes", "externo": false },
-    "elton":        { "nome": "Elton Dariva Staub",                    "nome_curto": "Elton Dariva",     "externo": false },
+    "elton":        { "nome": "Elton Dariva Staub",                    "nome_curto": "Elton Dariva",     "externo": false, "ativo": false },
     "elaine":       { "nome": "Elaine Maria Sousa Frota",              "nome_curto": "Elaine Frota",     "externo": false, "ativo": false },
     "miguel":       { "nome": "Miguel Eduardo de Azevedo Martins Filho","nome_curto": "Miguel Martins",  "externo": false },
     "mariana":      { "nome": "Mariana Silva Paixão",                  "nome_curto": "Mariana Paixão",   "externo": false, "ativo": false },
