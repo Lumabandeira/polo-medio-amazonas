@@ -6192,6 +6192,12 @@
             const internos   = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo !== false);
             const exMembros  = Object.keys(defensores).filter(k => !defensores[k].externo && defensores[k].ativo === false);
 
+            // Membros atuais "livres": têm DP ativa hoje mas o nome vem como texto livre do Firestore
+            // (cadastrados via UI antes de existirem no dicionário `defensores`).
+            const orphanCurrentMembros = Object.keys(defCurrentDPs)
+                .filter(defKey => !defensores[defKey])
+                .sort();
+
             // Ex-membros "livres": cadastrados como texto no editor de titulares (Firestore),
             // não constam no dicionário `defensores` e não têm mais nenhuma DP ativa.
             // Permite que novos ex-membros apareçam automaticamente sem alterar o JSON.
@@ -6204,7 +6210,7 @@
 
             let html = `<h2>👥 Defensores Públicos</h2>`
                      + `<div class="stats-grid">`
-                     + `<div class="stat-card"><h4>Total de Defensores</h4><div class="number">${internos.length}</div></div>`
+                     + `<div class="stat-card"><h4>Total de Defensores</h4><div class="number">${internos.length + orphanCurrentMembros.length}</div></div>`
                      + `<div class="stat-card"><h4>Total de Defensorias</h4><div class="number">12</div></div>`
                      + `</div>`;
 
@@ -6252,6 +6258,30 @@
                         html += '<li><em>Sem designação atual</em></li>';
                     }
                 }
+                html += '</ul></div>';
+            });
+
+            // Membros atuais "livres" — nome vem como texto do Firestore, sem chave no dicionário
+            orphanCurrentMembros.forEach(defKey => {
+                const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
+                html += `<div class="defensor-card"><h4>${esc(defKey)}</h4><ul>`;
+                dps.forEach(dpKey => {
+                    const dp = defensorias[dpKey];
+                    const label = dp.nome.includes('(') ? esc(dp.nome) : `${esc(dp.nome)} (${esc(dp.area)})`;
+                    const hist = (defHistorico[defKey] || []).find(h => h.dpKey === dpKey && !h.fim);
+                    const s = `color:var(--text-secondary);font-size:0.82em;`;
+                    let detalhe = '';
+                    if (hist) {
+                        detalhe += `<br><span style="${s}">Primeiro dia: ${fmtDate(hist.inicio)}`;
+                        if (hist.portaria_entrada) {
+                            detalhe += hist.do_entrada
+                                ? ` — <a href="${esc(hist.do_entrada)}" target="_blank" rel="noopener" style="color:var(--primary-color)">${esc(hist.portaria_entrada)}</a>`
+                                : ` — ${esc(hist.portaria_entrada)}`;
+                        }
+                        detalhe += `</span>`;
+                    }
+                    html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
+                });
                 html += '</ul></div>';
             });
 
