@@ -1,7 +1,7 @@
 {
   "meta": {
     "ano": 2026,
-    "ultima_atualizacao": "2026-04-07",
+    "ultima_atualizacao": "2026-05-04",
     "atualizado_por": "Ícaro Oliveira Avelar Costa"
   },
   "registros": [
@@ -27,13 +27,5 @@
     { "id": "af-016", "defensor": "elton",        "tipo": "folga",           "data_inicio": "2026-03-30", "data_fim": "2026-03-30", "observacao": null },
     { "id": "af-017", "defensor": "elton",        "tipo": "folga",           "data_inicio": "2026-03-31", "data_fim": "2026-04-01", "observacao": null },
 
-    { "id": "af-019", "defensor": "jose-antonio", "tipo": "ferias",          "data_inicio": "2026-06-08", "data_fim": "2026-06-25", "observacao": null },
-
-    { "id": "af-020", "defensor": "jose-antonio", "tipo": "folga",           "data_inicio": "2026-09-04", "data_fim": "2026-09-04", "observacao": null },
-    { "id": "af-021", "defensor": "jose-antonio", "tipo": "ferias",          "data_inicio": "2026-09-08", "data_fim": "2026-09-25", "observacao": null },
-
-    { "id": "af-022", "defensor": "jose-antonio", "tipo": "ferias",          "data_inicio": "2026-11-23", "data_fim": "2026-12-04", "observacao": null },
-
-    { "id": "af-023", "defensor": "jose-antonio", "tipo": "licenca_especial","data_inicio": "2026-12-09", "data_fim": "2026-12-18", "observacao": "SEI 25.0.000014378-5" }
   ]
 }
