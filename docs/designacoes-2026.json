@@ -1,7 +1,7 @@
 {
   "meta": {
     "ano": 2026,
-    "ultima_atualizacao": "2026-04-07",
+    "ultima_atualizacao": "2026-05-04",
     "atualizado_por": "Ícaro Oliveira Avelar Costa"
   },
 
@@ -15,7 +15,10 @@
     "mariana":      { "nome": "Mariana Silva Paixão",                  "nome_curto": "Mariana Paixão",   "externo": false, "ativo": false },
     "bruna-farias": { "nome": "Bruna Costa de Farias",                 "nome_curto": "Bruna Farias",     "externo": true  },
     "danielle":     { "nome": "Danielle Mascarenhas Cunha de Almeida", "nome_curto": "Danielle Almeida", "externo": true  },
-    "oswaldo":      { "nome": "Oswaldo Machado Neto",                  "nome_curto": "Oswaldo Machado",  "externo": true  }
+    "oswaldo":      { "nome": "Oswaldo Machado Neto",                  "nome_curto": "Oswaldo Machado",  "externo": true  },
+    "enio":         { "nome": "Ênio Jorge Lima Barbalho Junior",        "nome_curto": "Ênio Barbalho",    "externo": false },
+    "thays":        { "nome": "Thays Lidianne Campos de Azevedo Pereira","nome_curto": "Thays Azevedo",   "externo": false },
+    "emilly":       { "nome": "Emilly Bianca Ferreira dos Santos",       "nome_curto": "Emilly Santos",   "externo": false }
   },
 
   "defensorias": {
@@ -24,7 +27,8 @@
       "area": "Família, Sucessões e Infância",
       "destaque": "itacoatiara",
       "historico_titulares": [
-        { "defensor": "icaro", "inicio": "2026-01-01", "fim": null }
+        { "defensor": "icaro", "inicio": "2026-01-01", "fim": "2026-05-02" },
+        { "defensor": "enio",  "inicio": "2026-05-02", "fim": null }
       ]
     },
     "2": {
@@ -32,7 +36,8 @@
       "area": "Família, Sucessões e Infância",
       "destaque": "itacoatiara",
       "historico_titulares": [
-        { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": null }
+        { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": "2026-05-02" },
+        { "defensor": "thays",        "inicio": "2026-05-02", "fim": null }
       ]
     },
     "3": {
@@ -56,7 +61,8 @@
       "area": "Criminal e Medidas Socioeducativas",
       "destaque": "itacoatiara",
       "historico_titulares": [
-        { "defensor": "elton", "inicio": "2026-01-01", "fim": null }
+        { "defensor": "elton",  "inicio": "2026-01-01", "fim": "2026-05-02" },
+        { "defensor": "emilly", "inicio": "2026-05-02", "fim": null }
       ]
     },
     "6": {
@@ -74,7 +80,8 @@
       "destaque": null,
       "historico_titulares": [
         { "defensor": "elaine", "inicio": "2025-12-20", "fim": "2026-03-01", "portaria_entrada": "Portaria nº 1358/2025-GSPG/DPE/AM", "portaria_saida": "Portaria nº 206/2026-GSPG/DPE/AM" },
-        { "defensor": "miguel", "inicio": "2026-03-01", "fim": null }
+        { "defensor": "miguel", "inicio": "2026-03-01", "fim": "2026-05-02" },
+        { "defensor": null,     "inicio": "2026-05-02", "fim": null }
       ]
     },
     "8": {
@@ -82,7 +89,8 @@
       "area": "Todas as áreas",
       "destaque": null,
       "historico_titulares": [
-        { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": null }
+        { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": "2026-05-02" },
+        { "defensor": null,           "inicio": "2026-05-02", "fim": null }
       ]
     },
     "9": {
@@ -90,7 +98,8 @@
       "area": "Todas as áreas",
       "destaque": null,
       "historico_titulares": [
-        { "defensor": "eliaquim", "inicio": "2026-01-01", "fim": null }
+        { "defensor": "eliaquim", "inicio": "2026-01-01", "fim": "2026-05-02" },
+        { "defensor": null,       "inicio": "2026-05-02", "fim": null }
       ]
     },
     "10": {
@@ -98,7 +107,8 @@
       "area": "Todas as áreas",
       "destaque": null,
       "historico_titulares": [
-        { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": null }
+        { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": "2026-05-02" },
+        { "defensor": null,           "inicio": "2026-05-02", "fim": null }
       ]
     },
     "11": {
@@ -106,7 +116,8 @@
       "area": "Todas as áreas",
       "destaque": "silves",
       "historico_titulares": [
-        { "defensor": "icaro", "inicio": "2026-01-01", "fim": null }
+        { "defensor": "icaro", "inicio": "2026-01-01", "fim": "2026-05-02" },
+        { "defensor": null,    "inicio": "2026-05-02", "fim": null }
       ]
     },
     "12": {

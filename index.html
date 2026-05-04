@@ -2961,12 +2961,15 @@
             const mm = String(mes).padStart(2,'0');
             const dd = String(dia).padStart(2,'0');
             const date = new Date(`2026-${mm}-${dd}T12:00:00`);
+            let best = undefined, bestStart = null;
             for (const h of dp.historico_titulares) {
                 const s = new Date(h.inicio + 'T12:00:00');
                 const e = h.fim ? new Date(h.fim + 'T12:00:00') : new Date(2027, 0, 1);
-                if (date >= s && date <= e) return h.defensor; // null = vaga
+                if (date >= s && date <= e) {
+                    if (bestStart === null || s > bestStart) { best = h.defensor; bestStart = s; } // null = vaga
+                }
             }
-            return undefined;
+            return best;
         }
 
         // ===== Placeholders — mantidos para compatibilidade com syncFromSheets =====
@@ -6133,12 +6136,15 @@
             function getCurrentTitular(dpKey) {
                 const dp = defensorias[dpKey];
                 if (!dp) return null;
+                let best = null, bestStart = null;
                 for (const h of dp.historico_titulares) {
                     const s = new Date(h.inicio + 'T12:00:00');
                     const e = h.fim ? new Date(h.fim + 'T12:00:00') : new Date(2027, 0, 1);
-                    if (today >= s && today < e) return h.defensor;
+                    if (today >= s && today < e) {
+                        if (!bestStart || s > bestStart) { best = h.defensor; bestStart = s; }
+                    }
                 }
-                return null;
+                return best;
             }
 
             // Retorna a próxima entrada futura (inicio > hoje, fim === null) de uma DP
