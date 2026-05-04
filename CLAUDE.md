@@ -264,7 +264,7 @@ github-pages/
 - **Botão "Escala de Férias"** (futuro) — calendário visual de férias da equipe (defensores + servidores). Ideia: grid anual/mensal mostrando períodos de férias de cada pessoa. Arquitetura a definir.
 - **Limpar titulares_admin das DPs 1, 2, 5 no Firestore** — admin deve abrir o modal ✏️ de cada uma e salvar novamente para que os novos defensores sejam gravados com as chaves corretas (`enio`, `thays`, `emilly`) em vez do nome completo como texto livre.
 - **Dispensar notificações erradas do sino 🔔 de afastamentos** — as duas notificações geradas erroneamente em 28/04/2026 (cessações de Miguel 7ª DP e Ícaro 11ª DP interpretadas como afastamentos) ainda precisam ser dispensadas manualmente pelo admin.
-- **Excluir afastamentos do José Antônio no Firestore** — os registros do JSON já foram removidos (04/05/2026), mas os correspondentes no Firestore (`afastamentos_admin`) precisam ser deletados manualmente. Acessar console.firebase.google.com → projeto `polo-medio-as` → Firestore → coleção `afastamentos_admin` → excluir documentos com `defensor: "jose-antonio"` e `data_inicio >= "2026-06-08"` (períodos: 08–25/jun, 04/set, 08–25/set, 23/nov–04/dez, 09–18/dez).
+- ~~**Excluir afastamentos do José Antônio no Firestore**~~ ✅ Deletado via script em 04/05/2026 — doc `CpewjdQkUjofHP3xVe9v` (férias 08–25/jun) removido da coleção `afastamentos_admin`. Era o único registro futuro no Firestore.
 
 ### Descartado (não vale implementar)
 - **Coleção `defensores_admin` no Firestore** — descartado: ex-membros livres já detectados automaticamente via orphanExMembros; casos raros de inconsistência com o JSON não justificam a complexidade
