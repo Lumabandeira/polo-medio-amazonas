@@ -263,7 +263,7 @@ github-pages/
 - **Botão "Plantão"** — nova seção na landing page com escala de plantão de defensores e servidores. Arquitetura a definir na próxima sessão (dados estáticos no HTML? JSON? Firestore?).
 - **Botão "Escala de Férias"** (futuro) — calendário visual de férias da equipe (defensores + servidores). Ideia: grid anual/mensal mostrando períodos de férias de cada pessoa. Arquitetura a definir.
 - **Limpar titulares_admin das DPs 1, 2, 5 no Firestore** — admin deve abrir o modal ✏️ de cada uma e salvar novamente para que os novos defensores sejam gravados com as chaves corretas (`enio`, `thays`, `emilly`) em vez do nome completo como texto livre.
-- **Dispensar notificações erradas do sino 🔔 de afastamentos** — as duas notificações geradas erroneamente em 28/04/2026 (cessações de Miguel 7ª DP e Ícaro 11ª DP interpretadas como afastamentos) ainda precisam ser dispensadas manualmente pelo admin.
+- ~~**Dispensar notificações erradas do sino 🔔 de afastamentos**~~ ✅ Já dispensadas (confirmado em 04/05/2026 — não aparecem mais no painel).
 - ~~**Excluir afastamentos do José Antônio no Firestore**~~ ✅ Deletado via script em 04/05/2026 — doc `CpewjdQkUjofHP3xVe9v` (férias 08–25/jun) removido da coleção `afastamentos_admin`. Era o único registro futuro no Firestore.
 
 ### Descartado (não vale implementar)
