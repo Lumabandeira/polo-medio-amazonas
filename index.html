@@ -6195,7 +6195,7 @@
             // Membros atuais "livres": têm DP ativa hoje mas o nome vem como texto livre do Firestore
             // (cadastrados via UI antes de existirem no dicionário `defensores`).
             const orphanCurrentMembros = Object.keys(defCurrentDPs)
-                .filter(defKey => !defensores[defKey])
+                .filter(defKey => !defensores[defKey] && !/^dp\d+-vaga$/i.test(defKey))
                 .sort();
 
             // Ex-membros "livres": cadastrados como texto no editor de titulares (Firestore),
