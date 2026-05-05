@@ -2561,5 +2561,65 @@
         "resumo": "Designa Daniel Bettanin e Silva para atuar em audiências na 2ª Vara da Comarca de Itacoatiara (28-30/04/2026) com adicional de nível 1"
       }
     ]
+  },
+  {
+    "edicao": 2642,
+    "data": "2026-05-04",
+    "data_formatada": "04/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2642-2026__publicada_em_04_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 664/2026-GDPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Oswaldo Machado Neto, Defensor Público 3ª Classe, no trecho Manaus/Itacoatiara/Manaus, no período de 11 a 15 de maio de 2026, a fim de realizar sessões do Tribunal do Júri na 1ª Vara da Comarca de Itacoatiara-AM"
+        ],
+        "resumo": "Autoriza deslocamento de defensor público para Itacoatiara (11-15/05/2026) para sessões de Tribunal do Júri"
+      },
+      {
+        "numero": "Portaria Nº 401/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005525-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao",
+          "coordenacao",
+          "nomeacao_diretoria"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, a contar do dia 30 de abril de 2026, do inciso IV da Portaria nº 206/2026-GSPG/DPE/AM, publicada no dia 06 de março de 2026, Ano 12, Edição 2606 Pág. 10 de 32, quanto à designação do Defensor Público de 3ª Classe Miguel Eduardo de Azevedo Martins Filho para atuar, a contar do dia 07 de março de 2026, na 7ª Defensoria Pública do Polo Médio Amazonas (São Sebastião do Uatumã)",
+          "II - CESSAR OS EFEITOS, a contar do dia 30 de abril de 2026, do inciso V da Portaria nº 422/2025-GSPG/DPE/AM, publicada no dia 27 de maio de 2025, Ano 11, Edição 2421 Pág. 7 de 15, quanto à designação do Defensor Público de 4ª Classe Icaro Oliveira Avelar Costa para atuar, a contar do dia 20 de maio de 2025, na 11ª Defensoria Pública do Polo Médio Amazonas (Silves)",
+          "I - DESIGNAR, nos períodos de 13 a 22 de julho de 2026 e 27 de julho a 05 de agosto de 2026, o Defensor Público Ian Marcos Martins Palmeira como Coordenador do Polo de Coari, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019"
+        ],
+        "resumo": "Cessa designações na 7ª DP (São Sebastião do Uatumã) e 11ª DP (Silves) do Polo Médio Amazonas; designa coordenador para Polo de Coari"
+      },
+      {
+        "numero": "Portaria Nº 435/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005702-8",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao",
+          "comarca"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, a contar do dia 02 de maio de 2026, do inciso II da Portaria nº 559/2025-GSPG/DPE/AM, publicada no dia 08 de julho de 2025, Ano 11, Edição 2447 Pág. 18 de 32, quanto à designação do Defensor Público de 4ª Classe Ícaro Oliveira Avelar Costa para atuar, a contar do dia 30 de junho de 2025, na 1ª Defensoria Pública do Polo Médio Amazonas",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Enio Jorge Lima Barbalho Junior para atuar na 2ª Defensoria Pública do Polo do Médio Amazonas, a contar do dia 30 de abril de 2026",
+          "III - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Enio Jorge Lima Barbalho Junior para atuar na 7ª Defensoria Pública do Polo do Médio Amazonas (São Sebastião do Uatumã), a contar do dia 02 de maio de 2026",
+          "IV - DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Emilly Bianca Ferreira dos Santos para atuar na 10ª Defensoria Pública do Polo do Médio Amazonas (Urucará), a contar do dia 30 de abril de 2026",
+          "V - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Icaro Oliveira Avelar Costa para atuar na 11ª Defensoria Pública do Polo do Médio Amazonas (Silves), a contar do dia 30 de abril de 2026",
+          "VI - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Icaro Oliveira Avelar Costa para atuar na 12ª Defensoria Pública do Polo do Médio Amazonas (Silves), a contar do dia 02 de maio de 2026"
+        ],
+        "resumo": "Cessa designação na 1ª DP do Polo Médio Amazonas e designa defensores para 2ª, 7ª, 10ª, 11ª e 12ª Defensorias do Polo Médio Amazonas (cidades: São Sebastião do Uatumã, Urucará, Silves) a partir de 30/04-02/05/2026"
+      }
+    ]
   }
 ]
