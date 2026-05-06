@@ -2621,5 +2621,45 @@
         "resumo": "Cessa designação na 1ª DP do Polo Médio Amazonas e designa defensores para 2ª, 7ª, 10ª, 11ª e 12ª Defensorias do Polo Médio Amazonas (cidades: São Sebastião do Uatumã, Urucará, Silves) a partir de 30/04-02/05/2026"
       }
     ]
+  },
+  {
+    "edicao": 2643,
+    "data": "2026-05-05",
+    "data_formatada": "05/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2643-2026__publicada_em_05_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 449/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005383-9",
+        "sgi": "2600269",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "nomeacao_diretoria",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Ícaro Oliveira Avelar Costa para atuar na 5ª Defensoria Pública do Polo do Médio Amazonas, no período de 04 a 15 de maio de 2026;",
+          "I - CESSAR OS EFEITOS, apenas no período de 04 a 17 de maio de 2026, a FGD-6 (Coordenadoria do Interior), nos termos da Lei n.º 4.831 de 13 de maio de 2019, concedida à Defensora Pública Emilly Bianca Ferreira dos Santos;",
+          "II - DESIGNAR, no período de 04 a 17 de maio de 2026, o Defensor Público Ícaro Oliveira Avelar Costa como Coordenador do Polo do Médio Amazonas, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019."
+        ],
+        "resumo": "Designa Ícaro Oliveira Avelar Costa cumulativamente na 5ª DP do Polo Médio Amazonas (04-15/05/2026) e como Coordenador do Polo (04-17/05/2026), substituindo Emilly Bianca Ferreira dos Santos na FGD-6."
+      },
+      {
+        "numero": "Portaria Nº 451/2026-GSPG/DPE/AM",
+        "sei": "26.0.000002130-9",
+        "sgi": "2600689, 2600691, 2600693",
+        "categorias": [
+          "servidor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Renan Lopes Aparicio, sem titulação, nos trechos Tabatinga/Santo Antônio do Içá/Tabatinga, no período de 16 a 23 de maio de 2026, a fim de prestar apoio na realização de mutirão de atendimentos em comunidades do município de Santo Antônio do Içá-AM;",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor Renan Lopes Aparicio para Santo Antônio do Içá-AM (16-23/05/2026) em apoio a mutirão de atendimentos, com pagamento de diárias."
+      }
+    ]
   }
 ]
