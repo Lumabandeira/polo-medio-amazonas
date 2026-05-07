@@ -384,7 +384,7 @@ O workflow roda diariamente às **06:00 de Manaus** (10:00 UTC) via `.github/wor
 2. **Comparação** com `.estado-diario.json` (última edição processada, em cache via `actions/cache@v4`)
 3. Para cada edição nova: baixa PDF → extrai texto com `pdfplumber`
 4. **Pré-filtro por termos-gatilho** (`_extrair_trechos_relevantes`): procura no texto completo pela frase fixa `Polo (do) Médio Amazonas` + primeiro+segundo nome de cada **titular vigente** (carregados dinamicamente de `docs/designacoes-2026.json` + Firestore `titulares_admin` em `inicializar_defensores_e_termos()`). Se nenhum termo aparece, pula a chamada ao Claude (custo zero). Caso contrário, extrai janelas de ±1500 chars em volta de cada menção e concatena (intervalos sobrepostos são mesclados). Isso resolve o bug original de enviar só `text[:15000]` — as designações do Polo Médio costumam aparecer em páginas tardias do PDF (40k+ chars). **Cidades e servidores foram removidos dos termos** — o DO designa "Nª Defensoria Pública do Estado do Amazonas", nunca pela cidade; servidores são escopo do Projeto 2 (abaixo). Quando um titular muda (ex.: Miguel assumiu DPs 6/7 no lugar de Elaine em 01/03/2026), a automação se atualiza sozinha na próxima execução, sem edição no script.
-5. Envia trechos ao **Claude Haiku 4.5** (`claude-haiku-4-5-20251001`, `max_tokens=2048`) com prompt que pede JSON com dois arrays: `afastamentos` (ausências com substituto) e `cessacoes` (portarias que "cessam efeitos" / "tornam sem efeito" designações anteriores — DP ficará vaga). Portarias de cessação **não** geram afastamentos.
+5. Envia trechos ao **Claude Sonnet 4.5** (`claude-sonnet-4-5-20251001`, `max_tokens=2048`) com prompt que pede JSON com dois arrays: `afastamentos` (ausências com substituto) e `cessacoes` (portarias que "cessam efeitos" / "tornam sem efeito" designações anteriores — DP ficará vaga). Portarias de cessação **não** geram afastamentos.
 6. `salvar_afastamentos_firestore()` grava afastamentos em `afastamentos_admin`; `salvar_cessacoes_firestore()` grava cessações em `remocoes_admin` com `tipo:"cessacao_designacao"` e dedup por `portaria_cessada`.
 7. E-mail automático com resumo dos afastamentos gravados (opcional, via SMTP)
 
@@ -457,10 +457,10 @@ py verificar-diario-oficial.py
 ```
 Requer `firebase-service-account.json` na raiz do projeto.
 
-### Custos (Claude Haiku 4.5, preços conservadores no script)
-- Entrada: $1/M tokens; Saída: $5/M tokens
+### Custos (Claude Sonnet 4.5, preços conservadores no script)
+- Entrada: $3/M tokens; Saída: $15/M tokens
 - Execução com edição nova sem menção ao Polo Médio: **$0** (pré-filtro pula a chamada)
-- Execução com designação detectada: ~$0.004–0.008 por edição
+- Execução com designação detectada: ~$0.015–0.03 por edição
 - Limite mensal: `LIMITE_CUSTO_USD = $2.00`. Ao atingir, envia e-mail e pausa automação até virar o mês.
 
 ---

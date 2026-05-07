@@ -565,7 +565,7 @@ def parse_remocao(text: str, state: dict) -> dict:
     client = Anthropic()
 
     msg = client.messages.create(
-        model="claude-haiku-4-5-20251001",
+        model="claude-sonnet-4-5-20251001",
         max_tokens=2048,
         messages=[{
             "role": "user",
@@ -898,7 +898,7 @@ def parse_designations(text: str, state: dict) -> dict:
     )
 
     msg = client.messages.create(
-        model="claude-haiku-4-5-20251001",
+        model="claude-sonnet-4-5-20251001",
         max_tokens=2048,
         messages=[{
             "role": "user",
@@ -947,6 +947,14 @@ REGRAS:
 - Se não identificar algum campo, use string vazia "" (não use null)
 - Se a designação for "a contar do dia X" SEM data final explícita, use `"data_fim": ""` — NÃO invente uma data
 - Inclua o afastamento mesmo sem data fim; o sistema sinalizará para revisão manual
+
+ATENÇÃO — QUEM É O "defensor_ausente":
+- O `defensor_ausente` é o TITULAR DA DP que ficou vaga/sem cobertura — ou seja, quem está de férias/folga/licença.
+- A pessoa DESIGNADA para substituir é o `substituto` — ela NÃO é a ausente.
+- Exemplo: se o texto diz "Designar ÍCARO OLIVEIRA AVELAR COSTA para substituir na 5ª Defensoria Pública",
+  o `defensor_ausente` é o TITULAR DA 5ª DP (conforme a lista acima — Emilly Bianca Ferreira dos Santos),
+  e `substituto` é "Ícaro Oliveira Avelar Costa".
+- Use a lista de titulares acima para identificar quem é o ausente: titular da DP afetada = defensor_ausente.
 
 IMPORTANTE — NÃO coloque em `afastamentos`:
 - Portarias que "TORNAM SEM EFEITO", "CESSAM OS EFEITOS" ou "REVOGAM" designações anteriores
