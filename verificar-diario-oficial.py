@@ -34,6 +34,7 @@ DIARIO_URL  = "https://diario.defensoria.am.def.br/"
 FIREBASE_PROJECT_ID = "polo-medio-as"
 FIRESTORE_COLECAO   = "afastamentos_admin"
 FIRESTORE_COLECAO_REMOCOES  = "remocoes_admin"
+FIRESTORE_COLECAO_DESIGNACOES = "designacoes_cumulativas_admin"
 CRIADO_POR_AUTOMACAO = "automacao@github-actions"
 
 LIMITE_CUSTO_USD = 2.00  # Automação para se o custo mensal atingir este valor
@@ -519,6 +520,82 @@ def salvar_cessacoes_firestore(
     return criados
 
 
+# ─── Designações cumulativas permanentes ─────────────────────────────────────
+
+def salvar_designacoes_cumulativas_firestore(
+    designacoes: list,
+    edition_url: str,
+    edition_num: str = "",
+    data_publicacao_do: str = "",
+) -> list:
+    """
+    Grava portarias de designação cumulativa sem data fim em
+    `designacoes_cumulativas_admin`.
+    Dedup por (defensor, dp_designada, data_inicio).
+    """
+    if not designacoes:
+        return []
+
+    db = get_firestore_client()
+    col = db.collection(FIRESTORE_COLECAO_DESIGNACOES)
+    criados = []
+
+    for des in designacoes:
+        defensor_nome  = (des.get("defensor") or "").strip()
+        dp_numero      = str(des.get("dp_numero") or "").strip().replace("ª", "").replace("DP", "").strip()
+        data_inicio    = _normalizar_data(des.get("data_inicio", ""))
+        portaria_numero = (des.get("portaria_numero") or "").strip()
+        processo_sei    = (des.get("processo_sei") or "").strip()
+
+        if not defensor_nome or not dp_numero or not data_inicio:
+            log.warning(
+                f"Designação cumulativa descartada (campos obrigatórios faltando): "
+                f"defensor={defensor_nome!r} dp={dp_numero!r} inicio={data_inicio!r}"
+            )
+            continue
+
+        # Tenta mapear para abreviatura interna; mantém nome completo se não encontrar
+        defensor_abrev = _mapear_defensor_abrev(defensor_nome)
+
+        # Dedup
+        existentes = list(
+            col.where("defensor_nome", "==", defensor_nome)
+               .where("dp_designada", "==", dp_numero)
+               .where("data_inicio", "==", data_inicio)
+               .limit(1).stream()
+        )
+        if existentes:
+            log.info(
+                f"Designação cumulativa já existe (id={existentes[0].id}): "
+                f"{defensor_nome} → {dp_numero}ª DP {data_inicio}. Pulando."
+            )
+            continue
+
+        doc = {
+            "defensor_nome":     defensor_nome,
+            "defensor_abrev":    defensor_abrev if defensor_abrev != defensor_nome else "",
+            "dp_designada":      dp_numero,
+            "data_inicio":       data_inicio,
+            "portaria_numero":   portaria_numero,
+            "portaria_url":      edition_url,
+            "processo_sei":      processo_sei,
+            "origem":            "automacao-diario-oficial",
+            "lido":              False,
+            "edicao_do":         str(edition_num),
+            "data_publicacao_do": data_publicacao_do,
+            "criado_por":        CRIADO_POR_AUTOMACAO,
+            "criado_em":         firestore.SERVER_TIMESTAMP,
+        }
+        _, ref = col.add(doc)
+        log.info(
+            f"✅ Designação cumulativa gravada: id={ref.id} | "
+            f"{defensor_nome} → {dp_numero}ª DP a partir de {data_inicio}"
+        )
+        criados.append({"id": ref.id, **doc})
+
+    return criados
+
+
 # ─── Concurso de Remoção ──────────────────────────────────────────────────────
 
 def _texto_tem_remocao_polo_medio(text: str) -> bool:
@@ -935,35 +1012,47 @@ Retorne SOMENTE um JSON válido com esta estrutura:
       "portaria_cessadora": "Portaria nº 321/2026-GSPG/DPE/AM ou vazio",
       "data_fim_designacao": "YYYY-MM-DD"
     }}
+  ],
+  "designacoes_cumulativas": [
+    {{
+      "defensor": "Nome completo do defensor designado",
+      "dp_numero": "9",
+      "data_inicio": "YYYY-MM-DD",
+      "portaria_numero": "Portaria nº 456/2026-GSPG/DPE/AM ou vazio",
+      "processo_sei": "número SEI/SGI ou vazio"
+    }}
   ]
 }}
 
-Se não houver afastamentos nem cessações do Polo Médio, retorne:
-{{"tem_designacoes": false, "afastamentos": [], "cessacoes": []}}
+Se não houver afastamentos, cessações nem designações cumulativas do Polo Médio, retorne:
+{{"tem_designacoes": false, "afastamentos": [], "cessacoes": [], "designacoes_cumulativas": []}}
 
-REGRAS:
+REGRAS GERAIS:
 - Datas SEMPRE no formato YYYY-MM-DD (ex: 2026-05-15)
 - tipo em minúsculas, sem acento, valores fixos: ferias, folga, licenca_especial, outro
 - Se não identificar algum campo, use string vazia "" (não use null)
-- Se a designação for "a contar do dia X" SEM data final explícita, use `"data_fim": ""` — NÃO invente uma data
-- Inclua o afastamento mesmo sem data fim; o sistema sinalizará para revisão manual
 
-ATENÇÃO — QUEM É O "defensor_ausente":
-- O `defensor_ausente` é o TITULAR DA DP que ficou vaga/sem cobertura — ou seja, quem está de férias/folga/licença.
-- A pessoa DESIGNADA para substituir é o `substituto` — ela NÃO é a ausente.
-- Exemplo: se o texto diz "Designar ÍCARO OLIVEIRA AVELAR COSTA para substituir na 5ª Defensoria Pública",
-  o `defensor_ausente` é o TITULAR DA 5ª DP (conforme a lista acima — Emilly Bianca Ferreira dos Santos),
-  e `substituto` é "Ícaro Oliveira Avelar Costa".
-- Use a lista de titulares acima para identificar quem é o ausente: titular da DP afetada = defensor_ausente.
+COMO CLASSIFICAR CADA PORTARIA — leia com atenção:
 
-IMPORTANTE — NÃO coloque em `afastamentos`:
-- Portarias que "TORNAM SEM EFEITO", "CESSAM OS EFEITOS" ou "REVOGAM" designações anteriores
-  → Essas são **cessações de efeitos**: coloque-as em `cessacoes` (a DP ficará vaga)
-- Portarias de Concurso de Remoção (tratadas separadamente)
+1. `afastamentos` — o titular de uma DP está AUSENTE (férias, folga, licença) e alguém é designado para SUBSTITUÍ-LO temporariamente com período definido ("do dia X ao dia Y").
+   - O `defensor_ausente` é o TITULAR DA DP que ficou vaga — quem está de férias/folga/licença.
+   - O `substituto` é a pessoa designada para cobrir — ela NÃO é a ausente.
+   - Exemplo: "Designar ÍCARO para substituir na 5ª DP enquanto EMILLY estiver de férias de 10 a 20/05"
+     → defensor_ausente = "Emilly Bianca Ferreira dos Santos", substituto = "Ícaro Oliveira Avelar Costa"
+   - Use a lista de titulares acima para identificar quem é o ausente.
 
-Para cessações: `portaria_cessada` é a portaria ANTIGA cujos efeitos estão sendo encerrados;
-`portaria_cessadora` é a portaria da presente edição que determina a cessação (pode ser vazia);
-`data_fim_designacao` é o ÚLTIMO DIA de vigência da designação cessada.
+2. `cessacoes` — portarias que "TORNAM SEM EFEITO", "CESSAM OS EFEITOS" ou "REVOGAM" uma designação anterior.
+   - Coloque aqui; a DP ficará vaga após a cessação.
+   - `portaria_cessada` = portaria ANTIGA que está sendo encerrada.
+   - `portaria_cessadora` = portaria desta edição que determina a cessação.
+
+3. `designacoes_cumulativas` — portaria com verbo DESIGNAR + palavra "cumulativamente" + sem data de fim explícita ("a contar do dia X" sem "até Y").
+   - O defensor ganha uma DP adicional de forma permanente/indefinida, além das que já ocupa.
+   - Exemplo: "DESIGNAR, cumulativamente, Eliaquim Antunes de Souza Santos para atuar na 9ª Defensoria Pública... a contar do dia 04 de maio de 2026"
+     → coloque em `designacoes_cumulativas`, NÃO em `afastamentos`.
+   - Se a portaria diz "cumulativamente... do dia X ao dia Y" (tem data fim) → é substituição temporária → coloque em `afastamentos`.
+
+4. Portarias de Concurso de Remoção → NÃO coloque em nenhum dos arrays acima (tratadas separadamente).
 
 TRECHOS RELEVANTES DO DIÁRIO OFICIAL (janelas de contexto em volta de menções ao Polo Médio):
 {trechos}""",
@@ -982,10 +1071,11 @@ TRECHOS RELEVANTES DO DIÁRIO OFICIAL (janelas de contexto em volta de menções
             if "afastamentos" not in data and "designacoes" in data:
                 data["afastamentos"] = data.pop("designacoes")
             data.setdefault("cessacoes", [])
+            data.setdefault("designacoes_cumulativas", [])
             return data
         except json.JSONDecodeError:
             log.warning("Resposta do Claude não é JSON válido")
-    return {"tem_designacoes": False, "afastamentos": [], "cessacoes": []}
+    return {"tem_designacoes": False, "afastamentos": [], "cessacoes": [], "designacoes_cumulativas": []}
 
 # ─── Notificação pós-gravação ────────────────────────────────────────────────
 
@@ -1113,6 +1203,25 @@ def main():
                         )
                     salvar_cessacoes_firestore(
                         cessacoes,
+                        edition["url"],
+                        edition_num=edition["numero"],
+                        data_publicacao_do=edition.get("data_publicacao", ""),
+                    )
+
+                # Designações cumulativas permanentes (sem data fim)
+                desig_cumulativas = result.get("designacoes_cumulativas", [])
+                if desig_cumulativas and not verificar_limite_custo(state):
+                    log.info(
+                        f"Edição {num}: {len(desig_cumulativas)} designação(ões) cumulativa(s) detectada(s)"
+                    )
+                    for dc in desig_cumulativas:
+                        log.info(
+                            f"  → designação cumulativa: {dc.get('defensor')} "
+                            f"| DP {dc.get('dp_numero')} "
+                            f"| a partir de {dc.get('data_inicio')}"
+                        )
+                    salvar_designacoes_cumulativas_firestore(
+                        desig_cumulativas,
                         edition["url"],
                         edition_num=edition["numero"],
                         data_publicacao_do=edition.get("data_publicacao", ""),

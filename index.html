@@ -1944,6 +1944,22 @@
             margin: 0 2px 0 -6px;
         }
         .btn-sino-remocao:hover { background: rgba(59,130,246,0.12); }
+        /* Sino de designações cumulativas — posicionado na barra de abas */
+        .btn-sino-designacao {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.05em;
+            position: relative;
+            padding: 4px 5px;
+            line-height: 1;
+            border-radius: 8px;
+            transition: background .15s;
+            align-self: center;
+            flex: 0 0 auto;
+            margin: 0 2px 0 -6px;
+        }
+        .btn-sino-designacao:hover { background: rgba(59,130,246,0.12); }
         .badge-sino {
             position: absolute;
             top: -2px;
@@ -2405,6 +2421,9 @@
             <button id="btn-sino-remocao" class="btn-sino-remocao" style="display:none" onclick="abrirPainelRemocao()" title="Notificações de Alterações de Titularidade">
                 🔔<span id="badge-sino-remocao" class="badge-sino" style="display:none">0</span>
             </button>
+            <button id="btn-sino-designacao" class="btn-sino-designacao" style="display:none" onclick="abrirPainelDesignacao()" title="Notificações de Designações Cumulativas">
+                🔔<span id="badge-sino-designacao" class="badge-sino" style="display:none">0</span>
+            </button>
             <button class="tab-button" onclick="showTab('designacoes-periodo')">📅 Designações semanais</button>
             <button class="tab-button" onclick="showTab('calendario')">📅 Calendário</button>
             <button class="tab-button" onclick="showTab('lista-substituicoes')">📋 Lista de Substituições</button>
@@ -2737,6 +2756,19 @@
                 <button class="notif-panel-close" onclick="fecharPainelRemocao()">×</button>
             </div>
             <div class="notif-panel-body" id="notif-remocao-body">
+                <p class="notif-vazia">⏳ Carregando...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Painel de notificações de Designações Cumulativas -->
+    <div id="notif-designacao-overlay" class="notif-overlay" onclick="fecharPainelDesignacao(event)">
+        <div class="notif-panel" onclick="event.stopPropagation()">
+            <div class="notif-panel-header" style="background:linear-gradient(135deg,#166534,#16a34a)">
+                <h3>🔔 Designações Cumulativas</h3>
+                <button class="notif-panel-close" onclick="fecharPainelDesignacao()">×</button>
+            </div>
+            <div class="notif-panel-body" id="notif-designacao-body">
                 <p class="notif-vazia">⏳ Carregando...</p>
             </div>
         </div>
@@ -4234,6 +4266,7 @@
         let filtroListaDP = null;
         let notificacoesData = [];
         let remocaoNotifData = [];
+        let designacaoNotifData = [];
 
         function filterByMonth(month) {
             // Ocultar todas as seções de mês
@@ -4427,6 +4460,18 @@
             }
             _atualizarBadgeSino();
             _atualizarBadgeSinoRemocao();
+            try {
+                const snap = await db.collection('designacoes_cumulativas_admin')
+                    .where('origem', '==', 'automacao-diario-oficial').get();
+                designacaoNotifData = [];
+                snap.forEach(doc => {
+                    const reg = { id: doc.id, ...doc.data() };
+                    if (reg.lido !== true) designacaoNotifData.push(reg);
+                });
+            } catch(e) {
+                console.warn('Erro ao carregar notificações de designação cumulativa:', e.message);
+            }
+            _atualizarBadgeSinoDesignacao();
         }
 
         function _atualizarBadgeSino() {
@@ -4732,6 +4777,77 @@
                 remocaoNotifData = remocaoNotifData.filter(r => r.id !== id);
                 _atualizarBadgeSinoRemocao();
                 abrirPainelRemocao();
+            } catch(e) {
+                mostrarToast('❌ Erro ao dispensar: ' + e.message, true);
+            }
+        }
+
+        // ── Notificações de Designações Cumulativas ────────────────────────
+        function _atualizarBadgeSinoDesignacao() {
+            const btn   = document.getElementById('btn-sino-designacao');
+            const badge = document.getElementById('badge-sino-designacao');
+            if (!btn || !badge) return;
+            if (userRole !== 'admin') return;
+            btn.style.display = '';
+            const count = designacaoNotifData.length;
+            badge.textContent = count;
+            badge.style.display = count > 0 ? '' : 'none';
+            btn.style.opacity       = count > 0 ? '1' : '0';
+            btn.style.pointerEvents = count > 0 ? '' : 'none';
+        }
+
+        function abrirPainelDesignacao() {
+            const overlay = document.getElementById('notif-designacao-overlay');
+            const body    = document.getElementById('notif-designacao-body');
+            if (!overlay || !body) return;
+
+            if (designacaoNotifData.length === 0) {
+                body.innerHTML = '<p class="notif-vazia">✅ Nenhuma notificação pendente.</p>';
+            } else {
+                const ordenadas = [...designacaoNotifData].sort((a, b) =>
+                    (b.data_publicacao_do || '').localeCompare(a.data_publicacao_do || ''));
+                let html = '';
+                ordenadas.forEach(reg => {
+                    const dataInicio = reg.data_inicio ? formatarData(reg.data_inicio) : '—';
+                    const dataPub    = reg.data_publicacao_do ? formatarData(reg.data_publicacao_do) : '—';
+                    const dpLabel    = reg.dp_designada ? reg.dp_designada + 'ª DP' : '—';
+                    const portaria   = reg.portaria_numero || '';
+                    const portariaHtml = portaria && reg.portaria_url
+                        ? `<a href="${reg.portaria_url}" target="_blank" rel="noopener" style="color:#166534">${portaria}</a>`
+                        : (portaria || '—');
+                    html += `
+                    <div class="notif-item" style="border-left:4px solid #16a34a">
+                        <div class="notif-item-titulo">
+                            <span>📋</span>
+                            <span>${reg.defensor_nome || reg.defensor_abrev || '—'}</span>
+                        </div>
+                        <div class="notif-item-detalhe">${dpLabel} · a partir de ${dataInicio}</div>
+                        <div class="notif-item-detalhe" style="color:#6b7280;font-size:0.82em">Publicado em ${dataPub} · Edição ${reg.edicao_do || '—'}</div>
+                        ${portaria ? `<div class="notif-item-portaria">${portariaHtml}</div>` : ''}
+                        <div class="notif-revisao-alerta" style="background:#dcfce7;color:#166534;border-color:#bbf7d0">
+                            📋 Atualize o titular na aba <strong>Defensorias</strong>
+                        </div>
+                        <div class="notif-acoes">
+                            <button class="notif-btn notif-btn-dispensar" onclick="dispensarDesignacao('${reg.id}')">🗑️ Dispensar</button>
+                        </div>
+                    </div>`;
+                });
+                body.innerHTML = html;
+            }
+            overlay.classList.add('active');
+        }
+
+        function fecharPainelDesignacao(event) {
+            if (event && event.target !== document.getElementById('notif-designacao-overlay')) return;
+            document.getElementById('notif-designacao-overlay')?.classList.remove('active');
+        }
+
+        async function dispensarDesignacao(id) {
+            try {
+                await db.collection('designacoes_cumulativas_admin').doc(id).update({ lido: true });
+                designacaoNotifData = designacaoNotifData.filter(r => r.id !== id);
+                _atualizarBadgeSinoDesignacao();
+                abrirPainelDesignacao();
             } catch(e) {
                 mostrarToast('❌ Erro ao dispensar: ' + e.message, true);
             }
