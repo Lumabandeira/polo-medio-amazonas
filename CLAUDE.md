@@ -81,6 +81,21 @@ remocoes_admin/{id}   ← portarias de Concurso de Remoção OU cessação de de
   data_publicacao: "2026-04-15"
   criado_por: "automacao@github-actions"
   criado_em: timestamp
+
+designacoes_cumulativas_admin/{id}   ← designações cumulativas sem data fim detectadas pela automação
+  defensor_nome:    "Eliaquim Antunes de Souza Santos"  ← nome completo do designado
+  defensor_abrev:   "eliaquim"   ← abrev interna, se reconhecida; "" caso contrário
+  dp_designada:     "9"          ← número da DP
+  data_inicio:      "2026-05-04"
+  portaria_numero:  "Portaria nº .../2026-..."
+  portaria_url:     "https://..."   ← PDF do Diário Oficial
+  processo_sei:     "..."
+  origem:           "automacao-diario-oficial"
+  lido:             false    ← false = aparece no sino verde; true = dispensado
+  edicao_do:        "2650"
+  data_publicacao_do: "2026-05-06"
+  criado_por:       "automacao@github-actions"
+  criado_em:        timestamp
 ```
 
 > **Nota:** Os dados dos JSONs locais (`docs/afastamentos-2026.json` e `docs/designacoes-2026.json`) continuam sendo a base. A coleção `afastamentos_admin` contém apenas os registros adicionados/editados pelo admin via interface. Os dois são mesclados em memória ao carregar a página.
@@ -88,7 +103,7 @@ remocoes_admin/{id}   ← portarias de Concurso de Remoção OU cessação de de
 ### Regras de segurança do Firestore
 - Leitura: apenas usuários autenticados
 - Escrita: apenas usuários com `role == "admin"`
-- Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`, `remocoes_admin`
+- Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`, `remocoes_admin`, `designacoes_cumulativas_admin`
 
 ### Como funciona o login no site
 1. Página carrega → overlay de login cobre tudo
@@ -258,8 +273,11 @@ github-pages/
 - **Atenção — titulares_admin no Firestore para DPs 1, 2, 5** — provavelmente armazenam os novos defensores como nome completo (texto livre) em vez das chaves JSON (`enio`, `thays`, `emilly`), pois foram cadastrados antes do JSON ser atualizado. O site exibe corretamente via `orphanCurrentMembros`, mas para limpar o histórico o admin deve abrir o modal ✏️ dessas DPs e salvar novamente — o sistema vai reescrever com as chaves corretas.
 - **Automação migrada de Haiku para Sonnet (`verificar-diario-oficial.py`)** — `parse_designations` e `parse_remocao` agora usam `claude-sonnet-4-5-20251001` em vez de `claude-haiku-4-5-20251001`. O Haiku apresentou erros recorrentes de interpretação (ex.: identificar o substituto como ausente). Commit `8d037d0` (07/05/2026).
 - **Bug corrigido — automação identificava substituto como defensor_ausente** — quando o DO dizia "Designar ÍCARO para substituir na 5ª DP", o Haiku identificava Ícaro como ausente em vez da titular da 5ª DP (Emilly). Adicionado bloco `ATENÇÃO` no prompt de `parse_designations` deixando explícito que `defensor_ausente` = titular da DP afetada e `substituto` = pessoa designada, com exemplo concreto. Commit `8d037d0` (07/05/2026).
+- **Bug corrigido — designações cumulativas classificadas erroneamente como afastamentos** — portarias com verbo DESIGNAR + cumulativamente + sem data fim ("a contar do dia X" sem "até Y") eram salvas em `afastamentos_admin` e apareciam no sino azul. Caso exemplo: Eliaquim → 9ª DP a partir de 04/05/2026 (portaria de 06/05/2026). Correção: prompt do Claude agora tem terceiro array `designacoes_cumulativas` com regras explícitas de classificação; nova função `salvar_designacoes_cumulativas_firestore()` grava em `designacoes_cumulativas_admin`. Commit `457244c` (07/05/2026).
+- **Sino 🔔 de Designações Cumulativas** — botão `#btn-sino-designacao` na **barra de abas**, ao lado do `#btn-sino-remocao` (ambos junto à aba "📋 Defensorias"). Cabeçalho **verde** (`#166534`/`#16a34a`) para diferenciar dos outros dois sinos (azul = afastamentos, âmbar = remoções). Lê coleção `designacoes_cumulativas_admin` (onde `origem:"automacao-diario-oficial"` e `lido !== true`). Painel exibe: defensor, DP designada, data de início, portaria clicável, instrução "📋 Atualize o titular na aba Defensorias". Apenas botão [🗑️ Dispensar] — sem Editar (a ação é na aba Defensorias). Funções: `_atualizarBadgeSinoDesignacao()`, `abrirPainelDesignacao()`, `fecharPainelDesignacao()`, `dispensarDesignacao(id)`. Global: `designacaoNotifData[]`. `carregarNotificacoesAutomacao()` tem terceiro bloco `try/catch` independente para esta coleção. Commit `457244c` (07/05/2026).
 
 ### O que ainda falta implementar ⏳
+- **Dispensar registro incorreto do Eliaquim em `afastamentos_admin`** — a portaria de 06/05/2026 (Eliaquim → 9ª DP cumulativamente) foi gravada erroneamente em `afastamentos_admin` antes da correção do bug. Aparece no sino azul de afastamentos com `precisa_revisao: true`. Admin deve dispensá-lo pelo painel de notificações (sino azul) ou deletar diretamente no Firestore Console. O registro correto será criado automaticamente em `designacoes_cumulativas_admin` na próxima execução da automação se a edição ainda não foi reprocessada.
 - **Cadastrar os outros 36 usuários restantes** (1 admin + 35 viewers) no Firebase Auth + Firestore — Larice Bruce e José Antônio já cadastrados em 23/04/2026
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
 - **Botão "Plantão"** — nova seção na landing page com escala de plantão de defensores e servidores. Arquitetura a definir na próxima sessão (dados estáticos no HTML? JSON? Firestore?).
