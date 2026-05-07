@@ -2661,5 +2661,50 @@
         "resumo": "Autoriza deslocamento de servidor Renan Lopes Aparicio para Santo Antônio do Içá-AM (16-23/05/2026) em apoio a mutirão de atendimentos, com pagamento de diárias."
       }
     ]
+  },
+  {
+    "edicao": 2644,
+    "data": "2026-05-06",
+    "data_formatada": "06/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2644-2026__publicada_em_06_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 453/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005702-8",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 9ª Defensoria Pública do Polo do Médio Amazonas (Urucurituba), a contar do dia 04 de maio de 2026"
+        ],
+        "resumo": "Designa Defensor Eliaquim Antunes para atuar cumulativamente na 9ª DP do Polo Médio Amazonas (Urucurituba) a partir de 04/05/2026"
+      },
+      {
+        "numero": "Portaria Nº 440/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "substituicao",
+          "comarca",
+          "plantao"
+        ],
+        "trechos": [
+          "I - ALTERAR a Portaria n.º 298/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição n.º 2.622, de 30 de março de 2026, pág. 16 a 24",
+          "II - FORMALIZAR a substituição do Defensor Público Murilo Menezes do Monte, designado para a semana 17 do Plantão do Polo do Rio Negro-Solimões, pelo período de 04/05 a 10/05, por Stefanie Barbosa Sobral",
+          "IX - AUTORIZAR a substituição da Defensora Pública Thays Lidianne Campos de Azevedo Pereira, designada para a semana 19 do Plantão do Polo do Médio Solimões, pelo período de 18/05 a 24/05, por Pedro Henrique Pereira Paiva",
+          "X - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de afastamento, impedimento, suspeição, denegação de atendimento e licença médica de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Escala de substituição Polo do Rio Negro-Solimões Polo do Médio Amazonas Polo do Médio Solimões Polo do Baixo Amazonas Polo do Médio Madeira Polo do Madeira Iranduba, Careiro da Várzea, Careiro Castanho, Manaquiri, Autazes, Presidente Figueiredo e Rio Preto da Eva Polo de Coari Polo do Juruá Polo de Maués e do Alto Rio Negro Polo do Purus Polo do Alto Solimões",
+          "XI - Os Anexos I, II e III da Portaria n.º 298/2026-GSPG/DPE/AM, passam a viger conforme anexo único, desta Portaria, disponibilizado no sítio eletrônico da Defensoria Pública do Estado do Amazonas, no link 'Escala de Plantão - Atendimento e Custódia'"
+        ],
+        "resumo": "Altera escala de plantão e formaliza substituições de defensores públicos para diversos polos, incluindo Médio Amazonas, Médio Solimões e Rio Negro-Solimões, com designação especial para fins de promoção"
+      }
+    ]
   }
 ]
