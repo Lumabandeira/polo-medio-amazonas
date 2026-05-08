@@ -6359,7 +6359,12 @@
                         const label = dp.nome.includes('(')
                             ? esc(dp.nome)
                             : `${esc(dp.nome)} (${esc(dp.area)})`;
-                        const hist = (defHistorico[defKey] || []).find(h => h.dpKey === dpKey && !h.fim);
+                        const hist = (defHistorico[defKey] || []).find(h => {
+                            if (h.dpKey !== dpKey) return false;
+                            const s = new Date(h.inicio + 'T12:00:00');
+                            const e = h.fim ? new Date(h.fim + 'T12:00:00') : null;
+                            return today >= s && (e === null || today <= e);
+                        });
                         const s = `color:var(--text-secondary);font-size:0.82em;`;
                         let detalhe = '';
                         if (hist) {
