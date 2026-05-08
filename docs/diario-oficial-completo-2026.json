@@ -2706,5 +2706,84 @@
         "resumo": "Altera escala de plantão e formaliza substituições de defensores públicos para diversos polos, incluindo Médio Amazonas, Médio Solimões e Rio Negro-Solimões, com designação especial para fins de promoção"
       }
     ]
+  },
+  {
+    "edicao": 2645,
+    "data": "2026-05-07",
+    "data_formatada": "07/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2645-2026__publicada_em_07_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 231/2026-GDPG/DPE/AM",
+        "sei": "26.0.000005702-8",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "CONSIDERANDO o constante na Portaria n.º 231/2026-GDPG/DPE/AM, Ano 12, Edição 2.601, pág. 10, datada de 27 de fevereiro de 2026, que delegou ao Subdefensor Público Geral, as funções de organização e designação de membros para substituição em casos de férias, folgas, licenças e demais casos de afastamentos previstos em lei"
+        ],
+        "resumo": "Delegação de funções ao Subdefensor Público Geral para organização e designação de membros para substituição no Polo Médio Amazonas"
+      },
+      {
+        "numero": "Portaria Nº 259/2026-GDPG/DPE/AM",
+        "sei": "26.0.000005866-0",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "CONSIDERANDO o constante na Portaria n.º 259/2026-GDPG/DPE/AM, Ano 12, Edição 2.601, pág. 6, datada de 27 de fevereiro de 2026, que delegou à Segunda Subdefensora Pública Geral, as funções de organização e designação de membros para substituição em casos de férias, folgas, licenças e demais casos de afastamentos previstos em lei"
+        ],
+        "resumo": "Delegação de funções à Segunda Subdefensora Pública Geral para organização e designação de membros para substituição no Polo Médio Amazonas"
+      },
+      {
+        "numero": "[Portaria de Designação Cumulativa - Eliaquim Antunes de Souza Santos]",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 8ª Defensoria Pública do Polo Médio Amazonas (Itapiranga), no período de 02 a 15 de maio de 2026",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 10ª Defensoria Pública do Polo Médio Amazonas (Urucará), no período de 04 a 15 de maio de 2026"
+        ],
+        "resumo": "Designação cumulativa de Eliaquim Antunes de Souza Santos para atuar nas 8ª DP (Itapiranga) e 10ª DP (Urucará) do Polo Médio Amazonas em maio de 2026"
+      },
+      {
+        "numero": "RESOLUÇÃO Nº 17/2026-CSDPEAM",
+        "sei": "25.0.000008473-8",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca",
+          "coordenacao"
+        ],
+        "trechos": [
+          "1ª Defensoria Pública do Polo do Médio Amazonas (Família e Sucessões Itacoatiara)",
+          "2ª Defensoria Pública do Polo do Médio Amazonas (Família e Sucessões Itacoatiara)",
+          "3ª Defensoria Pública do Polo do Médio Amazonas (Cível, Infância e Juventude, Registros Públicos e Previdenciário Itacoatiara)",
+          "4ª Defensoria Pública do Polo do Médio Amazonas (Cível, Infância e Juventude, Registros Públicos e Previdenciário Itacoatiara)",
+          "5ª Defensoria Pública do Polo do Médio Amazonas (Criminal e Medidas Socioeducativas Itacoatiara)",
+          "6ª Defensoria Pública do Polo do Médio Amazonas (Criminal e Medidas Socioeducativas Itacoatiara)",
+          "7ª Defensoria Pública do Médio Amazonas (São Sebastião do Uatumã)",
+          "8ª Defensoria Pública do Polo do Médio Amazonas (Itapiranga)",
+          "9ª Defensoria Pública do Polo do Médio Amazonas (Urucurituba)",
+          "10ª Defensoria Pública do Polo do Médio Amazonas (Urucará)",
+          "11ª Defensoria Pública do Polo do Médio Amazonas (Silves)",
+          "12ª Defensoria Pública do Polo do Médio Amazonas (Silves)"
+        ],
+        "resumo": "Altera a Resolução nº 013/2023-CSDPE/AM definindo atribuições de todas as 12 Defensorias do Polo Médio Amazonas (Itacoatiara, São Sebastião do Uatumã, Itapiranga, Urucurituba, Urucará e Silves)"
+      }
+    ]
   }
 ]
