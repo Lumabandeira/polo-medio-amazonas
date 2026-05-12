@@ -2785,5 +2785,56 @@
         "resumo": "Altera a Resolução nº 013/2023-CSDPE/AM definindo atribuições de todas as 12 Defensorias do Polo Médio Amazonas (Itacoatiara, São Sebastião do Uatumã, Itapiranga, Urucurituba, Urucará e Silves)"
       }
     ]
+  },
+  {
+    "edicao": 2647,
+    "data": "2026-05-11",
+    "data_formatada": "11/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2647-2026__publicada_em_11_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 298/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "plantao",
+          "substituicao"
+        ],
+        "trechos": [
+          "CONSIDERANDO a publicação da Portaria n.º 298/2026-GSPG/DPE/AM, no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição n.º 2.622, de 30 de março de 2026, pág. 16 a 24, que estabeleceu a Escala de Plantão da Defensoria Pública do Estado do Amazonas para o 2.º trimestre de 2026 no interior",
+          "Escala de substituição - Polo do Rio Negro-Solimões - Polo do Médio Amazonas - Polo do Médio Solimões"
+        ],
+        "resumo": "Portaria que estabeleceu a Escala de Plantão para o 2º trimestre de 2026 no interior, incluindo o Polo do Médio Amazonas"
+      },
+      {
+        "numero": "Portaria Nº 440/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "plantao"
+        ],
+        "trechos": [
+          "CONSIDERANDO a publicação da Portaria n.º 440/2026-GSPG/DPE/AM, no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.644, de 6 de maio de 2026, pág. 24-32, que promoveu a 4ª Alteração à Escala de Plantão da Defensoria Pública do Estado do Amazonas para o interior para o 2º trimestre de 2026"
+        ],
+        "resumo": "4ª Alteração à Escala de Plantão da DPE/AM para o interior no 2º trimestre de 2026, envolvendo o Polo do Médio Amazonas"
+      },
+      {
+        "numero": "PORTARIA Nº 01/2026 - DPE/2DPPI/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "A DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS, através da 2 DEFENSORIA DE 1 INSTÂNCIA ESPECIALIZADA DE ATENDIMENTO A PESSOA IDOSA, por intermédio do Defensor Público subscritor",
+          "CONSIDERANDO que a ausência de políticas institucionais de transição e adaptação tecnológica podem gerar isolamento funcional, perda de atribuições, constrangimentos, ridicularizações, indução à aposentadoria precoce e outras formas de assédio moral organizacional direto e indireto, configurando etarismo digital e violência tecnoinstitucional"
+        ],
+        "resumo": "Portaria da 2ª Defensoria Especializada em Atendimento a Pessoa Idosa sobre diagnóstico e medidas de proteção a servidores públicos idosos com 60+ anos contra violência institucional digital"
+      }
+    ]
   }
 ]
