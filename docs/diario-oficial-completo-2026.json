@@ -2905,5 +2905,53 @@
         "resumo": "Designa Defensor Público José Ivan Benaion Cardoso para atuar em Sessão de Julgamento do Tribunal do Júri em Boa Vista do Ramos em 27 de maio de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2649,
+    "data": "2026-05-13",
+    "data_formatada": "13/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2649-2026__publicada_em_13_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 744/2026-GDPG/DPE/AM",
+        "sei": "26.0.000003673-0",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "substituicao",
+          "coordenacao"
+        ],
+        "trechos": [
+          "CONSIDERANDO a indispensabilidade da atualização da Portaria nº 493/2024-GDPG/DPE-AM, que fixa a escala de colidência entre os Polos e Unidades do Interior para atuarem como substitutos automáticos em casos de afastamento, impedimento, suspeição, denegação de atendimento e licença médica de seus membros",
+          "I - FIXAR a nova escala de substituição entre os órgãos de atuação dos Polos do Interior e Unidades da Região Metropolitana, nos casos de colidência, impedimento, suspeição e denegação de atendimento, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção",
+          "2ª Defensoria Pública do Polo do Médio Amazonas (Itacoatiara - Família)",
+          "3ª Defensoria Pública do Polo do Médio Amazonas (Itacoatiara - Cível)",
+          "4ª Defensoria Pública do Polo do Médio Amazonas (Itacoatiara - Cível)",
+          "6ª Defensoria Pública do Polo do Médio Amazonas (Itacoatiara - Criminal)",
+          "8ª Defensoria Pública do Polo do Médio Amazonas (Itapiranga)",
+          "9ª Defensoria Pública do Polo do Médio Amazonas (Urucurituba)",
+          "10ª Defensoria Pública do Polo do Médio Amazonas (Urucará)",
+          "11ª Defensoria Pública do Polo do Médio Amazonas (Silves)",
+          "12ª Defensoria Pública do Polo do Médio Amazonas (Silves)"
+        ],
+        "resumo": "Atualiza a escala de substituição entre órgãos de atuação dos Polos do Interior e Unidades da RM, definindo substitutos automáticos para casos de afastamento, impedimento e colidência, incluindo as defensorias do Polo Médio Amazonas (Itacoatiara, Itapiranga, Urucurituba, Urucará e Silves)"
+      },
+      {
+        "numero": "Portaria nº 746/2026-ESUDPAM/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "projeto",
+          "comarca"
+        ],
+        "trechos": [
+          "Art. 1º Tornar público o Resultado Definitivo do Processo Seletivo de Residência Jurídica, com atuação no Posto de Atendimento Avançado da Defensoria Pública no município de Urucará/AM",
+          "1.3 Será ofertada 01 (uma) vaga para residente no Programa de Residência Jurídica para a unidade de Tabatinga"
+        ],
+        "resumo": "Torna público o resultado do processo seletivo de Residência Jurídica com atuação no Polo Médio Amazonas, especificamente no Posto de Atendimento Avançado de Urucará/AM"
+      }
+    ]
   }
 ]
