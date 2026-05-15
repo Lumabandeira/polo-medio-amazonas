@@ -24,7 +24,7 @@
   "defensorias": {
     "1": {
       "nome": "1ª Defensoria Pública",
-      "area": "Família e Sucessões",
+      "area": "Família e Sucessões Itacoatiara",
       "destaque": "itacoatiara",
       "historico_titulares": [
         { "defensor": "icaro", "inicio": "2026-01-01", "fim": "2026-05-02" },
@@ -33,7 +33,7 @@
     },
     "2": {
       "nome": "2ª Defensoria Pública",
-      "area": "Família e Sucessões",
+      "area": "Família e Sucessões Itacoatiara",
       "destaque": "itacoatiara",
       "historico_titulares": [
         { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": "2026-05-02" },
@@ -42,7 +42,7 @@
     },
     "3": {
       "nome": "3ª Defensoria Pública",
-      "area": "Cível, Infância e Juventude, Registros Públicos e Previdenciário",
+      "area": "Cível, Infância e Juventude, Registros Públicos e Previdenciário Itacoatiara",
       "destaque": null,
       "historico_titulares": [
         { "defensor": "icaro", "inicio": "2026-01-01", "fim": null }
@@ -50,7 +50,7 @@
     },
     "4": {
       "nome": "4ª Defensoria Pública",
-      "area": "Cível, Infância e Juventude, Registros Públicos e Previdenciário",
+      "area": "Cível, Infância e Juventude, Registros Públicos e Previdenciário Itacoatiara",
       "destaque": null,
       "historico_titulares": [
         { "defensor": "eliaquim", "inicio": "2026-01-01", "fim": null }
@@ -58,7 +58,7 @@
     },
     "5": {
       "nome": "5ª Defensoria Pública",
-      "area": "Criminal e Medidas Socioeducativas",
+      "area": "Criminal e Medidas Socioeducativas Itacoatiara",
       "destaque": "itacoatiara",
       "historico_titulares": [
         { "defensor": "elton",  "inicio": "2026-01-01", "fim": "2026-05-02" },
@@ -67,7 +67,7 @@
     },
     "6": {
       "nome": "6ª Defensoria Pública",
-      "area": "Criminal e Medidas Socioeducativas",
+      "area": "Criminal e Medidas Socioeducativas Itacoatiara",
       "destaque": "itacoatiara",
       "historico_titulares": [
         { "defensor": "elaine", "inicio": "2025-11-30", "fim": "2026-03-01", "portaria_entrada": "Portaria nº 2145/2025-GDPG/DPE/AM", "portaria_saida": "Portaria nº 187/2026-GDPG/DPE/AM" },
