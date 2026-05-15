@@ -3956,25 +3956,35 @@
                 + Adicionar novo titular
             </button>`;
 
-            // Renderiza na ordem inversa: titular atual primeiro (topo), histórico depois
+            // Renderiza na ordem: titular atual → futuro → histórico (mais recente primeiro)
             const indices = historico.map((_, i) => i);
+
+            function _tipoEntrada(h) {
+                if (h.inicio > hoje) return 'futuro';
+                if (h.fim === null || h.fim >= hoje) return 'vigente';
+                return 'passada';
+            }
+
+            const _ordemTipo = { vigente: 0, futuro: 1, passada: 2 };
             indices.sort((a, b) => {
-                const ha = historico[a], hb = historico[b];
-                // Vigente (fim === null) sempre primeiro; fim vazio ("") é histórico
-                if (ha.fim === null && hb.fim !== null) return -1;
-                if (ha.fim !== null && hb.fim === null) return 1;
-                // Entre passadas: mais recente primeiro
-                return (hb.inicio || '').localeCompare(ha.inicio || '');
+                const ta = _ordemTipo[_tipoEntrada(historico[a])];
+                const tb = _ordemTipo[_tipoEntrada(historico[b])];
+                if (ta !== tb) return ta - tb;
+                // Dentro do mesmo tipo: mais recente primeiro
+                return (historico[b].inicio || '').localeCompare(historico[a].inicio || '');
             });
 
             indices.forEach(idx => {
                 const h = historico[idx];
-                const isVigente = h.fim === null;
+                const tipoEntrada = _tipoEntrada(h);
+                const isVigente = tipoEntrada === 'vigente';
+                const isFuturo = tipoEntrada === 'futuro';
                 const tipo = isVigente ? 'vigente' : 'passada';
+                const badgeLabel = isVigente ? 'Titular atual' : isFuturo ? 'Futuro' : 'Histórico';
                 const nomeDisplay = _resolverNomeDefensor(h.defensor);
 
                 html += `<div class="tit-entry-card tit-entry-${tipo}" data-idx="${idx}">
-                    <span class="tit-entry-badge ${tipo}">${isVigente ? 'Titular atual' : 'Histórico'}</span>
+                    <span class="tit-entry-badge ${tipo}">${badgeLabel}</span>
                     <button type="button" class="tit-btn-remover" onclick="_removerEntrada(${idx})">✕ Remover</button>
                     <div class="tit-entry-grid">
                         <div class="tit-field full">
@@ -6252,13 +6262,12 @@
             function getCurrentTitular(dpKey) {
                 const dp = defensorias[dpKey];
                 if (!dp) return null;
+                const todayStr = today.toISOString().split('T')[0];
                 let best = null, bestStart = null;
                 for (const h of dp.historico_titulares) {
-                    const s = new Date(h.inicio + 'T12:00:00');
-                    const e = h.fim ? new Date(h.fim + 'T12:00:00') : new Date(2027, 0, 1);
-                    if (today >= s && today < e) {
-                        if (!bestStart || s > bestStart) { best = h.defensor; bestStart = s; }
-                    }
+                    if (h.inicio > todayStr) continue;
+                    if (h.fim && h.fim < todayStr) continue;
+                    if (!bestStart || h.inicio > bestStart) { best = h.defensor; bestStart = h.inicio; }
                 }
                 return best;
             }
