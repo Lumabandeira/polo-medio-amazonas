@@ -24,7 +24,7 @@
   "defensorias": {
     "1": {
       "nome": "1ª Defensoria Pública",
-      "area": "Família, Sucessões e Infância",
+      "area": "Família e Sucessões",
       "destaque": "itacoatiara",
       "historico_titulares": [
         { "defensor": "icaro", "inicio": "2026-01-01", "fim": "2026-05-02" },
@@ -33,7 +33,7 @@
     },
     "2": {
       "nome": "2ª Defensoria Pública",
-      "area": "Família, Sucessões e Infância",
+      "area": "Família e Sucessões",
       "destaque": "itacoatiara",
       "historico_titulares": [
         { "defensor": "jose-antonio", "inicio": "2026-01-01", "fim": "2026-05-02" },
@@ -42,7 +42,7 @@
     },
     "3": {
       "nome": "3ª Defensoria Pública",
-      "area": "Cível, Registros e Previdenciário",
+      "area": "Cível, Infância e Juventude, Registros Públicos e Previdenciário",
       "destaque": null,
       "historico_titulares": [
         { "defensor": "icaro", "inicio": "2026-01-01", "fim": null }
@@ -50,7 +50,7 @@
     },
     "4": {
       "nome": "4ª Defensoria Pública",
-      "area": "Cível, Registros e Previdenciário",
+      "area": "Cível, Infância e Juventude, Registros Públicos e Previdenciário",
       "destaque": null,
       "historico_titulares": [
         { "defensor": "eliaquim", "inicio": "2026-01-01", "fim": null }
