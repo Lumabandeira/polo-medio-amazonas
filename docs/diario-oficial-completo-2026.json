@@ -2953,5 +2953,28 @@
         "resumo": "Torna público o resultado do processo seletivo de Residência Jurídica com atuação no Polo Médio Amazonas, especificamente no Posto de Atendimento Avançado de Urucará/AM"
       }
     ]
+  },
+  {
+    "edicao": 2651,
+    "data": "2026-05-15",
+    "data_formatada": "15/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2651-2026__publicada_em_15_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 768/2026-GDPG/DPE/AM",
+        "sei": "26.0.000006618-3",
+        "sgi": "2600719",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Larissa Rodrigues Bier da Silva, Assessora Técnica II DPE-1, no trecho Manaus/Urucará/Manaus, no período de 18 a 21 de maio de 2026, a fim de prestar apoio técnico aos servidores públicos do PAV da DPE-AM, em Urucará-AM",
+          "II - DETERMINAR o pagamento de diárias à servidora pública acima relacionada"
+        ],
+        "resumo": "Autoriza deslocamento de servidora para Urucará-AM no período de 18 a 21 de maio de 2026 para prestar apoio técnico"
+      }
+    ]
   }
 ]
