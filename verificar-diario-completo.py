@@ -269,6 +269,10 @@ def inicializar_termos():
 
     termos = [r"Polo\s+(?:do\s+)?M[eé]dio\s+Amazonas"]
 
+    # Resoluções de meta trimestral emitidas pelo Conselho Superior (CSDPEAM)
+    termos.append(r"CSDPEAM")
+    termos.append(r"metas?\s+(?:para\s+o\s+)?\d+[ºo°]\s+trimestre")
+
     # Cidades do polo
     termos.extend(CIDADES_POLO)
 
@@ -425,6 +429,7 @@ Categorias disponíveis (use quantas se aplicarem):
 - "plantao": escala de plantão (fins de semana, feriados)
 - "coordenacao": ato de coordenação regional do polo
 - "designacoes": designação de atuação cumulativa
+- "meta_trimestral": resolução do Conselho Superior (CSDPEAM) que estabelece metas, critérios de elegibilidade ou bonificação de produtividade/desempenho para um trimestre
 
 Retorne SOMENTE um JSON válido com esta estrutura:
 {{
