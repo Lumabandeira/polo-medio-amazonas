@@ -374,6 +374,25 @@ def salvar_afastamentos_firestore(
         data_inicio    = _normalizar_data(af.get("data_inicio", ""))
         data_fim       = _normalizar_data(af.get("data_fim", ""))
 
+        # Fallback: se o Claude não identificou o ausente mas há um dp_numero
+        # na designação, infere o titular vigente dessa DP a partir de DEFENSORES_POLO.
+        if not defensor_abrev and af.get("designacoes"):
+            dp_para_titular = {}
+            for _nome, _dados in DEFENSORES_POLO.items():
+                for _dp_str in _dados.get("dps", []):
+                    _m = re.match(r"\d+", _dp_str)
+                    if _m:
+                        dp_para_titular[_m.group()] = _dados["abrev"]
+            for _d in af.get("designacoes", []):
+                _dp_num = str(_d.get("dp_numero", "")).strip().replace("ª", "").replace("DP", "").strip()
+                if _dp_num in dp_para_titular:
+                    defensor_abrev = dp_para_titular[_dp_num]
+                    log.info(
+                        f"defensor_ausente não identificado pelo Claude — "
+                        f"inferido pelo titular da {_dp_num}ª DP: {defensor_abrev!r}"
+                    )
+                    break
+
         if not defensor_abrev or not data_inicio:
             log.warning(
                 f"Afastamento descartado (campos obrigatórios faltando): "
@@ -1099,11 +1118,16 @@ COMO CLASSIFICAR CADA PORTARIA — leia com atenção:
    - `portaria_cessada` = portaria ANTIGA que está sendo encerrada.
    - `portaria_cessadora` = portaria desta edição que determina a cessação.
 
-3. `designacoes_cumulativas` — portaria com verbo DESIGNAR + palavra "cumulativamente" + sem data de fim explícita ("a contar do dia X" sem "até Y").
+3. `designacoes_cumulativas` — portaria com verbo DESIGNAR + palavra "cumulativamente" + SEM data de fim explícita ("a contar do dia X" sem "até Y").
    - O defensor ganha uma DP adicional de forma permanente/indefinida, além das que já ocupa.
    - Exemplo: "DESIGNAR, cumulativamente, Eliaquim Antunes de Souza Santos para atuar na 9ª Defensoria Pública... a contar do dia 04 de maio de 2026"
      → coloque em `designacoes_cumulativas`, NÃO em `afastamentos`.
-   - Se a portaria diz "cumulativamente... do dia X ao dia Y" (tem data fim) → é substituição temporária → coloque em `afastamentos`.
+   - ⚠️ Se a portaria diz "cumulativamente... do dia X ao dia Y" (TEM data de início E data de fim) → NÃO é permanente → é substituição temporária → coloque em `afastamentos`, NÃO em `designacoes_cumulativas`.
+     Nesse caso, o `defensor_ausente` é o TITULAR VIGENTE da DP designada — consulte a lista de titulares acima para identificar.
+     Exemplo real: "DESIGNAR, cumulativamente, Emilly Bianca Ferreira dos Santos para atuar na 6ª Defensoria Pública do Polo do Médio Amazonas, no período de 18 a 31 de maio de 2026"
+     → A lista acima mostra que o titular da 6ª DP é Miguel Eduardo Martins Tavares
+     → defensor_ausente = "Miguel Eduardo Martins Tavares", substituto = "Emilly Bianca Ferreira dos Santos"
+     → data_inicio = "2026-05-18", data_fim = "2026-05-31", tipo = "outro"
 
 4. Portarias de Concurso de Remoção → NÃO coloque em nenhum dos arrays acima (tratadas separadamente).
 
