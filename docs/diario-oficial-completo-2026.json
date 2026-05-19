@@ -2976,5 +2976,41 @@
         "resumo": "Autoriza deslocamento de servidora para Urucará-AM no período de 18 a 21 de maio de 2026 para prestar apoio técnico"
       }
     ]
+  },
+  {
+    "edicao": 2652,
+    "data": "2026-05-18",
+    "data_formatada": "18/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2652-2026__publicada_em_18_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 516/2026-GSPG/DPE/AM",
+        "sei": "26.0.000006675-2",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Emilly Bianca Ferreira dos Santos para atuar na 6ª Defensoria Pública do Polo do Médio Amazonas, no período de 18 a 31 de maio de 2026;"
+        ],
+        "resumo": "Designa defensora para atuar cumulativamente na 6ª DP do Polo do Médio Amazonas de 18 a 31 de maio de 2026"
+      },
+      {
+        "numero": "Portaria Nº 517/2026-GSPG/DPE/AM",
+        "sei": "26.0.000006729-5",
+        "sgi": "2600754",
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Eliaquim Antunes de Souza Santos, Defensor Público 3ª Classe, no trecho Itacoatiara/Urucurituba/Itacoatiara, no período de 25 a 29 de maio de 2026, a fim de realizar atendimento presencial e inspeção carcerária, bem como atuação em sessão do Tribunal do Júri, no município de Urucurituba-AM;"
+        ],
+        "resumo": "Autoriza deslocamento de defensor para Itacoatiara e Urucurituba de 25 a 29 de maio de 2026 para atendimento presencial, inspeção carcerária e atuação em Tribunal do Júri"
+      }
+    ]
   }
 ]
