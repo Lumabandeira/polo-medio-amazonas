@@ -3012,5 +3012,75 @@
         "resumo": "Autoriza deslocamento de defensor para Itacoatiara e Urucurituba de 25 a 29 de maio de 2026 para atendimento presencial, inspeção carcerária e atuação em Tribunal do Júri"
       }
     ]
+  },
+  {
+    "edicao": 2653,
+    "data": "2026-05-20",
+    "data_formatada": "20/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2653-2026__publicada_em_20_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 791/2026-GDPG/DPE/AM",
+        "sei": "26.0.000006832-1",
+        "sgi": "2600774",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "servidor",
+          "projeto"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, nos trechos Manaus/Itapiranga/Manaus, no dia 21 de maio de 2026, a fim de conduzir a defensora pública Emilly Bianca Ferreira dos Santos até o município de Itapiranga-AM",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado"
+        ],
+        "resumo": "Autoriza deslocamento de servidor a Itapiranga para apoiar defensora no Projeto FENAPRED em 21/05/2026"
+      },
+      {
+        "numero": "Portaria Nº 519/2026-GSPG/DPE/AM",
+        "sei": "26.0.000004495-3",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3.ª Classe Inácio de Araújo Navarro, para atuar nas Sessões de Julgamento do Tribunal do Júri da Vara Única da Comarca de Beruri nos dias 26 a 28 de maio de 2026, conforme Anexo Único",
+          "II - ATRIBUIR ao Defensor Público mencionado neste ato, por dia trabalhado, 1 (um) dia de licença compensatória por acumulação de acervo processual, nos mesmos termos dispostos no art. 1º do Ato Normativo Helom Cesar da Silva Nunes 5/2025/GDPG/DPE/AM",
+          "III - ENQUADRAR a atuação do membro mencionado neste ato como 1 (uma) designação especial, por dia trabalhado, para fins de promoção, na forma do inciso IV do art. 17 da Resolução n.º 004/2018-CSDPE/AM",
+          "IV - DETERMINAR a atuação do membro mencionado no Anexo Único como critério de elegibilidade para meritocracia, nos termos do art. 2º, inciso V, da Resolução nº 016/2026-CSDPE/AM"
+        ],
+        "resumo": "Designa Inácio de Araújo Navarro para atuar em Júri em Beruri de 26-28/05/2026 com benefícios meritocráticos"
+      },
+      {
+        "numero": "Portaria Nº 520/2026-GSPG/DPE/AM",
+        "sei": "26.0.000006794-5",
+        "sgi": "2600769",
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Emilly Bianca Ferreira dos Santos, Defensora Pública 3ª Classe, nos trechos Manaus/Urucará/Manaus, no período de 21 a 23 de maio de 2026, a fim de atuar nos preparativos para a implantação do PAV de Urucará, bem como no treinamento da equipe",
+          "II - DETERMINAR o pagamento de diárias à defensora pública acima relacionada"
+        ],
+        "resumo": "Autoriza deslocamento de defensora a Urucará para preparativos de implantação do PAV de 21-23/05/2026"
+      },
+      {
+        "numero": "Portaria Nº 521/2026-GSPG/DPE/AM",
+        "sei": "26.0.000006374-5",
+        "sgi": "2600769",
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Rafael Vinheiro Monteiro Barbosa, Defensor Público Geral, nos trechos Manaus/Urucará/Manaus, no período de 22 a 23 de maio de 2026, a fim de participar na solenidade de inauguração da unidade da Defensoria Pública do Estado no município de Urucará-AM",
+          "II - DETERMINAR o pagamento de diárias ao Defensor Público Geral acima relacionado"
+        ],
+        "resumo": "Autoriza deslocamento do Defensor Público Geral a Urucará para inauguração do PAV de 22-23/05/2026"
+      }
+    ]
   }
 ]
