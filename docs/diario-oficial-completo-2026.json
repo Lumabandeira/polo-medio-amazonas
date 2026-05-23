@@ -3191,5 +3191,100 @@
         "resumo": "Designa Defensora Pública para atuar em audiência na Comarca de Careiro Castanho em 21 de maio de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2655,
+    "data": "2026-05-22",
+    "data_formatada": "22/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2655-2026__publicada_em_22_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 488/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005210-7",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, a Defensora Pública de 4.ª Classe Natália Feitosa de Almeida, para atuar na Sessão de Julgamento do Tribunal do Júri da Comarca de Maués"
+        ],
+        "resumo": "Designa Defensora Pública Natália Feitosa de Almeida para atuar em sessão do Tribunal do Júri de Maués em 25/05/2026"
+      },
+      {
+        "numero": "Portaria Nº 495/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "substituicao",
+          "plantao"
+        ],
+        "trechos": [
+          "II - FORMALIZAR a substituição do servidor Arnoud Lucas Andrade da Silva, designado para a semana 18 do Plantão do Polo do Médio Amazonas, pelo período de 11/05 a 17/05, por Larice Bruce Pereira",
+          "V - AUTORIZAR a substituição do Defensor Público Miguel Eduardo de Azevedo Martins Filho, designado para a semana 20 do Plantão do Polo do Médio Amazonas, pelo período de 25/05 a 31/05, por Ícaro Oliveira Avelar Costa",
+          "VI - AUTORIZAR a substituição do Defensor Público Elton Dariva Staub, designado para a semana 24 do Plantão do Polo do Médio Amazonas, pelo período de 22/06 a 28/06, por Miguel Eduardo de Azevedo Martins Filho",
+          "VII - AUTORIZAR a substituição da servidora Natália Cristina de Moraes, designada para a semana 24 do Plantão do Polo do Médio Amazonas, pelo período de 22/06 a 28/06, por Larice Bruce Pereira",
+          "XI - AUTORIZAR a substituição do Defensor Público Eliaquim Antunes de Souza Santos, designado para a semana 21 do Plantão do Polo do Médio Amazonas, pelo período de 01/06 a 07/06, por Gabriel Herzog Kehde"
+        ],
+        "resumo": "Altera escala de plantão do Polo do Médio Amazonas com substituições de defensores e servidores para 2º trimestre de 2026"
+      },
+      {
+        "numero": "Portaria Nº 522/2026-GSPG/DPE/AM",
+        "sei": "26.0.000006786-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 3ª Defensoria Pública do Polo do Médio Amazonas, no período de 02 de junho de 2026 a 05 de julho de 2026"
+        ],
+        "resumo": "Designa Defensor Eliaquim Antunes de Souza Santos cumulativamente na 3ª DP do Polo Médio Amazonas de 02/06 a 05/07/2026"
+      },
+      {
+        "numero": "Portaria Nº 525/2026-GSPG/DPE/AM",
+        "sei": "26.0.000006578-0",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - DESIGNAR o Defensor Público de 2ª Classe Fernando Figueiredo Serejo Mestrinho para atuar na audiência designada para o dia 21 de maio de 2026, na Vara Única da Comarca de Autazes"
+        ],
+        "resumo": "Designa Defensor Fernando Figueiredo Serejo Mestrinho para audiência na Comarca de Autazes em 21/05/2026"
+      },
+      {
+        "numero": "Portaria Nº 526/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005807-5",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3.ª Classe Oswaldo Machado Neto, para atuar na Sessão de Julgamento do Tribunal do Júri da 1ª Vara da Comarca de Manacapuru, no dia 16 de junho de 2026"
+        ],
+        "resumo": "Designa Defensor Oswaldo Machado Neto para sessão do Tribunal do Júri da Comarca de Manacapuru em 16/06/2026"
+      },
+      {
+        "numero": "Portaria Nº 527/2026-GSPG/DPE/AM",
+        "sei": "26.0.000006561-6",
+        "sgi": null,
+        "categorias": [
+          "defensor"
+        ],
+        "trechos": [
+          "I - DESIGNAR o Defensor Público de 4.ª Classe Ian Marcos Martins Palmeira para atuar na audiência designada para o dia 20 de maio de 2026, na Vara Única da Comarca de Presid"
+        ],
+        "resumo": "Designa Defensor Ian Marcos Martins Palmeira para audiência em comarca do interior em 20/05/2026"
+      }
+    ]
   }
 ]
