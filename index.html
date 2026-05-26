@@ -1578,6 +1578,128 @@
             min-height: 60px;
         }
 
+        /* ─── Rich Text Editor Toolbar ─────────────────────────────── */
+        #rich-editor-toolbar {
+            display: none;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2px;
+            padding: 6px 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+        }
+        .rte-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 30px;
+            height: 28px;
+            padding: 0 5px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            background: none;
+            cursor: pointer;
+            font-size: 0.85em;
+            color: #334155;
+            font-family: inherit;
+            transition: background 0.15s, border-color 0.15s;
+            white-space: nowrap;
+        }
+        .rte-btn:hover  { background: #e2e8f0; border-color: #cbd5e1; }
+        .rte-btn.active { background: #dbeafe; border-color: #93c5fd; color: #1d4ed8; }
+        .rte-sep {
+            width: 1px;
+            height: 20px;
+            background: #cbd5e1;
+            margin: 0 4px;
+            flex-shrink: 0;
+        }
+        #rte-fontsize {
+            height: 28px;
+            padding: 0 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            background: white;
+            font-size: 0.82em;
+            color: #334155;
+            cursor: pointer;
+            outline: none;
+        }
+        .rte-color-wrap {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 28px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .rte-color-wrap:hover { background: #e2e8f0; border-color: #cbd5e1; }
+        .rte-color-wrap input[type="color"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            border: none;
+            padding: 0;
+        }
+        /* Emoji picker */
+        #rte-emoji-panel {
+            position: fixed;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+            padding: 10px;
+            z-index: 9999;
+            width: 310px;
+            display: none;
+        }
+        .rte-emoji-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .rte-emoji-tab {
+            padding: 3px 9px;
+            font-size: 0.73em;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            cursor: pointer;
+            background: #f8fafc;
+            color: #475569;
+            transition: all 0.15s;
+        }
+        .rte-emoji-tab.active { background: #dbeafe; border-color: #93c5fd; color: #1d4ed8; font-weight: 600; }
+        .rte-emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+        }
+        .rte-emoji-btn {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25em;
+            cursor: pointer;
+            border: none;
+            background: none;
+            border-radius: 4px;
+            transition: background 0.1s;
+        }
+        .rte-emoji-btn:hover { background: #f1f5f9; }
+
         /* ─── Toast ────────────────────────────────────────────────── */
         #toast {
             display: none;
@@ -6680,6 +6802,180 @@
             }
         }
 
+        // ── Rich Text Editor ───────────────────────────────────────────────
+        const RTE_EMOJIS = {
+            comuns:   ['📋','📌','📎','🗓️','✅','❌','⚠️','ℹ️','🔔','🔒','🔓','📢','🏷️','💡','🔧','⚙️','📊','📈','📉','💬','📝','🗒️','📄','📃','📑','🔑','📮'],
+            juridico: ['⚖️','🏛️','📜','🖊️','🗂️','📁','🔍','📣','🚨','🔐','🗃️','📂','🗄️','💼','🤝','🚫','✍️','🖋️','📋','🏷️','🔏','🧾'],
+            pessoas:  ['👤','👥','🧑‍⚖️','🤝','👋','🙋','🧑','👩','👨','🧑‍💼','👩‍💼','👨‍💼','🫡','🫂','🧑‍🏫','👩‍🏫','👨‍🏫'],
+            status:   ['✔️','❗','❓','🔴','🟡','🟢','🔵','⚪','⚫','📅','🗓️','⏰','🕐','⏳','✨','🎯','🏆','🥇','⭐','🌟','🆕','🆗','🔄'],
+            natureza: ['🌿','🐟','🌊','🌳','🦅','🌱','🦜','🐊','🌺','🍃','🦋','🌈','☀️','🌧️','🏞️','🐢','🌻','🐆','🦈','🌴']
+        };
+        const RTE_CAT_LABELS = { comuns:'Comuns', juridico:'Jurídico', pessoas:'Pessoas', status:'Status', natureza:'Natureza/AM' };
+
+        let _rteSavedRange  = null;
+        let _rteEmojiCat    = 'comuns';
+        let _rteTargetEl    = null;  // o contentEditable ativo
+
+        function _rteSaveRange() {
+            const sel = window.getSelection();
+            _rteSavedRange = (sel && sel.rangeCount > 0) ? sel.getRangeAt(0).cloneRange() : null;
+            _rteUpdateStates();
+        }
+
+        function _rteRestoreRange() {
+            if (!_rteSavedRange || !_rteTargetEl) return;
+            _rteTargetEl.focus();
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(_rteSavedRange);
+        }
+
+        function _rteExec(cmd, value) {
+            _rteRestoreRange();
+            document.execCommand(cmd, false, value !== undefined ? value : null);
+            _rteSaveRange();
+        }
+
+        function _rteUpdateStates() {
+            const map = {
+                bold: 'rte-bold', italic: 'rte-italic', underline: 'rte-underline',
+                strikeThrough: 'rte-strike', justifyLeft: 'rte-align-left',
+                justifyCenter: 'rte-align-center', justifyRight: 'rte-align-right',
+                insertUnorderedList: 'rte-ul', insertOrderedList: 'rte-ol'
+            };
+            for (const [cmd, id] of Object.entries(map)) {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('active', document.queryCommandState(cmd));
+            }
+        }
+
+        function _rteInsertLink() {
+            _rteRestoreRange();
+            const url = prompt('Digite a URL do link (ex: https://...):');
+            if (url && url.trim()) {
+                document.execCommand('createLink', false, url.trim());
+                // Garante que link abra em nova aba
+                const sel = window.getSelection();
+                if (sel && sel.anchorNode) {
+                    let node = sel.anchorNode.parentElement;
+                    while (node && node.tagName !== 'A') node = node.parentElement;
+                    if (node && node.tagName === 'A') { node.target = '_blank'; node.rel = 'noopener'; }
+                }
+            }
+            _rteSaveRange();
+        }
+
+        function _rteShowEmojiCat(cat) {
+            _rteEmojiCat = cat;
+            // Abas
+            document.querySelectorAll('.rte-emoji-tab').forEach(t =>
+                t.classList.toggle('active', t.dataset.cat === cat)
+            );
+            // Grid
+            const grid = document.getElementById('rte-emoji-grid');
+            grid.innerHTML = RTE_EMOJIS[cat].map(e =>
+                `<button class="rte-emoji-btn" onmousedown="event.preventDefault()" onclick="_rteInsertEmoji('${e}')" title="${e}">${e}</button>`
+            ).join('');
+        }
+
+        function _rteInsertEmoji(emoji) {
+            _rteRestoreRange();
+            document.execCommand('insertText', false, emoji);
+            _rteSaveRange();
+            document.getElementById('rte-emoji-panel').style.display = 'none';
+        }
+
+        function _rteToggleEmoji(e) {
+            e.preventDefault();
+            const panel = document.getElementById('rte-emoji-panel');
+            if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+            const btn = document.getElementById('rte-emoji-btn');
+            const r   = btn.getBoundingClientRect();
+            panel.style.top  = (r.bottom + 4) + 'px';
+            panel.style.left = Math.min(r.left, window.innerWidth - 320) + 'px';
+            panel.style.display = 'block';
+            _rteShowEmojiCat(_rteEmojiCat);
+        }
+
+        function _rteMount(secaoId) {
+            const toolbar   = document.getElementById('rich-editor-toolbar');
+            const contentEl = document.getElementById(secaoId + '-html');
+            _rteTargetEl    = contentEl;
+
+            // Mover toolbar para antes do contentEditable
+            contentEl.parentNode.insertBefore(toolbar, contentEl);
+            toolbar.style.display = 'flex';
+
+            // Salvar seleção quando o editor recebe eventos
+            ['keyup','mouseup','keydown'].forEach(ev =>
+                contentEl.addEventListener(ev, _rteSaveRange)
+            );
+
+            // Construir abas de emoji
+            const tabsEl = document.getElementById('rte-emoji-tabs');
+            tabsEl.innerHTML = Object.entries(RTE_CAT_LABELS).map(([k, v]) =>
+                `<span class="rte-emoji-tab${k === _rteEmojiCat ? ' active' : ''}" data-cat="${k}" onmousedown="event.preventDefault()" onclick="_rteShowEmojiCat('${k}')">${v}</span>`
+            ).join('');
+            _rteShowEmojiCat(_rteEmojiCat);
+
+            // Botões — mousedown previne perda de foco
+            const cmds = {
+                'rte-bold': 'bold', 'rte-italic': 'italic', 'rte-underline': 'underline',
+                'rte-strike': 'strikeThrough', 'rte-align-left': 'justifyLeft',
+                'rte-align-center': 'justifyCenter', 'rte-align-right': 'justifyRight',
+                'rte-ul': 'insertUnorderedList', 'rte-ol': 'insertOrderedList',
+                'rte-indent': 'indent', 'rte-outdent': 'outdent',
+                'rte-clear': 'removeFormat', 'rte-undo': 'undo', 'rte-redo': 'redo'
+            };
+            for (const [id, cmd] of Object.entries(cmds)) {
+                const btn = document.getElementById(id);
+                btn.onmousedown = (e) => { e.preventDefault(); _rteExec(cmd); };
+            }
+
+            // Link
+            document.getElementById('rte-link').onmousedown = (e) => { e.preventDefault(); _rteInsertLink(); };
+
+            // Emoji
+            document.getElementById('rte-emoji-btn').onmousedown = _rteToggleEmoji;
+
+            // Tamanho de fonte
+            const fsEl = document.getElementById('rte-fontsize');
+            fsEl.onmousedown = (e) => e.preventDefault();
+            fsEl.onchange = function() { _rteExec('fontSize', this.value); };
+
+            // Cor do texto
+            const colorEl = document.getElementById('rte-color');
+            colorEl.onchange = colorEl.oninput = function() {
+                _rteRestoreRange(); document.execCommand('foreColor', false, this.value);
+            };
+
+            // Cor de realce
+            const hiliteEl = document.getElementById('rte-hilite');
+            hiliteEl.onchange = hiliteEl.oninput = function() {
+                _rteRestoreRange(); document.execCommand('hiliteColor', false, this.value);
+            };
+
+            _rteUpdateStates();
+        }
+
+        function _rteUnmount() {
+            document.getElementById('rich-editor-toolbar').style.display = 'none';
+            document.getElementById('rte-emoji-panel').style.display = 'none';
+            document.body.appendChild(document.getElementById('rich-editor-toolbar'));
+            _rteSavedRange = null;
+            _rteTargetEl   = null;
+        }
+
+        // Fechar emoji ao clicar fora
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('rte-emoji-panel');
+            if (panel && panel.style.display !== 'none'
+                && !panel.contains(e.target)
+                && e.target.id !== 'rte-emoji-btn') {
+                panel.style.display = 'none';
+            }
+        });
+
         // ── Edição inline de seções (conteúdo + título) ───────────────────
         function iniciarEdicao(secaoId) {
             const conteudoEl = document.getElementById(secaoId + '-html');
@@ -6694,7 +6990,7 @@
             conteudoEl.focus();
 
             // Ativar edição no título
-            tituloEl.contentEditable = 'true';
+            tituloEl.contentEditable    = 'true';
             tituloEl.style.outline      = '2px dashed #3b82f6';
             tituloEl.style.borderRadius = '4px';
             tituloEl.style.padding      = '2px 6px';
@@ -6703,6 +6999,8 @@
             document.getElementById('edit-btn-' + secaoId).style.display   = 'none';
             document.getElementById('save-btn-' + secaoId).style.display   = 'inline-flex';
             document.getElementById('cancel-btn-' + secaoId).style.display = 'inline-flex';
+
+            _rteMount(secaoId);
         }
 
         function cancelarEdicao(secaoId) {
@@ -6722,6 +7020,8 @@
             document.getElementById('edit-btn-' + secaoId).style.display   = 'inline-flex';
             document.getElementById('save-btn-' + secaoId).style.display   = 'none';
             document.getElementById('cancel-btn-' + secaoId).style.display = 'none';
+
+            _rteUnmount();
         }
 
         async function salvarSecao(secaoId) {
@@ -6754,6 +7054,7 @@
                 saveBtn.innerHTML       = '💾 Salvar';
                 document.getElementById('cancel-btn-' + secaoId).style.display = 'none';
 
+                _rteUnmount();
                 mostrarToast('✅ Salvo com sucesso!');
             } catch(e) {
                 saveBtn.disabled  = false;
@@ -6795,5 +7096,59 @@
             loadJSONData();
         };
     </script>
+
+    <!-- ── Rich Text Editor Toolbar ─────────────────────────────────── -->
+    <div id="rich-editor-toolbar">
+        <!-- Tamanho -->
+        <select id="rte-fontsize" title="Tamanho do texto">
+            <option value="1">Pequeno</option>
+            <option value="3" selected>Normal</option>
+            <option value="4">Grande</option>
+            <option value="5">Maior</option>
+            <option value="6">Título</option>
+        </select>
+        <span class="rte-sep"></span>
+        <!-- Estilo -->
+        <button class="rte-btn" id="rte-bold"      title="Negrito (Ctrl+B)"><b>N</b></button>
+        <button class="rte-btn" id="rte-italic"    title="Itálico (Ctrl+I)"><i>I</i></button>
+        <button class="rte-btn" id="rte-underline" title="Sublinhado (Ctrl+U)"><u>S</u></button>
+        <button class="rte-btn" id="rte-strike"    title="Tachado"><s>T</s></button>
+        <span class="rte-sep"></span>
+        <!-- Cores -->
+        <span class="rte-color-wrap" id="rte-color-wrap" title="Cor do texto">
+            🎨<input type="color" id="rte-color" value="#000000">
+        </span>
+        <span class="rte-color-wrap" id="rte-hilite-wrap" title="Cor de realce">
+            🖍️<input type="color" id="rte-hilite" value="#ffff00">
+        </span>
+        <span class="rte-sep"></span>
+        <!-- Alinhamento -->
+        <button class="rte-btn" id="rte-align-left"   title="Alinhar à esquerda">⬅</button>
+        <button class="rte-btn" id="rte-align-center" title="Centralizar">↔</button>
+        <button class="rte-btn" id="rte-align-right"  title="Alinhar à direita">➡</button>
+        <span class="rte-sep"></span>
+        <!-- Listas -->
+        <button class="rte-btn" id="rte-ul"      title="Lista com marcadores">• ≡</button>
+        <button class="rte-btn" id="rte-ol"      title="Lista numerada">1. ≡</button>
+        <button class="rte-btn" id="rte-indent"  title="Aumentar recuo">⇥</button>
+        <button class="rte-btn" id="rte-outdent" title="Diminuir recuo">⇤</button>
+        <span class="rte-sep"></span>
+        <!-- Inserir -->
+        <button class="rte-btn" id="rte-link"  title="Inserir link">🔗</button>
+        <button class="rte-btn" id="rte-clear" title="Limpar formatação">🧹</button>
+        <span class="rte-sep"></span>
+        <!-- Emoji -->
+        <button class="rte-btn" id="rte-emoji-btn" title="Inserir emoji">😀</button>
+        <span class="rte-sep"></span>
+        <!-- Histórico -->
+        <button class="rte-btn" id="rte-undo" title="Desfazer (Ctrl+Z)">↩</button>
+        <button class="rte-btn" id="rte-redo" title="Refazer (Ctrl+Y)">↪</button>
+    </div>
+
+    <!-- ── Emoji Picker Panel ─────────────────────────────────────────── -->
+    <div id="rte-emoji-panel">
+        <div class="rte-emoji-tabs" id="rte-emoji-tabs"></div>
+        <div class="rte-emoji-grid" id="rte-emoji-grid"></div>
+    </div>
 </body>
 </html>
