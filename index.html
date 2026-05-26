@@ -1628,28 +1628,73 @@
             cursor: pointer;
             outline: none;
         }
-        .rte-color-wrap {
-            position: relative;
+        /* Botões de cor com indicador */
+        .rte-color-btn {
             display: inline-flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 30px;
-            height: 28px;
+            gap: 2px;
+            min-width: 30px;
+            height: 32px;
+            padding: 3px 5px;
             border: 1px solid transparent;
             border-radius: 4px;
+            background: none;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.88em;
+            color: #334155;
+            font-family: inherit;
+            transition: background 0.15s, border-color 0.15s;
         }
-        .rte-color-wrap:hover { background: #e2e8f0; border-color: #cbd5e1; }
-        .rte-color-wrap input[type="color"] {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
+        .rte-color-btn:hover { background: #e2e8f0; border-color: #cbd5e1; }
+        .rte-color-ind {
+            width: 18px;
+            height: 3px;
+            border-radius: 2px;
+            border: 1px solid rgba(0,0,0,0.15);
+        }
+        /* Painel de paleta de cores */
+        #rte-color-panel {
+            position: fixed;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.14);
+            padding: 12px;
+            z-index: 9999;
+            display: none;
+            min-width: 220px;
+        }
+        .rte-cp-label {
+            font-size: 0.72em;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 6px;
+        }
+        .rte-cp-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin-bottom: 10px;
+        }
+        .rte-cp-swatch {
+            width: 18px;
+            height: 18px;
+            border-radius: 2px;
+            border: 1px solid rgba(0,0,0,0.12);
             cursor: pointer;
-            border: none;
-            padding: 0;
+            transition: transform 0.1s, box-shadow 0.1s;
+            flex-shrink: 0;
+        }
+        .rte-cp-swatch:hover {
+            transform: scale(1.25);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            border-color: rgba(0,0,0,0.35);
+            z-index: 1;
+            position: relative;
         }
         /* Emoji picker */
         #rte-emoji-panel {
@@ -6938,41 +6983,126 @@
             // Emoji
             document.getElementById('rte-emoji-btn').onmousedown = _rteToggleEmoji;
 
-            // Tamanho de fonte
+            // Tamanho de fonte — salva seleção no mousedown (sem preventDefault, senão o select não abre)
             const fsEl = document.getElementById('rte-fontsize');
-            fsEl.onmousedown = (e) => e.preventDefault();
-            fsEl.onchange = function() { _rteExec('fontSize', this.value); };
+            fsEl.onmousedown = () => _rteSaveRange();
+            fsEl.onchange    = function() { _rteExec('fontSize', this.value); this.blur(); };
 
             // Cor do texto
-            const colorEl = document.getElementById('rte-color');
-            colorEl.onchange = colorEl.oninput = function() {
-                _rteRestoreRange(); document.execCommand('foreColor', false, this.value);
+            document.getElementById('rte-color-btn').onmousedown = (e) => {
+                e.preventDefault(); _rteOpenColorPanel('text', e.currentTarget);
             };
 
             // Cor de realce
-            const hiliteEl = document.getElementById('rte-hilite');
-            hiliteEl.onchange = hiliteEl.oninput = function() {
-                _rteRestoreRange(); document.execCommand('hiliteColor', false, this.value);
+            document.getElementById('rte-hilite-btn').onmousedown = (e) => {
+                e.preventDefault(); _rteOpenColorPanel('hilite', e.currentTarget);
             };
+
+            _rteInitColorPalette();
 
             _rteUpdateStates();
         }
 
         function _rteUnmount() {
             document.getElementById('rich-editor-toolbar').style.display = 'none';
-            document.getElementById('rte-emoji-panel').style.display = 'none';
+            document.getElementById('rte-emoji-panel').style.display   = 'none';
+            document.getElementById('rte-color-panel').style.display   = 'none';
             document.body.appendChild(document.getElementById('rich-editor-toolbar'));
-            _rteSavedRange = null;
-            _rteTargetEl   = null;
+            _rteSavedRange  = null;
+            _rteTargetEl    = null;
+            _rteColorTarget = null;
         }
 
-        // Fechar emoji ao clicar fora
+        // ── Paleta de cores ───────────────────────────────────────────────
+        let _rteColorTarget = null;  // 'text' | 'hilite'
+        let _rteColorLast   = { text: '#000000', hilite: '#ffff00' };
+
+        const RTE_PALETTE_TEMA = [
+            // Linha 1 — bases
+            ['#FFFFFF','#000000','#EEECE1','#1F497D','#4F81BD','#C0504D','#9BBB59','#8064A2','#4BACC6','#F79646'],
+            // Linha 2 — muito claros
+            ['#F2F2F2','#7F7F7F','#DDD9C3','#C6D9F0','#DBE5F1','#F2DCDB','#EBF1DD','#E5E0EC','#DAEEF3','#FDEADA'],
+            // Linha 3 — claros
+            ['#D8D8D8','#595959','#C4BD97','#8DB3E2','#B8CCE4','#E6B8B7','#D7E4BC','#CCC1D9','#B7DDE8','#FAC090'],
+            // Linha 4 — médios
+            ['#BFBFBF','#404040','#938953','#548DD4','#95B3D7','#DA9694','#C3D69B','#B2A2C7','#92CDDC','#E36C09'],
+            // Linha 5 — escuros
+            ['#A6A6A6','#262626','#494429','#17375E','#376091','#963634','#76923C','#5F497A','#31849B','#974806'],
+            // Linha 6 — muito escuros
+            ['#808080','#0D0D0D','#1D1B10','#0F243E','#244061','#632423','#4F6228','#3F3151','#215868','#632F00'],
+        ];
+        const RTE_PALETTE_PADRAO = [
+            '#C00000','#FF0000','#FFC000','#FFFF00','#92D050',
+            '#00B050','#00B0F0','#0070C0','#002060','#7030A0'
+        ];
+
+        function _rteInitColorPalette() {
+            const tema   = document.getElementById('rte-cp-tema');
+            const padrao = document.getElementById('rte-cp-padrao');
+            if (tema.children.length) return; // já montado
+
+            RTE_PALETTE_TEMA.forEach(row => {
+                row.forEach(hex => {
+                    const s = document.createElement('div');
+                    s.className = 'rte-cp-swatch';
+                    s.style.background = hex;
+                    s.title = hex;
+                    s.onmousedown = (e) => { e.preventDefault(); _rteApplyColor(hex); };
+                    tema.appendChild(s);
+                });
+            });
+            RTE_PALETTE_PADRAO.forEach(hex => {
+                const s = document.createElement('div');
+                s.className = 'rte-cp-swatch';
+                s.style.background = hex;
+                s.title = hex;
+                s.onmousedown = (e) => { e.preventDefault(); _rteApplyColor(hex); };
+                padrao.appendChild(s);
+            });
+        }
+
+        function _rteOpenColorPanel(target, anchorEl) {
+            _rteColorTarget = target;
+            const panel = document.getElementById('rte-color-panel');
+            if (panel.style.display !== 'none' && panel.dataset.target === target) {
+                panel.style.display = 'none'; return;
+            }
+            panel.dataset.target = target;
+            const r = anchorEl.getBoundingClientRect();
+            panel.style.top     = (r.bottom + 4) + 'px';
+            panel.style.left    = Math.min(r.left, window.innerWidth - 230) + 'px';
+            panel.style.display = 'block';
+        }
+
+        function _rteApplyColor(hex) {
+            document.getElementById('rte-color-panel').style.display = 'none';
+            _rteRestoreRange();
+            if (_rteColorTarget === 'text') {
+                document.execCommand('foreColor', false, hex);
+                document.getElementById('rte-color-ind').style.background = hex;
+                _rteColorLast.text = hex;
+            } else {
+                document.execCommand('hiliteColor', false, hex);
+                document.getElementById('rte-hilite-ind').style.background = hex;
+                _rteColorLast.hilite = hex;
+            }
+            _rteSaveRange();
+        }
+
+        // Fechar painéis ao clicar fora
         document.addEventListener('click', function(e) {
-            const panel = document.getElementById('rte-emoji-panel');
-            if (panel && panel.style.display !== 'none'
-                && !panel.contains(e.target)
+            const emoji = document.getElementById('rte-emoji-panel');
+            if (emoji && emoji.style.display !== 'none'
+                && !emoji.contains(e.target)
                 && e.target.id !== 'rte-emoji-btn') {
-                panel.style.display = 'none';
+                emoji.style.display = 'none';
+            }
+            const color = document.getElementById('rte-color-panel');
+            if (color && color.style.display !== 'none'
+                && !color.contains(e.target)
+                && e.target.id !== 'rte-color-btn'
+                && e.target.id !== 'rte-hilite-btn') {
+                color.style.display = 'none';
             }
         });
 
@@ -7115,12 +7245,12 @@
         <button class="rte-btn" id="rte-strike"    title="Tachado"><s>T</s></button>
         <span class="rte-sep"></span>
         <!-- Cores -->
-        <span class="rte-color-wrap" id="rte-color-wrap" title="Cor do texto">
-            🎨<input type="color" id="rte-color" value="#000000">
-        </span>
-        <span class="rte-color-wrap" id="rte-hilite-wrap" title="Cor de realce">
-            🖍️<input type="color" id="rte-hilite" value="#ffff00">
-        </span>
+        <button class="rte-color-btn" id="rte-color-btn" title="Cor do texto">
+            🎨<span class="rte-color-ind" id="rte-color-ind" style="background:#000000"></span>
+        </button>
+        <button class="rte-color-btn" id="rte-hilite-btn" title="Cor de realce">
+            🖍️<span class="rte-color-ind" id="rte-hilite-ind" style="background:#ffff00"></span>
+        </button>
         <span class="rte-sep"></span>
         <!-- Alinhamento -->
         <button class="rte-btn" id="rte-align-left"   title="Alinhar à esquerda">⬅</button>
@@ -7149,6 +7279,14 @@
     <div id="rte-emoji-panel">
         <div class="rte-emoji-tabs" id="rte-emoji-tabs"></div>
         <div class="rte-emoji-grid" id="rte-emoji-grid"></div>
+    </div>
+
+    <!-- ── Color Palette Panel ───────────────────────────────────────── -->
+    <div id="rte-color-panel">
+        <div class="rte-cp-label">Cores do Tema</div>
+        <div class="rte-cp-grid" id="rte-cp-tema"></div>
+        <div class="rte-cp-label">Cores Padrão</div>
+        <div class="rte-cp-grid" id="rte-cp-padrao"></div>
     </div>
 </body>
 </html>
