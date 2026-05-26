@@ -2573,13 +2573,6 @@
     <div class="container">
         <header>
             <button id="auth-btn" class="auth-btn" onclick="fazerLogout()">🚪 Sair</button>
-            <label id="btn-editar-header">
-                <span class="toggle-editar-label">✏️ Editar</span>
-                <div class="toggle-switch-wrap">
-                    <input type="checkbox" id="toggle-editar-checkbox" onchange="toggleModoEdicao()">
-                    <span class="toggle-slider"></span>
-                </div>
-            </label>
             <span id="admin-badge">⚙️ ADMIN</span>
             <button id="inicio-btn" class="inicio-btn" onclick="showLanding()">🏠 Início</button>
             <h1>🏛️ Polo Médio Amazonas</h1>
@@ -3906,35 +3899,24 @@
             overlay.classList.add('active');
         }
 
-        let _modoEdicaoAtivo = false;
-
-        function toggleModoEdicao() {
-            const checkbox = document.getElementById('toggle-editar-checkbox');
-            _modoEdicaoAtivo = checkbox ? checkbox.checked : false;
-            _aplicarModoEdicao();
-        }
+        // Botões de edição sempre visíveis para admins — sem toggle
+        function toggleModoEdicao() { /* no-op: toggle removido */ }
 
         function _aplicarModoEdicao() {
-            const show = _modoEdicaoAtivo ? 'inline-flex' : 'none';
-            // Botões de edição das seções (Alternância, Observação)
+            const isAdmin = userRole === 'admin';
+            // Botões de edição das seções (Alternância, Coordenação, etc.)
             document.querySelectorAll('#designacoes .admin-only').forEach(el => {
-                el.style.display = show;
+                el.style.display = isAdmin ? 'inline-flex' : 'none';
             });
             // Células ✏️ por linha na tabela Designações Atuais
             document.querySelectorAll('.cel-editar-dp').forEach(c => {
-                c.style.display = _modoEdicaoAtivo ? 'table-cell' : 'none';
+                c.style.display = isAdmin ? 'table-cell' : 'none';
             });
             const colHeader = document.querySelector('.col-editar-dp');
-            if (colHeader) colHeader.style.display = _modoEdicaoAtivo ? 'table-cell' : 'none';
+            if (colHeader) colHeader.style.display = isAdmin ? 'table-cell' : 'none';
         }
 
-        function _desativarModoEdicao() {
-            if (!_modoEdicaoAtivo) return;
-            _modoEdicaoAtivo = false;
-            const checkbox = document.getElementById('toggle-editar-checkbox');
-            if (checkbox) checkbox.checked = false;
-            _aplicarModoEdicao();
-        }
+        function _desativarModoEdicao() { /* no-op: botões sempre visíveis para admins */ }
 
         function toggleExMembros(btn) {
             const body = btn.nextElementSibling;
@@ -4513,13 +4495,6 @@
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
 
-            // Botão editar do header: só visível na aba Defensorias + admin
-            const btnEditar = document.getElementById('btn-editar-header');
-            if (btnEditar) {
-                btnEditar.style.display = (tabName === 'designacoes' && userRole === 'admin') ? 'flex' : 'none';
-            }
-            // Desativar modo edição ao trocar de aba
-            _desativarModoEdicao();
 
             if (tabName === 'calendario') {
                 renderCalendar();
@@ -6013,9 +5988,6 @@
             document.getElementById('inicio-btn').style.display = 'none';
             // Restaurar visibilidade do botão Diário Oficial para próxima navegação
             document.getElementById('tab-btn-diario').style.display = '';
-            // Esconder botão editar e desativar modo edição
-            document.getElementById('btn-editar-header').style.display = 'none';
-            _desativarModoEdicao();
         }
 
         function showSection(tabName) {
@@ -6029,10 +6001,6 @@
             });
             document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
 
-            // Botão editar no header: só na aba Defensorias + admin
-            const btnEdH = document.getElementById('btn-editar-header');
-            if (btnEdH) btnEdH.style.display = (tabName === 'designacoes' && userRole === 'admin') ? 'flex' : 'none';
-            _desativarModoEdicao();
 
             if (tabName === 'diario-oficial') {
                 // Diário Oficial: sem barra de abas, conteúdo direto
@@ -6699,8 +6667,8 @@
             });
             tableHtml += '</tbody></table></div>';
             document.getElementById('defensorias-table-content').innerHTML = tableHtml;
-            // Re-aplicar modo edição após reconstruir o DOM da tabela
-            if (typeof _modoEdicaoAtivo !== 'undefined') _aplicarModoEdicao();
+            // Re-aplicar visibilidade dos botões de edição após reconstruir o DOM da tabela
+            _aplicarModoEdicao();
         }
 
         // =====================================================================
@@ -6804,13 +6772,9 @@
             // Exibir elementos de admin
             if (userRole === 'admin') {
                 document.getElementById('admin-badge').style.display = 'inline-block';
-                // Botão editar no header: visível se aba Defensorias está ativa
-                const abaDef = document.getElementById('designacoes');
-                if (abaDef && abaDef.classList.contains('active')) {
-                    document.getElementById('btn-editar-header').style.display = 'flex';
-                }
-                // .admin-only ficam ocultos até o admin clicar em "Editar"
             }
+            // Aplicar visibilidade dos botões de edição conforme role
+            _aplicarModoEdicao();
 
             // Se os JSONs já carregaram antes da autenticação, carregar dados do Firestore agora
             if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); }
