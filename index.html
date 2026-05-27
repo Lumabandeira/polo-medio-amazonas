@@ -1121,6 +1121,21 @@
             text-align: center !important;
         }
 
+        /* Células editáveis no modo edição da tabela Atribuições */
+        .atr-cell-editable {
+            outline: 2px solid #93c5fd;
+            cursor: text;
+            transition: outline-color 0.15s, background-color 0.15s;
+            min-height: 28px;
+        }
+        .atr-cell-editable:hover {
+            outline-color: #60a5fa;
+        }
+        .atr-cell-editable:focus {
+            outline: 2.5px solid #3b82f6 !important;
+            background-color: #eff6ff !important;
+        }
+
         .landing-btn-icon {
             font-size: 3.5em;
         }
@@ -6108,6 +6123,8 @@
         // =====================================================================
 
         function showLanding() {
+            // Encerrar edição de Atribuições se estava ativa
+            if (typeof _atrModoEdicao !== 'undefined' && _atrModoEdicao) _atrSairModoEdicao();
             document.getElementById('landing').style.display = 'block';
             document.querySelector('.tabs').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
@@ -6232,31 +6249,31 @@
             });
             html += '</tr>';
 
-            // Atribuição
+            // Atribuição (inclui dígitos — editável pelo admin)
             html += '<tr><td class="atr-row-label">Atribuição</td>';
             dps.forEach(d => {
                 const dig = d.digitos ? `<span class="atr-atrib-digits">${d.digitos}</span>` : '';
-                html += `<td class="atr-atrib-cell">${d.atribuicao}${dig}</td>`;
+                html += `<td class="atr-atrib-cell" data-atr-key="${d.num}_atribuicao">${d.atribuicao}${dig}</td>`;
             });
             html += '</tr>';
 
             // Colidência
             html += '<tr><td class="atr-row-label">Colidência</td>';
-            dps.forEach(d => { html += `<td class="atr-colidencia-cell">${d.colidencia}</td>`; });
+            dps.forEach(d => { html += `<td class="atr-colidencia-cell" data-atr-key="${d.num}_colidencia">${d.colidencia}</td>`; });
             html += '</tr>';
 
             // Substituições (label com rowspan=2)
             html += '<tr><td class="atr-row-label" rowspan="2">Substituições<br>Automáticas</td>';
-            dps.forEach(d => { html += `<td class="atr-sub-cell">1º Substituto: ${d.sub1}</td>`; });
+            dps.forEach(d => { html += `<td class="atr-sub-cell" data-atr-key="${d.num}_sub1">1º Substituto: ${d.sub1}</td>`; });
             html += '</tr><tr>';
-            dps.forEach(d => { html += `<td class="atr-sub-cell">2º Substituto: ${d.sub2}</td>`; });
+            dps.forEach(d => { html += `<td class="atr-sub-cell" data-atr-key="${d.num}_sub2">2º Substituto: ${d.sub2}</td>`; });
             html += '</tr>';
 
             // Atuação extrajudicial
             html += '<tr><td class="atr-row-label">Atuação Extrajudicial<br>e Coletiva</td>';
             dps.forEach(d => {
                 const vazia = !d.extrajudicial;
-                html += `<td class="atr-extrajud-cell${vazia ? ' vazia' : ''}">${d.extrajudicial || '—'}</td>`;
+                html += `<td class="atr-extrajud-cell${vazia ? ' vazia' : ''}" data-atr-key="${d.num}_extrajudicial">${d.extrajudicial || '—'}</td>`;
             });
             html += '</tr>';
 
@@ -6267,6 +6284,13 @@
         function renderAtribuicoes() {
             const el = document.getElementById('atribuicoes-content');
             if (!el) return;
+
+            // Encerrar modo edição se ativo (evita toolbar ser destruída pelo innerHTML)
+            if (typeof _atrModoEdicao !== 'undefined' && _atrModoEdicao) _atrSairModoEdicao();
+            // Resgatar toolbar do DOM se estiver dentro deste container
+            const _tb = document.getElementById('rich-editor-toolbar');
+            if (_tb && el.contains(_tb)) document.body.appendChild(_tb);
+
             if (!jsonDesignacoes) {
                 el.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Aguardando carregamento dos dados...</p>';
                 setTimeout(renderAtribuicoes, 800);
@@ -6279,6 +6303,15 @@
                        <svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar link
                    </button>` : '';
 
+            const editBar = userRole === 'admin' ? `
+                <div id="atr-edit-bar" style="margin:10px 0 6px;display:flex;gap:8px;align-items:center">
+                    <button class="btn-editar" id="atr-btn-editar-tabela" onclick="_atrEntrarModoEdicao()">
+                        <svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar tabela
+                    </button>
+                    <button class="btn-salvar" id="atr-btn-salvar-tabela" style="display:none" onclick="_atrSalvarCelulas()">✓ Salvar</button>
+                    <button class="btn-cancelar" id="atr-btn-cancelar-tabela" style="display:none" onclick="_atrCancelarCelulas()">✕ Cancelar</button>
+                </div>` : '';
+
             let html = `
                 <div class="atr-header">
                     <div class="atr-title">⚖️ Atribuições das Defensorias do Polo do Médio Amazonas</div>
@@ -6288,13 +6321,15 @@
                     <div class="atr-resolucao" style="margin-top:4px;font-size:0.8em;color:#94a3b8">
                         Os nomes dos defensores refletem os titulares vigentes em ${hoje}.
                     </div>
-                </div>`;
+                </div>
+                ${editBar}`;
 
             html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(0, 6));   // DPs 1–6
             html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(6, 12));  // DPs 7–12
 
             el.innerHTML = html;
             _atrCarregarResolucao();
+            _atrCarregarCelulas();
         }
 
         // ── Resolução da seção Atribuições ───────────────────────────────
@@ -6354,6 +6389,216 @@
 
         function _atrCancelarResolucaoEdit() {
             _atrCarregarResolucao();
+        }
+
+        // ── Edição de células da tabela Atribuições ────────────────────────
+        let _atrModoEdicao   = false;
+        let _atrCelulaAtiva  = null;   // <td> com foco durante edição
+        let _atrCelulasBackup = {};    // snapshot para cancelar
+
+        async function _atrCarregarCelulas() {
+            try {
+                const doc = await db.collection('secoes').doc('atribuicoes_celulas').get();
+                if (!doc.exists) return;
+                const { celulas } = doc.data();
+                if (!celulas) return;
+                Object.entries(celulas).forEach(([key, data]) => {
+                    const td = document.querySelector(`[data-atr-key="${CSS.escape(key)}"]`);
+                    if (!td) return;
+                    if (data.cellStyle) td.style.cssText = data.cellStyle;
+                    if (data.html !== undefined) td.innerHTML = data.html;
+                });
+            } catch(e) {
+                console.warn('Erro ao carregar células de atribuições:', e);
+            }
+        }
+
+        function _atrOnCellFocus(e) {
+            _atrCelulaAtiva = e.currentTarget;
+            _rteTargetEl    = e.currentTarget;
+            _rteSavedRange  = null;
+            _rteUpdateStates();
+        }
+
+        const _ATR_FONTSIZE_PX = {
+            '1': '8px', '2': '10px', '3': '12px', '4': '14px',
+            '5': '18px', '6': '24px', '7': '36px'
+        };
+
+        function _rteMountAtribuicoes() {
+            const toolbar   = document.getElementById('rich-editor-toolbar');
+            const editBar   = document.getElementById('atr-edit-bar');
+
+            // Posicionar toolbar imediatamente após a barra de edição
+            editBar.parentNode.insertBefore(toolbar, editBar.nextSibling);
+            toolbar.style.display = 'flex';
+
+            // Construir abas de emoji
+            const tabsEl = document.getElementById('rte-emoji-tabs');
+            tabsEl.innerHTML = Object.entries(RTE_CAT_LABELS).map(([k, v]) =>
+                `<span class="rte-emoji-tab${k === _rteEmojiCat ? ' active' : ''}" data-cat="${k}"
+                    onmousedown="event.preventDefault()" onclick="_rteShowEmojiCat('${k}')">${v}</span>`
+            ).join('');
+            _rteShowEmojiCat(_rteEmojiCat);
+
+            // Botões padrão com dupla aplicação para cells ATR
+            const cmdHandlers = {
+                'rte-bold':         () => {
+                    _rteExec('bold');
+                    if (_atrCelulaAtiva) _atrCelulaAtiva.style.fontWeight =
+                        document.queryCommandState('bold') ? 'bold' : 'normal';
+                },
+                'rte-italic':       () => {
+                    _rteExec('italic');
+                    if (_atrCelulaAtiva) _atrCelulaAtiva.style.fontStyle =
+                        document.queryCommandState('italic') ? 'italic' : 'normal';
+                },
+                'rte-underline':    () => {
+                    _rteExec('underline');
+                    if (_atrCelulaAtiva) _atrCelulaAtiva.style.textDecoration =
+                        document.queryCommandState('underline') ? 'underline' : '';
+                },
+                'rte-strike':       () => _rteExec('strikeThrough'),
+                'rte-align-left':   () => _rteExec('justifyLeft'),
+                'rte-align-center': () => _rteExec('justifyCenter'),
+                'rte-align-right':  () => _rteExec('justifyRight'),
+                'rte-ul':           () => _rteExec('insertUnorderedList'),
+                'rte-ol':           () => _rteExec('insertOrderedList'),
+                'rte-indent':       () => _rteExec('indent'),
+                'rte-outdent':      () => _rteExec('outdent'),
+                'rte-clear':        () => {
+                    _rteExec('removeFormat');
+                    // Limpar também os estilos inline do TD ao remover formatação
+                    if (_atrCelulaAtiva) {
+                        _atrCelulaAtiva.style.color           = '';
+                        _atrCelulaAtiva.style.backgroundColor = '';
+                        _atrCelulaAtiva.style.fontWeight      = '';
+                        _atrCelulaAtiva.style.fontStyle       = '';
+                        _atrCelulaAtiva.style.textDecoration  = '';
+                        _atrCelulaAtiva.style.fontSize        = '';
+                    }
+                },
+                'rte-undo':         () => _rteExec('undo'),
+                'rte-redo':         () => _rteExec('redo'),
+            };
+            for (const [id, handler] of Object.entries(cmdHandlers)) {
+                const btn = document.getElementById(id);
+                if (btn) btn.onmousedown = (e) => { e.preventDefault(); handler(); };
+            }
+
+            // Link
+            document.getElementById('rte-link').onmousedown =
+                (e) => { e.preventDefault(); _rteInsertLink(); };
+
+            // Emoji
+            document.getElementById('rte-emoji-btn').onmousedown = _rteToggleEmoji;
+
+            // Tamanho de fonte: sem preventDefault para o select abrir
+            const fsEl = document.getElementById('rte-fontsize');
+            fsEl.onmousedown = () => _rteSaveRange();
+            fsEl.onchange = function() {
+                _rteExec('fontSize', this.value);
+                if (_atrCelulaAtiva)
+                    _atrCelulaAtiva.style.fontSize = _ATR_FONTSIZE_PX[this.value] || '';
+                this.blur();
+            };
+
+            // Cor do texto
+            document.getElementById('rte-color-btn').onmousedown = (e) => {
+                e.preventDefault(); _rteOpenColorPanel('text', e.currentTarget);
+            };
+
+            // Cor de realce
+            document.getElementById('rte-hilite-btn').onmousedown = (e) => {
+                e.preventDefault(); _rteOpenColorPanel('hilite', e.currentTarget);
+            };
+
+            _rteInitColorPalette();
+            _rteUpdateStates();
+        }
+
+        function _atrEntrarModoEdicao() {
+            _atrModoEdicao    = true;
+            _atrCelulasBackup = {};
+
+            // Salvar snapshot das células para poder cancelar
+            document.querySelectorAll('[data-atr-key]').forEach(td => {
+                _atrCelulasBackup[td.dataset.atrKey] = {
+                    html:      td.innerHTML,
+                    cellStyle: td.getAttribute('style') || ''
+                };
+                td.contentEditable = 'true';
+                td.classList.add('atr-cell-editable');
+                td.addEventListener('focus', _atrOnCellFocus);
+                ['keyup', 'mouseup', 'keydown'].forEach(ev =>
+                    td.addEventListener(ev, _rteSaveRange));
+            });
+
+            _rteMountAtribuicoes();
+
+            document.getElementById('atr-btn-editar-tabela').style.display  = 'none';
+            document.getElementById('atr-btn-salvar-tabela').style.display  = 'inline-flex';
+            document.getElementById('atr-btn-cancelar-tabela').style.display = 'inline-flex';
+        }
+
+        function _atrSairModoEdicao() {
+            _atrModoEdicao   = false;
+            _atrCelulaAtiva  = null;
+
+            document.querySelectorAll('[data-atr-key]').forEach(td => {
+                td.contentEditable = 'false';
+                td.classList.remove('atr-cell-editable');
+                td.removeEventListener('focus', _atrOnCellFocus);
+            });
+
+            _rteUnmount();
+
+            const btnE = document.getElementById('atr-btn-editar-tabela');
+            const btnS = document.getElementById('atr-btn-salvar-tabela');
+            const btnC = document.getElementById('atr-btn-cancelar-tabela');
+            if (btnE) btnE.style.display  = 'inline-flex';
+            if (btnS) btnS.style.display  = 'none';
+            if (btnC) btnC.style.display  = 'none';
+        }
+
+        async function _atrSalvarCelulas() {
+            const btnS = document.getElementById('atr-btn-salvar-tabela');
+            btnS.disabled    = true;
+            btnS.textContent = '⏳ Salvando...';
+
+            const celulas = {};
+            document.querySelectorAll('[data-atr-key]').forEach(td => {
+                celulas[td.dataset.atrKey] = {
+                    html:      td.innerHTML,
+                    cellStyle: td.getAttribute('style') || ''
+                };
+            });
+
+            try {
+                await db.collection('secoes').doc('atribuicoes_celulas').set({
+                    celulas,
+                    atualizado_por: currentUser.email,
+                    atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                });
+                btnS.disabled = false;
+                btnS.innerHTML = '✓ Salvar';
+                _atrSairModoEdicao();
+                mostrarToast('✅ Tabela salva com sucesso!');
+            } catch(e) {
+                btnS.disabled  = false;
+                btnS.innerHTML = '✓ Salvar';
+                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+            }
+        }
+
+        function _atrCancelarCelulas() {
+            Object.entries(_atrCelulasBackup).forEach(([key, data]) => {
+                const td = document.querySelector(`[data-atr-key="${CSS.escape(key)}"]`);
+                if (!td) return;
+                td.style.cssText = data.cellStyle;
+                td.innerHTML     = data.html;
+            });
+            _atrSairModoEdicao();
         }
 
         let diarioLoaded = false;
@@ -7376,10 +7621,14 @@
                 document.execCommand('foreColor', false, hex);
                 document.getElementById('rte-color-ind').style.background = hex;
                 _rteColorLast.text = hex;
+                // Dupla aplicação: também define cor no TD para preservar após reescrever
+                if (_atrCelulaAtiva && _atrModoEdicao) _atrCelulaAtiva.style.color = hex;
             } else {
                 document.execCommand('hiliteColor', false, hex);
                 document.getElementById('rte-hilite-ind').style.background = hex;
                 _rteColorLast.hilite = hex;
+                // Dupla aplicação: background do TD
+                if (_atrCelulaAtiva && _atrModoEdicao) _atrCelulaAtiva.style.backgroundColor = hex;
             }
             _rteSaveRange();
         }
