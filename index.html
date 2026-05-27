@@ -6247,9 +6247,9 @@
 
             // Substituições (label com rowspan=2)
             html += '<tr><td class="atr-row-label" rowspan="2">Substituições<br>Automáticas</td>';
-            dps.forEach(d => { html += `<td class="atr-sub-cell">1º: ${d.sub1}</td>`; });
+            dps.forEach(d => { html += `<td class="atr-sub-cell">1º Substituto: ${d.sub1}</td>`; });
             html += '</tr><tr>';
-            dps.forEach(d => { html += `<td class="atr-sub-cell">2º: ${d.sub2}</td>`; });
+            dps.forEach(d => { html += `<td class="atr-sub-cell">2º Substituto: ${d.sub2}</td>`; });
             html += '</tr>';
 
             // Atuação extrajudicial
@@ -6283,9 +6283,8 @@
                     </div>
                 </div>`;
 
-            html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(0, 5));   // DPs 1–5
-            html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(5, 10));  // DPs 6–10
-            html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(10, 12)); // DPs 11–12
+            html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(0, 6));   // DPs 1–6
+            html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(6, 12));  // DPs 7–12
 
             el.innerHTML = html;
         }
