@@ -1009,6 +1009,118 @@
             color: white;
         }
 
+        .btn-atribuicoes {
+            background: linear-gradient(135deg, #3730a3 0%, #818cf8 100%);
+            color: white;
+        }
+
+        /* ─── Seção Atribuições ─────────────────────────────────── */
+        .atr-header {
+            margin-bottom: 22px;
+        }
+        .atr-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 6px;
+        }
+        .atr-resolucao {
+            font-size: 0.83em;
+            color: #64748b;
+            line-height: 1.5;
+        }
+        .atr-block {
+            margin-bottom: 28px;
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .atr-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 560px;
+            font-size: 0.875em;
+        }
+        .atr-table th {
+            background: #1e3a8a;
+            color: white;
+            padding: 10px 14px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        .atr-table th.atr-label-col {
+            text-align: left;
+            min-width: 155px;
+            font-size: 0.88em;
+        }
+        .atr-table td {
+            padding: 9px 12px;
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .atr-row-label {
+            background: #eef2ff;
+            color: #3730a3;
+            font-weight: 700;
+            font-size: 0.78em;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            text-align: left !important;
+            white-space: nowrap;
+        }
+        .atr-defensor-cell {
+            font-weight: 700;
+            color: #1e3a8a;
+            text-transform: uppercase;
+            background: #f8faff;
+            font-size: 0.92em;
+        }
+        .atr-defensor-vaga {
+            color: #94a3b8 !important;
+            font-style: italic;
+            font-weight: 400 !important;
+            text-transform: none !important;
+        }
+        .atr-atrib-cell {
+            color: #334155;
+            background: #fffbf5;
+            line-height: 1.5;
+        }
+        .atr-atrib-digits {
+            display: block;
+            margin-top: 5px;
+            font-weight: 700;
+            font-size: 0.82em;
+            color: #92400e;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .atr-colidencia-cell {
+            color: #1e3a8a;
+            font-weight: 600;
+            background: #eff6ff;
+        }
+        .atr-sub-cell {
+            color: #166534;
+            font-weight: 500;
+            background: #f0fdf4;
+        }
+        .atr-extrajud-cell {
+            font-size: 0.82em;
+            color: #475569;
+            background: #faf5ff;
+            line-height: 1.55;
+            text-align: left !important;
+        }
+        .atr-extrajud-cell.vazia {
+            color: #cbd5e1;
+            font-style: italic;
+            text-align: center !important;
+        }
+
         .landing-btn-icon {
             font-size: 3.5em;
         }
@@ -2586,6 +2698,11 @@
                 <p>Escolha uma área para acessar:</p>
             </div>
             <div class="landing-buttons">
+                <button class="landing-btn btn-atribuicoes" onclick="showSection('atribuicoes')">
+                    <span class="landing-btn-icon">⚖️</span>
+                    <span class="landing-btn-title">Atribuições</span>
+                    <span class="landing-btn-desc">Colidências e substituições automáticas das defensorias</span>
+                </button>
                 <button class="landing-btn btn-designacoes" onclick="showSection('designacoes')">
                     <span class="landing-btn-icon">📋</span>
                     <span class="landing-btn-title">Designações</span>
@@ -2766,6 +2883,15 @@
                 <p style="margin-bottom: 20px; color: var(--text-secondary);">Informações completas sobre todos os afastamentos dos Defensores Públicos do Polo Médio Amazonas em 2026.</p>
                 <div id="tabela-completa-content">
                     <p style="text-align:center;padding:40px;color:var(--text-secondary);">⏳ Carregando tabela...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção: Atribuições, Colidências e Substituições -->
+        <div id="atribuicoes" class="tab-content">
+            <div class="card">
+                <div id="atribuicoes-content">
+                    <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
                 </div>
             </div>
         </div>
@@ -6002,7 +6128,12 @@
             document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
 
 
-            if (tabName === 'diario-oficial') {
+            if (tabName === 'atribuicoes') {
+                // Atribuições: sem barra de abas, conteúdo direto
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('atribuicoes').classList.add('active');
+                renderAtribuicoes();
+            } else if (tabName === 'diario-oficial') {
                 // Diário Oficial: sem barra de abas, conteúdo direto
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('diario-oficial').classList.add('active');
@@ -6047,6 +6178,97 @@
             coordenacao:        '👑 Coordenação',
             designacoes:        '📋 Designações'
         };
+
+        // ── Atribuições, Colidências e Substituições Automáticas ─────────
+        const ATRIBUICOES_STATIC = [
+            { num:1,  dpKey:'1',  atribuicao:'Família e Sucessões<br>Itacoatiara',                                                            digitos:'Dígitos Pares',   colidencia:'5ª DP',  sub1:'2ª DP',  sub2:'5ª DP',  extrajudicial:'Direitos da mulher, da pessoa com deficiência e à saúde.' },
+            { num:2,  dpKey:'2',  atribuicao:'Família e Sucessões<br>Itacoatiara',                                                            digitos:'Dígitos Ímpares', colidencia:'6ª DP',  sub1:'1ª DP',  sub2:'6ª DP',  extrajudicial:'Diversidade sexual e igualdade étnico-racial.' },
+            { num:3,  dpKey:'3',  atribuicao:'Cível, Infância e Juventude,<br>Registros Públicos e Previdenciário<br>Itacoatiara',            digitos:'Dígitos Ímpares', colidencia:'1ª DP',  sub1:'4ª DP',  sub2:'1ª DP',  extrajudicial:'Meio ambiente, moradia, saneamento básico e questões fundiárias.' },
+            { num:4,  dpKey:'4',  atribuicao:'Cível, Infância e Juventude,<br>Registros Públicos e Previdenciário<br>Itacoatiara',            digitos:'Dígitos Pares',   colidencia:'2ª DP',  sub1:'3ª DP',  sub2:'2ª DP',  extrajudicial:'Educação e ao direito do consumidor.' },
+            { num:5,  dpKey:'5',  atribuicao:'Criminal e Medidas Socioeducativas<br>Itacoatiara',                                             digitos:'Dígitos Pares',   colidencia:'3ª DP',  sub1:'6ª DP',  sub2:'3ª DP',  extrajudicial:'População em situação de rua e aos povos tradicionais.' },
+            { num:6,  dpKey:'6',  atribuicao:'Criminal e Medidas Socioeducativas<br>Itacoatiara',                                             digitos:'Dígitos Ímpares', colidencia:'4ª DP',  sub1:'5ª DP',  sub2:'4ª DP',  extrajudicial:'Direitos da infância e juventude, aos direitos da pessoa idosa e às pessoas no cárcere e política criminal.' },
+            { num:7,  dpKey:'7',  atribuicao:'São Sebastião do Uatumã',                                                                       digitos:'',                colidencia:'10ª DP', sub1:'9ª DP',  sub2:'10ª DP', extrajudicial:'' },
+            { num:8,  dpKey:'8',  atribuicao:'Itapiranga',                                                                                    digitos:'',                colidencia:'9ª DP',  sub1:'10ª DP', sub2:'11ª DP', extrajudicial:'' },
+            { num:9,  dpKey:'9',  atribuicao:'Urucurituba',                                                                                   digitos:'',                colidencia:'8ª DP',  sub1:'11ª DP', sub2:'12ª DP', extrajudicial:'' },
+            { num:10, dpKey:'10', atribuicao:'Urucará',                                                                                       digitos:'',                colidencia:'7ª DP',  sub1:'12ª DP', sub2:'7ª DP',  extrajudicial:'' },
+            { num:11, dpKey:'11', atribuicao:'Silves',                                                                                        digitos:'Dígitos Ímpares', colidencia:'12ª DP', sub1:'7ª DP',  sub2:'8ª DP',  extrajudicial:'Diversidade sexual, aos direitos do consumidor, à saúde, à moradia e saneamento básico, aos direitos da pessoa com deficiência, às pessoas submetidas ao cárcere e política criminal, bem como à educação, tendo os defensores ajustado a divisão das questões fundiárias.' },
+            { num:12, dpKey:'12', atribuicao:'Silves',                                                                                        digitos:'Dígitos Pares',   colidencia:'11ª DP', sub1:'8ª DP',  sub2:'9ª DP',  extrajudicial:'Povos tradicionais, aos direitos da mulher, aos direitos da infância e juventude, à população em situação de rua, aos direitos da pessoa idosa, ao meio ambiente e à igualdade étnico-racial, tendo os defensores ajustado a divisão das questões fundiárias.' },
+        ];
+
+        function _atrResolverDefensor(dpKey) {
+            const key = getCurrentTitular(dpKey);
+            if (!key || /vaga/i.test(key)) return { nome: 'Vaga', vaga: true };
+            const info = jsonDesignacoes && jsonDesignacoes.defensores && jsonDesignacoes.defensores[key];
+            const nome = info ? (info.nome_curto || info.nome) : (defensorNames[key] || key);
+            return { nome: nome.toUpperCase(), vaga: false };
+        }
+
+        function _atrRenderBloco(dps) {
+            let html = '<div class="atr-block"><table class="atr-table"><thead><tr>';
+            html += '<th class="atr-label-col">Defensoria</th>';
+            dps.forEach(d => { html += `<th>${d.num}ª DP</th>`; });
+            html += '</tr></thead><tbody>';
+
+            // Defensor responsável
+            html += '<tr><td class="atr-row-label">Defensor(a)<br>Responsável</td>';
+            dps.forEach(d => {
+                const def = _atrResolverDefensor(d.dpKey);
+                html += `<td class="atr-defensor-cell${def.vaga ? ' atr-defensor-vaga' : ''}">${def.nome}</td>`;
+            });
+            html += '</tr>';
+
+            // Atribuição
+            html += '<tr><td class="atr-row-label">Atribuição</td>';
+            dps.forEach(d => {
+                const dig = d.digitos ? `<span class="atr-atrib-digits">${d.digitos}</span>` : '';
+                html += `<td class="atr-atrib-cell">${d.atribuicao}${dig}</td>`;
+            });
+            html += '</tr>';
+
+            // Colidência
+            html += '<tr><td class="atr-row-label">Colidência</td>';
+            dps.forEach(d => { html += `<td class="atr-colidencia-cell">${d.colidencia}</td>`; });
+            html += '</tr>';
+
+            // Substituições (label com rowspan=2)
+            html += '<tr><td class="atr-row-label" rowspan="2">Substituições<br>Automáticas</td>';
+            dps.forEach(d => { html += `<td class="atr-sub-cell">1º: ${d.sub1}</td>`; });
+            html += '</tr><tr>';
+            dps.forEach(d => { html += `<td class="atr-sub-cell">2º: ${d.sub2}</td>`; });
+            html += '</tr>';
+
+            // Atuação extrajudicial
+            html += '<tr><td class="atr-row-label">Atuação Extrajudicial<br>e Coletiva</td>';
+            dps.forEach(d => {
+                const vazia = !d.extrajudicial;
+                html += `<td class="atr-extrajud-cell${vazia ? ' vazia' : ''}">${d.extrajudicial || '—'}</td>`;
+            });
+            html += '</tr>';
+
+            html += '</tbody></table></div>';
+            return html;
+        }
+
+        function renderAtribuicoes() {
+            const el = document.getElementById('atribuicoes-content');
+            if (!el) return;
+
+            const hoje = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            let html = `
+                <div class="atr-header">
+                    <div class="atr-title">⚖️ Atribuições das Defensorias do Polo do Médio Amazonas</div>
+                    <div class="atr-resolucao">📋 Resolução: <em style="color:#94a3b8">[link a adicionar]</em></div>
+                    <div class="atr-resolucao" style="margin-top:4px;font-size:0.8em;color:#94a3b8">
+                        Os nomes dos defensores refletem os titulares vigentes em ${hoje}.
+                    </div>
+                </div>`;
+
+            html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(0, 5));   // DPs 1–5
+            html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(5, 10));  // DPs 6–10
+            html += _atrRenderBloco(ATRIBUICOES_STATIC.slice(10, 12)); // DPs 11–12
+
+            el.innerHTML = html;
+        }
 
         let diarioLoaded = false;
         let filtroCategoria = '';
