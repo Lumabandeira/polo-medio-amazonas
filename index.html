@@ -6668,14 +6668,13 @@
         // =====================================================================
         // Seção Adote — dados estáticos, globais e funções
         // =====================================================================
-        const ADOTE_COLS = ['defensor','comarcas','polo','forma_trabalho','coordenador','servidor'];
+        const ADOTE_COLS = ['defensor','comarcas','forma_trabalho','coordenador','servidor'];
         const ADOTE_COL_LABELS = {
             defensor:       'Defensor(a) Público(a)',
             comarcas:       'Comarcas',
-            polo:           'Polo',
             forma_trabalho: 'Forma de Trabalho',
-            coordenador:    'Coordenador',
-            servidor:       'Servidor(a)'
+            coordenador:    'Servidor(a)',
+            servidor:       'E-mail'
         };
         const ADOTE_STATIC = [
             { defensor:'Carlos Alberto Souza de Almeida Filho',    comarcas:'São Sebastião do Uatumã',  polo:'Polo do Médio Amazonas',                                  forma_trabalho:'Grupo Único (Intimações)', coordenador:'Rodrigo Cavalcante dos Santos',  servidor:'carlosalmeidafilho@defensoria.am.def.br' },
@@ -6742,8 +6741,8 @@
             ${editBar}
             <div class="adote-block"><table class="adote-table">
                 <colgroup>
-                    <col style="width:22%"><col style="width:13%"><col style="width:20%">
-                    <col style="width:12%"><col style="width:18%"><col style="width:15%">
+                    <col style="width:27%"><col style="width:16%">
+                    <col style="width:14%"><col style="width:22%"><col style="width:21%">
                 </colgroup>
                 <thead><tr>`;
             ADOTE_COLS.forEach(c => { html += `<th>${ADOTE_COL_LABELS[c]}</th>`; });
