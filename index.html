@@ -7353,23 +7353,29 @@
             document.getElementById('loading-overlay').style.display = 'none';
             if (user) {
                 currentUser = user;
-                userRole    = 'viewer'; // padrão enquanto busca o role
+                // Usa role em cache (sessionStorage) para renderizar imediatamente sem esperar o Firestore
+                userRole = sessionStorage.getItem('pma-role') || 'viewer';
                 mostrarSiteAutenticado();
                 carregarConteudoFirestore();
-                // Busca role em segundo plano — atualiza UI se for admin
+                // Verifica role no Firestore em segundo plano
                 try {
                     const doc = await db.collection('usuarios').doc(user.uid).get();
-                    const role = doc.exists ? (doc.data().role || 'viewer') : 'viewer';
-                    if (role !== userRole) {
-                        userRole = role;
+                    const freshRole = doc.exists ? (doc.data().role || 'viewer') : 'viewer';
+                    sessionStorage.setItem('pma-role', freshRole);
+                    if (freshRole !== userRole) {
+                        userRole = freshRole;
                         if (userRole === 'admin') {
                             document.getElementById('admin-badge').style.display = 'inline-block';
                             _aplicarModoEdicao();
                             carregarNotificacoesAutomacao();
+                            // Re-renderiza seção ativa para incluir botões admin
+                            const _s = sessionStorage.getItem('pma-secao');
+                            if (_s === 'atribuicoes') setTimeout(renderAtribuicoes, 100);
                         }
                     }
-                } catch(e) { /* mantém viewer */ }
+                } catch(e) { /* mantém role atual */ }
             } else {
+                sessionStorage.removeItem('pma-role');
                 currentUser = null;
                 userRole    = null;
                 mostrarLoginOverlay();
@@ -7401,7 +7407,8 @@
             if (_secaoSalva) {
                 showSection(_secaoSalva);
                 const _scrollSalvo = parseInt(sessionStorage.getItem('pma-scroll') || '0', 10);
-                if (_scrollSalvo) setTimeout(() => window.scrollTo(0, _scrollSalvo), 400);
+                // Aguarda 1200ms para o conteúdo async (Firestore) terminar de renderizar
+                if (_scrollSalvo) setTimeout(() => window.scrollTo(0, _scrollSalvo), 1200);
             }
         }
 
@@ -7438,6 +7445,9 @@
 
         // ── Logout ─────────────────────────────────────────────────────────
         async function fazerLogout() {
+            sessionStorage.removeItem('pma-role');
+            sessionStorage.removeItem('pma-secao');
+            sessionStorage.removeItem('pma-scroll');
             await auth.signOut();
         }
 
