@@ -34,6 +34,23 @@ secoes/ferias_folgas
   atualizado_por: "..."
   atualizado_em: timestamp
 
+secoes/atribuicoes_resolucao
+  url: "https://..."    ← link do PDF da Resolução (pode ser "")
+  nome: "Resolução nº 538/2026-GSPG/DPE/AM"   ← texto exibido como link (pode ser "")
+  atualizado_por: "..."
+  atualizado_em: timestamp
+
+secoes/atribuicoes_celulas
+  celulas:              ← mapa de 72 chaves no formato "N_campo"
+    "1_atribuicao":     { html: "Família e Sucessões<br>Itacoatiara...", cellStyle: "color:#...; font-weight:..." }
+    "1_colidencia":     { html: "5ª DP", cellStyle: "" }
+    "1_sub1":           { html: "1º Substituto: 2ª DP", cellStyle: "" }
+    "1_sub2":           { html: "2º Substituto: 5ª DP", cellStyle: "" }
+    "1_extrajudicial":  { html: "Direitos da mulher...", cellStyle: "" }
+    ...                 ← 12 DPs × 5 campos = 60 chaves (atribuicao, colidencia, sub1, sub2, extrajudicial)
+  atualizado_por: "..."
+  atualizado_em: timestamp
+
 titulares_admin/{dpKey}   ← histórico de titulares editado pelo admin (por DP)
   historico_titulares: [
     { defensor: "icaro", inicio: "2026-01-01", fim: null,
@@ -113,15 +130,17 @@ designacoes_cumulativas_admin/{id}   ← designações cumulativas sem data fim 
 5. Viewer: vê o site normalmente sem botões de edição
 
 ### Seções editáveis (admin)
-- **Regra de Alternância** (`#regra_alternancia-html`) — edição inline com contentEditable
-- **Férias/Folgas/Licenças** (`#ferias_folgas-html`) — edição inline com contentEditable
-- Edições salvas em `secoes/{id}` no Firestore e carregadas a cada login
+- **Regra de Alternância** (`#regra_alternancia-html`) — edição inline com contentEditable + régua RTE
+- **Férias/Folgas/Licenças** (`#ferias_folgas-html`) — edição inline com contentEditable + régua RTE
+- **Atribuições — células da tabela** (`secoes/atribuicoes_celulas`) — células editáveis individualmente por célula, com formatação preservada no TD
+- **Atribuições — link da resolução** (`secoes/atribuicoes_resolucao`) — campos `url` + `nome`, ambos opcionais
+- Edições salvas em `secoes/{id}` no Firestore e carregadas a cada abertura da seção
 
 ### Funções JS do Firebase no index.html
 - `fazerLogin()` — autentica com Firebase Auth
 - `fazerLogout()` — encerra sessão
 - `carregarConteudoFirestore()` — carrega conteúdo editável do Firestore
-- `iniciarEdicao(secaoId)` — ativa contentEditable na seção
+- `iniciarEdicao(secaoId)` — ativa contentEditable na seção + monta régua RTE
 - `salvarSecao(secaoId)` — salva HTML no Firestore
 - `cancelarEdicao(secaoId)` — restaura conteúdo original
 - `mostrarToast(msg)` — exibe notificação temporária
@@ -130,8 +149,35 @@ designacoes_cumulativas_admin/{id}   ← designações cumulativas sem data fim 
 - `abrirModalTitulares(dpKey)` — abre modal de edição de titulares para uma DP
 - `salvarTitularesDp()` — valida e salva histórico de titulares no Firestore
 - `fecharModalTitulares()` — fecha modal e reverte alterações não salvas
-- `toggleModoEdicao()` — alterna modo de edição (mostra/oculta botões ✏️)
+- `toggleModoEdicao()` — **no-op** (toggle removido; botões de edição sempre visíveis para admins)
+- `_aplicarModoEdicao()` — mostra/oculta botões admin-only na aba Defensorias
+- `_desativarModoEdicao()` — **no-op** (mantido por compat, não faz mais nada)
 - `getTitularForDPOnDay(dpNum, mes, dia)` — resolve titular de uma DP em data específica
+- `renderAtribuicoes()` — renderiza seção Atribuições com duas tabelas (DPs 1–6 e 7–12)
+- `_atrResolverDefensor(dpKey)` — resolve titular vigente de uma DP para a tabela (lógica inline, não usa `getCurrentTitular`)
+- `_atrCarregarResolucao()` — carrega link da resolução do Firestore; grava data-url/data-nome no span
+- `_atrEditarResolucao()` — abre form de edição do link (lê valores de data-attributes)
+- `_atrSalvarResolucao()` — salva url+nome no Firestore (permite vazio para limpar)
+- `_atrCarregarCelulas()` — carrega `secoes/atribuicoes_celulas` e aplica cellStyle+html em cada TD
+- `_atrEntrarModoEdicao()` — habilita contentEditable nas 72 células editáveis, monta toolbar
+- `_atrSairModoEdicao()` — desabilita contentEditable, desmonta toolbar, restaura botões
+- `_atrSalvarCelulas()` — coleta innerHTML+style de todos os TDs e salva no Firestore
+- `_atrCancelarCelulas()` — restaura backup em memória e sai do modo edição
+- `_rteMountAtribuicoes()` — monta régua RTE para edição de células (com dupla aplicação de estilo)
+- `_atrOnCellFocus(e)` — atualiza `_atrCelulaAtiva` e `_rteTargetEl` quando célula recebe foco
+
+### Régua de edição (Rich Text Editor — RTE)
+- **Toolbar compartilhada** `#rich-editor-toolbar` — elemento único no DOM, movido para junto do editor ativo
+- `_rteSaveRange()` / `_rteRestoreRange()` — salva/restaura seleção antes/após operações da toolbar
+- `_rteExec(cmd, value)` — wrapper para `document.execCommand`
+- `_rteMount(secaoId)` — monta toolbar para seções (Alternância/Férias). Conecta botões com `onmousedown + preventDefault`
+- `_rteMountAtribuicoes()` — monta toolbar para células ATR. Igual ao anterior mas com **dupla aplicação** de estilo: execCommand na seleção + CSS inline no `<td>` ativo
+- `_rteUnmount()` — oculta toolbar, move de volta para `document.body`
+- `_rteApplyColor(hex)` — aplica cor via execCommand; se `_atrCelulaAtiva` está ativo, também aplica `td.style.color`
+- `_rteUpdateStates()` — atualiza estado visual (active/inactive) dos botões da toolbar
+- `RTE_EMOJIS` — objeto com categorias de emojis (comuns, jurídico, pessoas, status, natureza)
+- `RTE_CAT_LABELS` — mapa categoria→label para as abas do painel de emojis
+- `_ATR_FONTSIZE_PX` — mapa de tamanhos HTML (1–7) para px para aplicar no `<td>`
 
 ### Para adicionar novos usuários
 Firebase Console → Authentication → Adicionar usuário → copiar UID → Firestore → coleção `usuarios` → novo documento com o UID → campos `role` e `nome`
@@ -217,7 +263,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 04/05/2026 — sessão 16)
+## Estado atual do site (atualizado em 26/05/2026 — sessão 17)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -233,8 +279,8 @@ github-pages/
 - **Datas de cobertura do substituto liberadas** — removidos os atributos `min`/`max` dos inputs e a lógica de clamping que forçava as datas para dentro do afastamento (causava bug de só permitir selecionar 1 dia). A validação agora ocorre apenas no momento de salvar, com mensagem de erro.
 - **Validação de sobreposição entre substitutos** — ao salvar, o sistema verifica se dois substitutos da mesma DP têm períodos de cobertura sobrepostos (inclusive dias iguais na fronteira). Exibe mensagem `❌ [Nome A] e [Nome B] (DP) têm períodos de cobertura sobrepostos.` e bloqueia o salvamento.
 - **Edição dos defensores titulares de cada DP** — interface completa para admin gerenciar histórico de titulares. Detalhes abaixo em "Arquitetura da edição de titulares".
-- **Toggle switch "Editar" no header** — `<label id="btn-editar-header">` com checkbox interno (`#toggle-editar-checkbox`) na área azul do header (top:60px right:140px, ao lado do botão Sair). Deslizante cinza/verde que alterna modo de edição. Visível apenas na aba Defensorias para admins. Exibe/oculta todos os botões ✏️ por linha na tabela Designações Atuais e os botões de edição das seções (Alternância, Observação). Desativa automaticamente ao trocar de aba ou voltar ao Início. Após salvar/cancelar no modal de titulares, `renderDefensorias()` chama `_aplicarModoEdicao()` para re-aplicar o estado.
-- **Controle de visibilidade admin-only por especificidade CSS** — regra `.btn-editar.admin-only { display: none }` garante que botões de edição fiquem ocultos por padrão; inline style via `_aplicarModoEdicao()` sobrescreve quando admin ativa o modo edição.
+- ~~**Toggle switch "Editar" no header**~~ — **REMOVIDO em 26/05/2026 (sessão 17)**. Botões de edição agora sempre visíveis para admins. Ver seção "Modo de edição" abaixo.
+- **Controle de visibilidade admin-only** — `_aplicarModoEdicao()` usa `userRole === 'admin'` para mostrar/ocultar `.cel-editar-dp` e `.admin-only` em `#designacoes`. Régua RTE e botões Editar/Salvar/Cancelar visíveis ao admin sem toggle.
 - **Registros base (JSON) editáveis pelo admin no calendário** — botão ✏️ adicionado a registros "base" (vindos dos JSONs) no modal "Detalhes do Afastamento". Ao clicar, abre o formulário pré-populado com os dados do JSON. Ao salvar, cria registro no Firestore com campo `json_base_id` apontando para o evento JSON original, que é então suprimido da renderização. Globais: `jsonEventosMap` (id→evento) e `jsonOverrideMap` (jsonEventoId→firestoreId). Função auxiliar: `converterDesignacoesJSONParaFirestore(ev)`.
 - **Modal de visualização somente leitura no calendário** — ícone 🔍 no modal "Detalhes do Afastamento", visível para todos os usuários (admin e viewer). Abre modal "🔍 Detalhes do Afastamento" (cabeçalho azul) com: defensor, tipo, data início/fim do afastamento completo, processo SEI, e por DP: substituto, data início/fim de cobertura, portaria clicável. Funciona para registros base (JSON) e Firestore. Função: `abrirVisualizacaoAfastamento(tipo, id)` onde `tipo` é `'firestore'` ou `'json'`. Helper: `formatarData(dateStr)` converte `YYYY-MM-DD` → `DD/MM/YYYY`.
 - **Detecção automática de ex-membros na aba Defensorias** — `renderDefensorias` detecta "orphan ex-members": qualquer defensor cadastrado como titular via UI (Firestore) que não tenha mais DP ativa aparece automaticamente no accordion "Ex-membros", sem necessidade de editar o JSON. Lógica: `orphanExMembros = Object.keys(defHistorico).filter(k => !defensores[k] && !defCurrentDPs[k])`. Mariana Silva Paixão corrigida no JSON de `externo: true` para `externo: false, ativo: false`.
@@ -276,6 +322,14 @@ github-pages/
 - **Bug corrigido — designações cumulativas classificadas erroneamente como afastamentos** — portarias com verbo DESIGNAR + cumulativamente + sem data fim ("a contar do dia X" sem "até Y") eram salvas em `afastamentos_admin` e apareciam no sino azul. Caso exemplo: Eliaquim → 9ª DP a partir de 04/05/2026 (portaria de 06/05/2026). Correção: prompt do Claude agora tem terceiro array `designacoes_cumulativas` com regras explícitas de classificação; nova função `salvar_designacoes_cumulativas_firestore()` grava em `designacoes_cumulativas_admin`. Commit `457244c` (07/05/2026).
 - **Sino 🔔 de Designações Cumulativas** — botão `#btn-sino-designacao` na **barra de abas**, ao lado do `#btn-sino-remocao` (ambos junto à aba "📋 Defensorias"). Cabeçalho **verde** (`#166534`/`#16a34a`) para diferenciar dos outros dois sinos (azul = afastamentos, âmbar = remoções). Lê coleção `designacoes_cumulativas_admin` (onde `origem:"automacao-diario-oficial"` e `lido !== true`). Painel exibe: defensor, DP designada, data de início, portaria clicável, instrução "📋 Atualize o titular na aba Defensorias". Apenas botão [🗑️ Dispensar] — sem Editar (a ação é na aba Defensorias). Funções: `_atualizarBadgeSinoDesignacao()`, `abrirPainelDesignacao()`, `fecharPainelDesignacao()`, `dispensarDesignacao(id)`. Global: `designacaoNotifData[]`. `carregarNotificacoesAutomacao()` tem terceiro bloco `try/catch` independente para esta coleção. Commit `457244c` (07/05/2026).
 - **Bug corrigido — designações temporárias não exibiam data/portaria no card de defensor** — o card da aba Defensorias buscava a entrada ativa de cada DP com `!h.fim` (exigia `fim === null`), fazendo designações com data de saída definida (ex.: Eliaquim na 8ª DP de 02/05 a 15/05) aparecerem sem "Primeiro dia" e sem portaria. Corrigido em `renderDefensorias` (`index.html`, linha ~6362): a busca passou a usar comparação de intervalo de datas (`today >= inicio && today <= fim`), consistente com `getTitularForDPOnDay`. Commit `e415bff` (08/05/2026).
+- **Régua de edição (RTE) nas seções editáveis** — toolbar rica (`#rich-editor-toolbar`) adicionada às seções "Alternância para Atendimentos" e "Férias/Folgas/Licenças dos Membros". Botões: negrito, itálico, sublinhado, tachado, alinhamento (3), listas (ul/ol), indentação, limpar formatação, undo/redo, tamanho de fonte (select 1–7), cor do texto (paleta), cor de realce (paleta), link, emoji. Toolbar é um elemento único no DOM compartilhado, movido via `insertBefore` para junto do editor ativo. `mousedown + preventDefault()` preserva seleção ao clicar na toolbar. Seleção salva/restaurada via `Range.cloneRange()` / `sel.addRange()`. Commit da sessão 17 (26/05/2026).
+- **Paleta de cores estilo Word** — substituiu color pickers nativos `<input type="color">`. Painel `#rte-color-panel` com grade de swatches: 6 linhas × 10 colunas de cores temáticas + 10 cores padrão. Aplica cor no texto selecionado via `document.execCommand('foreColor'/'hiliteColor')`. Indicadores coloridos (`#rte-color-ind`, `#rte-hilite-ind`) mostram a última cor usada. Commit da sessão 17.
+- **Painel de emojis com abas** — `#rte-emoji-panel` com 5 categorias: Comuns, Jurídico, Pessoas, Status, Natureza/AM. Inserção via `execCommand('insertText')`. Commit da sessão 17.
+- **Redesign dos botões Editar/Salvar/Cancelar** — ~60% menores que os antigos, fundo branco, borda fina azul (`1.5px solid #3b82f6`), texto azul. Ícone SVG caneta (`<svg class="btn-icon-pen">`) substitui emoji ✏️. Classes CSS: `.btn-editar`, `.btn-salvar`, `.btn-cancelar`. Hover do Salvar fica verde; hover do Cancelar fica vermelho. Commit da sessão 17.
+- **Toggle switch "Editar" removido do header** — o toggle `#btn-editar-header` / `#toggle-editar-checkbox` foi **removido**. Botões de edição (✏️ titulares, seções editáveis) agora ficam **sempre visíveis** para admins após login, sem necessidade de ativar o modo edição. `toggleModoEdicao()` e `_desativarModoEdicao()` tornaram-se no-ops. `_aplicarModoEdicao()` ainda existe e ainda mostra/oculta `.admin-only` na aba Defensorias com base em `userRole === 'admin'` (sem checkbox). Commit da sessão 17.
+- **Nova seção "Atribuições, Colidências e Substituições Automáticas"** — botão indigo ⚖️ na landing page. Abre seção sem barra de abas com duas tabelas (DPs 1–6 e DPs 7–12). Cada tabela tem linhas: Defensor(a) Responsável (dinâmico), Atribuição, Colidência, Substituições Automáticas (2 linhas), Atuação Extrajudicial e Coletiva. Dados estáticos em `ATRIBUICOES_STATIC[]` (12 objetos). `_atrResolverDefensor(dpKey)` resolve titular vigente **inline** (não chama `getCurrentTitular`, que é local a `renderDefensorias`). Retry automático via `setTimeout(renderAtribuicoes, 800)` se `jsonDesignacoes` ainda não carregou. Commit `6a751ce` da sessão 17. Bugs corrigidos (commit `f57c81a`): carregamento, divisão em 2 blocos (DPs 1–6 e 7–12), texto das substituições ("1º Substituto: 2ª DP").
+- **Link da resolução na seção Atribuições** — campo editável persistido em `secoes/atribuicoes_resolucao`. Exibe link clicável se url presente; texto simples se só nome; placeholder discreto para admin se vazio; nada para viewers se vazio. Sem rótulo "Resolução:" no cabeçalho — o nome do link já é autoexplicativo. Permite salvar vazio (para limpar o campo). Valores lidos de `data-url`/`data-nome` no span (não de `innerHTML`), evitando bugs de parse. Commit `3383b7b` + `91f1c35` da sessão 17.
+- **Células da tabela Atribuições editáveis por admins** — modo planilha: botão "✏️ Editar tabela" ativa contentEditable nas 60 células editáveis (5 campos × 12 DPs: atribuicao, colidencia, sub1, sub2, extrajudicial). Cada `<td>` tem `data-atr-key="N_campo"`. Toolbar RTE compartilhada montada via `_rteMountAtribuicoes()`. Formatação preservada mesmo após apagar todo o texto: **dupla aplicação** — execCommand aplica ao texto selecionado; handlers de cor/bold/italic/size também aplicam ao `<td>` ativo via `td.style.*`, garantindo herança para novos textos. Saved em `secoes/atribuicoes_celulas` como `{ html, cellStyle }` por chave. Botão "Limpar formatação" limpa ambas as camadas. Navegação segura: `renderAtribuicoes()` encerra modo edição e resgata toolbar do DOM antes de reconstruir `innerHTML`. Commit `86b56b3` da sessão 17. Globals: `_atrModoEdicao` (bool), `_atrCelulaAtiva` (TD em foco), `_atrCelulasBackup` (snapshot para cancelar), `_ATR_FONTSIZE_PX` (mapa HTML size → px).
 
 ### O que ainda falta implementar ⏳
 - ~~**Dispensar registro incorreto do Eliaquim em `afastamentos_admin`**~~ ✅ Deletado manualmente no Firestore Console em 07/05/2026. O registro correto (em `designacoes_cumulativas_admin`) será criado automaticamente na próxima execução da automação caso a edição de 06/05/2026 ainda não tenha sido reprocessada.
@@ -375,11 +429,12 @@ github-pages/
 - **Aba Designações Semanais:** tabelas semanais usam `getTitularForDPOnDay()` que reflete o titular correto por data
 - **Aba Calendário:** re-renderizado para refletir novos titulares nos afastamentos
 
-### Modo de edição (`toggleModoEdicao`)
-- Toggle switch `#btn-editar-header` (label) + `#toggle-editar-checkbox` (checkbox interno) na área azul do header — visível apenas na aba Defensorias para admins
-- Estado lido diretamente de `checkbox.checked`; verde = modo edição ativo
-- `_aplicarModoEdicao()` — mostra/oculta botões ✏️ por linha na tabela e botões `.admin-only` das seções editáveis; chamado também ao final de `renderDefensorias()` para preservar estado após re-render do DOM
-- `_desativarModoEdicao()` — desmarca o checkbox e chama `_aplicarModoEdicao()`; acionado ao trocar de aba (`showTab`) ou voltar ao início (`showLanding`/`showSection`)
+### Modo de edição (`toggleModoEdicao`) — ⚠️ Toggle REMOVIDO na sessão 17
+- O toggle switch `#btn-editar-header` foi **removido do header** em 26/05/2026
+- Botões de edição (✏️ titulares e seções) agora **sempre visíveis para admins** após login
+- `toggleModoEdicao()` → **no-op** (função mantida por compat, não faz nada)
+- `_desativarModoEdicao()` → **no-op** (idem)
+- `_aplicarModoEdicao()` — ainda funcional: mostra/oculta `.cel-editar-dp` e `.admin-only` em `#designacoes` com base em `userRole === 'admin'`. Chamada ao final de `renderDefensorias()` para re-aplicar após rebuild do DOM
 
 ### Renderização da aba Defensorias (`renderDefensorias`)
 - Cards sem numeração, com label "Primeiro dia" e portarias
@@ -579,6 +634,51 @@ py verificar-diario-completo.py
 ### O que NÃO fazer (preservar Projeto 1)
 - **Não misturar** os scripts — cada um tem seu próprio workflow, estado e API key
 - **Não gravar em `afastamentos_admin`** — só o Projeto 1 escreve ali
+
+---
+
+## Arquitetura da seção Atribuições (✅ IMPLEMENTADA — sessão 17 em 26/05/2026)
+
+### Estrutura geral
+- Seção acessível pelo botão ⚖️ na landing page → `showSection('atribuicoes')`
+- Sem barra de abas; botão Início retorna à landing
+- Duas tabelas: DPs 1–6 e DPs 7–12 (geradas por `_atrRenderBloco(dps)`)
+- Dados estáticos em `ATRIBUICOES_STATIC[]` (12 objetos com `num`, `dpKey`, `atribuicao`, `digitos`, `colidencia`, `sub1`, `sub2`, `extrajudicial`)
+
+### Linhas da tabela
+| Linha | Editável | Fonte |
+|---|---|---|
+| Defensor(a) Responsável | ❌ | `_atrResolverDefensor(dpKey)` — lê `jsonDesignacoes.defensorias[dp].historico_titulares` |
+| Atribuição (+ Dígitos) | ✅ `data-atr-key="N_atribuicao"` | `ATRIBUICOES_STATIC` → Firestore |
+| Colidência | ✅ `data-atr-key="N_colidencia"` | `ATRIBUICOES_STATIC` → Firestore |
+| 1º Substituto | ✅ `data-atr-key="N_sub1"` | `ATRIBUICOES_STATIC` → Firestore |
+| 2º Substituto | ✅ `data-atr-key="N_sub2"` | `ATRIBUICOES_STATIC` → Firestore |
+| Atuação Extrajudicial | ✅ `data-atr-key="N_extrajudicial"` | `ATRIBUICOES_STATIC` → Firestore |
+
+### Fluxo de edição das células
+1. `renderAtribuicoes()` — constrói HTML com dados estáticos e `data-atr-key` nos TDs editáveis
+2. `_atrCarregarCelulas()` — busca `secoes/atribuicoes_celulas` e aplica `cellStyle` + `innerHTML` em cada TD (sobrescreve padrões estáticos)
+3. Admin clica "✏️ Editar tabela" → `_atrEntrarModoEdicao()` — backup em `_atrCelulasBackup`, contentEditable ativado, `_rteMountAtribuicoes()` monta toolbar
+4. Admin foca célula → `_atrOnCellFocus(e)` — `_atrCelulaAtiva = td; _rteTargetEl = td`
+5. Admin usa toolbar → handlers com **dupla aplicação**: `document.execCommand(...)` + `td.style.*`
+6. "✓ Salvar" → `_atrSalvarCelulas()` — coleta `{ html: td.innerHTML, cellStyle: td.style.cssText }` de todos os TDs → grava em Firestore
+7. "✕ Cancelar" → `_atrCancelarCelulas()` — restaura `_atrCelulasBackup`
+
+### Preservação de formatação (mecanismo chave)
+- **Problema:** `execCommand('foreColor')` cria `<span style="color:...">` — ao apagar o texto, o span some
+- **Solução:** aplicação dupla — ao usar cor/bold/italic/size na toolbar, o estilo é aplicado **também ao `<td>`** como inline style
+- Quando o admin apaga o texto e digita novo, o `<td>` ainda tem `color: red` (por ex.) e o novo texto herda via CSS cascade
+- "Limpar formatação" (eraser): além de `execCommand('removeFormat')`, zera `td.style.color/backgroundColor/fontWeight/fontStyle/textDecoration/fontSize`
+
+### Segurança contra reconstrução do DOM
+- `renderAtribuicoes()` sempre verifica: se `_atrModoEdicao` ativo → chama `_atrSairModoEdicao()` antes de reconstruir innerHTML
+- Também resgata a toolbar do container se ela estiver dentro (`el.contains(toolbar)`) → move para `document.body`
+- `showLanding()` também chama `_atrSairModoEdicao()` se modo ativo
+
+### `_atrResolverDefensor(dpKey)` — atenção
+- **Não chama `getCurrentTitular()`** — essa função é local a `renderDefensorias()` e inacessível globalmente
+- Lógica de resolução duplicada inline: itera `historico_titulares`, retorna entrada com `inicio` mais recente que cobre hoje
+- Se o titular não está no dicionário `defensores`, tenta `defensorNames[key]` como fallback
 
 ---
 
