@@ -6160,7 +6160,6 @@
             // Restaurar visibilidade do botão Diário Oficial para próxima navegação
             document.getElementById('tab-btn-diario').style.display = '';
             sessionStorage.removeItem('pma-secao');
-            sessionStorage.removeItem('pma-scroll');
         }
 
         function showSection(tabName) {
@@ -7402,13 +7401,10 @@
             if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); }
             carregarNotificacoesAutomacao();
 
-            // Restaurar seção e posição de scroll do F5
+            // Restaurar seção após F5
             const _secaoSalva = sessionStorage.getItem('pma-secao');
             if (_secaoSalva) {
                 showSection(_secaoSalva);
-                const _scrollSalvo = parseInt(sessionStorage.getItem('pma-scroll') || '0', 10);
-                // Aguarda 1200ms para o conteúdo async (Firestore) terminar de renderizar
-                if (_scrollSalvo) setTimeout(() => window.scrollTo(0, _scrollSalvo), 1200);
             }
         }
 
@@ -7447,7 +7443,6 @@
         async function fazerLogout() {
             sessionStorage.removeItem('pma-role');
             sessionStorage.removeItem('pma-secao');
-            sessionStorage.removeItem('pma-scroll');
             await auth.signOut();
         }
 
@@ -7845,22 +7840,6 @@
             document.querySelector('.tabs').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
 
-            // Salvar posição de scroll com debounce (para restaurar após F5)
-            let _scrollTimer = null;
-            window.addEventListener('scroll', () => {
-                clearTimeout(_scrollTimer);
-                _scrollTimer = setTimeout(() => {
-                    if (sessionStorage.getItem('pma-secao') && window.scrollY > 0) {
-                        sessionStorage.setItem('pma-scroll', window.scrollY);
-                    }
-                }, 150);
-            }, { passive: true });
-            // beforeunload é a salvaguarda final antes do F5 (scroll já resetado pelo browser no evento scroll)
-            window.addEventListener('beforeunload', () => {
-                if (sessionStorage.getItem('pma-secao') && window.scrollY > 0) {
-                    sessionStorage.setItem('pma-scroll', window.scrollY);
-                }
-            });
 
             filterByMonth('janeiro');
 
