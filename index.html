@@ -6196,9 +6196,24 @@
         ];
 
         function _atrResolverDefensor(dpKey) {
-            const key = getCurrentTitular(dpKey);
-            if (!key || /vaga/i.test(key)) return { nome: 'Vaga', vaga: true };
-            const info = jsonDesignacoes && jsonDesignacoes.defensores && jsonDesignacoes.defensores[key];
+            // getCurrentTitular é local a renderDefensorias — replicamos a lógica aqui
+            if (!jsonDesignacoes) return { nome: '...', vaga: false };
+            const defensorias = jsonDesignacoes.defensorias;
+            const dp = defensorias && defensorias[dpKey];
+            if (!dp || !dp.historico_titulares) return { nome: 'Vaga', vaga: true };
+
+            const todayStr = new Date().toISOString().split('T')[0];
+            let best = null, bestStart = null;
+            for (const h of dp.historico_titulares) {
+                if (h.inicio > todayStr) continue;
+                if (h.fim && h.fim < todayStr) continue;
+                if (!bestStart || h.inicio > bestStart) { best = h.defensor; bestStart = h.inicio; }
+            }
+
+            const key = best;
+            if (!key || /vaga/i.test(String(key))) return { nome: 'Vaga', vaga: true };
+
+            const info = jsonDesignacoes.defensores && jsonDesignacoes.defensores[key];
             const nome = info ? (info.nome_curto || info.nome) : (defensorNames[key] || key);
             return { nome: nome.toUpperCase(), vaga: false };
         }
@@ -6252,6 +6267,11 @@
         function renderAtribuicoes() {
             const el = document.getElementById('atribuicoes-content');
             if (!el) return;
+            if (!jsonDesignacoes) {
+                el.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Aguardando carregamento dos dados...</p>';
+                setTimeout(renderAtribuicoes, 800);
+                return;
+            }
 
             const hoje = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
             let html = `
