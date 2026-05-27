@@ -4682,6 +4682,7 @@
                     removeWeekendHighlightsFromRows();
                 }, 200);
             }
+            sessionStorage.setItem('pma-secao', tabName);
         }
 
         // Formata período de afastamento: "DD-DD/MM" (mesmo mês) ou "DD/MM–DD/MM" (meses diferentes)
@@ -6158,6 +6159,8 @@
             document.getElementById('inicio-btn').style.display = 'none';
             // Restaurar visibilidade do botão Diário Oficial para próxima navegação
             document.getElementById('tab-btn-diario').style.display = '';
+            sessionStorage.removeItem('pma-secao');
+            sessionStorage.removeItem('pma-scroll');
         }
 
         function showSection(tabName) {
@@ -6204,6 +6207,7 @@
                     setTimeout(removeWeekendHighlightsFromRows, 200);
                 }
             }
+            sessionStorage.setItem('pma-secao', tabName);
         }
 
         // =====================================================================
@@ -7349,14 +7353,22 @@
             document.getElementById('loading-overlay').style.display = 'none';
             if (user) {
                 currentUser = user;
-                try {
-                    const doc = await db.collection('usuarios').doc(user.uid).get();
-                    userRole  = doc.exists ? (doc.data().role || 'viewer') : 'viewer';
-                } catch(e) {
-                    userRole = 'viewer';
-                }
+                userRole    = 'viewer'; // padrão enquanto busca o role
                 mostrarSiteAutenticado();
                 carregarConteudoFirestore();
+                // Busca role em segundo plano — atualiza UI se for admin
+                try {
+                    const doc = await db.collection('usuarios').doc(user.uid).get();
+                    const role = doc.exists ? (doc.data().role || 'viewer') : 'viewer';
+                    if (role !== userRole) {
+                        userRole = role;
+                        if (userRole === 'admin') {
+                            document.getElementById('admin-badge').style.display = 'inline-block';
+                            _aplicarModoEdicao();
+                            carregarNotificacoesAutomacao();
+                        }
+                    }
+                } catch(e) { /* mantém viewer */ }
             } else {
                 currentUser = null;
                 userRole    = null;
@@ -7383,6 +7395,14 @@
             // Se os JSONs já carregaram antes da autenticação, carregar dados do Firestore agora
             if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); }
             carregarNotificacoesAutomacao();
+
+            // Restaurar seção e posição de scroll do F5
+            const _secaoSalva = sessionStorage.getItem('pma-secao');
+            if (_secaoSalva) {
+                showSection(_secaoSalva);
+                const _scrollSalvo = parseInt(sessionStorage.getItem('pma-scroll') || '0', 10);
+                if (_scrollSalvo) setTimeout(() => window.scrollTo(0, _scrollSalvo), 400);
+            }
         }
 
         // ── Login ──────────────────────────────────────────────────────────
@@ -7814,6 +7834,17 @@
             // Iniciar na landing page (aplicado quando autenticado)
             document.querySelector('.tabs').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
+
+            // Salvar posição de scroll com debounce (para restaurar após F5)
+            let _scrollTimer = null;
+            window.addEventListener('scroll', () => {
+                clearTimeout(_scrollTimer);
+                _scrollTimer = setTimeout(() => {
+                    if (sessionStorage.getItem('pma-secao')) {
+                        sessionStorage.setItem('pma-scroll', window.scrollY);
+                    }
+                }, 150);
+            }, { passive: true });
 
             filterByMonth('janeiro');
 
