@@ -1041,6 +1041,7 @@
             border-collapse: collapse;
             min-width: 560px;
             font-size: 0.875em;
+            table-layout: fixed;
         }
         .atr-table th {
             background: #1e3a8a;
@@ -1060,6 +1061,7 @@
             border: 1px solid #e2e8f0;
             vertical-align: middle;
             text-align: center;
+            word-break: break-word;
         }
         .atr-row-label {
             background: #eef2ff;
@@ -6236,7 +6238,18 @@
         }
 
         function _atrRenderBloco(dps) {
-            let html = '<div class="atr-block"><table class="atr-table"><thead><tr>';
+            // Colgroup para bloco 1 (DPs 1–6): alarga 2ª DP, estreita 6ª DP
+            let colgroup = '';
+            if (dps[0].num === 1) {
+                const larguras = { 1:'auto', 2:'19%', 3:'auto', 4:'auto', 5:'auto', 6:'12%' };
+                colgroup = '<colgroup><col>';
+                dps.forEach(d => {
+                    const w = larguras[d.num];
+                    colgroup += w === 'auto' ? '<col>' : `<col style="width:${w}">`;
+                });
+                colgroup += '</colgroup>';
+            }
+            let html = `<div class="atr-block"><table class="atr-table">${colgroup}<thead><tr>`;
             html += '<th class="atr-label-col">Defensoria</th>';
             dps.forEach(d => { html += `<th>${d.num}ª DP</th>`; });
             html += '</tr></thead><tbody>';
