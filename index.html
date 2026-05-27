@@ -7850,11 +7850,17 @@
             window.addEventListener('scroll', () => {
                 clearTimeout(_scrollTimer);
                 _scrollTimer = setTimeout(() => {
-                    if (sessionStorage.getItem('pma-secao')) {
+                    if (sessionStorage.getItem('pma-secao') && window.scrollY > 0) {
                         sessionStorage.setItem('pma-scroll', window.scrollY);
                     }
                 }, 150);
             }, { passive: true });
+            // beforeunload é a salvaguarda final antes do F5 (scroll já resetado pelo browser no evento scroll)
+            window.addEventListener('beforeunload', () => {
+                if (sessionStorage.getItem('pma-secao') && window.scrollY > 0) {
+                    sessionStorage.setItem('pma-scroll', window.scrollY);
+                }
+            });
 
             filterByMonth('janeiro');
 
