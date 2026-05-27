@@ -6315,8 +6315,8 @@
             let html = `
                 <div class="atr-header">
                     <div class="atr-title">⚖️ Atribuições das Defensorias do Polo do Médio Amazonas</div>
-                    <div class="atr-resolucao" style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
-                        📋 Resolução:&nbsp;<span id="atr-resolucao-link"><em style="color:#94a3b8">[carregando...]</em></span>${btnEditarRes}
+                    <div class="atr-resolucao" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px">
+                        <span id="atr-resolucao-link"><em style="color:#94a3b8;font-size:0.85em">[carregando...]</em></span>${btnEditarRes}
                     </div>
                     <div class="atr-resolucao" style="margin-top:4px;font-size:0.8em;color:#94a3b8">
                         Os nomes dos defensores refletem os titulares vigentes em ${hoje}.
@@ -6338,31 +6338,44 @@
             if (!linkEl) return;
             try {
                 const doc = await db.collection('secoes').doc('atribuicoes_resolucao').get();
-                if (doc.exists && doc.data().url) {
-                    const { url, nome } = doc.data();
-                    linkEl.innerHTML = `<a href="${url}" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600">${nome || 'Ver Resolução'}</a>`;
+                const data = doc.exists ? doc.data() : {};
+                const url  = (data.url  || '').trim();
+                const nome = (data.nome || '').trim();
+
+                // Guardar valores atuais como data-attributes (para o form de edição)
+                linkEl.dataset.url  = url;
+                linkEl.dataset.nome = nome;
+
+                if (url) {
+                    linkEl.innerHTML = `📋 <a href="${url}" target="_blank" rel="noopener"
+                        style="color:#1d4ed8;font-weight:600">${nome || url}</a>`;
+                } else if (nome) {
+                    linkEl.innerHTML = `📋 <span style="color:#475569;font-weight:600">${nome}</span>`;
                 } else {
-                    linkEl.innerHTML = `<em style="color:#94a3b8">[link a adicionar]</em>`;
+                    // Campo vazio
+                    linkEl.innerHTML = userRole === 'admin'
+                        ? `<em style="color:#94a3b8;font-size:0.85em">[sem resolução vinculada]</em>`
+                        : '';
                 }
             } catch(e) {
-                linkEl.innerHTML = `<em style="color:#94a3b8">[link a adicionar]</em>`;
+                linkEl.innerHTML = `<em style="color:#94a3b8;font-size:0.85em">[sem resolução vinculada]</em>`;
             }
         }
 
         function _atrEditarResolucao() {
             const linkEl = document.getElementById('atr-resolucao-link');
             if (!linkEl) return;
-            const aEl     = linkEl.querySelector('a');
-            const urlAtual  = aEl ? aEl.href : '';
-            const nomeAtual = aEl ? aEl.textContent : '';
+            // Ler valores atuais dos data-attributes (gravados por _atrCarregarResolucao)
+            const urlAtual  = linkEl.dataset.url  || '';
+            const nomeAtual = linkEl.dataset.nome || '';
             linkEl.innerHTML = `
-                <span style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px">
-                    <input id="atr-res-nome" type="text" placeholder="Nome (ex: Resolução nº 1/2026)"
+                <span style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap">
+                    <input id="atr-res-nome" type="text" placeholder="Nome (ex: Resolução nº 538/2026-GSPG/DPE/AM)"
                         value="${nomeAtual}"
-                        style="border:1.5px solid #3b82f6;border-radius:4px;padding:3px 8px;font-size:0.83em;width:210px;outline:none">
-                    <input id="atr-res-url" type="url" placeholder="https://..."
-                        value="${urlAtual}"
                         style="border:1.5px solid #3b82f6;border-radius:4px;padding:3px 8px;font-size:0.83em;width:260px;outline:none">
+                    <input id="atr-res-url" type="url" placeholder="https://... (deixe vazio para ocultar o link)"
+                        value="${urlAtual}"
+                        style="border:1.5px solid #3b82f6;border-radius:4px;padding:3px 8px;font-size:0.83em;width:280px;outline:none">
                     <button class="btn-salvar" style="display:inline-flex" onclick="_atrSalvarResolucao()">✓ Salvar</button>
                     <button class="btn-cancelar" style="display:inline-flex" onclick="_atrCancelarResolucaoEdit()">✕</button>
                 </span>`;
@@ -6371,17 +6384,16 @@
 
         async function _atrSalvarResolucao() {
             const url  = (document.getElementById('atr-res-url').value  || '').trim();
-            const nome = (document.getElementById('atr-res-nome').value || '').trim() || 'Ver Resolução';
-            if (!url) { mostrarToast('❌ Digite a URL da resolução.', true); return; }
+            const nome = (document.getElementById('atr-res-nome').value || '').trim();
+            // Ambos podem ser vazios (para limpar o campo)
             try {
                 await db.collection('secoes').doc('atribuicoes_resolucao').set({
                     url, nome,
                     atualizado_por: currentUser.email,
                     atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
                 });
-                const linkEl = document.getElementById('atr-resolucao-link');
-                if (linkEl) linkEl.innerHTML = `<a href="${url}" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600">${nome}</a>`;
-                mostrarToast('✅ Link salvo com sucesso!');
+                await _atrCarregarResolucao();  // rebuild display from Firestore
+                mostrarToast('✅ Salvo com sucesso!');
             } catch(e) {
                 mostrarToast('❌ Erro ao salvar: ' + e.message, true);
             }
