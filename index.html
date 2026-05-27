@@ -3553,6 +3553,10 @@
                 renderDesignacoes();
                 renderCalendar();
                 populateDefensorDropdown();
+                // Atualiza nomes de titulares na tabela Atribuições se ela estiver aberta
+                if (document.getElementById('atribuicoes')?.classList.contains('active')) {
+                    renderAtribuicoes();
+                }
             } catch(e) {
                 console.warn('Firestore titulares_admin:', e.message);
             }
@@ -6448,19 +6452,27 @@
         let _atrModoEdicao   = false;
         let _atrCelulaAtiva  = null;   // <td> com foco durante edição
         let _atrCelulasBackup = {};    // snapshot para cancelar
+        let _atrCelulasCache  = null;  // cache em memória — evita re-fetch a cada abertura
+
+        function _atrAplicarCelulas(celulas) {
+            Object.entries(celulas).forEach(([key, data]) => {
+                const td = document.querySelector(`[data-atr-key="${CSS.escape(key)}"]`);
+                if (!td) return;
+                if (data.cellStyle) td.style.cssText = data.cellStyle;
+                if (data.html !== undefined) td.innerHTML = data.html;
+            });
+        }
 
         async function _atrCarregarCelulas() {
+            // Aplica cache imediatamente (sem esperar rede) se já tiver sido buscado antes
+            if (_atrCelulasCache) { _atrAplicarCelulas(_atrCelulasCache); return; }
             try {
                 const doc = await db.collection('secoes').doc('atribuicoes_celulas').get();
                 if (!doc.exists) return;
                 const { celulas } = doc.data();
                 if (!celulas) return;
-                Object.entries(celulas).forEach(([key, data]) => {
-                    const td = document.querySelector(`[data-atr-key="${CSS.escape(key)}"]`);
-                    if (!td) return;
-                    if (data.cellStyle) td.style.cssText = data.cellStyle;
-                    if (data.html !== undefined) td.innerHTML = data.html;
-                });
+                _atrCelulasCache = celulas;   // armazena em cache
+                _atrAplicarCelulas(celulas);
             } catch(e) {
                 console.warn('Erro ao carregar células de atribuições:', e);
             }
@@ -6633,6 +6645,7 @@
                     atualizado_por: currentUser.email,
                     atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
                 });
+                _atrCelulasCache = celulas;   // atualiza cache com dados recém salvos
                 btnS.disabled = false;
                 btnS.innerHTML = '✓ Salvar';
                 _atrSairModoEdicao();
