@@ -1053,6 +1053,11 @@
         .adote-cell-editable:focus {
             outline: 2px solid #0d9488; outline-offset: -2px; background: #f0fdfa !important;
         }
+        /* Título e sublinhado do bloco Expandir Presença na paleta teal */
+        #adote .card h2 {
+            color: #0f766e;
+            border-bottom-color: #0d9488;
+        }
 
         /* ─── Seção Atribuições ─────────────────────────────────── */
         .atr-header {
@@ -4151,8 +4156,8 @@
 
         function _aplicarModoEdicao() {
             const isAdmin = userRole === 'admin';
-            // Botões de edição das seções (Alternância, Coordenação, etc.)
-            document.querySelectorAll('#designacoes .admin-only').forEach(el => {
+            // Botões de edição das seções (Alternância, Férias, Adote, etc.)
+            document.querySelectorAll('#designacoes .admin-only, #adote .admin-only').forEach(el => {
                 el.style.display = isAdmin ? 'inline-flex' : 'none';
             });
             // Células ✏️ por linha na tabela Designações Atuais
