@@ -1014,6 +1014,46 @@
             color: white;
         }
 
+        .btn-adote {
+            background: linear-gradient(135deg, #0f766e 0%, #2dd4bf 100%);
+            color: white;
+        }
+
+        /* ─── Seção Adote ────────────────────────────────────────── */
+        .adote-header { margin-bottom: 18px; }
+        .adote-cabecalho-txt {
+            font-size: 1.05em; font-weight: 700;
+            color: #0f766e; line-height: 1.5;
+        }
+        .adote-portaria-lnk { font-size: 0.83em; color: #64748b; margin-top: 4px; }
+        .adote-portaria-lnk a { color: #0f766e; text-decoration: underline; }
+        .adote-block {
+            margin-bottom: 28px; overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .adote-table {
+            width: 100%; border-collapse: collapse;
+            min-width: 700px; font-size: 0.875em;
+            table-layout: fixed;
+        }
+        .adote-table thead th {
+            background: #0f766e; color: white;
+            padding: 10px 12px; text-align: center;
+            font-weight: 700; letter-spacing: 0.03em;
+            word-break: break-word;
+        }
+        .adote-table td {
+            padding: 9px 11px; border: 1px solid #e2e8f0;
+            vertical-align: middle; text-align: center;
+            word-break: break-word;
+        }
+        .adote-table tbody tr:nth-child(even) td { background: #f0fdfa; }
+        .adote-cell-editable:focus {
+            outline: 2px solid #0d9488; outline-offset: -2px; background: #f0fdfa !important;
+        }
+
         /* ─── Seção Atribuições ─────────────────────────────────── */
         .atr-header {
             margin-bottom: 22px;
@@ -2750,6 +2790,11 @@
                     <span class="landing-btn-title">Designações</span>
                     <span class="landing-btn-desc">Escalas semanais, calendário de afastamentos e tabela de defensores</span>
                 </button>
+                <button class="landing-btn btn-adote" onclick="showSection('adote')">
+                    <span class="landing-btn-icon">🏘️</span>
+                    <span class="landing-btn-title">Adote</span>
+                    <span class="landing-btn-desc">Projetos Adote uma Comarca e Expandir Presença, Garantir Direitos</span>
+                </button>
                 <button class="landing-btn btn-diario" onclick="showSection('diario-oficial')">
                     <span class="landing-btn-icon">📰</span>
                     <span class="landing-btn-title">Diário Oficial</span>
@@ -2934,6 +2979,36 @@
             <div class="card">
                 <div id="atribuicoes-content">
                     <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção: Adote uma Comarca / Expandir Presença -->
+        <div id="adote" class="tab-content">
+            <div class="card">
+                <div id="adote-content">
+                    <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
+                </div>
+            </div>
+            <div class="card" style="margin-top:20px">
+                <h2>
+                    <span id="adote_expandir-titulo">📋 Projeto Expandir Presença, Garantir Direitos (Audiências)</span>
+                    <button class="btn-editar admin-only" id="edit-btn-adote_expandir"
+                        onclick="iniciarEdicao('adote_expandir')"><svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar</button>
+                    <button class="btn-salvar" id="save-btn-adote_expandir" style="display:none"
+                        onclick="salvarSecao('adote_expandir')">✓ Salvar</button>
+                    <button class="btn-cancelar" id="cancel-btn-adote_expandir" style="display:none"
+                        onclick="cancelarEdicao('adote_expandir')">✕ Cancelar</button>
+                </h2>
+                <div id="adote_expandir-html" class="secao-editavel">
+                    <p><u>Período de 16/03/2026 a 15/06/2026</u> (Sob Coordenação da Defensora Pública Karlla Alynne Queiroz D'Oliveira)</p>
+                    <br>
+                    <p>16. Itapiranga</p>
+                    <p>24. São Sebastião do Uatumã</p>
+                    <p>25. Silves</p>
+                    <p>28. Urucurituba</p>
+                    <br>
+                    <p>33. Urucará</p>
                 </div>
             </div>
         </div>
@@ -6155,8 +6230,9 @@
         // =====================================================================
 
         function showLanding() {
-            // Encerrar edição de Atribuições se estava ativa
-            if (typeof _atrModoEdicao !== 'undefined' && _atrModoEdicao) _atrSairModoEdicao();
+            // Encerrar edição de Atribuições/Adote se estava ativa
+            if (typeof _atrModoEdicao   !== 'undefined' && _atrModoEdicao)   _atrSairModoEdicao();
+            if (typeof _adoteModoEdicao !== 'undefined' && _adoteModoEdicao) _adoteSairModoEdicao();
             document.getElementById('landing').style.display = 'block';
             document.querySelector('.tabs').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
@@ -6183,6 +6259,10 @@
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('atribuicoes').classList.add('active');
                 renderAtribuicoes();
+            } else if (tabName === 'adote') {
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('adote').classList.add('active');
+                renderAdote();
             } else if (tabName === 'diario-oficial') {
                 // Diário Oficial: sem barra de abas, conteúdo direto
                 document.querySelector('.tabs').style.display = 'none';
@@ -6490,15 +6570,9 @@
             '5': '18px', '6': '24px', '7': '36px'
         };
 
-        function _rteMountAtribuicoes() {
-            const toolbar   = document.getElementById('rich-editor-toolbar');
-            const editBar   = document.getElementById('atr-edit-bar');
-
-            // Posicionar toolbar imediatamente após a barra de edição
-            editBar.parentNode.insertBefore(toolbar, editBar.nextSibling);
-            toolbar.style.display = 'flex';
-
-            // Construir abas de emoji
+        // Setup compartilhado de handlers RTE para tabelas editáveis (Atribuições e Adote)
+        // Usa _rteTargetEl (célula ativa) — definido por _atrOnCellFocus / _adoteOnCellFocus
+        function _rteMountTabelaHandlers() {
             const tabsEl = document.getElementById('rte-emoji-tabs');
             tabsEl.innerHTML = Object.entries(RTE_CAT_LABELS).map(([k, v]) =>
                 `<span class="rte-emoji-tab${k === _rteEmojiCat ? ' active' : ''}" data-cat="${k}"
@@ -6506,21 +6580,20 @@
             ).join('');
             _rteShowEmojiCat(_rteEmojiCat);
 
-            // Botões padrão com dupla aplicação para cells ATR
             const cmdHandlers = {
                 'rte-bold':         () => {
                     _rteExec('bold');
-                    if (_atrCelulaAtiva) _atrCelulaAtiva.style.fontWeight =
+                    if (_rteTargetEl) _rteTargetEl.style.fontWeight =
                         document.queryCommandState('bold') ? 'bold' : 'normal';
                 },
                 'rte-italic':       () => {
                     _rteExec('italic');
-                    if (_atrCelulaAtiva) _atrCelulaAtiva.style.fontStyle =
+                    if (_rteTargetEl) _rteTargetEl.style.fontStyle =
                         document.queryCommandState('italic') ? 'italic' : 'normal';
                 },
                 'rte-underline':    () => {
                     _rteExec('underline');
-                    if (_atrCelulaAtiva) _atrCelulaAtiva.style.textDecoration =
+                    if (_rteTargetEl) _rteTargetEl.style.textDecoration =
                         document.queryCommandState('underline') ? 'underline' : '';
                 },
                 'rte-strike':       () => _rteExec('strikeThrough'),
@@ -6533,53 +6606,327 @@
                 'rte-outdent':      () => _rteExec('outdent'),
                 'rte-clear':        () => {
                     _rteExec('removeFormat');
-                    // Limpar também os estilos inline do TD ao remover formatação
-                    if (_atrCelulaAtiva) {
-                        _atrCelulaAtiva.style.color           = '';
-                        _atrCelulaAtiva.style.backgroundColor = '';
-                        _atrCelulaAtiva.style.fontWeight      = '';
-                        _atrCelulaAtiva.style.fontStyle       = '';
-                        _atrCelulaAtiva.style.textDecoration  = '';
-                        _atrCelulaAtiva.style.fontSize        = '';
+                    if (_rteTargetEl) {
+                        _rteTargetEl.style.color           = '';
+                        _rteTargetEl.style.backgroundColor = '';
+                        _rteTargetEl.style.fontWeight      = '';
+                        _rteTargetEl.style.fontStyle       = '';
+                        _rteTargetEl.style.textDecoration  = '';
+                        _rteTargetEl.style.fontSize        = '';
                     }
                 },
-                'rte-undo':         () => _rteExec('undo'),
-                'rte-redo':         () => _rteExec('redo'),
+                'rte-undo': () => _rteExec('undo'),
+                'rte-redo': () => _rteExec('redo'),
             };
             for (const [id, handler] of Object.entries(cmdHandlers)) {
                 const btn = document.getElementById(id);
                 if (btn) btn.onmousedown = (e) => { e.preventDefault(); handler(); };
             }
-
-            // Link
             document.getElementById('rte-link').onmousedown =
                 (e) => { e.preventDefault(); _rteInsertLink(); };
-
-            // Emoji
             document.getElementById('rte-emoji-btn').onmousedown = _rteToggleEmoji;
 
-            // Tamanho de fonte: sem preventDefault para o select abrir
             const fsEl = document.getElementById('rte-fontsize');
             fsEl.onmousedown = () => _rteSaveRange();
             fsEl.onchange = function() {
                 _rteExec('fontSize', this.value);
-                if (_atrCelulaAtiva)
-                    _atrCelulaAtiva.style.fontSize = _ATR_FONTSIZE_PX[this.value] || '';
+                if (_rteTargetEl)
+                    _rteTargetEl.style.fontSize = _ATR_FONTSIZE_PX[this.value] || '';
                 this.blur();
             };
-
-            // Cor do texto
             document.getElementById('rte-color-btn').onmousedown = (e) => {
                 e.preventDefault(); _rteOpenColorPanel('text', e.currentTarget);
             };
-
-            // Cor de realce
             document.getElementById('rte-hilite-btn').onmousedown = (e) => {
                 e.preventDefault(); _rteOpenColorPanel('hilite', e.currentTarget);
             };
-
             _rteInitColorPalette();
             _rteUpdateStates();
+        }
+
+        function _rteMountAtribuicoes() {
+            const toolbar = document.getElementById('rich-editor-toolbar');
+            const editBar = document.getElementById('atr-edit-bar');
+            editBar.parentNode.insertBefore(toolbar, editBar.nextSibling);
+            toolbar.style.display = 'flex';
+            _rteMountTabelaHandlers();
+        }
+
+        function _rteMountAdote() {
+            const toolbar = document.getElementById('rich-editor-toolbar');
+            const editBar = document.getElementById('adote-edit-bar');
+            editBar.parentNode.insertBefore(toolbar, editBar.nextSibling);
+            toolbar.style.display = 'flex';
+            _rteMountTabelaHandlers();
+        }
+
+        // =====================================================================
+        // Seção Adote — dados estáticos, globais e funções
+        // =====================================================================
+        const ADOTE_COLS = ['defensor','comarcas','polo','forma_trabalho','coordenador','servidor'];
+        const ADOTE_COL_LABELS = {
+            defensor:       'Defensor(a) Público(a)',
+            comarcas:       'Comarcas',
+            polo:           'Polo',
+            forma_trabalho: 'Forma de Trabalho',
+            coordenador:    'Coordenador',
+            servidor:       'Servidor(a)'
+        };
+        const ADOTE_STATIC = [
+            { defensor:'Carlos Alberto Souza de Almeida Filho',    comarcas:'São Sebastião do Uatumã',  polo:'Polo do Médio Amazonas',                                  forma_trabalho:'Grupo Único (Intimações)', coordenador:'Rodrigo Cavalcante dos Santos',  servidor:'carlosalmeidafilho@defensoria.am.def.br' },
+            { defensor:'Wilson Oliveira de Melo Júnior',           comarcas:'Silves + Barreirinha',     polo:'Polo do Médio Amazonas e Polo do Baixo Amazonas',         forma_trabalho:'Grupo Único (Intimações)', coordenador:'Renata Patrícia Torres dos Reis', servidor:'wilsonmelojr@defensoria.am.def.br'         },
+            { defensor:'Raimundo Sérvulo Lourido Barreto',         comarcas:'Tapauá',                   polo:'Polo do Purus',                                           forma_trabalho:'Grupo Único (Intimações)', coordenador:'Luana do Nascimento Jucá',        servidor:'servulo@defensoria.am.def.br'              },
+            { defensor:'Antonio Cavalcante de Albuquerque Junior', comarcas:'Itapiranga + Guajará',     polo:'Polo do Médio Amazonas e Polo do Juruá',                  forma_trabalho:'Grupo Único (Intimações)', coordenador:'Luciana Pontes da Costa',         servidor:'antoniocavalcante@defensoria.am.def.br'    },
+            { defensor:'Ulysses Silva Falcão',                     comarcas:'Anori + Urucurituba',      polo:'Polo do Rio Negro-Solimões e Polo do Médio Amazonas',     forma_trabalho:'Grupo Único (Intimações)', coordenador:'Dennis Barbosa Maquiné',          servidor:'ulysses.falcao@defensoria.am.def.br'       },
+            { defensor:'Thiago Nobre Rosas',                       comarcas:'Maraã + Urucará',          polo:'Polo do Médio Solimões e Polo do Médio Amazonas',         forma_trabalho:'Grupo Único (Intimações)', coordenador:'Daniela Freitas Chaves',          servidor:'thiagorosas@defensoria.am.def.br'          }
+        ];
+
+        let _adoteModoEdicao    = false;
+        let _adoteCelulaAtiva   = null;
+        let _adoteCelulasBackup = {};
+        let _adoteCelulasCache  = null;
+
+        function renderAdote() {
+            const el = document.getElementById('adote-content');
+            if (!el) return;
+
+            // Encerrar modo edição se ativo e resgatar toolbar
+            if (_adoteModoEdicao) _adoteSairModoEdicao();
+            const _tb = document.getElementById('rich-editor-toolbar');
+            if (_tb && el.contains(_tb)) document.body.appendChild(_tb);
+
+            const isAdmin = userRole === 'admin';
+            const cabBtn  = isAdmin
+                ? `<button class="btn-editar" onclick="_adoteEditarInfo()" style="margin-left:10px;vertical-align:middle"><svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar info</button>` : '';
+            const editBar = isAdmin ? `
+                <div id="adote-edit-bar" style="margin:10px 0 6px;display:flex;gap:8px;align-items:center">
+                    <button class="btn-editar" id="adote-btn-editar-tabela" onclick="_adoteEntrarModoEdicao()">
+                        <svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar tabela
+                    </button>
+                    <button class="btn-salvar"   id="adote-btn-salvar-tabela"   style="display:none" onclick="_adoteSalvarCelulas()">✓ Salvar</button>
+                    <button class="btn-cancelar" id="adote-btn-cancelar-tabela" style="display:none" onclick="_adoteCancelarCelulas()">✕ Cancelar</button>
+                </div>` : '';
+
+            // Cabeçalho + form de edição de info
+            let html = `
+            <div class="adote-header">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+                    <span class="adote-cabecalho-txt" id="adote-cabecalho-texto">14º Ciclo do Projeto Adote uma Comarca · Vigência: 16/03 a 15/06/2026</span>
+                    ${cabBtn}
+                </div>
+                <div class="adote-portaria-lnk" id="adote-portaria-display"></div>
+                <div id="adote-info-form" style="display:none;margin-top:10px;background:#f0fdfa;border:1px solid #99f6e4;border-radius:8px;padding:14px;max-width:600px">
+                    <div style="margin-bottom:10px">
+                        <label style="font-size:0.82em;font-weight:600;color:#374151;display:block;margin-bottom:4px">Cabeçalho</label>
+                        <input id="adote-info-cab" type="text" style="width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9em">
+                    </div>
+                    <div style="margin-bottom:10px">
+                        <label style="font-size:0.82em;font-weight:600;color:#374151;display:block;margin-bottom:4px">Nome da portaria</label>
+                        <input id="adote-info-nome" type="text" style="width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9em" placeholder="Portaria nº 373/2026-GDPG/DPE/AM">
+                    </div>
+                    <div style="margin-bottom:12px">
+                        <label style="font-size:0.82em;font-weight:600;color:#374151;display:block;margin-bottom:4px">Link do PDF</label>
+                        <input id="adote-info-url" type="url" style="width:100%;padding:7px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.9em" placeholder="https://...">
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="btn-salvar" onclick="_adoteSalvarInfo()">✓ Salvar</button>
+                        <button class="btn-cancelar" onclick="_adoteCancelarInfo()">✕ Cancelar</button>
+                    </div>
+                </div>
+            </div>
+            ${editBar}
+            <div class="adote-block"><table class="adote-table">
+                <colgroup>
+                    <col style="width:22%"><col style="width:13%"><col style="width:20%">
+                    <col style="width:12%"><col style="width:18%"><col style="width:15%">
+                </colgroup>
+                <thead><tr>`;
+            ADOTE_COLS.forEach(c => { html += `<th>${ADOTE_COL_LABELS[c]}</th>`; });
+            html += '</tr></thead><tbody>';
+            ADOTE_STATIC.forEach((row, idx) => {
+                const r = idx + 1;
+                html += '<tr>';
+                ADOTE_COLS.forEach(c => {
+                    html += `<td data-adote-key="${r}_${c}">${row[c]}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+            el.innerHTML = html;
+
+            _adoteCarregarInfo();
+            _adoteCarregarCelulas();
+            _adoteCarregarExpandir();
+        }
+
+        // ── Adote: Info / Cabeçalho / Portaria ───────────────────────────────
+        async function _adoteCarregarInfo() {
+            try {
+                const doc = await db.collection('secoes').doc('adote_info').get();
+                if (!doc.exists) return;
+                const d = doc.data();
+                if (d.cabecalho) {
+                    const el = document.getElementById('adote-cabecalho-texto');
+                    if (el) el.textContent = d.cabecalho;
+                }
+                _adoteRenderPortaria(d.portaria_nome || '', d.portaria_url || '');
+            } catch(e) {}
+        }
+
+        function _adoteRenderPortaria(nome, url) {
+            const el = document.getElementById('adote-portaria-display');
+            if (!el) return;
+            if (url && nome)       el.innerHTML  = `📄 <a href="${url}" target="_blank" rel="noopener">${nome}</a>`;
+            else if (nome)         el.textContent = `📄 ${nome}`;
+            else if (url)          el.innerHTML  = `📄 <a href="${url}" target="_blank" rel="noopener">${url}</a>`;
+            else if (userRole === 'admin') el.innerHTML = '<em style="color:#94a3b8;font-size:0.85em">(sem portaria vinculada)</em>';
+            else                   el.textContent = '';
+            // Guardar para preencher o form depois
+            el.dataset.nome = nome;
+            el.dataset.url  = url;
+        }
+
+        function _adoteEditarInfo() {
+            const cab  = document.getElementById('adote-cabecalho-texto')?.textContent || '';
+            const disp = document.getElementById('adote-portaria-display');
+            document.getElementById('adote-info-cab').value  = cab;
+            document.getElementById('adote-info-nome').value = disp?.dataset.nome || '';
+            document.getElementById('adote-info-url').value  = disp?.dataset.url  || '';
+            document.getElementById('adote-info-form').style.display = 'block';
+        }
+
+        async function _adoteSalvarInfo() {
+            const cab  = document.getElementById('adote-info-cab').value.trim();
+            const nome = document.getElementById('adote-info-nome').value.trim();
+            const url  = document.getElementById('adote-info-url').value.trim();
+            try {
+                await db.collection('secoes').doc('adote_info').set({
+                    cabecalho: cab, portaria_nome: nome, portaria_url: url,
+                    atualizado_por: currentUser.email,
+                    atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                });
+                if (cab) { const e = document.getElementById('adote-cabecalho-texto'); if (e) e.textContent = cab; }
+                _adoteRenderPortaria(nome, url);
+                document.getElementById('adote-info-form').style.display = 'none';
+                mostrarToast('✅ Informações salvas!');
+            } catch(e) { mostrarToast('❌ Erro: ' + e.message, true); }
+        }
+
+        function _adoteCancelarInfo() {
+            document.getElementById('adote-info-form').style.display = 'none';
+        }
+
+        // ── Adote: Células da tabela ─────────────────────────────────────────
+        function _adoteAplicarCelulas(celulas) {
+            Object.entries(celulas).forEach(([key, data]) => {
+                const td = document.querySelector(`[data-adote-key="${CSS.escape(key)}"]`);
+                if (!td) return;
+                if (data.cellStyle) td.style.cssText = data.cellStyle;
+                if (data.html !== undefined) td.innerHTML = data.html;
+            });
+        }
+
+        async function _adoteCarregarCelulas() {
+            if (_adoteCelulasCache) { _adoteAplicarCelulas(_adoteCelulasCache); return; }
+            try {
+                const doc = await db.collection('secoes').doc('adote_celulas').get();
+                if (!doc.exists) return;
+                const { celulas } = doc.data();
+                if (!celulas) return;
+                _adoteCelulasCache = celulas;
+                _adoteAplicarCelulas(celulas);
+            } catch(e) { console.warn('Erro ao carregar células adote:', e); }
+        }
+
+        async function _adoteCarregarExpandir() {
+            try {
+                const doc = await db.collection('secoes').doc('adote_expandir').get();
+                if (!doc.exists) return;
+                const d = doc.data();
+                if (d.html)   document.getElementById('adote_expandir-html').innerHTML  = d.html;
+                if (d.titulo) document.getElementById('adote_expandir-titulo').textContent = d.titulo;
+            } catch(e) {}
+        }
+
+        function _adoteOnCellFocus(e) {
+            _adoteCelulaAtiva = e.currentTarget;
+            _rteTargetEl      = e.currentTarget;
+            _rteSavedRange    = null;
+            _rteUpdateStates();
+        }
+
+        function _adoteEntrarModoEdicao() {
+            if (_adoteModoEdicao) return;
+            _adoteModoEdicao    = true;
+            _adoteCelulasBackup = {};
+            document.querySelectorAll('[data-adote-key]').forEach(td => {
+                _adoteCelulasBackup[td.dataset.adoteKey] = {
+                    html:      td.innerHTML,
+                    cellStyle: td.getAttribute('style') || ''
+                };
+                td.contentEditable = 'true';
+                td.classList.add('adote-cell-editable');
+                td.addEventListener('focus', _adoteOnCellFocus);
+                ['keyup','mouseup','keydown'].forEach(ev => td.addEventListener(ev, _rteSaveRange));
+            });
+            document.getElementById('adote-btn-editar-tabela').style.display  = 'none';
+            document.getElementById('adote-btn-salvar-tabela').style.display   = 'inline-flex';
+            document.getElementById('adote-btn-cancelar-tabela').style.display = 'inline-flex';
+            _rteMountAdote();
+        }
+
+        function _adoteSairModoEdicao() {
+            if (!_adoteModoEdicao) return;
+            _adoteModoEdicao  = false;
+            _adoteCelulaAtiva = null;
+            document.querySelectorAll('[data-adote-key]').forEach(td => {
+                td.contentEditable = 'false';
+                td.classList.remove('adote-cell-editable');
+                td.removeEventListener('focus', _adoteOnCellFocus);
+            });
+            _rteUnmount();
+            const bE = document.getElementById('adote-btn-editar-tabela');
+            const bS = document.getElementById('adote-btn-salvar-tabela');
+            const bC = document.getElementById('adote-btn-cancelar-tabela');
+            if (bE) bE.style.display = 'inline-flex';
+            if (bS) bS.style.display = 'none';
+            if (bC) bC.style.display = 'none';
+        }
+
+        async function _adoteSalvarCelulas() {
+            const btnS = document.getElementById('adote-btn-salvar-tabela');
+            btnS.disabled = true; btnS.textContent = '⏳ Salvando...';
+            const celulas = {};
+            document.querySelectorAll('[data-adote-key]').forEach(td => {
+                celulas[td.dataset.adoteKey] = {
+                    html:      td.innerHTML,
+                    cellStyle: td.getAttribute('style') || ''
+                };
+            });
+            try {
+                await db.collection('secoes').doc('adote_celulas').set({
+                    celulas,
+                    atualizado_por: currentUser.email,
+                    atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                });
+                _adoteCelulasCache = celulas;
+                btnS.disabled = false; btnS.innerHTML = '✓ Salvar';
+                _adoteSairModoEdicao();
+                mostrarToast('✅ Tabela salva com sucesso!');
+            } catch(e) {
+                btnS.disabled = false; btnS.innerHTML = '✓ Salvar';
+                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+            }
+        }
+
+        function _adoteCancelarCelulas() {
+            Object.entries(_adoteCelulasBackup).forEach(([key, data]) => {
+                const td = document.querySelector(`[data-adote-key="${CSS.escape(key)}"]`);
+                if (!td) return;
+                td.style.cssText = data.cellStyle;
+                td.innerHTML     = data.html;
+            });
+            _adoteSairModoEdicao();
         }
 
         function _atrEntrarModoEdicao() {
