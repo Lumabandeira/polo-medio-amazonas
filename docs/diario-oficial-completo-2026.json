@@ -3286,5 +3286,114 @@
         "resumo": "Designa Defensor Ian Marcos Martins Palmeira para audiência em comarca do interior em 20/05/2026"
       }
     ]
+  },
+  {
+    "edicao": 2657,
+    "data": "2026-05-26",
+    "data_formatada": "26/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2657-2026__publicada_em_26_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 540/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007129-2",
+        "sgi": "2600810",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Rodrigo Hilario Rabelo, Assistente Técnico de Defensoria, nos trechos Tabatinga/Atalaia do Norte/Tabatinga, no período de 14 a 19 de junho de 2026, a fim de auxiliar o Defensor Público Kleber Luiz Miyasato na realização de atendimentos presenciais, na Comarca de Atalaia do Norte-AM",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de assistente técnico para auxiliar defensor em atendimentos presenciais na Comarca de Atalaia do Norte de 14 a 19 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 542/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007147-0",
+        "sgi": "2600808",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Kleber Luiz Miyasato, Defensor Público 4ª Classe, nos trechos Tabatinga/Atalaia do Norte/Tabatinga, no período de 14"
+        ],
+        "resumo": "Autoriza deslocamento de Defensor Público Kleber Luiz Miyasato para atendimentos presenciais em Atalaia do Norte de 14 a 19 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 92/2026-CG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca"
+        ],
+        "trechos": [
+          "Art. 1º – Publicar pauta de correição, conforme anexo único desta portaria.",
+          "Órgão de Atuação a ser correicionado: Polo do Médio Amazonas, Data da Correição Ordinária: 09/06/2026 à 12/06/2026"
+        ],
+        "resumo": "Publica pauta de correição ordinária para o Polo do Médio Amazonas no período de 09/06/2026 a 12/06/2026"
+      },
+      {
+        "numero": "EDITAL Nº 64/2026 - ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca"
+        ],
+        "trechos": [
+          "A ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS - ESUDPAM e a COORDENAÇÃO DO POLO MÉDIO AMAZONAS, no uso de suas atribuições institucionais, tornam pública a abertura de Seleção Pública de Estagiário de Graduação para o POLO MÉDIO AMAZONAS – UNIDADE DESCENTRALIZADA DO INTERIOR DE SILVES/AM",
+          "1.3 O processo seletivo se destina ao preenchimento de 01 (uma) vaga e formação de cadastro de reserva de estagiários de graduação para a Unidade Descentralizada de Silves/AM – POLO MÉDIO AMAZONAS.",
+          "5.1 A contratação ocorrerá no interesse da Defensoria Pública do Estado do Amazonas - Polo Médio Amazonas – Unidade Descentralizada do Interior de Silves/AM"
+        ],
+        "resumo": "Abre seleção pública para preenchimento de 01 vaga de estagiário de graduação na Unidade Descentralizada de Silves/AM do Polo Médio Amazonas, com inscrições de 27/05 a 02/06/2026"
+      }
+    ]
+  },
+  {
+    "edicao": 2658,
+    "data": "2026-05-27",
+    "data_formatada": "27/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2658-2026__publicada_em_27_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 42/2026-ESUDPAM/DPE/AM",
+        "sei": "26.0.000007052-0",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "A DIRETORA DA ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS e o POLO MÉDIO AMAZONAS, no uso das atribuições",
+          "I- DESIGNAR, em caráter especial, o Defensor Público de 2ª Classe Diego Luiz Castro Silva, para atuar em sessão de julgamento na 2ª Vara do Tribunal do Júri da Comarca de Manaus"
+        ],
+        "resumo": "Designa o Defensor Diego Luiz Castro Silva para atuar em sessão de julgamento na 2ª Vara do Tribunal do Júri em 27-29/05/2026"
+      },
+      {
+        "numero": "Portaria Nº 426/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007039-3",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "servidor",
+          "estágio",
+          "coordenacao"
+        ],
+        "trechos": [
+          "CONSIDERANDO a realização do processo seletivo de Estágio de Graduação para a Unidade Descentralizada do Interior em Silves/AM, no EDITAL Nº 64/2026 publicado no Diário Oficial da Defensoria Pública no dia 26 de maio de 2026",
+          "CONSIDERANDO a responsabilidade da Escola Superior da Defensoria Pública pelo planejamento, organização e execução do Processo Seletivo de Estágio de Graduação do Polo Médio Amazonas - Unidade Descentralizada do Interior em Silves/AM da Defensoria Pública do Estado do Amazonas",
+          "I - DIVULGAR os nomes dos membros e servidores que atuarão como FISCAIS na seleção do Processo Seletivo de Estágio de Graduação – Unidade Descentralizada de Silves/AM",
+          "V - COMUNICAR que, em reconhecimento ao trabalho voluntário executado, o Polo Médio Amazonas encaminhará os nomes destes à Diretoria de Gestão de Pessoas"
+        ],
+        "resumo": "Divulga fiscais para seleção de estágio de graduação do Polo Médio Amazonas em Silves e concede dispensa de atividades como contraprestação"
+      }
+    ]
   }
 ]
