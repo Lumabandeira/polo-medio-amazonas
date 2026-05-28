@@ -6870,24 +6870,49 @@
         }
 
         async function _adoteCarregarCelulas() {
-            if (_adoteCelulasCache) { _adoteAplicarCelulas(_adoteCelulasCache); return; }
+            // 1. Aplicar do cache em memória (navegação interna)
+            if (_adoteCelulasCache) { _adoteAplicarCelulas(_adoteCelulasCache); }
+            else {
+                // 2. Aplicar do localStorage (F5 / recarga) — síncrono, sem flash
+                try {
+                    const ls = localStorage.getItem('pma-adote-celulas');
+                    if (ls) {
+                        const cached = JSON.parse(ls);
+                        _adoteCelulasCache = cached;
+                        _adoteAplicarCelulas(cached);
+                    }
+                } catch(e) {}
+            }
+            // 3. Sempre buscar do Firestore para manter o cache atualizado
             try {
                 const doc = await db.collection('secoes').doc('adote_celulas').get();
                 if (!doc.exists) return;
                 const { celulas } = doc.data();
                 if (!celulas) return;
                 _adoteCelulasCache = celulas;
+                localStorage.setItem('pma-adote-celulas', JSON.stringify(celulas));
                 _adoteAplicarCelulas(celulas);
             } catch(e) { console.warn('Erro ao carregar células adote:', e); }
         }
 
         async function _adoteCarregarExpandir() {
+            // 1. Aplicar do localStorage primeiro — sem flash
+            try {
+                const ls = localStorage.getItem('pma-adote-expandir');
+                if (ls) {
+                    const d = JSON.parse(ls);
+                    if (d.html)   document.getElementById('adote_expandir-html').innerHTML     = d.html;
+                    if (d.titulo) document.getElementById('adote_expandir-titulo').textContent = d.titulo;
+                }
+            } catch(e) {}
+            // 2. Buscar do Firestore e atualizar localStorage
             try {
                 const doc = await db.collection('secoes').doc('adote_expandir').get();
                 if (!doc.exists) return;
                 const d = doc.data();
-                if (d.html)   document.getElementById('adote_expandir-html').innerHTML  = d.html;
+                if (d.html)   document.getElementById('adote_expandir-html').innerHTML     = d.html;
                 if (d.titulo) document.getElementById('adote_expandir-titulo').textContent = d.titulo;
+                localStorage.setItem('pma-adote-expandir', JSON.stringify({ html: d.html || '', titulo: d.titulo || '' }));
             } catch(e) {}
         }
 
@@ -6953,6 +6978,7 @@
                     atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
                 });
                 _adoteCelulasCache = celulas;
+                localStorage.setItem('pma-adote-celulas', JSON.stringify(celulas));
                 btnS.disabled = false; btnS.innerHTML = '✓ Salvar';
                 _adoteSairModoEdicao();
                 mostrarToast('✅ Tabela salva com sucesso!');
@@ -8206,6 +8232,14 @@
                 saveBtn.disabled        = false;
                 saveBtn.innerHTML       = '✓ Salvar';
                 document.getElementById('cancel-btn-' + secaoId).style.display = 'none';
+
+                // Atualizar localStorage para seções com cache persistente
+                if (secaoId === 'adote_expandir') {
+                    localStorage.setItem('pma-adote-expandir', JSON.stringify({
+                        html:   conteudoEl.innerHTML,
+                        titulo: tituloEl.textContent
+                    }));
+                }
 
                 _rteUnmount();
                 mostrarToast('✅ Salvo com sucesso!');
