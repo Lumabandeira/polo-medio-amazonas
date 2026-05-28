@@ -1021,12 +1021,10 @@
 
         /* ─── Seção Adote ────────────────────────────────────────── */
         .adote-header { margin-bottom: 18px; }
-        .adote-cabecalho-txt {
-            font-size: 1.05em; font-weight: 700;
-            color: #0f766e; line-height: 1.5;
-        }
         .adote-portaria-lnk { font-size: 0.83em; color: #64748b; margin-top: 4px; }
         .adote-portaria-lnk a { color: #0f766e; text-decoration: underline; }
+        #adote-info-form .btn-salvar,
+        #adote-info-form .btn-cancelar { display: inline-flex; }
         .adote-block {
             margin-bottom: 28px; overflow-x: auto;
             border-radius: 10px;
@@ -6714,10 +6712,10 @@
             // Cabeçalho + form de edição de info
             let html = `
             <div class="adote-header">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
-                    <span class="adote-cabecalho-txt" id="adote-cabecalho-texto">14º Ciclo do Projeto Adote uma Comarca · Vigência: 16/03 a 15/06/2026</span>
+                <h2>
+                    <span id="adote-cabecalho-texto">14º Ciclo do Projeto Adote uma Comarca · Vigência: 16/03 a 15/06/2026</span>
                     ${cabBtn}
-                </div>
+                </h2>
                 <div class="adote-portaria-lnk" id="adote-portaria-display"></div>
                 <div id="adote-info-form" style="display:none;margin-top:10px;background:#f0fdfa;border:1px solid #99f6e4;border-radius:8px;padding:14px;max-width:600px">
                     <div style="margin-bottom:10px">
