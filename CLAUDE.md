@@ -40,6 +40,27 @@ secoes/atribuicoes_resolucao
   atualizado_por: "..."
   atualizado_em: timestamp
 
+secoes/adote_info
+  html: "14º Ciclo do Projeto Adote uma Comarca · Vigência: 16/03 a 15/06/2026"  ← cabeçalho editável
+  atualizado_por: "..."
+  atualizado_em: timestamp
+
+secoes/adote_celulas
+  celulas:              ← mapa de chaves no formato "ROW_COL" (ex: "0_defensor", "0_comarcas", ...)
+    "0_defensor":       { html: "Carlos Alberto...", cellStyle: "" }
+    "0_comarcas":       { html: "São Sebastião do Uatumã", cellStyle: "" }
+    "0_forma_trabalho": { html: "Grupo Único (Intimações)", cellStyle: "" }
+    "0_coordenador":    { html: "Rodrigo Cavalcante dos Santos", cellStyle: "" }
+    "0_servidor":       { html: "carlosalmeidafilho@defensoria.am.def.br", cellStyle: "" }
+    ...                 ← 6 linhas × 5 colunas = 30 chaves
+  atualizado_por: "..."
+  atualizado_em: timestamp
+
+secoes/adote_expandir
+  html: "..."           ← conteúdo editável do bloco "Expandir Presença, Garantir Direitos"
+  atualizado_por: "..."
+  atualizado_em: timestamp
+
 secoes/atribuicoes_celulas
   celulas:              ← mapa de 72 chaves no formato "N_campo"
     "1_atribuicao":     { html: "Família e Sucessões<br>Itacoatiara...", cellStyle: "color:#...; font-weight:..." }
@@ -163,8 +184,19 @@ designacoes_cumulativas_admin/{id}   ← designações cumulativas sem data fim 
 - `_atrSairModoEdicao()` — desabilita contentEditable, desmonta toolbar, restaura botões
 - `_atrSalvarCelulas()` — coleta innerHTML+style de todos os TDs e salva no Firestore
 - `_atrCancelarCelulas()` — restaura backup em memória e sai do modo edição
-- `_rteMountAtribuicoes()` — monta régua RTE para edição de células (com dupla aplicação de estilo)
+- `_rteMountAtribuicoes()` — monta toolbar RTE para edição de células ATR (posiciona toolbar + chama `_rteMountTabelaHandlers`)
+- `_rteMountAdote()` — monta toolbar RTE para edição de células Adote (mesma lógica, posicionamento diferente)
+- `_rteMountTabelaHandlers()` — **função compartilhada** que conecta todos os botões da toolbar usando `_rteTargetEl` como alvo; chamada tanto por `_rteMountAtribuicoes` quanto por `_rteMountAdote`
 - `_atrOnCellFocus(e)` — atualiza `_atrCelulaAtiva` e `_rteTargetEl` quando célula recebe foco
+- `renderAdote()` — renderiza seção Adote: monta tabela com `ADOTE_STATIC`, chama `_adoteCarregarInfo()` e `_adoteCarregarCelulas()` e `_adoteCarregarExpandir()`
+- `_adoteCarregarInfo()` — carrega `secoes/adote_info` e aplica no cabeçalho; botão "✏️ Editar info" edita inline via `iniciarEdicao('adote_info')`
+- `_adoteCarregarCelulas()` — carrega `secoes/adote_celulas` e aplica nas células; usa cache em memória `_adoteCelulasCache`
+- `_adoteAplicarCelulas(celulas)` — aplica `cellStyle + html` em cada `<td>` com `data-adote-key`
+- `_adoteCarregarExpandir()` — carrega `secoes/adote_expandir` e aplica no div `#adote_expandir-html`
+- `_adoteEntrarModoEdicao()` — ativa contentEditable nas células, monta `_rteMountAdote()`, faz backup
+- `_adoteSairModoEdicao()` — desativa contentEditable, desmonta toolbar, restaura botões
+- `_adoteSalvarCelulas()` — coleta `{ html, cellStyle }` de todos os TDs e salva em `secoes/adote_celulas`; atualiza `_adoteCelulasCache`
+- `_adoteCancelarCelulas()` — restaura backup e sai do modo edição
 
 ### Régua de edição (Rich Text Editor — RTE)
 - **Toolbar compartilhada** `#rich-editor-toolbar` — elemento único no DOM, movido para junto do editor ativo
@@ -263,7 +295,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 26/05/2026 — sessão 17)
+## Estado atual do site (atualizado em 27/05/2026 — sessão 18)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -280,7 +312,7 @@ github-pages/
 - **Validação de sobreposição entre substitutos** — ao salvar, o sistema verifica se dois substitutos da mesma DP têm períodos de cobertura sobrepostos (inclusive dias iguais na fronteira). Exibe mensagem `❌ [Nome A] e [Nome B] (DP) têm períodos de cobertura sobrepostos.` e bloqueia o salvamento.
 - **Edição dos defensores titulares de cada DP** — interface completa para admin gerenciar histórico de titulares. Detalhes abaixo em "Arquitetura da edição de titulares".
 - ~~**Toggle switch "Editar" no header**~~ — **REMOVIDO em 26/05/2026 (sessão 17)**. Botões de edição agora sempre visíveis para admins. Ver seção "Modo de edição" abaixo.
-- **Controle de visibilidade admin-only** — `_aplicarModoEdicao()` usa `userRole === 'admin'` para mostrar/ocultar `.cel-editar-dp` e `.admin-only` em `#designacoes`. Régua RTE e botões Editar/Salvar/Cancelar visíveis ao admin sem toggle.
+- **Controle de visibilidade admin-only** — `_aplicarModoEdicao()` usa `userRole === 'admin'` para mostrar/ocultar `.cel-editar-dp` e `.admin-only` em `#designacoes` **e em `#adote`**. Régua RTE e botões Editar/Salvar/Cancelar visíveis ao admin sem toggle.
 - **Registros base (JSON) editáveis pelo admin no calendário** — botão ✏️ adicionado a registros "base" (vindos dos JSONs) no modal "Detalhes do Afastamento". Ao clicar, abre o formulário pré-populado com os dados do JSON. Ao salvar, cria registro no Firestore com campo `json_base_id` apontando para o evento JSON original, que é então suprimido da renderização. Globais: `jsonEventosMap` (id→evento) e `jsonOverrideMap` (jsonEventoId→firestoreId). Função auxiliar: `converterDesignacoesJSONParaFirestore(ev)`.
 - **Modal de visualização somente leitura no calendário** — ícone 🔍 no modal "Detalhes do Afastamento", visível para todos os usuários (admin e viewer). Abre modal "🔍 Detalhes do Afastamento" (cabeçalho azul) com: defensor, tipo, data início/fim do afastamento completo, processo SEI, e por DP: substituto, data início/fim de cobertura, portaria clicável. Funciona para registros base (JSON) e Firestore. Função: `abrirVisualizacaoAfastamento(tipo, id)` onde `tipo` é `'firestore'` ou `'json'`. Helper: `formatarData(dateStr)` converte `YYYY-MM-DD` → `DD/MM/YYYY`.
 - **Detecção automática de ex-membros na aba Defensorias** — `renderDefensorias` detecta "orphan ex-members": qualquer defensor cadastrado como titular via UI (Firestore) que não tenha mais DP ativa aparece automaticamente no accordion "Ex-membros", sem necessidade de editar o JSON. Lógica: `orphanExMembros = Object.keys(defHistorico).filter(k => !defensores[k] && !defCurrentDPs[k])`. Mariana Silva Paixão corrigida no JSON de `externo: true` para `externo: false, ativo: false`.
@@ -330,6 +362,13 @@ github-pages/
 - **Nova seção "Atribuições, Colidências e Substituições Automáticas"** — botão indigo ⚖️ na landing page. Abre seção sem barra de abas com duas tabelas (DPs 1–6 e DPs 7–12). Cada tabela tem linhas: Defensor(a) Responsável (dinâmico), Atribuição, Colidência, Substituições Automáticas (2 linhas), Atuação Extrajudicial e Coletiva. Dados estáticos em `ATRIBUICOES_STATIC[]` (12 objetos). `_atrResolverDefensor(dpKey)` resolve titular vigente **inline** (não chama `getCurrentTitular`, que é local a `renderDefensorias`). Retry automático via `setTimeout(renderAtribuicoes, 800)` se `jsonDesignacoes` ainda não carregou. Commit `6a751ce` da sessão 17. Bugs corrigidos (commit `f57c81a`): carregamento, divisão em 2 blocos (DPs 1–6 e 7–12), texto das substituições ("1º Substituto: 2ª DP").
 - **Link da resolução na seção Atribuições** — campo editável persistido em `secoes/atribuicoes_resolucao`. Exibe link clicável se url presente; texto simples se só nome; placeholder discreto para admin se vazio; nada para viewers se vazio. Sem rótulo "Resolução:" no cabeçalho — o nome do link já é autoexplicativo. Permite salvar vazio (para limpar o campo). Valores lidos de `data-url`/`data-nome` no span (não de `innerHTML`), evitando bugs de parse. Commit `3383b7b` + `91f1c35` da sessão 17.
 - **Células da tabela Atribuições editáveis por admins** — modo planilha: botão "✏️ Editar tabela" ativa contentEditable nas 60 células editáveis (5 campos × 12 DPs: atribuicao, colidencia, sub1, sub2, extrajudicial). Cada `<td>` tem `data-atr-key="N_campo"`. Toolbar RTE compartilhada montada via `_rteMountAtribuicoes()`. Formatação preservada mesmo após apagar todo o texto: **dupla aplicação** — execCommand aplica ao texto selecionado; handlers de cor/bold/italic/size também aplicam ao `<td>` ativo via `td.style.*`, garantindo herança para novos textos. Saved em `secoes/atribuicoes_celulas` como `{ html, cellStyle }` por chave. Botão "Limpar formatação" limpa ambas as camadas. Navegação segura: `renderAtribuicoes()` encerra modo edição e resgata toolbar do DOM antes de reconstruir `innerHTML`. Commit `86b56b3` da sessão 17. Globals: `_atrModoEdicao` (bool), `_atrCelulaAtiva` (TD em foco), `_atrCelulasBackup` (snapshot para cancelar), `_ATR_FONTSIZE_PX` (mapa HTML size → px).
+- **Restauração de scroll removida (sessão 18)** — a funcionalidade de salvar/restaurar posição de scroll via `sessionStorage` (`pma-scroll`) foi **removida**. O evento `beforeunload` e o listener de scroll com debounce foram eliminados. Ao recarregar (F5), a página sempre inicia no topo. A restauração de **seção** (`pma-secao`) permanece ativa.
+- **Cache em memória das células Atribuições** — `_atrCelulasCache` (variável global). `_atrCarregarCelulas()` verifica o cache antes de buscar no Firestore; células são exibidas instantaneamente na segunda abertura da seção. Cache atualizado em `_atrSalvarCelulas()` após cada salvamento. `loadTitularesFirestore()` re-renderiza a seção Atribuições se ela estiver ativa (corrige atraso no carregamento dos nomes dos defensores titulares). Commits da sessão 18.
+- **Nova seção "Adote uma Comarca"** — botão teal 🏘️ na landing page (3ª posição, entre ⚖️ e 📰). CSS: `.btn-adote` com gradiente `#0f766e → #2dd4bf`. Abre seção `#adote` sem barra de abas via `showSection('adote')`. Dois blocos: (1) tabela editável do Projeto Adote; (2) bloco rich-text do Projeto Expandir Presença. `showLanding()` chama `_adoteSairModoEdicao()` se modo ativo. Commits `34bc812`, `eab7214`, `8c89247`, `3d04444` da sessão 18.
+- **Tabela Adote — 6 linhas × 5 colunas** — colunas: Defensor(a) Público(a) (22%), Comarcas (16%), Forma de Trabalho (14%), Servidor(a) (18%), E-mail (30%). Dados estáticos em `ADOTE_STATIC[]` (6 objetos) e `ADOTE_COLS`/`ADOTE_COL_LABELS`. Células editáveis com `data-adote-key="ROW_COL"`. Mesmo mecanismo de dupla aplicação das Atribuições. Persistidas em `secoes/adote_celulas`. Cache em memória `_adoteCelulasCache`. Globals análogos: `_adoteModoEdicao`, `_adoteCelulaAtiva`, `_adoteCelulasBackup`.
+- **Cabeçalho editável do Adote** — span `#adote-info-texto` com botão "✏️ Editar info". Usa `iniciarEdicao('adote_info')` (mesmo mecanismo de `regra_alternancia`/`ferias_folgas`). Persistido em `secoes/adote_info`. Padrão inicial: "14º Ciclo do Projeto Adote uma Comarca · Vigência: 16/03 a 15/06/2026".
+- **Bloco "Expandir Presença, Garantir Direitos"** — segundo card da seção Adote. Título `#adote_expandir-titulo` e conteúdo `#adote_expandir-html` editáveis com RTE completa (mesmo mecanismo de `regra_alternancia`). Persistido em `secoes/adote_expandir`. Cores teal no título e sublinhado (`#0f766e`/`#0d9488`) via CSS `#adote .card h2`.
+- **`_rteMountTabelaHandlers()` — função RTE compartilhada** — extraída de `_rteMountAtribuicoes()`. Conecta todos os botões da toolbar usando `_rteTargetEl` (não `_atrCelulaAtiva` diretamente). Tanto `_rteMountAtribuicoes()` quanto `_rteMountAdote()` chamam esta função após posicionarem a toolbar. Elimina duplicação de código de handlers entre as duas tabelas editáveis.
 
 ### O que ainda falta implementar ⏳
 - ~~**Dispensar registro incorreto do Eliaquim em `afastamentos_admin`**~~ ✅ Deletado manualmente no Firestore Console em 07/05/2026. O registro correto (em `designacoes_cumulativas_admin`) será criado automaticamente na próxima execução da automação caso a edição de 06/05/2026 ainda não tenha sido reprocessada.
@@ -679,6 +718,57 @@ py verificar-diario-completo.py
 - **Não chama `getCurrentTitular()`** — essa função é local a `renderDefensorias()` e inacessível globalmente
 - Lógica de resolução duplicada inline: itera `historico_titulares`, retorna entrada com `inicio` mais recente que cobre hoje
 - Se o titular não está no dicionário `defensores`, tenta `defensorNames[key]` como fallback
+
+---
+
+## Arquitetura da seção Adote uma Comarca (✅ IMPLEMENTADA — sessão 18 em 27/05/2026)
+
+### Estrutura geral
+- Seção acessível pelo botão 🏘️ na landing page → `showSection('adote')`
+- Sem barra de abas; botão Início retorna à landing
+- Dois blocos: tabela do Projeto Adote + bloco rich-text do Projeto Expandir Presença
+- Paleta teal: `#0f766e` (escuro) / `#0d9488` (médio) / `#2dd4bf` (claro)
+
+### Tabela Adote — estrutura
+| Coluna | Key | Largura | Editável |
+|---|---|---|---|
+| Defensor(a) Público(a) | `defensor` | 22% | ✅ |
+| Comarcas | `comarcas` | 16% | ✅ |
+| Forma de Trabalho | `forma_trabalho` | 14% | ✅ |
+| Servidor(a) | `coordenador` | 18% | ✅ |
+| E-mail | `servidor` | 30% | ✅ |
+
+> **Nota:** os campos internos (`coordenador`, `servidor`) mantêm as chaves originais do `ADOTE_STATIC`; apenas os labels exibidos foram renomeados.
+
+### Dados estáticos em `ADOTE_STATIC[]`
+6 objetos com campos: `defensor`, `comarcas`, `polo` (legado, não exibido), `forma_trabalho`, `coordenador`, `servidor`
+
+### Fluxo de edição das células (idêntico ao Atribuições)
+1. `renderAdote()` — constrói HTML com `data-adote-key="ROW_COLKEY"` nos TDs
+2. `_adoteCarregarCelulas()` — verifica `_adoteCelulasCache`; se vazio, busca `secoes/adote_celulas` e aplica
+3. Admin clica "✏️ Editar tabela" → `_adoteEntrarModoEdicao()` — backup em `_adoteCelulasBackup`, contentEditable ativado, `_rteMountAdote()` monta toolbar
+4. Admin foca célula → `_adoteCelulaAtiva = td; _rteTargetEl = td`
+5. Admin usa toolbar → **dupla aplicação**: `document.execCommand(...)` + `td.style.*`
+6. "✓ Salvar" → `_adoteSalvarCelulas()` — grava em `secoes/adote_celulas`; atualiza `_adoteCelulasCache`
+7. "✕ Cancelar" → `_adoteCancelarCelulas()` — restaura backup
+
+### Cabeçalho editável (`adote_info`)
+- Tag `<span id="adote-info-texto">` com botão `.admin-only` "✏️ Editar info" ao lado
+- Usa `iniciarEdicao('adote_info')` — mesma função das seções Alternância/Férias
+- `_adoteCarregarInfo()` busca `secoes/adote_info`; se não existir, mantém o texto padrão do HTML
+
+### Bloco "Expandir Presença, Garantir Direitos" (`adote_expandir`)
+- ID `adote_expandir-titulo` (título) e `adote_expandir-html` (conteúdo)
+- Usa `iniciarEdicao('adote_expandir')` — mesma função das seções Alternância/Férias
+- RTE completa com toolbar compartilhada
+- `_adoteCarregarExpandir()` busca `secoes/adote_expandir`; se não existir, mantém HTML padrão
+- Cor do título e sublinhado: `#0f766e` / `#0d9488` (override via `#adote .card h2`)
+
+### `_rteMountTabelaHandlers()` — ponto de atenção
+- Função **compartilhada** entre Atribuições e Adote
+- Usa `_rteTargetEl` (variável global) como referência ao TD ativo — não usa `_atrCelulaAtiva` diretamente
+- Ao focar numa célula de qualquer tabela, o handler `_atrOnCellFocus` (Atribuições) ou equivalente (Adote) deve setar `_rteTargetEl = td`
+- Handlers de cor/bold/italic/size aplicam ao `_rteTargetEl` para dupla aplicação
 
 ---
 
