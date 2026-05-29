@@ -6869,6 +6869,12 @@
             });
         }
 
+        // Retorna true se as chaves do cache têm mais linhas do que o ADOTE_STATIC atual
+        function _adoteCacheDesatualizado(celulas) {
+            const maxRow = Math.max(...Object.keys(celulas).map(k => parseInt(k) || 0));
+            return maxRow > ADOTE_STATIC.length;
+        }
+
         async function _adoteCarregarCelulas() {
             // 1. Aplicar do cache em memória (navegação interna)
             if (_adoteCelulasCache) { _adoteAplicarCelulas(_adoteCelulasCache); }
@@ -6878,8 +6884,13 @@
                     const ls = localStorage.getItem('pma-adote-celulas');
                     if (ls) {
                         const cached = JSON.parse(ls);
-                        _adoteCelulasCache = cached;
-                        _adoteAplicarCelulas(cached);
+                        // Ignorar se cache tem mais linhas do que ADOTE_STATIC (linha foi removida)
+                        if (_adoteCacheDesatualizado(cached)) {
+                            localStorage.removeItem('pma-adote-celulas');
+                        } else {
+                            _adoteCelulasCache = cached;
+                            _adoteAplicarCelulas(cached);
+                        }
                     }
                 } catch(e) {}
             }
@@ -6889,6 +6900,16 @@
                 if (!doc.exists) return;
                 const { celulas } = doc.data();
                 if (!celulas) return;
+                // Se Firestore também está desatualizado, limpar e mostrar dados estáticos
+                if (_adoteCacheDesatualizado(celulas)) {
+                    localStorage.removeItem('pma-adote-celulas');
+                    _adoteCelulasCache = null;
+                    // Admin: deletar documento desatualizado do Firestore
+                    if (userRole === 'admin') {
+                        await db.collection('secoes').doc('adote_celulas').delete().catch(() => {});
+                    }
+                    return;
+                }
                 _adoteCelulasCache = celulas;
                 localStorage.setItem('pma-adote-celulas', JSON.stringify(celulas));
                 _adoteAplicarCelulas(celulas);
