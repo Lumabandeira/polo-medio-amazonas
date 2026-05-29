@@ -386,6 +386,64 @@ github-pages/
 - **Comportamento da 7ª DP (SSU) na aba Designações Semanais** — mostra "—" em vez de "dp7-vaga" como as DPs 8–12. Isso ocorre porque o site usa o JSON (que tem `defensor: null`) em vez do Firestore (que tem `dp7-vaga`). Comportamento correto — significa DP vaga. Miguel NÃO está mais vinculado à 7ª DP (Firestore tem `fim: 2026-04-29` para ele; `dp7-vaga` vigente desde 2026-04-30).
 - ~~**Afastamento do Miguel com 7ª DP indevida**~~ ✅ Corrigido em 04/05/2026 — o registro de Tratamento de Saúde (02/05–09/06) foi criado quando Miguel ainda era titular de 6ª e 7ª DPs. O formulário de edição recalcula DPs pelos titulares atuais (só mostra 6ª DP). Admin abriu o ✏️ e salvou → Firestore sobrescrito sem a 7ª DP.
 
+### Padrão: cache localStorage para eliminar flash de dados estáticos
+
+**Problema:** seções que carregam dados do Firestore exibem primeiro os dados estáticos do HTML/JS (ex: `ADOTE_STATIC`, `ATRIBUICOES_STATIC`) e só depois sobrescrevem com os dados editados. No F5 isso causa um "flash" visível.
+
+**Solução:** cache de três camadas — memória → localStorage → Firestore.
+
+**Quando aplicar:** sempre que o usuário relatar "primeiro mostra informações antigas, depois atualiza" em qualquer seção que tenha células/conteúdo editáveis carregados do Firestore.
+
+**Seções já com cache localStorage aplicado:**
+| Seção | Chave localStorage | Firestore doc | Função carregar | Função salvar |
+|---|---|---|---|---|
+| Adote — células | `pma-adote-celulas` | `secoes/adote_celulas` | `_adoteCarregarCelulas()` | `_adoteSalvarCelulas()` |
+| Adote — expandir | `pma-adote-expandir` | `secoes/adote_expandir` | `_adoteCarregarExpandir()` | `salvarSecao('adote_expandir')` |
+| Atribuições — células | `pma-atr-celulas` | `secoes/atribuicoes_celulas` | `_atrCarregarCelulas()` | `_atrSalvarCelulas()` |
+
+**Seções que ainda NÃO têm (candidatas futuras):**
+- `secoes/regra_alternancia` — carregada por `carregarConteudoFirestore()`, salva por `salvarSecao('regra_alternancia')`
+- `secoes/ferias_folgas` — mesma função genérica
+- `secoes/adote_info` — carregada por `_adoteCarregarInfo()`, salva por `_adoteSalvarInfo()`
+- `secoes/atribuicoes_resolucao` — carregada por `_atrCarregarResolucao()`
+
+**Template da função carregar** (substituir `CHAVE`, `LS_KEY` e `COLECAO`):
+```javascript
+async function _CHAVE_CarregarCelulas() {
+    // 1. Cache em memória (navegação interna)
+    if (_CHAVECelulasCache) { _CHAVEAplicarCelulas(_CHAVECelulasCache); }
+    else {
+        // 2. localStorage (F5 / recarga) — síncrono, sem flash
+        try {
+            const ls = localStorage.getItem('LS_KEY');
+            if (ls) {
+                const cached = JSON.parse(ls);
+                _CHAVECelulasCache = cached;
+                _CHAVEAplicarCelulas(cached);
+            }
+        } catch(e) {}
+    }
+    // 3. Sempre buscar do Firestore para manter cache atualizado
+    try {
+        const doc = await db.collection('secoes').doc('COLECAO').get();
+        if (!doc.exists) return;
+        const { celulas } = doc.data();
+        if (!celulas) return;
+        _CHAVECelulasCache = celulas;
+        localStorage.setItem('LS_KEY', JSON.stringify(celulas));
+        _CHAVEAplicarCelulas(celulas);
+    } catch(e) { console.warn('Erro ao carregar células:', e); }
+}
+```
+
+**Na função salvar**, adicionar após gravar no Firestore:
+```javascript
+_CHAVECelulasCache = celulas;
+localStorage.setItem('LS_KEY', JSON.stringify(celulas));
+```
+
+**Atenção — cache desatualizado após remoção de linhas:** se o número de linhas do array estático diminuir, o cache antigo vai sobrescrever células erradas. Use `_adoteCacheDesatualizado(celulas)` como referência — verifica `maxRow > STATIC_ARRAY.length` e deleta o doc do Firestore (admin) + limpa localStorage.
+
 ### Descartado (não vale implementar)
 - **Coleção `defensores_admin` no Firestore** — descartado: ex-membros livres já detectados automaticamente via orphanExMembros; casos raros de inconsistência com o JSON não justificam a complexidade
 
