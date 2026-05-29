@@ -6590,14 +6590,27 @@
         }
 
         async function _atrCarregarCelulas() {
-            // Aplica cache imediatamente (sem esperar rede) se já tiver sido buscado antes
-            if (_atrCelulasCache) { _atrAplicarCelulas(_atrCelulasCache); return; }
+            // 1. Cache em memória (navegação interna)
+            if (_atrCelulasCache) { _atrAplicarCelulas(_atrCelulasCache); }
+            else {
+                // 2. localStorage (F5 / recarga) — síncrono, sem flash
+                try {
+                    const ls = localStorage.getItem('pma-atr-celulas');
+                    if (ls) {
+                        const cached = JSON.parse(ls);
+                        _atrCelulasCache = cached;
+                        _atrAplicarCelulas(cached);
+                    }
+                } catch(e) {}
+            }
+            // 3. Sempre buscar do Firestore para manter cache atualizado
             try {
                 const doc = await db.collection('secoes').doc('atribuicoes_celulas').get();
                 if (!doc.exists) return;
                 const { celulas } = doc.data();
                 if (!celulas) return;
-                _atrCelulasCache = celulas;   // armazena em cache
+                _atrCelulasCache = celulas;
+                localStorage.setItem('pma-atr-celulas', JSON.stringify(celulas));
                 _atrAplicarCelulas(celulas);
             } catch(e) {
                 console.warn('Erro ao carregar células de atribuições:', e);
@@ -7082,7 +7095,8 @@
                     atualizado_por: currentUser.email,
                     atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
                 });
-                _atrCelulasCache = celulas;   // atualiza cache com dados recém salvos
+                _atrCelulasCache = celulas;
+                localStorage.setItem('pma-atr-celulas', JSON.stringify(celulas));
                 btnS.disabled = false;
                 btnS.innerHTML = '✓ Salvar';
                 _atrSairModoEdicao();
