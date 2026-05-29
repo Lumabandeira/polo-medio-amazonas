@@ -3395,5 +3395,68 @@
         "resumo": "Divulga fiscais para seleção de estágio de graduação do Polo Médio Amazonas em Silves e concede dispensa de atividades como contraprestação"
       }
     ]
+  },
+  {
+    "edicao": 2659,
+    "data": "2026-05-28",
+    "data_formatada": "28/05/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/05/Edicao_2659-2026__publicada_em_28_maio_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 850/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007150-0",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Camila Cristina de Andrade Rodrigues, Assessora Técnica I DPE-2, Luiz Felipe Santos de Sousa, Assessor Técnico II DPE-1, nos trechos Manaus/Itacoatiara/Manaus, no período de 28 a 29 de maio de 2026, a fim de realizarem entrevistas relacionadas ao caso de denúncias contra uma empresa de colchões por possíveis práticas abusivas, visando à cobertura jornalística e à produção de conteúdo institucional, em Itacoatiara-AM"
+        ],
+        "resumo": "Autoriza deslocamento de servidores para Itacoatiara de 28-29 de maio de 2026 para entrevistas e produção de conteúdo institucional"
+      },
+      {
+        "numero": "Portaria Nº 858/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007343-0",
+        "sgi": "2600741",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Melquisedeque Costa da Silva Teixeira, Auxiliar I de Defensoria, nos trechos Manaus/Rio Preto da Eva/Silves/Itacoatiara/Manaus, no período de 28 a 29 de maio de 2026, a fim de realizar a condução da servidora Alcilene Araújo Cavalcante Saraiva aos municípios de Rio Preto da Eva-AM, Itacoatiara-AM e Silves-AM"
+        ],
+        "resumo": "Autoriza deslocamento de Auxiliar de Defensoria para conduzir servidora aos municípios de Rio Preto da Eva, Itacoatiara e Silves de 28-29 de maio de 2026"
+      },
+      {
+        "numero": "Portaria Nº 859/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007340-6",
+        "sgi": "2600897",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Alcilene Araújo Cavalcante Saraiva, Auxiliar II de Defensoria, nos trechos Manaus/Rio Preto da Eva/Silves/Itacoatiara/Manaus, no período de 28 a 29 de maio de 2026, a fim de realizar a entrega de materiais do 1º ressuprimento anual de 2026 às unidades da DPE-AM em Rio Preto da Eva-AM, Itacoatiara-AM e Silves-AM"
+        ],
+        "resumo": "Autoriza deslocamento de Auxiliar de Defensoria para entrega de materiais em Rio Preto da Eva, Itacoatiara e Silves de 28-29 de maio de 2026"
+      },
+      {
+        "numero": "Portaria Nº 860/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007381-3",
+        "sgi": "1672",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Helom Cesar da Silva Nunes, Primeiro Subdefensor Público Geral, Alexandre Carvalho Macedo, Diretor DPE-5, nos trechos Manaus/ Itacoatiara/ Urucurituba/ Itacoatiara/ Manaus, no período de 28 a 29 de maio de 2026, a fim de realizar visita técnica e promover tratativas junto à Prefeitura de Urucurituba visando à definição de imóvel destinado à implantação do Posto de Atendimento Virtual (PAV) no município Urucurituba-AM",
+          "II - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, nos trechos Manaus/ Itacoatiara/ Urucurituba/ Itacoatiara/ Manaus, no período de 28 a 29 de maio de 2026, a fim de realizar a condução do Primeiro Subdefensor Público e do servidor público acima relacionado até o município de Itacoatiara-AM e assessorar o Primeiro Subdefensor Público Geral na realização de visita técnica ao município Urucurituba-AM"
+        ],
+        "resumo": "Autoriza visita técnica do Primeiro Subdefensor e Diretor DPE-5 a Itacoatiara e Urucurituba de 28-29 de maio de 2026 para implantação de PAV"
+      }
+    ]
   }
 ]
