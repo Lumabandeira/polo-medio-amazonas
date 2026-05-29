@@ -7911,18 +7911,34 @@
         }
 
         // ── Carregar conteúdo do Firestore ─────────────────────────────────
+        const _SECOES_LS_KEYS = {
+            regra_alternancia: 'pma-regra-alternancia',
+            ferias_folgas:     'pma-ferias-folgas'
+        };
+
+        function _aplicarSecaoCache(id, data) {
+            if (data.html)   document.getElementById(id + '-html').innerHTML  = data.html;
+            if (data.titulo) document.getElementById(id + '-titulo').textContent = data.titulo;
+        }
+
         async function carregarConteudoFirestore() {
             const secoes = ['regra_alternancia', 'ferias_folgas'];
             for (const id of secoes) {
+                // 1. localStorage (síncrono) — elimina flash no F5
+                try {
+                    const ls = localStorage.getItem(_SECOES_LS_KEYS[id]);
+                    if (ls) _aplicarSecaoCache(id, JSON.parse(ls));
+                } catch(e) {}
+                // 2. Firestore — sempre busca para manter cache atualizado
                 try {
                     const doc = await db.collection('secoes').doc(id).get();
                     if (doc.exists) {
                         const data = doc.data();
-                        if (data.html)   document.getElementById(id + '-html').innerHTML  = data.html;
-                        if (data.titulo) document.getElementById(id + '-titulo').textContent = data.titulo;
+                        _aplicarSecaoCache(id, data);
+                        localStorage.setItem(_SECOES_LS_KEYS[id], JSON.stringify({ html: data.html || '', titulo: data.titulo || '' }));
                     }
                 } catch(e) {
-                    // Mantém o conteúdo padrão do HTML
+                    // Mantém o conteúdo já aplicado (padrão HTML ou cache localStorage)
                 }
             }
         }
@@ -8271,6 +8287,12 @@
                 // Atualizar localStorage para seções com cache persistente
                 if (secaoId === 'adote_expandir') {
                     localStorage.setItem('pma-adote-expandir', JSON.stringify({
+                        html:   conteudoEl.innerHTML,
+                        titulo: tituloEl.textContent
+                    }));
+                }
+                if (_SECOES_LS_KEYS[secaoId]) {
+                    localStorage.setItem(_SECOES_LS_KEYS[secaoId], JSON.stringify({
                         html:   conteudoEl.innerHTML,
                         titulo: tituloEl.textContent
                     }));
