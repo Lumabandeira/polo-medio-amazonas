@@ -87,6 +87,7 @@
             transition: transform 0.15s, box-shadow 0.15s;
             box-shadow: 0 3px 12px rgba(0,0,0,0.25);
             white-space: nowrap;
+            text-decoration: none;
         }
 
         .header-nav-btn:hover {
@@ -2812,10 +2813,10 @@
             <h1>🏛️ Polo Médio Amazonas</h1>
             <p>Itacoatiara, Itapiranga, São Sebastião do Uatumã, Silves, Urucará e Urucurituba</p>
             <div id="header-nav">
-                <button class="header-nav-btn btn-atribuicoes" onclick="showSection('atribuicoes')">⚖️ Atribuições</button>
-                <button class="header-nav-btn btn-designacoes" onclick="showSection('designacoes')">📋 Designações</button>
-                <button class="header-nav-btn btn-adote" onclick="showSection('adote')">🏘️ Adote</button>
-                <button class="header-nav-btn btn-diario" onclick="showSection('diario-oficial')">📰 Diário Oficial</button>
+                <a class="header-nav-btn btn-atribuicoes" href="?s=atribuicoes" onclick="showSection('atribuicoes');return false;">⚖️ Atribuições</a>
+                <a class="header-nav-btn btn-designacoes" href="?s=designacoes" onclick="showSection('designacoes');return false;">📋 Designações</a>
+                <a class="header-nav-btn btn-adote" href="?s=adote" onclick="showSection('adote');return false;">🏘️ Adote</a>
+                <a class="header-nav-btn btn-diario" href="?s=diario-oficial" onclick="showSection('diario-oficial');return false;">📰 Diário Oficial</a>
             </div>
         </header>
 
@@ -7865,8 +7866,9 @@
             if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); }
             carregarNotificacoesAutomacao();
 
-            // Restaurar seção após F5
-            const _secaoSalva = sessionStorage.getItem('pma-secao');
+            // Restaurar seção: parâmetro URL (?s=) tem prioridade sobre sessionStorage
+            const _urlParam = new URLSearchParams(location.search).get('s');
+            const _secaoSalva = _urlParam || sessionStorage.getItem('pma-secao');
             if (_secaoSalva) {
                 showSection(_secaoSalva);
             }
