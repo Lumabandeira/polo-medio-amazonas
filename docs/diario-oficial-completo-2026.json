@@ -3581,5 +3581,30 @@
         "resumo": "Designa defensoras para atuação em audiências nas Comarcas de Itacoatiara e Iranduba entre 29 de maio e 03 de junho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2661,
+    "data": "2026-06-01",
+    "data_formatada": "01/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2661-2026__publicada_em_01_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 556/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007406-2",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Gabriel Herzog Kehde para atuar na 7ª Defensoria Pública do Polo Médio Amazonas (São Sebastião do Uatumã), no período de 01 a 15 de junho de 2026;",
+          "III - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Francine Lúcia Buffon Baldissarella para atuar na 10ª Defensoria Pública do Polo Médio Amazonas (Urucará), no período de 01 a 07 de junho de 2026;"
+        ],
+        "resumo": "Designa defensores públicos para atuação cumulativa no Polo Médio Amazonas em junho de 2026"
+      }
+    ]
   }
 ]
