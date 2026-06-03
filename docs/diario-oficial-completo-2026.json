@@ -3606,5 +3606,45 @@
         "resumo": "Designa defensores públicos para atuação cumulativa no Polo Médio Amazonas em junho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2662,
+    "data": "2026-06-02",
+    "data_formatada": "02/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2662-2026__publicada_em_02_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 871/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007429-1",
+        "sgi": "1719",
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Clovis Roberto Soares Muniz Barreto, Corregedor Geral, Everton Sarraff Nascimento, Sub-corregedor Geral, Lucas Pinto da Silva, Assessor Técnico II - DPE-1, no trecho Manaus/Itacoatiara/Manaus, no período de 09 a 12 de junho de 2026, a fim de realizar Correição Ordinária no Polo do Médio Solimões, com sede no município de Itacoatiara",
+          "II - AUTORIZAR o deslocamento de Melquisedeque Costa da Silva Teixeira, Auxiliar I de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no período de 09 a 12 de junho de 2026, a fim de conduzir os defensores públicos e o servidor público ao município de Itacoatiara",
+          "III - DETERMINAR o pagamento de diárias aos defensores públicos e aos servidores públicos acima relacionados."
+        ],
+        "resumo": "Autoriza deslocamento de corregedor, subcorregedor, assessor e servidor para realizar correição no Polo do Médio Solimões em Itacoatiara de 09 a 12 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 570/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007599-9",
+        "sgi": "2600914",
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Miguel Eduardo de Azevedo Martins Filho, Defensor Público de 3ª classe, nos trechos Itacoatiara/Itapiranga/Itacoatiara, no período de 15 a 18 de junho de 2026, a fim de realizar atendimentos presenciais na comarca de Itapiranga",
+          "II - DETERMINAR o pagamento de diárias ao defensor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de defensor público para realizar atendimentos presenciais na comarca de Itapiranga de 15 a 18 de junho de 2026"
+      }
+    ]
   }
 ]
