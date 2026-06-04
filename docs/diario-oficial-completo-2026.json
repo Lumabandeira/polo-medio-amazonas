@@ -3646,5 +3646,78 @@
         "resumo": "Autoriza deslocamento de defensor público para realizar atendimentos presenciais na comarca de Itapiranga de 15 a 18 de junho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2663,
+    "data": "2026-06-03",
+    "data_formatada": "03/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2663-2026__publicada_em_03_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 886/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007219-1",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Helom César da Silva Nunes para atuar na 1ª Defensoria Pública de Iranduba, no período de 01 a 03 de junho de 2026",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Helom César da Silva Nunes para atuar na 2ª Defensoria Pública de Iranduba, no período de 01 a 03 de junho de 2026"
+        ],
+        "resumo": "Designa Helom César da Silva Nunes para atuação cumulativa em Iranduba de 01 a 03 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 556/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007406-2",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Gabriel Herzog Kehde para atuar na 7ª Defensoria Pública do Polo Médio Amazonas (São Sebastião do Uatumã), no período de 01 a 15 de junho de 2026",
+          "II - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Elânia Cristina Fonseca do Nascimento para atuar na 8ª Defensoria Pública do Polo do Rio Negro - Solimões (Novo Airão), no período de 01 a 18 de junho de 2026",
+          "III - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Francine Lúcia Buffon Baldissarella para atuar na 10ª Defensoria Pública do Polo Médio Amazonas (Urucará), no período de 01 a 03 de junho de 2026"
+        ],
+        "resumo": "Designa Gabriel Herzog Kehde para São Sebastião do Uatumã (01-15/06), Francine Lúcia Buffon Baldissarella para Urucará (01-03/06) e Elânia Cristina Fonseca para Novo Airão (01-18/06)"
+      },
+      {
+        "numero": "Portaria Nº 571/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005713-3",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Pedro Henrique Pereira Paiva para atuar na 2ª Defensoria Pública do Polo do Médio Solimões, no período de 01 a 30 de junho de 2026"
+        ],
+        "resumo": "Designa Pedro Henrique Pereira Paiva para o Polo do Médio Solimões de 01 a 30 de junho de 2026"
+      },
+      {
+        "numero": "EDITAL Nº 67/2026 - ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "Será ofertada 01 (uma) vaga para o Programa de Residência Jurídica, destinada ao Polo Médio Amazonas – Unidade Descentralizada de Silves/AM, além da formação de cadastro de reserva",
+          "A carga horária semanal será de 30 (trinta) horas, divididas entre atividades teóricas e práticas, em expediente, das 08h às 14h, de segunda a sexta-feira, de forma PRESENCIAL no Polo Médio Amazonas – na Unidade Descentralizada de Silves/AM",
+          "O(a) aluno(a) residente poderá permanecer no programa por até 03 (três) anos e deverá residir no município de Silves/AM"
+        ],
+        "resumo": "Abre inscrições para 01 vaga de Residência Jurídica no Polo Médio Amazonas em Silves/AM com bolsa de R$ 2.550,00 e carga de 30h/semana"
+      }
+    ]
   }
 ]
