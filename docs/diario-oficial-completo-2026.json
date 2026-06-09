@@ -3719,5 +3719,62 @@
         "resumo": "Abre inscrições para 01 vaga de Residência Jurídica no Polo Médio Amazonas em Silves/AM com bolsa de R$ 2.550,00 e carga de 30h/semana"
       }
     ]
+  },
+  {
+    "edicao": 2664,
+    "data": "2026-06-08",
+    "data_formatada": "08/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2664-2026__publicada_em_08_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 924/2026-GDPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "substituicao",
+          "polo_medio",
+          "designacoes"
+        ],
+        "trechos": [
+          "DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Arthur de Oliveira Cavalcante para atuar na 7ª Defensoria Pública do Polo do Médio Madeira, nos dias 01 e 02 de junho de 2026"
+        ],
+        "resumo": "Designa Defensor Público de 4ª Classe Arthur de Oliveira Cavalcante para atuar cumulativamente na 7ª DP do Polo Médio Madeira nos dias 01 e 02 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 580/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007807-6",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes",
+          "polo_medio"
+        ],
+        "trechos": [
+          "DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Renata Visco Costa de Almeida para atuar na 10ª Defensoria Pública do Polo do Médio Solimões (Maraã e Japurá), a contar do dia 04 de junho de 2026",
+          "DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Renata Visco Costa de Almeida para atuar na 8ª Defensoria Pública do Polo do Juruá (Carauari), a contar do dia 04 de junho de 2026",
+          "DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Thays Lidianne Campos de Azevedo Pereira para atuar na 11ª Defensoria Pública do Polo do Rio Negro - Solimões (Anamã), a contar do dia 04 de junho de 2026",
+          "DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Oswaldo Machado Neto para atuar na 11ª Defensoria Pública do Polo do Médio Solimões (Jutaí), a contar do dia 04 de junho de 2026"
+        ],
+        "resumo": "Designa cumulativamente quatro defensores públicos para atuar em defensorias do Polo Médio Solimões e Juruá a partir de 04 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 581/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007818-1",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes",
+          "polo_medio",
+          "substituicao"
+        ],
+        "trechos": [
+          "DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Francine Lucia Buffon Baldissarella para atuar na 1ª Defensoria Pública do Polo do Madeira, no período de 22 de junho a 01 de julho de 2026",
+          "DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Fernanda de Carvalho e Santos para atuar na 5ª Defensoria Pública do Polo do Madeira (Apuí), no período de 22 de junho a 01 de julho de 2026"
+        ],
+        "resumo": "Designa cumulativamente duas defensoras públicas para atuar em defensorias do Polo Médio Madeira de 22 de junho a 01 de julho de 2026"
+      }
+    ]
   }
 ]
