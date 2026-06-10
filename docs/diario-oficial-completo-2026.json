@@ -3776,5 +3776,76 @@
         "resumo": "Designa cumulativamente duas defensoras públicas para atuar em defensorias do Polo Médio Madeira de 22 de junho a 01 de julho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2665,
+    "data": "2026-06-09",
+    "data_formatada": "09/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2665-2026__publicada_em_09_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 925/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007794-0",
+        "sgi": "1764",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Helóm César da Silva Nunes, Primeiro Subdefensor Público Geral, nos trechos Manaus/Itacoatiara/Manaus, no período de 14 a 15 de junho de 2026, a fim de participar do mutirão previdenciário de Itacoatiara-AM;",
+          "II - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, nos trechos Manaus/Itacoatiara/Manaus, no período de 14 a 15 de junho de 2026, a fim de conduzir o Primeiro Subdefensor Público Geral, no trecho acima relacionado;"
+        ],
+        "resumo": "Autoriza deslocamento de Primeiro Subdefensor e servidor para mutirão previdenciário em Itacoatiara-AM no período de 14-15 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 582/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "substituicao",
+          "plantao"
+        ],
+        "trechos": [
+          "II - AUTORIZAR a permuta entre os servidores Arnoud Lucas Andrade da Silva e Fábio Bastos de Souza, designados para as semanas 21 e 22 do Plantão do Polo do Médio Amazonas, pelos períodos de 01/06 a 07/06 e 08/06 a 14/06, respectivamente;",
+          "III - AUTORIZAR a substituição do servidor Ivan Coutinho Vieira, designado para a semana 24 do Plantão do Polo do Médio Madeira, pelo período de 22/06 a 28/06, por Guilherme Messias do Nascimento Soares;",
+          "IV - AUTORIZAR a substituição do servidor Victor Gabriel Fernandes Monteiro, designado para a semana 22 do Plantão do Polo do Madeira, pelo período de 08/06 a 14/06, por Juliana Dias Hatchwel Monteiro;",
+          "V - AUTORIZAR a substituição da Defensora Pública Francine Lucia Buffon Baldissarella, designada para a semana 24 do Plantão do Polo do Madeira, pelo período de 22/06 a 28/06, por Fernanda de Carvalho e Santos;",
+          "VI - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Escala de substituição Polo do Médio Amazonas - Polo do Rio Negro-Solimões"
+        ],
+        "resumo": "Altera escala de plantão do Polo do Médio Amazonas, autorizando permutas e substituições entre servidores e defensores para as semanas 21-24 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 588/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007906-4",
+        "sgi": "2600958",
+        "categorias": [
+          "polo_medio",
+          "servidor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Larice Bruce Pereira, Assistente Defensorial DPE-1, nos trechos Itacoatiara/Itapiranga/Itacoatiara, no período de 15 a 18 de junho de 2026, a fim de auxiliar o Defensor Público Miguel Eduardo de Azevedo Martins Filho na realização de atendimentos presenciais, na comarca de Itapiranga-AM;"
+        ],
+        "resumo": "Autoriza deslocamento de servidora de Itacoatiara para Itapiranga de 15-18 de junho de 2026 para auxiliar em atendimentos na comarca"
+      },
+      {
+        "numero": "Portaria Nº 92/2026/CG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca"
+        ],
+        "trechos": [
+          "CONSIDERANDO a Portaria n° 92/2026/CG/DPE/AM, de 26 de maio de 2026 (Correição Ordinária no Polo do Médio Amazonas, de 09 a 12 de junho de 2026);"
+        ],
+        "resumo": "Realiza correição ordinária no Polo do Médio Amazonas no período de 09-12 de junho de 2026"
+      }
+    ]
   }
 ]
