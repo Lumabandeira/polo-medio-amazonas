@@ -3847,5 +3847,81 @@
         "resumo": "Realiza correição ordinária no Polo do Médio Amazonas no período de 09-12 de junho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2666,
+    "data": "2026-06-10",
+    "data_formatada": "10/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2666-2026__publicada_em_10_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 944/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007732-0",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Eduardo Carneiro Sousa, Assistente Técnico de Defensoria, nos trechos Manaus/Urucurituba/Manaus, no período de 10 a 15 de junho de 2026, a fim de participar em visita técnica à comunidade no município de Urucurituba, a ser realizada em conjunto com o INCRA"
+        ],
+        "resumo": "Autoriza deslocamento de servidor para Urucurituba de 10 a 15 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 945/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007903-0",
+        "sgi": "1759",
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - CONSIDERAR AUTORIZADO o deslocamento de Helom Cesar da Silva Nunes, Primeiro Subdefensor Público Geral, nos trechos Manaus/Iranduba/Manaus, no dia 01 de junho de 2026, a fim de realizar visita à unidade da Defensoria Pública em Iranduba-AM, bem como para participação em reunião com o Prefeito da referida comarca"
+        ],
+        "resumo": "Autoriza deslocamento de Primeiro Subdefensor para Iranduba em 01 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 558/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007519-0",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - DESIGNAR a Defensora Pública de 4ª Classe Érica Andrade de Oliveira para atuar nas audiências designadas para o dia 29 de maio de 2026, na Comarca de Maués, conforme Anexo Único",
+          "II - DESIGNAR, em caráter especial, a Defensora Pública de 3ª Classe Carine Teresa Lopes de Sousa Possidônio para atuar nas audiências designadas para o dia 29 de maio de 2026, na Comarca de Maués, conforme Anexo Único"
+        ],
+        "resumo": "Designa defensoras para atuar em audiências na Comarca de Maués em 29 de maio de 2026"
+      },
+      {
+        "numero": "Portaria Nº 566/2026-GSPG/DPE/AM",
+        "sei": "26.0.000006561-6",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - DESIGNAR a Defensora Pública de 4ª Classe Érica Andrade de Oliveira para atuar nas audiências designadas para o dia 02 de junho de 2026, na Vara Única da Comarca de Presidente Figueiredo (criminais), conforme Anexo Único"
+        ],
+        "resumo": "Designa defensora para atuar em audiências em Presidente Figueiredo em 02 de junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 587/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007894-7",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - DESIGNAR o Defensor Público de 4ª Classe Ian Marcos Martins Palmeira para atuar nas audiências designadas para os dias 09 e 11 de junho de 2026, na 1ª Vara da Comarca de Iranduba, conforme Anexo Único"
+        ],
+        "resumo": "Designa defensor para atuar em audiências na Comarca de Iranduba nos dias 09 e 11 de junho de 2026"
+      }
+    ]
   }
 ]
