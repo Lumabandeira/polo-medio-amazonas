@@ -4800,9 +4800,9 @@
                 renderDetalhesAfastamentos();
             }
             
-            // Se abrir a aba de designações semanais, garantir que Janeiro está visível
+            // Se abrir a aba de designações semanais, abrir no mês vigente
             if (tabName === 'designacoes-periodo') {
-                filterByMonth('janeiro');
+                filterByMonth(MONTH_IDS_PT[new Date().getMonth()]);
                 // Garantir que a função seja executada quando a aba for aberta
                 setTimeout(() => {
                     removeWeekendHighlightsFromRows();
@@ -6099,7 +6099,7 @@
             filterDiv.innerHTML = '';
             MONTH_IDS_PT.forEach((id, i) => {
                 const btn = document.createElement('button');
-                btn.className = 'month-filter-btn' + (i === 0 ? ' active' : '');
+                btn.className = 'month-filter-btn' + (i === new Date().getMonth() ? ' active' : '');
                 btn.setAttribute('data-month', id);
                 btn.textContent = MONTH_NAMES_PT[i];
                 btn.onclick = () => filterByMonth(id);
