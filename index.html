@@ -4738,7 +4738,7 @@
             }
         }
 
-        let currentMonth = 0; // Janeiro = 0
+        let currentMonth = new Date().getMonth(); // mês vigente (0=Jan … 11=Dez)
         let filtroListaDP = null;
         let notificacoesData = [];
         let remocaoNotifData = [];
@@ -6333,7 +6333,7 @@
 
                 if (tabName === 'calendario') renderCalendar();
                 if (tabName === 'designacoes-periodo') {
-                    filterByMonth('janeiro');
+                    filterByMonth(MONTH_IDS_PT[new Date().getMonth()]);
                     setTimeout(removeWeekendHighlightsFromRows, 200);
                 }
             }
@@ -8337,7 +8337,7 @@
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
 
 
-            filterByMonth('janeiro');
+            filterByMonth(MONTH_IDS_PT[new Date().getMonth()]);
 
             // Carregar JSONs e inicializar renderização
             loadJSONData();
