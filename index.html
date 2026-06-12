@@ -4739,6 +4739,7 @@
         }
 
         let currentMonth = new Date().getMonth(); // mês vigente (0=Jan … 11=Dez)
+        let currentYear  = new Date().getFullYear();
         let filtroListaDP = null;
         let notificacoesData = [];
         let remocaoNotifData = [];
@@ -5506,17 +5507,17 @@
 
         function changeMonth(direction) {
             currentMonth += direction;
-            if (currentMonth < 0) currentMonth = 11;
-            if (currentMonth > 11) currentMonth = 0;
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
             renderCalendar();
         }
 
         function renderCalendar() {
             const month = currentMonth;
-            const year = 2026;
+            const year = currentYear;
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
+
             document.getElementById('current-month').textContent = `${months[month]} ${year}`;
             
             const container = document.getElementById('calendar-container');
