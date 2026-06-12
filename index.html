@@ -3775,7 +3775,7 @@
                 }
             });
 
-            dateInfo.innerHTML = `<strong>📅 Data:</strong> ${dia} de ${mesNome} de 2026`;
+            dateInfo.innerHTML = `<strong>📅 Data:</strong> ${dia} de ${mesNome} de ${ano}`;
 
             const isAdmin = userRole === 'admin';
 
@@ -6070,8 +6070,8 @@
             const sm = MONTH_NAMES_PT[start.getMonth()];
             const em = MONTH_NAMES_PT[end.getMonth()];
             if (start.getMonth() === end.getMonth())
-                return `${start.getDate()} a ${end.getDate()} de ${sm} de 2026`;
-            return `${start.getDate()} de ${sm} a ${end.getDate()} de ${em} de 2026`;
+                return `${start.getDate()} a ${end.getDate()} de ${sm} de ${start.getFullYear()}`;
+            return `${start.getDate()} de ${sm} a ${end.getDate()} de ${em} de ${end.getFullYear()}`;
         }
 
         function fmtDay(d) {
