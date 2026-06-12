@@ -561,6 +561,20 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
+        .cal-year-btn {
+            padding: 6px 22px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            color: var(--primary-color);
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .cal-year-btn:hover { background: var(--primary-color); color: #fff; }
+        .cal-year-btn.active { background: var(--primary-color); color: #fff; }
+
         .month-selector h3 {
             font-size: 1.5em;
             color: var(--primary-color);
@@ -2932,8 +2946,12 @@
         <!-- Tab: Calendário -->
         <div id="calendario" class="tab-content">
             <div class="card">
-                <h2>📅 Calendário de Afastamentos dos Defensores 2026</h2>
-                
+                <h2 id="cal-titulo">📅 Calendário de Afastamentos dos Defensores 2026</h2>
+
+                <div id="cal-year-selector" style="display:flex;gap:8px;margin-bottom:12px;">
+                    <button id="btn-ano-2026" onclick="switchYear(2026)" class="cal-year-btn active">2026</button>
+                    <button id="btn-ano-2027" onclick="switchYear(2027)" class="cal-year-btn">2027</button>
+                </div>
 
                 <div class="month-selector">
                     <button onclick="changeMonth(-1)">← Mês Anterior</button>
@@ -5512,6 +5530,11 @@
             renderCalendar();
         }
 
+        function switchYear(year) {
+            currentYear = year;
+            renderCalendar();
+        }
+
         function renderCalendar() {
             const month = currentMonth;
             const year = currentYear;
@@ -5519,6 +5542,11 @@
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
             document.getElementById('current-month').textContent = `${months[month]} ${year}`;
+            const titulo = document.getElementById('cal-titulo');
+            if (titulo) titulo.textContent = `📅 Calendário de Afastamentos dos Defensores ${year}`;
+            document.querySelectorAll('.cal-year-btn').forEach(b => {
+                b.classList.toggle('active', parseInt(b.textContent) === year);
+            });
             
             const container = document.getElementById('calendar-container');
             container.innerHTML = '';
