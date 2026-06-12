@@ -3398,7 +3398,8 @@
         let afastamentosFirestoreMap = {}; // firestoreId → record completo
         let jsonDataLoaded = false;        // true após loadJSONData concluir
         let _jsonDesignacoesBkDefensorias = null; // snapshot imutável do JSON base (para reloadTitularesData)
-        let _formAfMesCtx = null;          // contexto de dia para reabrir modal
+        let _formAfAnoCtx = null;          // contexto de ano para reabrir modal
+        let _formAfMesCtx = null;
         let _formAfDiaCtx = null;
 
         // Mapa de eventos base do JSON: jsonEventoId → objeto evento completo
@@ -3416,11 +3417,13 @@
                 const end    = new Date(reg.data_fim    + 'T12:00:00');
                 const cur    = new Date(start);
                 while (cur <= end) {
+                    const y = cur.getFullYear();
                     const m = cur.getMonth() + 1;
                     const d = cur.getDate();
-                    if (!result[m]) result[m] = {};
-                    if (!result[m][d]) result[m][d] = [];
-                    if (!result[m][d].includes(calKey)) result[m][d].push(calKey);
+                    if (!result[y])       result[y] = {};
+                    if (!result[y][m])    result[y][m] = {};
+                    if (!result[y][m][d]) result[y][m][d] = [];
+                    if (!result[y][m][d].includes(calKey)) result[y][m][d].push(calKey);
                     cur.setDate(cur.getDate() + 1);
                 }
             });
@@ -3457,15 +3460,17 @@
                                      ? defensores[des.substituto].nome : '';
                     const cur = new Date(start);
                     while (cur <= end) {
+                        const y = cur.getFullYear();
                         const m = cur.getMonth() + 1;
                         const d = cur.getDate();
-                        if (!detalhesAfastamentos[m]) detalhesAfastamentos[m] = {};
-                        if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
-                        detalhesAfastamentos[m][d].push({
+                        if (!detalhesAfastamentos[y])       detalhesAfastamentos[y] = {};
+                        if (!detalhesAfastamentos[y][m])    detalhesAfastamentos[y][m] = {};
+                        if (!detalhesAfastamentos[y][m][d]) detalhesAfastamentos[y][m][d] = [];
+                        detalhesAfastamentos[y][m][d].push({
                             defensor: defNome, tipo: tipoLabel,
                             defensoria: dpLabel, substituto: subNome,
                             processo, link,
-                            jsonEventoId: ev.id, // identifica origem para edição e supressão
+                            jsonEventoId: ev.id,
                             afastamento_inicio: ev.data_inicio, afastamento_fim: ev.data_fim,
                             sub_inicio: startStr, sub_fim: endStr
                         });
@@ -3529,11 +3534,13 @@
             const end    = new Date(reg.data_fim    + 'T12:00:00');
             let cur = new Date(start);
             while (cur <= end) {
+                const y = cur.getFullYear();
                 const m = cur.getMonth() + 1;
                 const d = cur.getDate();
-                if (!afastamentos[m])    afastamentos[m] = {};
-                if (!afastamentos[m][d]) afastamentos[m][d] = [];
-                if (!afastamentos[m][d].includes(calKey)) afastamentos[m][d].push(calKey);
+                if (!afastamentos[y])       afastamentos[y] = {};
+                if (!afastamentos[y][m])    afastamentos[y][m] = {};
+                if (!afastamentos[y][m][d]) afastamentos[y][m][d] = [];
+                if (!afastamentos[y][m][d].includes(calKey)) afastamentos[y][m][d].push(calKey);
                 cur.setDate(cur.getDate() + 1);
             }
 
@@ -3575,12 +3582,14 @@
                         if (sStart > sEnd) return; // cobertura fora do período — ignorar
                         let c = new Date(sStart);
                         while (c <= sEnd) {
+                            const y = c.getFullYear();
                             const m = c.getMonth() + 1;
                             const d = c.getDate();
-                            diasCobertos.add(`${m}-${d}`);
-                            if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
-                            if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
-                            detalhesAfastamentos[m][d].push({
+                            diasCobertos.add(`${y}-${m}-${d}`);
+                            if (!detalhesAfastamentos[y])       detalhesAfastamentos[y] = {};
+                            if (!detalhesAfastamentos[y][m])    detalhesAfastamentos[y][m] = {};
+                            if (!detalhesAfastamentos[y][m][d]) detalhesAfastamentos[y][m][d] = [];
+                            detalhesAfastamentos[y][m][d].push({
                                 defensor: defNome, tipo: tipoLabel,
                                 defensoria: dpLabel, substituto: subNome,
                                 processo, link, firestoreId: reg.id,
@@ -3595,12 +3604,14 @@
                     // Preencher dias do afastamento sem cobertura como "ainda não definido"
                     let c = new Date(start);
                     while (c <= end) {
+                        const y = c.getFullYear();
                         const m = c.getMonth() + 1;
                         const d = c.getDate();
-                        if (!diasCobertos.has(`${m}-${d}`)) {
-                            if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
-                            if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
-                            detalhesAfastamentos[m][d].push({
+                        if (!diasCobertos.has(`${y}-${m}-${d}`)) {
+                            if (!detalhesAfastamentos[y])       detalhesAfastamentos[y] = {};
+                            if (!detalhesAfastamentos[y][m])    detalhesAfastamentos[y][m] = {};
+                            if (!detalhesAfastamentos[y][m][d]) detalhesAfastamentos[y][m][d] = [];
+                            detalhesAfastamentos[y][m][d].push({
                                 defensor: defNome, tipo: tipoLabel,
                                 defensoria: dpLabel, substituto: 'ainda não definido',
                                 processo, link: '', firestoreId: reg.id,
@@ -3615,14 +3626,16 @@
                 // Compatibilidade com estrutura antiga
                 cur = new Date(start);
                 while (cur <= end) {
+                    const y = cur.getFullYear();
                     const m = cur.getMonth() + 1;
                     const d = cur.getDate();
-                    if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
-                    if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
+                    if (!detalhesAfastamentos[y])       detalhesAfastamentos[y] = {};
+                    if (!detalhesAfastamentos[y][m])    detalhesAfastamentos[y][m] = {};
+                    if (!detalhesAfastamentos[y][m][d]) detalhesAfastamentos[y][m][d] = [];
                     desigOld.forEach(des => {
                         const dpLabel = dpDisplayLabel(des.dp);
                         const subInfo = (jsonDesignacoes?.defensores || {})[des.substituto] || {};
-                        detalhesAfastamentos[m][d].push({
+                        detalhesAfastamentos[y][m][d].push({
                             defensor: defNome, tipo: tipoLabel,
                             defensoria: dpLabel,
                             substituto: subInfo.nome_curto || des.substituto || '',
@@ -3636,11 +3649,13 @@
             } else {
                 cur = new Date(start);
                 while (cur <= end) {
+                    const y = cur.getFullYear();
                     const m = cur.getMonth() + 1;
                     const d = cur.getDate();
-                    if (!detalhesAfastamentos[m])    detalhesAfastamentos[m] = {};
-                    if (!detalhesAfastamentos[m][d]) detalhesAfastamentos[m][d] = [];
-                    detalhesAfastamentos[m][d].push({
+                    if (!detalhesAfastamentos[y])       detalhesAfastamentos[y] = {};
+                    if (!detalhesAfastamentos[y][m])    detalhesAfastamentos[y][m] = {};
+                    if (!detalhesAfastamentos[y][m][d]) detalhesAfastamentos[y][m][d] = [];
+                    detalhesAfastamentos[y][m][d].push({
                         defensor: defNome, tipo: tipoLabel,
                         defensoria: '—', substituto: '',
                         processo, link: '', firestoreId: reg.id,
@@ -3733,17 +3748,15 @@
         }
 
         // Função para obter dados detalhados de um dia específico
-        function getDetalhesDia(mes, dia) {
-            const mesData = detalhesAfastamentos[mes];
+        function getDetalhesDia(ano, mes, dia) {
+            const mesData = (detalhesAfastamentos[ano] || {})[mes];
             if (!mesData) return [];
-            
-            const diaData = mesData[dia];
-            return diaData || [];
+            return mesData[dia] || [];
         }
 
         // Função para abrir o modal com os detalhes
-        function openModal(mes, dia) {
-            const detalhes = getDetalhesDia(mes, dia);
+        function openModal(ano, mes, dia) {
+            const detalhes = getDetalhesDia(ano, mes, dia);
             const mesNome = months[mes - 1];
             const modal = document.getElementById('modal-overlay');
             const dateInfo = document.getElementById('modal-date-info');
@@ -3828,12 +3841,12 @@
                             if (isAdmin) {
                                 if (item.firestoreId) {
                                     btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar"
-                                            onclick="abrirFormAfastamento('${item.firestoreId}',${mes},${dia})">✏️</button>
+                                            onclick="abrirFormAfastamento('${item.firestoreId}',${ano},${mes},${dia})">✏️</button>
                                         <button class="btn-acao-tabela btn-deletar-af" title="Excluir"
-                                            onclick="confirmarDeletarAfastamento('${item.firestoreId}',${mes},${dia})">🗑️</button>`;
+                                            onclick="confirmarDeletarAfastamento('${item.firestoreId}',${ano},${mes},${dia})">🗑️</button>`;
                                 } else if (item.jsonEventoId) {
                                     btnsAdmin = `<button class="btn-acao-tabela btn-editar-af" title="Editar"
-                                            onclick="abrirFormAfastamento(null,${mes},${dia},'${item.jsonEventoId}')">✏️</button>`;
+                                            onclick="abrirFormAfastamento(null,${ano},${mes},${dia},'${item.jsonEventoId}')">✏️</button>`;
                                 }
                             }
 
@@ -3867,7 +3880,7 @@
                 const footer = document.createElement('div');
                 footer.className = 'modal-admin-footer';
                 footer.innerHTML = `<button class="btn-novo-afastamento"
-                    onclick="abrirFormAfastamento(null,${mes},${dia})">➕ Novo Afastamento</button>`;
+                    onclick="abrirFormAfastamento(null,${ano},${mes},${dia})">➕ Novo Afastamento</button>`;
                 tableContainer.appendChild(footer);
             }
 
@@ -4150,7 +4163,8 @@
             return Object.entries(dpMap).map(([dp, substitutos]) => ({ dp, substitutos }));
         }
 
-        function abrirFormAfastamento(firestoreId, mes, dia, jsonEventoId) {
+        function abrirFormAfastamento(firestoreId, ano, mes, dia, jsonEventoId) {
+            _formAfAnoCtx = ano;
             _formAfMesCtx = mes;
             _formAfDiaCtx = dia;
             const overlay = document.getElementById('form-af-overlay');
@@ -4731,7 +4745,7 @@
                 fecharFormAfastamento();
                 mostrarToast('✅ Afastamento salvo com sucesso!');
                 await reloadAfastamentosData();
-                if (_formAfMesCtx && _formAfDiaCtx) openModal(_formAfMesCtx, _formAfDiaCtx);
+                if (_formAfMesCtx && _formAfDiaCtx) openModal(_formAfAnoCtx, _formAfMesCtx, _formAfDiaCtx);
             } catch(e) {
                 mostrarToast('❌ Erro ao salvar: ' + e.message, true);
             } finally {
@@ -4740,7 +4754,7 @@
             }
         }
 
-        async function confirmarDeletarAfastamento(firestoreId, mes, dia) {
+        async function confirmarDeletarAfastamento(firestoreId, ano, mes, dia) {
             const reg = afastamentosFirestoreMap[firestoreId];
             if (!reg) return;
             const defInfo = (jsonDesignacoes?.defensores || {})[reg.defensor] || {};
@@ -4750,7 +4764,7 @@
                 await db.collection('afastamentos_admin').doc(firestoreId).delete();
                 mostrarToast('✅ Afastamento excluído.');
                 await reloadAfastamentosData();
-                if (mes && dia) openModal(mes, dia);
+                if (mes && dia) openModal(ano, mes, dia);
             } catch(e) {
                 mostrarToast('❌ Erro ao excluir: ' + e.message, true);
             }
@@ -5576,7 +5590,7 @@
             // Dias do mês
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayDiv = document.createElement('div');
-                const monthData = afastamentos[month + 1];
+                const monthData = (afastamentos[currentYear] || {})[month + 1];
                 const hasAfastamento = monthData && monthData[day];
                 
                 dayDiv.className = hasAfastamento ? 'calendar-day has-afastamento' : 'calendar-day';
@@ -5605,7 +5619,7 @@
 
                 // Admin: todos os dias são clicáveis. Outros usuários: só dias com afastamento
                 if (hasAfastamento || userRole === 'admin') {
-                    dayDiv.onclick = () => openModal(month + 1, day);
+                    dayDiv.onclick = () => openModal(currentYear, month + 1, day);
                     if (userRole === 'admin' && !hasAfastamento) {
                         dayDiv.classList.add('admin-day-hint');
                     }
@@ -5995,9 +6009,9 @@
             return parts.length > 1 ? parts[0] + ' ' + parts[parts.length-1] : name;
         }
 
-        function getResponsibleForDPOnDay(dp, mes, dia) {
-            const dayDetails = ((detalhesAfastamentos[mes] || {})[dia]) || [];
-            const dayAbsent  = ((afastamentos[mes]          || {})[dia]) || [];
+        function getResponsibleForDPOnDay(dp, ano, mes, dia) {
+            const dayDetails = (((detalhesAfastamentos[ano] || {})[mes]) || {})[dia] || [];
+            const dayAbsent  = (((afastamentos[ano]          || {})[mes]) || {})[dia] || [];
 
             const prefixMatch = dp.label.match(/^(\d+ª DP)/);
             const dpPrefix    = prefixMatch ? prefixMatch[1] : null;
@@ -6080,7 +6094,7 @@
                 days.forEach(d => {
                     const isWeekday = d.getDay() >= 1 && d.getDay() <= 5;
                     const baseClass = (active && dp.highlight && isWeekday) ? dp.highlight : '';
-                    const resp = getResponsibleForDPOnDay(dp, d.getMonth()+1, d.getDate());
+                    const resp = getResponsibleForDPOnDay(dp, d.getFullYear(), d.getMonth()+1, d.getDate());
                     let cellClass = baseClass;
                     let cell;
                     if (resp.semCobertura && isWeekday) {
