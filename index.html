@@ -98,6 +98,7 @@
         .header-nav-btn.btn-atribuicoes { background: linear-gradient(135deg, #3730a3 0%, #818cf8 100%); }
         .header-nav-btn.btn-designacoes { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
         .header-nav-btn.btn-adote       { background: linear-gradient(135deg, #0f766e 0%, #2dd4bf 100%); }
+        .header-nav-btn.btn-equipe      { background: linear-gradient(135deg, #0369a1 0%, #38bdf8 100%); }
         .header-nav-btn.btn-diario      { background: linear-gradient(135deg, #065f46 0%, #10b981 100%); }
 
 
@@ -1069,6 +1070,63 @@
             background: linear-gradient(135deg, #0f766e 0%, #2dd4bf 100%);
             color: white;
         }
+
+        .btn-equipe {
+            background: linear-gradient(135deg, #0369a1 0%, #38bdf8 100%);
+            color: white;
+        }
+
+        /* ─── Seção Equipe ───────────────────────────────────────── */
+        #equipe-year-selector { display:flex; gap:8px; margin-bottom:12px; }
+        .equipe-year-btn {
+            padding: 6px 22px; border-radius: 20px;
+            border: 2px solid var(--primary-color);
+            background: transparent; color: var(--primary-color);
+            font-size: 0.95em; font-weight: 600; cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .equipe-year-btn:hover, .equipe-year-btn.active { background: var(--primary-color); color: #fff; }
+
+        .equipe-month-selector { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+        .equipe-month-btn {
+            padding: 5px 14px; border-radius: 16px;
+            border: 1.5px solid #cbd5e1; background: #fff;
+            color: var(--text-primary); font-size: 0.88em; cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
+        }
+        .equipe-month-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .equipe-month-btn.active {
+            background: var(--primary-color); color: #fff; border-color: var(--primary-color);
+        }
+
+        .equipe-calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px;
+        }
+        .equipe-cal-header {
+            text-align: center; font-weight: 700; font-size: 0.82em;
+            color: var(--primary-color); padding: 6px 0;
+        }
+        .equipe-cal-day {
+            min-height: 72px; border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 4px; background: #fff;
+            cursor: default; transition: background 0.15s;
+        }
+        .equipe-cal-day.empty { background: transparent; border-color: transparent; }
+        .equipe-cal-day.has-af { cursor: pointer; }
+        .equipe-cal-day.has-af:hover { background: #f0f9ff; }
+        .equipe-cal-day .day-num {
+            font-size: 0.8em; font-weight: 600; color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+        .equipe-badge {
+            display: block; border-radius: 10px; padding: 2px 6px;
+            font-size: 0.72em; font-weight: 600; color: #fff;
+            margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .equipe-badge.ferias  { background: #2563eb; }
+        .equipe-badge.folga   { background: #d97706; }
+        .equipe-badge.outro   { background: #6b7280; }
 
         /* ─── Seção Adote ────────────────────────────────────────── */
         .adote-header { margin-bottom: 18px; }
@@ -2829,6 +2887,7 @@
             <div id="header-nav">
                 <a class="header-nav-btn btn-atribuicoes" href="?s=atribuicoes" onclick="showSection('atribuicoes');return false;">⚖️ Atribuições</a>
                 <a class="header-nav-btn btn-designacoes" href="?s=designacoes" onclick="showSection('designacoes');return false;">📋 Designações</a>
+                <a class="header-nav-btn btn-equipe" href="?s=equipe" onclick="showSection('equipe');return false;">👥 Férias Equipe</a>
                 <a class="header-nav-btn btn-adote" href="?s=adote" onclick="showSection('adote');return false;">🏘️ Adote</a>
                 <a class="header-nav-btn btn-diario" href="?s=diario-oficial" onclick="showSection('diario-oficial');return false;">📰 Diário Oficial</a>
             </div>
@@ -2850,6 +2909,11 @@
                     <span class="landing-btn-icon">📋</span>
                     <span class="landing-btn-title">Designações</span>
                     <span class="landing-btn-desc">Escalas semanais, calendário de afastamentos e tabela de defensores</span>
+                </button>
+                <button class="landing-btn btn-equipe" onclick="showSection('equipe')">
+                    <span class="landing-btn-icon">👥</span>
+                    <span class="landing-btn-title">Férias Equipe</span>
+                    <span class="landing-btn-desc">Calendário de férias, folgas e afastamentos dos servidores</span>
                 </button>
                 <button class="landing-btn btn-adote" onclick="showSection('adote')">
                     <span class="landing-btn-icon">🏘️</span>
@@ -3049,6 +3113,89 @@
         </div>
 
         <!-- Seção: Adote uma Comarca / Expandir Presença -->
+        <!-- Seção: Férias Equipe -->
+        <div id="equipe" class="tab-content">
+            <div class="card">
+                <h2 id="equipe-titulo">👥 Férias e Afastamentos da Equipe 2026</h2>
+                <div id="equipe-year-selector">
+                    <button id="btn-equipe-ano-2026" class="equipe-year-btn active" onclick="switchEquipeYear(2026)">2026</button>
+                    <button id="btn-equipe-ano-2027" class="equipe-year-btn" onclick="switchEquipeYear(2027)">2027</button>
+                </div>
+                <div class="equipe-month-selector" id="equipe-month-selector"></div>
+                <div id="equipe-calendar-container"></div>
+                <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                    <span style="font-size:0.82em;color:var(--text-secondary);">
+                        <span class="equipe-badge ferias" style="display:inline-block;margin-right:4px;">férias</span>
+                        <span class="equipe-badge folga" style="display:inline-block;margin-right:4px;">folga</span>
+                        <span class="equipe-badge outro" style="display:inline-block;margin-right:4px;">outro</span>
+                    </span>
+                    <button class="btn-salvar admin-only" onclick="abrirFormEquipe(null,equipeCurrentYear,equipeCurrentMonth+1,null)" style="margin-left:auto;">➕ Novo Afastamento</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Equipe: detalhes do dia -->
+        <div id="equipe-modal-overlay" class="form-af-overlay" onclick="fecharModalEquipe(event)">
+            <div class="form-af-content" style="max-width:600px" onclick="event.stopPropagation()">
+                <div class="form-af-header">
+                    <h2>📋 Afastamentos da Equipe</h2>
+                    <button class="form-af-close" onclick="fecharModalEquipe()">×</button>
+                </div>
+                <div class="form-af-body">
+                    <div id="equipe-modal-date" style="background:#f0f9ff;border-left:4px solid var(--primary-color);padding:10px 16px;border-radius:6px;margin-bottom:16px;font-weight:600;"></div>
+                    <div id="equipe-modal-lista"></div>
+                    <div style="margin-top:16px;text-align:right;">
+                        <button class="btn-salvar admin-only" onclick="abrirFormEquipe(null,_equipeModalAno,_equipeModalMes,_equipeModalDia)">➕ Novo Afastamento</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário Equipe: cadastro/edição -->
+        <div id="equipe-form-overlay" class="form-af-overlay" onclick="fecharFormEquipe(event)">
+            <div class="form-af-content" style="max-width:560px" onclick="event.stopPropagation()">
+                <div class="form-af-header" style="background:linear-gradient(135deg,#0369a1,#38bdf8)">
+                    <h2 id="equipe-form-titulo">➕ Novo Afastamento</h2>
+                    <button class="form-af-close" onclick="fecharFormEquipe()">×</button>
+                </div>
+                <div class="form-af-body">
+                    <form id="equipe-form" onsubmit="event.preventDefault();salvarEquipeFirestore()">
+                        <input type="hidden" id="equipe-form-id">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                            <div class="form-group" style="grid-column:1/-1">
+                                <label>NOME DO SERVIDOR</label>
+                                <input type="text" id="equipe-form-nome" placeholder="ex: Natália" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group">
+                                <label>DATA INÍCIO</label>
+                                <input type="date" id="equipe-form-inicio" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group">
+                                <label>DATA FIM</label>
+                                <input type="date" id="equipe-form-fim" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group">
+                                <label>TIPO</label>
+                                <select id="equipe-form-tipo" required onchange="document.getElementById('equipe-form-outro-group').style.display=this.value==='outro'?'block':'none'" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;background:#fff;">
+                                    <option value="ferias">Férias</option>
+                                    <option value="folga">Folga</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="equipe-form-outro-group" style="display:none;grid-column:1/-1">
+                                <label>ESPECIFICAR TIPO</label>
+                                <input type="text" id="equipe-form-outro-texto" placeholder="ex: Licença médica" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                        </div>
+                        <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border-color)">
+                            <button type="button" class="btn-cancelar" onclick="fecharFormEquipe()">Cancelar</button>
+                            <button type="submit" id="equipe-form-submit" class="btn-salvar-form">💾 Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div id="adote" class="tab-content">
             <div class="card">
                 <div id="adote-content">
@@ -6350,6 +6497,10 @@
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('atribuicoes').classList.add('active');
                 renderAtribuicoes();
+            } else if (tabName === 'equipe') {
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('equipe').classList.add('active');
+                renderEquipeCalendar();
             } else if (tabName === 'adote') {
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('adote').classList.add('active');
@@ -6786,6 +6937,285 @@
         let _adoteCelulaAtiva   = null;
         let _adoteCelulasBackup = {};
         let _adoteCelulasCache  = null;
+
+        // =====================================================================
+        // Férias Equipe
+        // =====================================================================
+
+        let equipeCurrentYear  = new Date().getFullYear();
+        let equipeCurrentMonth = new Date().getMonth(); // 0-based
+        let equipeAfastamentos = {}; // [ano][mes][dia] → [{id, nome, tipo, tipo_custom}]
+        let equipeMap          = {}; // id → registro completo
+        let _equipeModalAno = null, _equipeModalMes = null, _equipeModalDia = null;
+
+        const EQUIPE_TIPO_LABELS = { ferias: 'Férias', folga: 'Folga', outro: 'Outro' };
+
+        async function loadEquipeFirestore() {
+            try {
+                const snap = await db.collection('afastamentos_equipe').get();
+                equipeAfastamentos = {};
+                equipeMap = {};
+                snap.forEach(doc => {
+                    const reg = { id: doc.id, ...doc.data() };
+                    equipeMap[doc.id] = reg;
+                    if (!reg.data_inicio || !reg.data_fim) return;
+                    const start = new Date(reg.data_inicio + 'T12:00:00');
+                    const end   = new Date(reg.data_fim    + 'T12:00:00');
+                    let cur = new Date(start);
+                    while (cur <= end) {
+                        const y = cur.getFullYear();
+                        const m = cur.getMonth() + 1;
+                        const d = cur.getDate();
+                        if (!equipeAfastamentos[y])       equipeAfastamentos[y] = {};
+                        if (!equipeAfastamentos[y][m])    equipeAfastamentos[y][m] = {};
+                        if (!equipeAfastamentos[y][m][d]) equipeAfastamentos[y][m][d] = [];
+                        equipeAfastamentos[y][m][d].push({
+                            id: reg.id, nome: reg.nome, tipo: reg.tipo,
+                            tipo_custom: reg.tipo_custom || '',
+                            data_inicio: reg.data_inicio, data_fim: reg.data_fim
+                        });
+                        cur.setDate(cur.getDate() + 1);
+                    }
+                });
+            } catch(e) { console.warn('Erro ao carregar equipe:', e); }
+        }
+
+        function switchEquipeYear(year) {
+            equipeCurrentYear = year;
+            document.querySelectorAll('.equipe-year-btn').forEach(b => {
+                b.classList.toggle('active', parseInt(b.textContent) === year);
+            });
+            const titulo = document.getElementById('equipe-titulo');
+            if (titulo) titulo.textContent = `👥 Férias e Afastamentos da Equipe ${year}`;
+            renderEquipeCalendar();
+        }
+
+        function renderEquipeCalendar() {
+            _aplicarModoEdicao();
+            const year  = equipeCurrentYear;
+            const month = equipeCurrentMonth;
+
+            // Seletor de meses
+            const monthSel = document.getElementById('equipe-month-selector');
+            if (monthSel) {
+                monthSel.innerHTML = '';
+                MONTH_NAMES_PT.forEach((nome, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'equipe-month-btn' + (i === month ? ' active' : '');
+                    btn.textContent = nome;
+                    btn.onclick = () => { equipeCurrentMonth = i; renderEquipeCalendar(); };
+                    monthSel.appendChild(btn);
+                });
+            }
+
+            const container = document.getElementById('equipe-calendar-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Cabeçalho dias da semana
+            const daysOfWeek = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+            const headerGrid = document.createElement('div');
+            headerGrid.className = 'equipe-calendar-grid';
+            daysOfWeek.forEach(d => {
+                const h = document.createElement('div');
+                h.className = 'equipe-cal-header';
+                h.textContent = d;
+                headerGrid.appendChild(h);
+            });
+            container.appendChild(headerGrid);
+
+            // Grade de dias
+            const firstDay   = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const monthData  = (equipeAfastamentos[year] || {})[month + 1] || {};
+            const grid = document.createElement('div');
+            grid.className = 'equipe-calendar-grid';
+
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'equipe-cal-day empty';
+                grid.appendChild(empty);
+            }
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = document.createElement('div');
+                const entries = monthData[day] || [];
+                dayDiv.className = 'equipe-cal-day' + (entries.length ? ' has-af' : '');
+
+                const num = document.createElement('div');
+                num.className = 'day-num';
+                num.textContent = day;
+                dayDiv.appendChild(num);
+
+                entries.forEach(e => {
+                    const badge = document.createElement('span');
+                    badge.className = `equipe-badge ${e.tipo || 'outro'}`;
+                    badge.textContent = e.nome;
+                    badge.title = `${e.nome} — ${EQUIPE_TIPO_LABELS[e.tipo] || e.tipo_custom || 'Outro'}`;
+                    dayDiv.appendChild(badge);
+                });
+
+                if (entries.length) {
+                    dayDiv.onclick = () => abrirModalEquipe(year, month + 1, day);
+                }
+                grid.appendChild(dayDiv);
+            }
+            container.appendChild(grid);
+        }
+
+        function abrirModalEquipe(ano, mes, dia) {
+            _equipeModalAno = ano; _equipeModalMes = mes; _equipeModalDia = dia;
+            const overlay = document.getElementById('equipe-modal-overlay');
+            const dateEl  = document.getElementById('equipe-modal-date');
+            const listaEl = document.getElementById('equipe-modal-lista');
+            const isAdmin = userRole === 'admin';
+
+            dateEl.textContent = `📅 ${dia} de ${months[mes - 1]} de ${ano}`;
+
+            const entries = ((equipeAfastamentos[ano] || {})[mes] || {})[dia] || [];
+            if (!entries.length) {
+                listaEl.innerHTML = '<p style="color:var(--text-secondary);text-align:center;">Nenhum afastamento nesta data.</p>';
+            } else {
+                // Agrupar por id (um registro pode cobrir vários dias)
+                const seen = new Set();
+                let html = '<table style="width:100%;border-collapse:collapse;font-size:0.93em;">';
+                html += '<thead><tr style="background:#f0f9ff;"><th style="padding:8px;text-align:left;">Servidor</th><th style="padding:8px;text-align:left;">Tipo</th><th style="padding:8px;text-align:left;">Período</th>';
+                if (isAdmin) html += '<th style="padding:8px;text-align:center;">Ações</th>';
+                html += '</tr></thead><tbody>';
+                entries.forEach(e => {
+                    if (seen.has(e.id)) return;
+                    seen.add(e.id);
+                    const tipoLabel = e.tipo === 'outro' ? (e.tipo_custom || 'Outro') : (EQUIPE_TIPO_LABELS[e.tipo] || e.tipo);
+                    const tipoClass = e.tipo === 'ferias' ? 'ferias' : e.tipo === 'folga' ? 'folga' : 'outro';
+                    const periodo = e.data_inicio === e.data_fim
+                        ? _fmtEquipeDate(e.data_inicio)
+                        : `${_fmtEquipeDate(e.data_inicio)} a ${_fmtEquipeDate(e.data_fim)}`;
+                    let acoes = '';
+                    if (isAdmin) acoes = `<td style="text-align:center;vertical-align:middle;white-space:nowrap">
+                        <button class="btn-acao-tabela btn-editar-af" title="Editar" onclick="abrirFormEquipe('${e.id}',${ano},${mes},${dia})">✏️</button>
+                        <button class="btn-acao-tabela btn-deletar-af" title="Excluir" onclick="confirmarDeletarEquipe('${e.id}',${ano},${mes},${dia})">🗑️</button>
+                    </td>`;
+                    html += `<tr style="border-top:1px solid var(--border-color)">
+                        <td style="padding:8px;font-weight:600">${e.nome}</td>
+                        <td style="padding:8px"><span class="equipe-badge ${tipoClass}" style="display:inline-block">${tipoLabel}</span></td>
+                        <td style="padding:8px;font-size:0.88em;color:var(--text-secondary)">${periodo}</td>
+                        ${acoes}</tr>`;
+                });
+                html += '</tbody></table>';
+                listaEl.innerHTML = html;
+            }
+
+            // Mostrar/ocultar botão admin
+            overlay.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = isAdmin ? 'inline-flex' : 'none';
+            });
+            overlay.classList.add('active');
+        }
+
+        function fecharModalEquipe(e) {
+            if (e && e.target !== document.getElementById('equipe-modal-overlay')) return;
+            document.getElementById('equipe-modal-overlay').classList.remove('active');
+        }
+
+        function abrirFormEquipe(id, ano, mes, dia) {
+            const overlay = document.getElementById('equipe-form-overlay');
+            document.getElementById('equipe-form').reset();
+            document.getElementById('equipe-form-id').value = '';
+            document.getElementById('equipe-form-outro-group').style.display = 'none';
+
+            if (id && equipeMap[id]) {
+                const reg = equipeMap[id];
+                document.getElementById('equipe-form-titulo').textContent = '✏️ Editar Afastamento';
+                document.getElementById('equipe-form-id').value    = id;
+                document.getElementById('equipe-form-nome').value  = reg.nome || '';
+                document.getElementById('equipe-form-inicio').value = reg.data_inicio || '';
+                document.getElementById('equipe-form-fim').value    = reg.data_fim    || '';
+                document.getElementById('equipe-form-tipo').value   = reg.tipo        || 'ferias';
+                if (reg.tipo === 'outro') {
+                    document.getElementById('equipe-form-outro-group').style.display = 'block';
+                    document.getElementById('equipe-form-outro-texto').value = reg.tipo_custom || '';
+                }
+            } else {
+                document.getElementById('equipe-form-titulo').textContent = '➕ Novo Afastamento';
+                if (ano && mes && dia) {
+                    const dateStr = `${ano}-${String(mes).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+                    document.getElementById('equipe-form-inicio').value = dateStr;
+                    document.getElementById('equipe-form-fim').value    = dateStr;
+                }
+            }
+            // Fechar modal de detalhes se estiver aberto
+            document.getElementById('equipe-modal-overlay').classList.remove('active');
+            overlay.classList.add('active');
+        }
+
+        function fecharFormEquipe(e) {
+            if (e && e.target !== document.getElementById('equipe-form-overlay')) return;
+            document.getElementById('equipe-form-overlay').classList.remove('active');
+        }
+
+        async function salvarEquipeFirestore() {
+            const submitBtn = document.getElementById('equipe-form-submit');
+            submitBtn.disabled = true; submitBtn.innerHTML = '⏳ Salvando...';
+            try {
+                const id      = document.getElementById('equipe-form-id').value;
+                const nome    = document.getElementById('equipe-form-nome').value.trim();
+                const inicio  = document.getElementById('equipe-form-inicio').value;
+                const fim     = document.getElementById('equipe-form-fim').value;
+                const tipo    = document.getElementById('equipe-form-tipo').value;
+                const custom  = document.getElementById('equipe-form-outro-texto').value.trim();
+
+                if (!nome)   throw new Error('Informe o nome do servidor.');
+                if (!inicio) throw new Error('Informe a data de início.');
+                if (!fim)    throw new Error('Informe a data de fim.');
+                if (fim < inicio) throw new Error('Data fim não pode ser anterior à data início.');
+                if (tipo === 'outro' && !custom) throw new Error('Especifique o tipo de afastamento.');
+
+                const dados = {
+                    nome, tipo,
+                    tipo_custom: tipo === 'outro' ? custom : '',
+                    data_inicio: inicio, data_fim: fim,
+                    ano: parseInt(inicio.substring(0, 4)),
+                    atualizado_por: firebase.auth().currentUser?.email || '',
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                if (id) {
+                    await db.collection('afastamentos_equipe').doc(id).update(dados);
+                } else {
+                    dados.criado_por = firebase.auth().currentUser?.email || '';
+                    dados.criado_em  = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('afastamentos_equipe').add(dados);
+                }
+                fecharFormEquipe();
+                mostrarToast('✅ Afastamento salvo!');
+                await loadEquipeFirestore();
+                renderEquipeCalendar();
+            } catch(e) {
+                mostrarToast('❌ Erro: ' + e.message, true);
+            } finally {
+                submitBtn.disabled = false; submitBtn.innerHTML = '💾 Salvar';
+            }
+        }
+
+        async function confirmarDeletarEquipe(id, ano, mes, dia) {
+            const reg = equipeMap[id];
+            if (!reg) return;
+            if (!confirm(`Excluir afastamento de ${reg.nome} (${reg.data_inicio} a ${reg.data_fim})?`)) return;
+            try {
+                await db.collection('afastamentos_equipe').doc(id).delete();
+                mostrarToast('✅ Afastamento excluído.');
+                await loadEquipeFirestore();
+                renderEquipeCalendar();
+                if (mes && dia) abrirModalEquipe(ano, mes, dia);
+            } catch(e) {
+                mostrarToast('❌ Erro ao excluir: ' + e.message, true);
+            }
+        }
+
+        function _fmtEquipeDate(str) {
+            if (!str) return '';
+            const [y, m, d] = str.split('-');
+            return `${d}/${m}/${y}`;
+        }
 
         function renderAdote() {
             const el = document.getElementById('adote-content');
@@ -7838,6 +8268,7 @@
                 if (currentUser) {
                     await loadAfastamentosFirestore();
                     await loadTitularesFirestore();
+                    await loadEquipeFirestore();
                 }
 
             } catch(err) {
