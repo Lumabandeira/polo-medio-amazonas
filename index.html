@@ -3148,11 +3148,11 @@
                         </div>
                         <div class="form-group">
                             <label>Data Início</label>
-                            <input type="date" id="form-af-inicio" min="2026-01-01" max="2026-12-31" required onchange="onDatasChange()">
+                            <input type="date" id="form-af-inicio" required onchange="onDatasChange()">
                         </div>
                         <div class="form-group">
                             <label>Data Fim</label>
-                            <input type="date" id="form-af-fim" min="2026-01-01" max="2026-12-31" required onchange="onDatasChange()">
+                            <input type="date" id="form-af-fim" required onchange="onDatasChange()">
                         </div>
                         <div class="form-group">
                             <label>Tipo</label>
@@ -4217,7 +4217,8 @@
                 // ── Novo afastamento ──
                 document.getElementById('form-af-titulo').textContent = '➕ Novo Afastamento';
                 if (mes && dia) {
-                    const dateStr = `2026-${String(mes).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+                    const y = ano || currentYear;
+                    const dateStr = `${y}-${String(mes).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
                     document.getElementById('form-af-inicio').value = dateStr;
                     document.getElementById('form-af-fim').value    = dateStr;
                 }
