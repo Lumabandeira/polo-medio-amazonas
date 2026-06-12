@@ -7613,6 +7613,15 @@
                                     : ` — ${esc(hist.portaria_entrada)}`;
                             }
                             detalhe += `</span>`;
+                            if (hist.fim) {
+                                detalhe += `<br><span style="${s}">Último dia: ${fmtDate(hist.fim)}`;
+                                if (hist.portaria_saida) {
+                                    detalhe += hist.do_saida
+                                        ? ` — <a href="${esc(hist.do_saida)}" target="_blank" rel="noopener" style="color:var(--primary-color)">${esc(hist.portaria_saida)}</a>`
+                                        : ` — ${esc(hist.portaria_saida)}`;
+                                }
+                                detalhe += `</span>`;
+                            }
                         }
                         html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
                     });
