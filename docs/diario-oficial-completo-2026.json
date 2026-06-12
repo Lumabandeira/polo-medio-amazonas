@@ -3923,5 +3923,87 @@
         "resumo": "Designa defensor para atuar em audiências na Comarca de Iranduba nos dias 09 e 11 de junho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2667,
+    "data": "2026-06-11",
+    "data_formatada": "11/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2667-2026__publicada_em_11_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 954/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007639-1",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "projeto",
+          "comarca"
+        ],
+        "trechos": [
+          "I – TORNAR público o resultado dos pedidos de inscrição para o 15º Ciclo do Projeto \"Adote uma Comarca\", nos termos do Anexo Único",
+          "Christiano Pinheiro da Costa | Itapiranga e Barreirinha | Polo do Médio Amazonas e Polo do Baixo Amazonas | Grupo Único (Intimações)",
+          "Leonardo Figliuolo | Urucurituba e São Sebastião do Uatumã | Polo do Médio Amazonas | Grupo Único (Intimações)",
+          "Melissa Souza Fonte Credie e Borborema | Boa Fonte e Urucará | Polo do Médio Amazonas | Grupo Único (Intimações)",
+          "Ricardo Queiroz de Paiva | Guajará e Silves | Polo do Médio Amazonas | Grupo Único (Intimações)"
+        ],
+        "resumo": "Publica resultado do 15º Ciclo do Projeto \"Adote uma Comarca\" com designação de defensores para o Polo Médio Amazonas (Itapiranga, Barreirinha, Urucurituba, São Sebastião do Uatumã, Boa Fonte, Urucará, Guajará e Silves)"
+      },
+      {
+        "numero": "Portaria Nº 579/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007782-7",
+        "sgi": "1788",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Enio Jorge Lima Barbalho Junior, Defensor Público de 3ª Classe, nos trechos Itacoatiara/São Sebastião do Uatumã/Itacoatiara, no período de 29 de junho a 03 de julho de 2026, a fim de realizar atendimentos presenciais na comarca de São Sebastião do Uatumã-AM",
+          "II - DETERMINAR o pagamento de diárias ao defensor público acima relacionado"
+        ],
+        "resumo": "Autoriza deslocamento do Defensor Público Enio Jorge Lima Barbalho Junior para São Sebastião do Uatumã (Polo Médio) de 29/06 a 03/07/2026"
+      },
+      {
+        "numero": "Portaria Nº 595/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007957-9",
+        "sgi": "2600924",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Emilly Bianca Ferreira dos Santos, Defensora Pública de 3ª Classe, nos trechos Itacoatiara/Urucará/Itacoatiara, no período de 22 a 26 junho de 2026, a fim de realizar atendimento presencial na comarca de Urucará-AM",
+          "II - DETERMINAR o pagamento de diárias à defensora pública acima relacionada"
+        ],
+        "resumo": "Autoriza deslocamento da Defensora Pública Emilly Bianca Ferreira dos Santos para Urucará (Polo Médio) de 22 a 26/06/2026"
+      },
+      {
+        "numero": "Portaria Nº 951/2026-GDPG/DPE/AM",
+        "sei": "26.0.000005894-6",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Renata Visco Costa de Almeida, Defensora Pública de 3ª Classe, Max do Nascimento Coelho, Assistente Técnico de Defensoria, Georgia do Nascimento Juca, Assessora de Defensor Público DPE-3, João Coelho de Souza, Assessor Jurídico DPE-3, Rafael Pereira de Freitas, Assessor de Defensor Público DPE-3, nos trechos Manaus/Itacoatiara/Manaus, no período de 14 a 17 de junho de 2026, a fim de realizarem Mutirão de Atendimento Previdenciário no município de Itacoatiara/AM",
+          "II - AUTORIZAR o deslocamento de Thiago Torres Cordeiro, Defensor Público de 3ª Classe, nos trechos Coari/Itacoatiara/Coari, no período de 13 a 22 de junho de 2026, a fim de realizar Mutirão de Atendimento Previdenciário no município de Itacoatiara/AM",
+          "III - AUTORIZAR o deslocamento de José Everton Pires Binda, Chefe de Cerimonial, Dalia Rose De Oliveira Paixão, Assessora de Cerimonial e Impressa I DPE-2, nos trechos Manaus/Itacoatiara/Manaus, no período de 13 a 15 de junho de 2026, a fim de prestar apoio e organizar a solenidade de abertura do Mutirão de Atendimento Previdenciário",
+          "IV - AUTORIZAR o deslocamento de Mauricio Pinto Flaga, Assistente Técnico em Tecnologia da Informação de Defensoria, nos trechos Manaus/Itacoatiara/Manaus, no período de 13 a 17 de junho de 2026, a fim de prestar apoio técnico na realização do Mutirão de Atendimento Previdenciário em Itacoatiara/AM",
+          "V - AUTORIZAR o deslocamento de Luana Carvalho da Silva, Diretora DPE-5, Luiz Felipe Santos de Sousa, Assessor Técnico II DPE-1, nos trechos Manaus/Itacoatiara/Manaus, no período de 14 a 15 de junho de 2026, a fim de realizarem a cobertura jornalística das atividades do Mutirão Previdenciário em Itacoatiara-AM",
+          "VI - AUTORIZAR o deslocamento de José Marques Gonçalves Júnior, Auxiliar I de Defensoria, nos trechos Manaus/Itacoatiara/Manaus, no período de 14 a 17 de junho de 2026, a fim de conduzir os defensores públicos e os servidores públicos acima relacionados ao município de Itacoatiara/AM",
+          "VII - AUTORIZAR o deslocamento de Paulo Roberto de Carvalho, Auxiliar I de Defensoria, nos trechos Manaus/Itacoatiara/Manaus, no período de 13 a 15 de junho de 2026, a fim de conduzir os defensores públicos e os servidores públicos acima relacionados ao município de Itacoatiara/AM",
+          "VIII - AUTORIZAR o deslocamento de Fabio Honda Nascimento, Chefe de Assessoria Militar DPE-5, nos trechos Manaus/Itacoatiara/Manaus, no período de 14 a 15 de junho de 2026, a fim de acompanhar o Defensor Público Geral Rafael Vinheiro Monteiro Barbosa durante a participação da solenidade de abertura do Mutirão de Atendimento Previdenciário, na cidade de Itacoatiara/AM",
+          "IX - AUTORIZAR o deslocamento de Hudson de Souza Pena, Auxiliar I de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no período de 14 a 15 de junho de 2026, a fim de conduzir o Defensor Público Geral Rafael Vinheiro Monteiro Barbosa e o servidor relacionado no inciso VIII ao município de Itacoatiara-AM",
+          "X - DETERMINAR o pagamento de diárias aos defensores públicos e servidores públicos acima relacionados, bem como o pagamento de diárias ao Defensor Público Thiago Torres Cordeiro apenas referente ao periodo de 13 a 17 de junho de 2026"
+        ],
+        "resumo": "Autoriza deslocamento de múltiplos defensores e servidores para Itacoatiara (Polo Médio) entre 13 a 17/22 de junho de 2026 para realização de Mutirão de Atendimento Previdenciário"
+      }
+    ]
   }
 ]
