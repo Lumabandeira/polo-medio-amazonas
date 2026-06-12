@@ -104,6 +104,18 @@ afastamentos_admin/{id}   ← afastamentos adicionados pelo admin via calendári
   precisa_revisao: true    ← true quando data_fim está vazia (designação aberta)
   motivo_revisao: "sem data fim — designação aberta (\"a contar do dia X\")"
 
+afastamentos_equipe/{id}   ← afastamentos dos servidores (férias/folga/outro), sem DPs nem substitutos
+  nome:         "Natália"
+  tipo:         "ferias" | "folga" | "outro"
+  tipo_custom:  ""        ← texto livre quando tipo=="outro"
+  data_inicio:  "2026-06-29"
+  data_fim:     "2026-07-18"
+  ano:          2026      ← ano de data_inicio (para filtros futuros)
+  criado_por:   "email@..."
+  criado_em:    timestamp
+  atualizado_por: "email@..."
+  atualizado_em:  timestamp
+
 remocoes_admin/{id}   ← portarias de Concurso de Remoção OU cessação de designação
   tipo: "cessacao_designacao"  ← presente apenas em cessações; ausente = concurso de remoção
   portaria_numero: "Portaria nº 602/2026-GDPG/DPE/AM"  ← portaria cessadora (para cessações)
@@ -295,7 +307,7 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 28/05/2026 — sessão 19)
+## Estado atual do site (atualizado em 12/06/2026 — sessão 20)
 
 ### O que já foi implementado ✅
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -373,13 +385,19 @@ github-pages/
 - **Navegação rápida no header (sessão 19)** — `#header-nav` com 4 botões `.header-nav-btn` (⚖️ Atribuições, 📋 Designações, 🏘️ Adote, 📰 Diário Oficial). Mesmas cores gradiente da landing page. Sempre visíveis no header (inclusive na landing). CSS: `padding: 8px 22px; font-size: 1.06em; border-radius: 24px`. Responsivo: `font-size: 0.94em; padding: 7px 14px` em ≤ 768px.
 - **Subtítulo do header alterado (sessão 19)** — de "Designações dos Defensores Públicos e Calendário de Afastamentos 2026" para "Itacoatiara, Itapiranga, São Sebastião do Uatumã, Silves, Urucará e Urucurituba". `margin-bottom` do `<h1>` reduzido de 10px para 4px (texto das comarcas mais próximo do título).
 - **Texto de descrição dos botões da landing aumentado (sessão 19)** — `.landing-btn-desc` de `0.95em` para `1.24em` (+30%).
+- **Designações Semanais e Calendário abrem no mês vigente (sessão 20)** — `currentMonth` inicializado com `new Date().getMonth()` em vez de `0`. Havia duas chamadas `filterByMonth('janeiro')` em `showTab()` (uma em cada bloco separado) e uma na inicialização — todas corrigidas para `filterByMonth(MONTH_IDS_PT[new Date().getMonth()])`. O botão ativo no seletor de meses também corrigido de `i === 0` para `i === new Date().getMonth()`.
+- **Calendário suporta múltiplos anos — seletor 2026/2027 (sessão 20)** — variável `currentYear` adicionada (inicializada com `new Date().getFullYear()`). Botões `[2026]` / `[2027]` acima do seletor de mês (`.cal-year-btn`, estilo pill com active state). `changeMonth()` agora avança/recua o ano ao cruzar dezembro/janeiro. `renderCalendar()` usa `currentYear` em vez do ano fixo `2026`. `switchYear(year)` troca o ano e re-renderiza. Título do card e botão ativo sincronizados automaticamente.
+- **`afastamentos` e `detalhesAfastamentos` tornados year-aware (sessão 20)** — estrutura migrada de `[mes][dia]` para `[ano][mes][dia]`. Todos os builders (`buildAfastamentosFromJSONRegistros`, `buildDetalhesFromJSONEventos`, `mergeAfastamentoFirestoreRecord` — 5 blocos internos) extraem o ano via `cur.getFullYear()`. Todos os leitores (`renderCalendar`, `getResponsibleForDPOnDay`, `getDetalhesDia`) usam `currentYear` ou recebem `ano` como parâmetro. Funções `openModal`, `abrirFormAfastamento`, `confirmarDeletarAfastamento` recebem `ano` como primeiro parâmetro; nova global `_formAfAnoCtx`. Resolve o bug de afastamentos de 2027 aparecendo no calendário de 2026.
+- **Formulário de afastamento: data pré-preenchida usa ano correto (sessão 20)** — a linha que montava `dateStr` usava `2026` fixo; corrigido para `ano || currentYear`. Atributos `min`/`max` fixos em `2026-01-01`/`2026-12-31` removidos dos inputs de data.
+- **Card da aba Defensorias exibe "Último dia" (sessão 20)** — quando `hist.fim` está preenchido, exibe linha adicional "Último dia: DD/MM/YYYY" (com portaria de saída como link se houver), abaixo do "Primeiro dia". Mesmo padrão já usado nos cards de ex-membros.
+- **Nova seção "Férias Equipe" (sessão 20)** — botão 👥 azul-céu (`#0369a1 → #38bdf8`) na landing page (entre Designações e Adote) e no header. Seção `#equipe` sem barra de abas. Calendário de badges por mês com seletor de ano (2026/2027) e seletor de meses. Badges coloridos: azul = férias, âmbar = folga, cinza = outro. Modal de detalhes ao clicar no dia (tabela com nome, tipo, período; botões ✏️ 🗑️ para admins). Formulário CRUD: Nome (texto livre), Data início, Data fim, Tipo (Férias/Folga/Outro). Coleção Firestore: `afastamentos_equipe` (campos: `nome`, `tipo`, `tipo_custom`, `data_inicio`, `data_fim`, `ano`, `criado_por`, `criado_em`, `atualizado_por`, `atualizado_em`). Carregada em `loadJSONData()` via `loadEquipeFirestore()`. Globals: `equipeCurrentYear`, `equipeCurrentMonth`, `equipeAfastamentos[ano][mes][dia]`, `equipeMap`. Funções: `loadEquipeFirestore()`, `switchEquipeYear(year)`, `renderEquipeCalendar()`, `abrirModalEquipe(ano,mes,dia)`, `fecharModalEquipe()`, `abrirFormEquipe(id,ano,mes,dia)`, `fecharFormEquipe()`, `salvarEquipeFirestore()`, `confirmarDeletarEquipe(id,ano,mes,dia)`, `_fmtEquipeDate(str)`.
 
 ### O que ainda falta implementar ⏳
 - ~~**Dispensar registro incorreto do Eliaquim em `afastamentos_admin`**~~ ✅ Deletado manualmente no Firestore Console em 07/05/2026. O registro correto (em `designacoes_cumulativas_admin`) será criado automaticamente na próxima execução da automação caso a edição de 06/05/2026 ainda não tenha sido reprocessada.
 - **Cadastrar os outros 36 usuários restantes** (1 admin + 35 viewers) no Firebase Auth + Firestore — Larice Bruce e José Antônio já cadastrados em 23/04/2026
 - **Dados privados da equipe** — WhatsApp, contatos internos (estrutura no Firestore planejada mas não implementada)
 - **Botão "Plantão"** — nova seção na landing page com escala de plantão de defensores e servidores. Arquitetura a definir na próxima sessão (dados estáticos no HTML? JSON? Firestore?).
-- **Botão "Escala de Férias"** (futuro) — calendário visual de férias da equipe (defensores + servidores). Ideia: grid anual/mensal mostrando períodos de férias de cada pessoa. Arquitetura a definir.
+- ~~**Botão "Escala de Férias"**~~ ✅ Implementado como "Férias Equipe" (sessão 20) — calendário de badges por mês com CRUD Firestore.
 - ~~**Limpar titulares_admin das DPs 1, 2, 5 no Firestore**~~ ✅ Concluído em 04/05/2026 — admin reabriu o modal ✏️ de cada DP e salvou; chaves corretas (`enio`, `thays`, `emilly`) gravadas no Firestore.
 - ~~**Dispensar notificações erradas do sino 🔔 de afastamentos**~~ ✅ Já dispensadas (confirmado em 04/05/2026 — não aparecem mais no painel).
 - ~~**Excluir afastamentos do José Antônio no Firestore**~~ ✅ Deletado via script em 04/05/2026 — doc `CpewjdQkUjofHP3xVe9v` (férias 08–25/jun) removido da coleção `afastamentos_admin`. Era o único registro futuro no Firestore.
