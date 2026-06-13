@@ -3820,16 +3820,23 @@
             }
         }
 
+        function _afastamentosAplicarCache(registros) {
+            afastamentosFirestoreMap = {};
+            jsonOverrideMap = {};
+            registros.forEach(reg => {
+                afastamentosFirestoreMap[reg.id] = reg;
+                mergeAfastamentoFirestoreRecord(reg);
+            });
+        }
+
         async function loadAfastamentosFirestore() {
             try {
                 const snapshot = await db.collection('afastamentos_admin').get();
-                afastamentosFirestoreMap = {};
-                jsonOverrideMap = {};
-                snapshot.forEach(doc => {
-                    const reg = { id: doc.id, ...doc.data() };
-                    afastamentosFirestoreMap[doc.id] = reg;
-                    mergeAfastamentoFirestoreRecord(reg);
-                });
+                const registros = [];
+                snapshot.forEach(doc => registros.push({ id: doc.id, ...doc.data() }));
+                _afastamentosAplicarCache(registros);
+                // Persiste para eliminar flash no próximo carregamento
+                try { localStorage.setItem('pma-afastamentos-fs', JSON.stringify(registros)); } catch(e) {}
                 renderCalendar();
                 renderDesignacoes();
                 renderListaSubstituicoes();
@@ -8256,6 +8263,12 @@
                 afastamentos = buildAfastamentosFromJSONRegistros(jsonAfastamentos.registros);
                 buildDetalhesFromJSONEventos(jsonDesignacoes.eventos, jsonDesignacoes.defensores);
 
+                // Aplicar cache localStorage do Firestore (elimina flash: calendário já aparece com dados)
+                try {
+                    const lsFs = localStorage.getItem('pma-afastamentos-fs');
+                    if (lsFs) _afastamentosAplicarCache(JSON.parse(lsFs));
+                } catch(e) {}
+
                 // Renderizar seções dinâmicas
                 renderTabelaCompleta();
                 renderDefensorias();
@@ -8415,13 +8428,15 @@
 
         async function carregarConteudoFirestore() {
             const secoes = ['regra_alternancia', 'ferias_folgas'];
+            // 1. Aplica localStorage de todas as seções de uma vez (síncrono) — elimina flash no F5
             for (const id of secoes) {
-                // 1. localStorage (síncrono) — elimina flash no F5
                 try {
                     const ls = localStorage.getItem(_SECOES_LS_KEYS[id]);
                     if (ls) _aplicarSecaoCache(id, JSON.parse(ls));
                 } catch(e) {}
-                // 2. Firestore — sempre busca para manter cache atualizado
+            }
+            // 2. Busca Firestore em paralelo para manter caches atualizados
+            await Promise.all(secoes.map(async (id) => {
                 try {
                     const doc = await db.collection('secoes').doc(id).get();
                     if (doc.exists) {
@@ -8432,7 +8447,7 @@
                 } catch(e) {
                     // Mantém o conteúdo já aplicado (padrão HTML ou cache localStorage)
                 }
-            }
+            }));
         }
 
         // ── Rich Text Editor ───────────────────────────────────────────────
