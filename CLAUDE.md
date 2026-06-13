@@ -307,9 +307,11 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 13/06/2026 — sessão 21)
+## Estado atual do site (atualizado em 13/06/2026 — sessão 22)
 
 ### O que já foi implementado ✅
+- **Cache de performance para calendário de afastamentos (sessão 22)** — eliminado o delay/flash "⏳ Carregando..." no Calendário de Afastamentos, Resumo de Afastamentos e Lista de Substituições. Estratégia: após `loadAfastamentosFirestore()` buscar o Firestore, os documentos brutos são salvos em `localStorage['pma-afastamentos-fs']`. Em `loadJSONData()`, após processar os JSONs, o cache é aplicado imediatamente via `_afastamentosAplicarCache()` (síncrono) antes de qualquer chamada de rede. `renderListaSubstituicoes()` e `renderDetalhesAfastamentos()` também passaram a ser chamados nesse momento. Commits `3d527a0` e `dd535ad`.
+- **Cache da seção Férias/Folgas/Licenças corrigido (sessão 22)** — `carregarConteudoFirestore()` aplicava localStorage em loop sequencial com `await`, fazendo a seção `ferias_folgas` aguardar o Firestore de `regra_alternancia` antes de ler seu próprio cache. Corrigido: localStorage de todas as seções aplicado de forma síncrona primeiro, depois Firestore buscado em paralelo com `Promise.all`. Commit `3d527a0`.
 - **Ícones dos botões da landing e header atualizados (sessão 21)** — Férias Equipe: emoji 👥 → ⛱️ (guarda-sol). Adote: emoji 🏘️ → imagem real PNG (`docs/gavel.png`) de um gavel de juiz com fundo transparente, exibida via `<img>` tag (width=78px no card, width=26px no header).
 - **Cores dos badges de defensores fixadas no CSS estático (sessão 21)** — Emilly Santos: `#f43f5e` (vermelho-rosa); Miguel Martins: `#10b981` (verde-esmeralda). Ambos adicionados ao `BADGE_CSS_KNOWN` para não serem sobrescritos pela paleta dinâmica. Paleta atual: Ícaro=azul `#3b82f6`, Emilly=vermelho-rosa `#f43f5e`, Miguel=verde-esmeralda `#10b981`, Ênio=ciano (paleta), Eliaquim=laranja `#f97316`, Elton=âmbar `#f59e0b`, Elaine=roxo `#a855f7`.
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
@@ -415,15 +417,18 @@ github-pages/
 **Quando aplicar:** sempre que o usuário relatar "primeiro mostra informações antigas, depois atualiza" em qualquer seção que tenha células/conteúdo editáveis carregados do Firestore.
 
 **Seções já com cache localStorage aplicado:**
-| Seção | Chave localStorage | Firestore doc | Função carregar | Função salvar |
+| Seção | Chave localStorage | Firestore doc/coleção | Função carregar | Função salvar |
 |---|---|---|---|---|
 | Adote — células | `pma-adote-celulas` | `secoes/adote_celulas` | `_adoteCarregarCelulas()` | `_adoteSalvarCelulas()` |
 | Adote — expandir | `pma-adote-expandir` | `secoes/adote_expandir` | `_adoteCarregarExpandir()` | `salvarSecao('adote_expandir')` |
 | Atribuições — células | `pma-atr-celulas` | `secoes/atribuicoes_celulas` | `_atrCarregarCelulas()` | `_atrSalvarCelulas()` |
+| Regra de Alternância | `pma-regra-alternancia` | `secoes/regra_alternancia` | `carregarConteudoFirestore()` | `salvarSecao('regra_alternancia')` |
+| Férias/Folgas/Licenças | `pma-ferias-folgas` | `secoes/ferias_folgas` | `carregarConteudoFirestore()` | `salvarSecao('ferias_folgas')` |
+| Calendário de Afastamentos (docs Firestore brutos) | `pma-afastamentos-fs` | `afastamentos_admin` | `loadJSONData()` via `_afastamentosAplicarCache()` | `loadAfastamentosFirestore()` |
+
+> **Nota `pma-afastamentos-fs`:** guarda o array de documentos brutos da coleção `afastamentos_admin`. Aplicado em `loadJSONData()` após processar os JSONs, antes de qualquer chamada de rede. `_afastamentosAplicarCache(registros)` processa o array e popula `afastamentosFirestoreMap` + chama `mergeAfastamentoFirestoreRecord` para cada registro. Atualizado automaticamente ao final de `loadAfastamentosFirestore()`.
 
 **Seções que ainda NÃO têm (candidatas futuras):**
-- `secoes/regra_alternancia` — carregada por `carregarConteudoFirestore()`, salva por `salvarSecao('regra_alternancia')`
-- `secoes/ferias_folgas` — mesma função genérica
 - `secoes/adote_info` — carregada por `_adoteCarregarInfo()`, salva por `_adoteSalvarInfo()`
 - `secoes/atribuicoes_resolucao` — carregada por `_atrCarregarResolucao()`
 
