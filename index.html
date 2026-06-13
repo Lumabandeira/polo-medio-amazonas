@@ -6964,10 +6964,16 @@
             '#f59e0b','#06b6d4','#84cc16','#ec4899','#8b5cf6',
             '#14b8a6','#ef4444'
         ];
+        // Cores fixas por nome — têm prioridade sobre a paleta dinâmica
+        const EQUIPE_PESSOA_CORES_FIXAS = {
+            'Fábio':  '#06b6d4',  // ciano
+            'Larice': '#eab308',  // amarelo vivo
+        };
         const _equipePessoaCores = {}; // nome → cor hex
         let _equipePessoaIdx = 0;
 
         function _equipeCorPessoa(nome) {
+            if (EQUIPE_PESSOA_CORES_FIXAS[nome]) return EQUIPE_PESSOA_CORES_FIXAS[nome];
             if (!_equipePessoaCores[nome]) {
                 _equipePessoaCores[nome] = EQUIPE_PESSOA_PALETTE[_equipePessoaIdx % EQUIPE_PESSOA_PALETTE.length];
                 _equipePessoaIdx++;
