@@ -6963,35 +6963,54 @@
 
         const EQUIPE_TIPO_LABELS = { ferias: 'Férias', folga: 'Folga', outro: 'Outro' };
 
+        function _equipeAplicarRegistros(registros) {
+            equipeAfastamentos = {};
+            equipeMap = {};
+            registros.forEach(reg => {
+                equipeMap[reg.id] = reg;
+                if (!reg.data_inicio || !reg.data_fim) return;
+                const start = new Date(reg.data_inicio + 'T12:00:00');
+                const end   = new Date(reg.data_fim    + 'T12:00:00');
+                let cur = new Date(start);
+                while (cur <= end) {
+                    const y = cur.getFullYear();
+                    const m = cur.getMonth() + 1;
+                    const d = cur.getDate();
+                    if (!equipeAfastamentos[y])       equipeAfastamentos[y] = {};
+                    if (!equipeAfastamentos[y][m])    equipeAfastamentos[y][m] = {};
+                    if (!equipeAfastamentos[y][m][d]) equipeAfastamentos[y][m][d] = [];
+                    equipeAfastamentos[y][m][d].push({
+                        id: reg.id, nome: reg.nome, tipo: reg.tipo,
+                        tipo_custom: reg.tipo_custom || '',
+                        data_inicio: reg.data_inicio, data_fim: reg.data_fim
+                    });
+                    cur.setDate(cur.getDate() + 1);
+                }
+            });
+        }
+
         async function loadEquipeFirestore() {
+            // 1. Cache localStorage — aplica sincronamente antes de qualquer rede
+            try {
+                const ls = localStorage.getItem('pma-equipe-fs');
+                if (ls) {
+                    _equipeAplicarRegistros(JSON.parse(ls));
+                    if (document.getElementById('equipe')?.classList.contains('active')) {
+                        renderEquipeCalendar();
+                    }
+                }
+            } catch(e) {}
+
+            // 2. Sempre busca do Firestore para manter cache atualizado
             try {
                 const snap = await db.collection('afastamentos_equipe').get();
-                equipeAfastamentos = {};
-                equipeMap = {};
-                snap.forEach(doc => {
-                    const reg = { id: doc.id, ...doc.data() };
-                    equipeMap[doc.id] = reg;
-                    if (!reg.data_inicio || !reg.data_fim) return;
-                    const start = new Date(reg.data_inicio + 'T12:00:00');
-                    const end   = new Date(reg.data_fim    + 'T12:00:00');
-                    let cur = new Date(start);
-                    while (cur <= end) {
-                        const y = cur.getFullYear();
-                        const m = cur.getMonth() + 1;
-                        const d = cur.getDate();
-                        if (!equipeAfastamentos[y])       equipeAfastamentos[y] = {};
-                        if (!equipeAfastamentos[y][m])    equipeAfastamentos[y][m] = {};
-                        if (!equipeAfastamentos[y][m][d]) equipeAfastamentos[y][m][d] = [];
-                        equipeAfastamentos[y][m][d].push({
-                            id: reg.id, nome: reg.nome, tipo: reg.tipo,
-                            tipo_custom: reg.tipo_custom || '',
-                            data_inicio: reg.data_inicio, data_fim: reg.data_fim
-                        });
-                        cur.setDate(cur.getDate() + 1);
-                    }
-                });
+                const registros = [];
+                snap.forEach(doc => registros.push({ id: doc.id, ...doc.data() }));
+                localStorage.setItem('pma-equipe-fs', JSON.stringify(registros));
+                _equipeAplicarRegistros(registros);
             } catch(e) { console.warn('Erro ao carregar equipe:', e); }
-            // Re-renderiza se a seção equipe estiver visível (dados chegaram após o primeiro render)
+
+            // Re-renderiza com dados frescos do Firestore
             if (document.getElementById('equipe')?.classList.contains('active')) {
                 renderEquipeCalendar();
             }
