@@ -8273,9 +8273,11 @@
                 renderTabelaCompleta();
                 renderDefensorias();
 
-                // Atualizar calendário e designações semanais se já visíveis
+                // Atualizar calendário, designações e abas dependentes do Firestore
                 renderCalendar();
                 renderDesignacoes();
+                renderListaSubstituicoes();
+                renderDetalhesAfastamentos();
                 setTimeout(() => {
                     validateWeekendHighlights();
                     removeWeekendHighlightsFromRows();
