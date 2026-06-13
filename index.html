@@ -8367,7 +8367,7 @@
             _aplicarModoEdicao();
 
             // Se os JSONs já carregaram antes da autenticação, carregar dados do Firestore agora
-            if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); }
+            if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); loadEquipeFirestore(); }
             carregarNotificacoesAutomacao();
 
             // Restaurar seção: parâmetro URL (?s=) tem prioridade sobre sessionStorage
