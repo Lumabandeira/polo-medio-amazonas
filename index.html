@@ -1133,6 +1133,7 @@
         .equipe-badge.ferias  { background: #2563eb; }
         .equipe-badge.folga   { background: #d97706; }
         .equipe-badge.outro   { background: #6b7280; }
+        .equipe-badge.pessoa  { /* cor aplicada via style inline */ }
 
         /* ─── Seção Adote ────────────────────────────────────────── */
         .adote-header { margin-bottom: 18px; }
@@ -3129,13 +3130,8 @@
                 </div>
                 <div class="equipe-month-selector" id="equipe-month-selector"></div>
                 <div id="equipe-calendar-container"></div>
-                <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                    <span style="font-size:0.82em;color:var(--text-secondary);">
-                        <span class="equipe-badge ferias" style="display:inline-block;margin-right:4px;">férias</span>
-                        <span class="equipe-badge folga" style="display:inline-block;margin-right:4px;">folga</span>
-                        <span class="equipe-badge outro" style="display:inline-block;margin-right:4px;">outro</span>
-                    </span>
-                    <button class="btn-salvar admin-only" onclick="abrirFormEquipe(null,equipeCurrentYear,equipeCurrentMonth+1,null)" style="margin-left:auto;">➕ Novo Afastamento</button>
+                <div style="margin-top:12px;display:flex;justify-content:flex-end;">
+                    <button class="btn-salvar admin-only" onclick="abrirFormEquipe(null,equipeCurrentYear,equipeCurrentMonth+1,null)">➕ Novo Afastamento</button>
                 </div>
             </div>
         </div>
@@ -6963,7 +6959,27 @@
 
         const EQUIPE_TIPO_LABELS = { ferias: 'Férias', folga: 'Folga', outro: 'Outro' };
 
+        const EQUIPE_PESSOA_PALETTE = [
+            '#3b82f6','#f97316','#a855f7','#10b981','#f43f5e',
+            '#f59e0b','#06b6d4','#84cc16','#ec4899','#8b5cf6',
+            '#14b8a6','#ef4444'
+        ];
+        const _equipePessoaCores = {}; // nome → cor hex
+        let _equipePessoaIdx = 0;
+
+        function _equipeCorPessoa(nome) {
+            if (!_equipePessoaCores[nome]) {
+                _equipePessoaCores[nome] = EQUIPE_PESSOA_PALETTE[_equipePessoaIdx % EQUIPE_PESSOA_PALETTE.length];
+                _equipePessoaIdx++;
+            }
+            return _equipePessoaCores[nome];
+        }
+
         function _equipeAplicarRegistros(registros) {
+            // Atribui cores em ordem alfabética de nomes para estabilidade entre reloads
+            const nomesOrdenados = [...new Set(registros.map(r => r.nome).filter(Boolean))].sort();
+            nomesOrdenados.forEach(nome => _equipeCorPessoa(nome));
+
             equipeAfastamentos = {};
             equipeMap = {};
             registros.forEach(reg => {
@@ -7084,7 +7100,8 @@
 
                 entries.forEach(e => {
                     const badge = document.createElement('span');
-                    badge.className = `equipe-badge ${e.tipo || 'outro'}`;
+                    badge.className = 'equipe-badge';
+                    badge.style.background = _equipeCorPessoa(e.nome);
                     badge.textContent = e.nome;
                     badge.title = `${e.nome} — ${EQUIPE_TIPO_LABELS[e.tipo] || e.tipo_custom || 'Outro'}`;
                     dayDiv.appendChild(badge);
@@ -7120,7 +7137,7 @@
                     if (seen.has(e.id)) return;
                     seen.add(e.id);
                     const tipoLabel = e.tipo === 'outro' ? (e.tipo_custom || 'Outro') : (EQUIPE_TIPO_LABELS[e.tipo] || e.tipo);
-                    const tipoClass = e.tipo === 'ferias' ? 'ferias' : e.tipo === 'folga' ? 'folga' : 'outro';
+                    const pessoaCor = _equipeCorPessoa(e.nome);
                     const periodo = e.data_inicio === e.data_fim
                         ? _fmtEquipeDate(e.data_inicio)
                         : `${_fmtEquipeDate(e.data_inicio)} a ${_fmtEquipeDate(e.data_fim)}`;
@@ -7131,7 +7148,7 @@
                     </td>`;
                     html += `<tr style="border-top:1px solid var(--border-color)">
                         <td style="padding:8px;font-weight:600">${e.nome}</td>
-                        <td style="padding:8px"><span class="equipe-badge ${tipoClass}" style="display:inline-block">${tipoLabel}</span></td>
+                        <td style="padding:8px"><span class="equipe-badge" style="display:inline-block;background:${pessoaCor}">${tipoLabel}</span></td>
                         <td style="padding:8px;font-size:0.88em;color:var(--text-secondary)">${periodo}</td>
                         ${acoes}</tr>`;
                 });
