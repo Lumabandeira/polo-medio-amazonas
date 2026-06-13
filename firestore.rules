@@ -1,0 +1,48 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Leitura: apenas usuários autenticados
+    match /{document=**} {
+      allow read: if isAuthenticated();
+    }
+
+    // Escrita restrita a admins
+    match /usuarios/{uid} {
+      allow write: if isAdmin();
+    }
+
+    match /secoes/{id} {
+      allow write: if isAdmin();
+    }
+
+    match /afastamentos_admin/{id} {
+      allow write: if isAdmin();
+    }
+
+    match /afastamentos_equipe/{id} {
+      allow write: if isAdmin();
+    }
+
+    match /titulares_admin/{id} {
+      allow write: if isAdmin();
+    }
+
+    match /remocoes_admin/{id} {
+      allow write: if isAdmin();
+    }
+
+    match /designacoes_cumulativas_admin/{id} {
+      allow write: if isAdmin();
+    }
+  }
+}
