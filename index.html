@@ -7067,9 +7067,8 @@
                     dayDiv.appendChild(badge);
                 });
 
-                if (entries.length) {
-                    dayDiv.onclick = () => abrirModalEquipe(year, month + 1, day);
-                }
+                dayDiv.style.cursor = 'pointer';
+                dayDiv.onclick = () => abrirModalEquipe(year, month + 1, day);
                 grid.appendChild(dayDiv);
             }
             container.appendChild(grid);
