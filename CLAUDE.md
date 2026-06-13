@@ -307,9 +307,11 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 12/06/2026 — sessão 20)
+## Estado atual do site (atualizado em 13/06/2026 — sessão 21)
 
 ### O que já foi implementado ✅
+- **Ícones dos botões da landing e header atualizados (sessão 21)** — Férias Equipe: emoji 👥 → ⛱️ (guarda-sol). Adote: emoji 🏘️ → imagem real PNG (`docs/gavel.png`) de um gavel de juiz com fundo transparente, exibida via `<img>` tag (width=78px no card, width=26px no header).
+- **Cores dos badges de defensores fixadas no CSS estático (sessão 21)** — Emilly Santos: `#f43f5e` (vermelho-rosa); Miguel Martins: `#10b981` (verde-esmeralda). Ambos adicionados ao `BADGE_CSS_KNOWN` para não serem sobrescritos pela paleta dinâmica. Paleta atual: Ícaro=azul `#3b82f6`, Emilly=vermelho-rosa `#f43f5e`, Miguel=verde-esmeralda `#10b981`, Ênio=ciano (paleta), Eliaquim=laranja `#f97316`, Elton=âmbar `#f59e0b`, Elaine=roxo `#a855f7`.
 - **Sistema de login completo** — overlay de tela cheia, Firebase Auth, roles admin/viewer
 - **Badge ADMIN** no header (visível só para admins, posicionado em top:75px left:20px)
 - **Botão Sair** no header (top:60px right:20px)
