@@ -4005,5 +4005,47 @@
         "resumo": "Autoriza deslocamento de múltiplos defensores e servidores para Itacoatiara (Polo Médio) entre 13 a 17/22 de junho de 2026 para realização de Mutirão de Atendimento Previdenciário"
       }
     ]
+  },
+  {
+    "edicao": 2668,
+    "data": "2026-06-12",
+    "data_formatada": "12/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2668-2026__publicada_em_12_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 957/2026-GDPG/DPE/AM",
+        "sei": "26.0.000004361-2",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "servidor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR os Defensores Públicos e os servidores abaixo relacionados para atuarem no Mutirão Carcerário, a ser realizado no presídio de Itacoatiara, nos períodos e atividades a seguir especificados:",
+          "Helom César da Silva Nunes - Defensor Público - 27 a 31 de julho de 2026 - Atendimento jurídico",
+          "Emilly Bianca Ferreira dos Santos - Defensora Pública - 27 a 31 de julho de 2026 - Atendimento jurídico"
+        ],
+        "resumo": "Designa defensores e servidores para atuar no Mutirão Carcerário em Itacoatiara nos períodos de 20 a 24 e 27 a 31 de julho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 611/2026-GSPG/DPE/AM",
+        "sei": "26.0.000008079-8",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Miguel Eduardo de Azevedo Martins Filho para atuar na 8ª Defensoria Pública do Polo Médio Amazonas (Itapiranga), a contar do dia 09 de junho de 2026;",
+          "II - ATRIBUIR a contraprestação na forma do Ato Normativo nº 3/2025-GDPG/DPE/AM, de 22 de maio de 2025, em complemento com o art. 40, § 3º, da Lei Complementar Estadual nº 01, de 30 de março de 1990, alterado pela Lei Complementar Estadual nº 196, de 13 de maio de 2019, e regulamentado pela Resolução nº 013/2019 do Conselho Superior da Defensoria Pública, observado o limite de duas acumulações."
+        ],
+        "resumo": "Designa Defensor Público de 3ª Classe para atuar cumulativamente na 8ª Defensoria Pública do Polo Médio Amazonas (Itapiranga) a partir de 09 de junho de 2026"
+      }
+    ]
   }
 ]
