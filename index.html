@@ -6991,6 +6991,10 @@
                     }
                 });
             } catch(e) { console.warn('Erro ao carregar equipe:', e); }
+            // Re-renderiza se a seção equipe estiver visível (dados chegaram após o primeiro render)
+            if (document.getElementById('equipe')?.classList.contains('active')) {
+                renderEquipeCalendar();
+            }
         }
 
         function switchEquipeYear(year) {
