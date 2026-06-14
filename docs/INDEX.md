@@ -4,6 +4,23 @@
 
 ---
 
+## Arquivos raiz de docs/
+
+| Arquivo | Conteúdo |
+|---------|---------|
+| `firebase.md` | Schema do Firestore, autenticação, regras de segurança, funções JS do Firebase |
+| `automacao.md` | Projeto 1 (afastamentos), Projeto 2 (diário completo), backfill, secrets |
+| `arquitetura.md` | Decisões de design, padrão de cache localStorage, arquiteturas internas |
+| `historico-sessoes.md` | Log cronológico do que foi implementado por sessão |
+| `diario-oficial-completo-2026.json` | Saída do Projeto 2, atualizado automaticamente |
+| `designacoes-2026.json` | Defensores, DPs e histórico de titulares (base do site) |
+| `afastamentos-2026.json` | Eventos base de afastamentos (Firestore tem prioridade) |
+| `diario-oficial-categorias.md` | Regras de categorização de portarias para o Claude |
+| `diario-oficial-polo-medio-2026.md` | ⚠️ Legado — não usar |
+| `diario-oficial-polo-medio-2026.json` | ⚠️ Legado — não usar |
+
+---
+
 ## defensores/
 
 Um arquivo por defensor. Contém status, DPs titulares, grupo de alternância e histórico de ausências.
