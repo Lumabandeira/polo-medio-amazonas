@@ -20,7 +20,7 @@ Um arquivo por defensor. Contém status, DPs titulares, grupo de alternância e 
 | `elton.md` | Elton Dariva Staub | ❌ Ex-membro (saiu 02/05/2026) |
 | `elaine.md` | Elaine Maria Sousa Frota | ❌ Ex-membro (saiu 02/05/2026) |
 | `mariana.md` | Mariana Silva Paixão | ❌ Ex-membro (saiu 30/12/2025 — 11º Concurso de Remoção) |
-| `isabela.md` | Isabela do Amaral Sales | ⏸️ Cedida ao Min. do Meio Ambiente (não é ex-membro) |
+| `isabela.md` | Isabela do Amaral Sales | ❌ Ex-membro (cedida a órgão externo — nunca atuou no polo) |
 
 ## defensorias/
 
