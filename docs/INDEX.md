@@ -15,10 +15,12 @@ Um arquivo por defensor. Contém status, DPs titulares, grupo de alternância e 
 | `icaro.md` | Ícaro Oliveira Avelar Costa | ✅ Ativo |
 | `eliaquim.md` | Eliaquim Antunes de Souza Santos | ✅ Ativo |
 | `emilly.md` | Emilly Bianca Ferreira dos Santos | ✅ Ativo (desde 02/05/2026) |
-| `miguel.md` | Miguel Eduardo de Azevedo Martins Filho | ✅ Ativo (desde 01/03/2026) — *arquivo a criar* |
+| `miguel.md` | Miguel Eduardo de Azevedo Martins Filho | ✅ Ativo (desde 01/03/2026) |
 | `jose-antonio.md` | José Antônio Pereira da Silva | ❌ Ex-membro (saiu 02/05/2026) |
 | `elton.md` | Elton Dariva Staub | ❌ Ex-membro (saiu 02/05/2026) |
 | `elaine.md` | Elaine Maria Sousa Frota | ❌ Ex-membro (saiu 02/05/2026) |
+| `mariana.md` | Mariana Silva Paixão | ❌ Ex-membro (saiu 30/12/2025 — 11º Concurso de Remoção) |
+| `isabela.md` | Isabela do Amaral Sales | ⏸️ Cedida ao Min. do Meio Ambiente (não é ex-membro) |
 
 ## defensorias/
 
