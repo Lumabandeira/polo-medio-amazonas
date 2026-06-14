@@ -131,7 +131,11 @@ def load_state() -> dict:
     if STATE_FILE.exists():
         with open(STATE_FILE, encoding="utf-8") as f:
             return json.load(f)
-    return {
+
+    # Cache do Actions perdido — tenta recuperar ultima_edicao do Firestore
+    # para evitar reprocessar edições antigas quando o cache expira (7 dias).
+    log.warning("Arquivo de estado não encontrado. Tentando recuperar do Firestore...")
+    state = {
         "ultima_edicao": 0,
         "edicoes_processadas": [],
         "custo": {
@@ -142,11 +146,36 @@ def load_state() -> dict:
             "pausada": False,
         }
     }
+    try:
+        db = get_firestore_client()
+        doc = db.collection("automacao_config").document("estado_diario").get()
+        if doc.exists:
+            data = doc.to_dict()
+            state["ultima_edicao"] = data.get("ultima_edicao", 0)
+            state["edicoes_processadas"] = data.get("edicoes_processadas", [])
+            log.info(f"Estado recuperado do Firestore: ultima_edicao={state['ultima_edicao']}")
+        else:
+            log.warning("Documento de estado não encontrado no Firestore. Começando do zero.")
+    except Exception as e:
+        log.warning(f"Não foi possível recuperar estado do Firestore: {e}")
+    return state
 
 
 def save_state(state: dict):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2, ensure_ascii=False)
+
+    # Persiste ultima_edicao e edicoes_processadas no Firestore como backup
+    # para resistir à expiração do cache do GitHub Actions (7 dias).
+    try:
+        db = get_firestore_client()
+        db.collection("automacao_config").document("estado_diario").set({
+            "ultima_edicao":       state.get("ultima_edicao", 0),
+            "edicoes_processadas": state.get("edicoes_processadas", []),
+            "atualizado_em":       firestore.SERVER_TIMESTAMP,
+        }, merge=True)
+    except Exception as e:
+        log.warning(f"Não foi possível salvar estado no Firestore: {e}")
 
 
 def registrar_uso(state: dict, tokens_entrada: int, tokens_saida: int) -> float:
