@@ -1092,6 +1092,8 @@
             transition: background 0.2s, color 0.2s;
         }
         .equipe-year-btn:hover, .equipe-year-btn.active { background: var(--primary-color); color: #fff; }
+        #btn-equipe-ano-2027 { border-color: #d4c200; color: #6b6000; }
+        #btn-equipe-ano-2027:hover, #btn-equipe-ano-2027.active { background: #f5e600; color: #4a4400; border-color: #d4c200; }
 
         .equipe-month-selector { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
         .equipe-month-btn {
@@ -3134,10 +3136,9 @@
                     <button id="btn-equipe-ano-2026" class="equipe-year-btn active" onclick="switchEquipeYear(2026)">2026</button>
                     <button id="btn-equipe-ano-2027" class="equipe-year-btn" onclick="switchEquipeYear(2027)">2027</button>
                 </div>
-                <div class="equipe-month-selector" id="equipe-month-selector"></div>
                 <div id="equipe-calendar-container"></div>
                 <div style="margin-top:12px;display:flex;justify-content:flex-end;">
-                    <button class="btn-salvar admin-only" onclick="abrirFormEquipe(null,equipeCurrentYear,equipeCurrentMonth+1,null)">➕ Novo Afastamento</button>
+                    <button class="btn-salvar admin-only" onclick="abrirFormEquipe(null,equipeCurrentYear,new Date().getMonth()+1,null)">➕ Novo Afastamento</button>
                 </div>
             </div>
         </div>
@@ -7121,49 +7122,14 @@
         function renderEquipeCalendar() {
             _aplicarModoEdicao();
 
-            // Seletor de meses — destaca o mês do topo
-            const monthSel = document.getElementById('equipe-month-selector');
-            if (monthSel) {
-                monthSel.innerHTML = '';
-                MONTH_NAMES_PT.forEach((nome, i) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'equipe-month-btn' + (i === equipeCurrentMonth ? ' active' : '');
-                    btn.textContent = nome;
-                    btn.onclick = () => { equipeCurrentMonth = i; renderEquipeCalendar(); };
-                    monthSel.appendChild(btn);
-                });
-            }
-
             const container = document.getElementById('equipe-calendar-container');
             if (!container) return;
             container.innerHTML = '';
 
-            // Renderiza 4 meses consecutivos a partir do mês do topo
-            for (let offset = 0; offset < 4; offset++) {
-                const totalMonth = equipeCurrentMonth + offset;
-                const y = equipeCurrentYear + Math.floor(totalMonth / 12);
-                const m = totalMonth % 12;
-                container.appendChild(_renderEquipeMes(y, m));
+            // Renderiza os 12 meses do ano selecionado
+            for (let m = 0; m < 12; m++) {
+                container.appendChild(_renderEquipeMes(equipeCurrentYear, m));
             }
-
-            // Scroll do mouse navega 1 mês por vez (throttle 300ms + piso jan/2026)
-            container.onwheel = null;
-            container.addEventListener('wheel', function(e) {
-                e.preventDefault();
-                const now = Date.now();
-                if (now - _equipeScrollThrottle < 300) return;
-                _equipeScrollThrottle = now;
-                if (e.deltaY > 0) {
-                    equipeCurrentMonth++;
-                    if (equipeCurrentMonth > 11) { equipeCurrentMonth = 0; equipeCurrentYear++; }
-                } else {
-                    if (equipeCurrentYear === 2026 && equipeCurrentMonth === 0) return;
-                    equipeCurrentMonth--;
-                    if (equipeCurrentMonth < 0) { equipeCurrentMonth = 11; equipeCurrentYear--; }
-                    if (equipeCurrentYear < 2026) { equipeCurrentYear = 2026; equipeCurrentMonth = 0; }
-                }
-                renderEquipeCalendar();
-            }, { passive: false });
         }
 
         function abrirModalEquipe(ano, mes, dia) {
