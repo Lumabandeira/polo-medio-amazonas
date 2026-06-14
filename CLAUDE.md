@@ -307,9 +307,10 @@ github-pages/
 
 ---
 
-## Estado atual do site (atualizado em 13/06/2026 — sessão 23)
+## Estado atual do site (atualizado em 14/06/2026 — sessão 24)
 
 ### O que já foi implementado ✅
+- **Bug corrigido — reprocessamento de edições antigas quando cache do Actions expira (sessão 24)** — o arquivo `.estado-diario.json` vivia só no cache do GitHub Actions (expira após 7 dias sem acesso). Quando o cache sumia, `ultima_edicao` voltava a 0 e edições antigas eram reprocessadas, gerando notificações tardias no sino de Alterações de Titularidade. Corrigido em `verificar-diario-oficial.py`: `load_state()` agora busca `ultima_edicao` no Firestore (`automacao_config/estado_diario`) como fallback quando o arquivo não existe; `save_state()` agora também persiste o estado no Firestore a cada execução. Commit `4f9199a`.
 - **Seção Férias Equipe totalmente funcional (sessão 23)** — corrigidos 4 bugs e aplicado cache localStorage:
   - Clique em qualquer dia do calendário abre o modal (antes só dias com afastamentos tinham `onclick`). Commit `8fa2d99`.
   - Permissão do Firestore corrigida: coleção `afastamentos_equipe` adicionada às regras de segurança via `firebase deploy`. Arquivos `firebase.json`, `firestore.rules` e `firestore.indexes.json` criados e commitados. Commit `5c7132e`.
