@@ -1,5 +1,7 @@
 # Padrões de Código
 
+> Atualizado em 14/06/2026
+
 ## Estrutura HTML das Tabelas de Designações Semanais
 
 ```html
@@ -16,30 +18,20 @@
         </tr>
     </thead>
     <tbody>
-        <!-- DP do Grupo A (itacoatiara) -->
+        <!-- DP do Grupo A -->
         <tr>
             <td class="itacoatiara">1ª DP (Família)</td>
-            <td class="itacoatiara">Ícaro</td>  <!-- Seg -->
-            <td class="itacoatiara">Ícaro</td>  <!-- Ter -->
-            <td class="itacoatiara">Ícaro</td>  <!-- Qua -->
-            <td>Ícaro</td>  <!-- Sáb — SEM classe -->
-            <td>Ícaro</td>  <!-- Dom — SEM classe -->
+            <td class="itacoatiara">Ênio</td>  <!-- Seg -->
+            <td class="itacoatiara">Ênio</td>  <!-- Ter -->
+            <td class="itacoatiara">Ênio</td>  <!-- Qua -->
+            <td>Ênio</td>  <!-- Sáb — SEM classe -->
+            <td>Ênio</td>  <!-- Dom — SEM classe -->
         </tr>
 
-        <!-- DP do Grupo A (silves) -->
-        <tr>
-            <td class="silves">12ª DP (Silves)</td>
-            <td class="silves">Elton Dariva</td>
-            <td class="silves">Elton Dariva</td>
-            <td class="silves">Elton Dariva</td>
-            <td>Elton Dariva</td>  <!-- Sáb — SEM classe -->
-            <td>Elton Dariva</td>  <!-- Dom — SEM classe -->
-        </tr>
-
-        <!-- DP sem destaque (Grupo B na semana do Grupo A) -->
+        <!-- DP do Grupo B (na semana do Grupo A, sem destaque) -->
         <tr>
             <td>2ª DP (Família)</td>
-            <td>José Antônio</td>
+            <td>Thays</td>
             <!-- ... -->
         </tr>
     </tbody>
@@ -50,45 +42,42 @@
 - Classes `itacoatiara` ou `silves` vão na célula do nome da DP **e** em todas as células de dias úteis
 - Sábados e domingos **nunca** recebem classe de destaque
 - O formato das datas no `<th>` é `DD/MM`
+- DPs 7–12 estão vagas — exibir "—" nas células
 
-## Legenda das Tabelas (HTML padrão)
-
-```html
-<p style="margin: 0 0 15px 0; font-weight: 600; color: var(--text-primary); font-size: 1.1em;">
-    <strong>Legenda:</strong>
-</p>
-<div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
-    <div style="flex: 1; min-width: 280px; padding: 15px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; border-radius: 8px;">
-        <p style="margin: 0; font-weight: 600; color: #92400e;">
-            <span style="display: inline-block; width: 20px; height: 20px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 3px solid #f59e0b; border-radius: 3px; vertical-align: middle; margin-right: 8px;"></span>
-            As linhas destacadas em amarelo representam as Defensorias responsáveis pelos atendimentos da sede de Itacoatiara.
-        </p>
-    </div>
-    <div style="flex: 1; min-width: 280px; padding: 15px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left: 4px solid #3b82f6; border-radius: 8px;">
-        <p style="margin: 0; font-weight: 600; color: #1e40af;">
-            <span style="display: inline-block; width: 20px; height: 20px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left: 3px solid #3b82f6; border-radius: 3px; vertical-align: middle; margin-right: 8px;"></span>
-            As linhas destacadas em azul representam as Defensorias responsáveis pelos atendimentos da UDI de Silves.
-        </p>
-    </div>
-</div>
-```
-
-## Convenções de Nomenclatura
-
-### Abreviações dos Defensores nas Tabelas
+## Abreviações dos Defensores nas Tabelas
 
 | Defensor | Abreviação |
 |----------|------------|
-| José Antônio Pereira da Silva | José Antônio |
-| Ícaro Oliveira Avelar Costa | Ícaro ou Ícaro Avelar |
-| Eliaquim Antunes de Souza | Eliaquim |
-| Elton Dariva Staub | Elton Dariva |
-| Elaine Maria Sousa Frota | Elaine Maria |
+| Ênio Jorge Lima Barbalho Junior | Ênio |
+| Thays Lidianne Campos de Azevedo Pereira | Thays |
+| Ícaro Oliveira Avelar Costa | Ícaro |
+| Eliaquim Antunes de Souza Santos | Eliaquim |
+| Emilly Bianca Ferreira dos Santos | Emilly |
+| Miguel Eduardo de Azevedo Martins Filho | Miguel |
 
-### Formato de Datas
+## Formato de Datas
 
 | Contexto | Formato | Exemplo |
 |----------|---------|---------|
 | Cabeçalho de tabela HTML | DD/MM | 10/01 |
+| JavaScript / Firestore | YYYY-MM-DD | 2026-01-10 |
+| Exibição no site | DD/MM/YYYY | 10/01/2026 |
 | JavaScript `new Date` | `new Date(year, month-1, day)` | mês é 0-indexed |
-| Markdown | DD/MM/AAAA | 10/01/2026 |
+
+## Chaves JSON dos Defensores
+
+| Defensor | Chave JSON | Status |
+|----------|-----------|--------|
+| Ênio Jorge Lima Barbalho Junior | `enio` | ativo |
+| Thays Lidianne Campos de Azevedo Pereira | `thays` | ativo |
+| Ícaro Oliveira Avelar Costa | `icaro` | ativo |
+| Eliaquim Antunes de Souza Santos | `eliaquim` | ativo |
+| Emilly Bianca Ferreira dos Santos | `emilly` | ativo |
+| Miguel Eduardo de Azevedo Martins Filho | `miguel` | ativo |
+| José Antônio Pereira da Silva | `jose-antonio` | ex-membro |
+| Elton Dariva Staub | `elton` | ex-membro |
+| Elaine Maria Sousa Frota | `elaine` | ex-membro |
+
+## Padrão de DPs vagas no JavaScript
+
+DPs vagas são representadas pela chave `"dpN-vaga"` (ex: `"dp7-vaga"`). A função `_atualizarNomesVaga()` gera automaticamente o label `"7ª DP (vaga)"` para exibição. Badges de vaga são ordenados por último no calendário.

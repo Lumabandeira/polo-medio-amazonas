@@ -1,46 +1,94 @@
 # Estrutura do Site (index.html)
 
+> Atualizado em 14/06/2026 — reflete sessões 1–24
+
 ## Arquivo Único
 
-Existe apenas **um** `index.html` na raiz do projeto. Nunca criar cópias. Para publicar no GitHub Pages, usar este mesmo arquivo.
+Existe apenas **um** `index.html` na raiz do projeto. Para publicar no GitHub Pages, usar este mesmo arquivo.
 
-## Abas do Site
+## Autenticação (Firebase Auth)
 
-O site possui 5 abas com os seguintes IDs:
+Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
+- **Admin:** vê badge `ADMIN` + botões ✏️ Editar nas seções editáveis
+- **Viewer:** vê o site normalmente, sem botões de edição
 
-| ID | Nome da Aba | Conteúdo |
-|----|-------------|----------|
-| `#calendario` | Calendário Visual | Calendário mensal com badges de ausência por defensor |
-| `#tabela-completa` | Tabela Completa | Tabela HTML estática com todas as ausências de 2026, organizada por mês |
-| `#detalhes` | Detalhes de Afastamentos | Tabela individual por defensor, filtrável |
-| `#defensorias` | Defensorias | Informações das 12 DPs |
-| `#designacoes-periodo` | Designações Semanais | Tabelas semanais com defensor por DP por dia |
+## Seções Principais (navegação via landing page)
+
+| Botão na Landing | ID da seção | Função JS |
+|-----------------|-------------|----------|
+| ⚖️ Atribuições | `#atribuicoes` | `showSection('atribuicoes')` |
+| 📋 Designações | `#designacoes` | `showSection('designacoes')` |
+| ⛱️ Férias Equipe | `#equipe` | `showSection('equipe')` |
+| 🏘️ Adote | `#adote` | `showSection('adote')` |
+| 📰 Diário Oficial | `#diario` | `showSection('diario')` |
+
+## Abas dentro da seção Designações (`#designacoes`)
+
+| ID da aba | Nome | Função de render |
+|-----------|------|-----------------|
+| `defensorias` | 📋 Defensorias | `renderDefensorias()` |
+| `designacoes-semanais` | 📅 Designações semanais | `renderDesignacoes()` |
+| `calendario` | 📅 Calendário | `renderCalendar()` |
+| `lista-substituicoes` | 📋 Lista de Substituições | `renderListaSubstituicoes()` |
+| `detalhes` | 📊 Resumo de Afastamentos | `renderDetalhesAfastamentos()` |
+
+> ⚠️ A aba "Tabela Completa" foi **removida** em sessão anterior. O Calendário Visual é a aba principal de ausências.
+
+## Sinos de Notificação (admin only, barra de abas)
+
+| ID do botão | Coleção Firestore | Painel |
+|-------------|-------------------|--------|
+| `#btn-sino` | `afastamentos_admin` (automação) | `#notif-overlay` — azul |
+| `#btn-sino-remocao` | `remocoes_admin` | `#notif-remocao-overlay` — âmbar |
+| `#btn-sino-designacao` | `designacoes_cumulativas_admin` | painel verde |
 
 ## Fontes de Dados no JavaScript
 
-O JavaScript do site possui dois objetos principais:
+| Variável global | Origem | Uso |
+|----------------|--------|-----|
+| `jsonDesignacoes` | `docs/designacoes-2026.json` | defensores, DPs, historico_titulares |
+| `jsonAfastamentos` | `docs/afastamentos-2026.json` | eventos base de afastamentos |
+| `afastamentos[ano][mes][dia]` | JSON + Firestore mesclados | badges no calendário |
+| `detalhesAfastamentos[ano][mes][dia]` | JSON + Firestore mesclados | modal de detalhes |
+| `afastamentosFirestoreMap` | `afastamentos_admin` | registros criados via admin |
+| `equipeAfastamentos[ano][mes][dia]` | `afastamentos_equipe` | calendário Férias Equipe |
+| `defensorNames` | construído de `jsonDesignacoes.defensores` | labels de badge |
 
-| Objeto | Finalidade |
-|--------|-----------|
-| `afastamentos` | Alimenta o calendário visual (aba Calendário). Estrutura: `{ ano: { mes: { dia: ['nome_curto'] } } }` |
-| `detalhesAfastamentosRaw` | Alimenta a aba "Detalhes de Afastamentos". Array de objetos por mês. |
+## Nomes/Chaves dos Defensores Ativos
 
-**Importante:** A aba "Tabela Completa" é uma tabela HTML **estática** — não é gerada pelo JavaScript. Precisa ser atualizada manualmente.
+| Nome completo | Chave JSON | Badge cor |
+|---------------|-----------|----------|
+| Ênio Jorge Lima Barbalho Junior | `enio` | paleta dinâmica |
+| Thays Lidianne Campos de Azevedo Pereira | `thays` | paleta dinâmica |
+| Ícaro Oliveira Avelar Costa | `icaro` | `#3b82f6` (azul) |
+| Eliaquim Antunes de Souza Santos | `eliaquim` | `#f97316` (laranja) |
+| Emilly Bianca Ferreira dos Santos | `emilly` | `#f43f5e` (vermelho-rosa) |
+| Miguel Eduardo de Azevedo Martins Filho | `miguel` | `#10b981` (verde-esmeralda) |
 
-## Estrutura das Seções de Designações Semanais
+## Seções Editáveis pelo Admin (Firestore)
 
-Cada mês tem uma seção `<h3>` dentro de `#designacoes-periodo`. Cada semana tem:
-1. Um `<h4>` com o título do período (ex: "Designações - 07 a 11 de Janeiro de 2026")
-2. Uma `<table>` com as 12 DPs e os dias da semana
+| Seção | doc Firestore | Mecanismo |
+|-------|--------------|----------|
+| Regra de Alternância | `secoes/regra_alternancia` | contentEditable + RTE |
+| Férias/Folgas/Licenças dos Membros | `secoes/ferias_folgas` | contentEditable + RTE |
+| Atribuições — células da tabela | `secoes/atribuicoes_celulas` | contentEditable por TD + RTE |
+| Atribuições — link da resolução | `secoes/atribuicoes_resolucao` | form inline |
+| Adote — cabeçalho | `secoes/adote_info` | contentEditable |
+| Adote — células da tabela | `secoes/adote_celulas` | contentEditable por TD + RTE |
+| Adote — bloco Expandir | `secoes/adote_expandir` | contentEditable + RTE |
+| Titulares por DP | `titulares_admin/{dpKey}` | modal de edição |
+| Afastamentos | `afastamentos_admin/{id}` | formulário modal completo |
+| Férias Equipe | `afastamentos_equipe/{id}` | formulário modal |
 
-O título do `<h4>` é usado pela função `validateAlternation()` para ordenar as tabelas cronologicamente.
+## Cache localStorage (elimina flash de dados)
 
-## Nomes Curtos dos Defensores (usados no objeto `afastamentos`)
-
-| Nome completo | Nome curto no JS |
-|---------------|-----------------|
-| José Antônio Pereira da Silva | `jose` |
-| Ícaro Oliveira Avelar Costa | `icaro` |
-| Eliaquim Antunes de Souza | `eliaquim` |
-| Elton Dariva Staub | `elton` |
-| Elaine Maria Sousa Frota | `elaine` |
+| Chave | Conteúdo |
+|-------|---------|
+| `pma-regra-alternancia` | HTML da seção Regra de Alternância |
+| `pma-ferias-folgas` | HTML da seção Férias/Folgas/Licenças |
+| `pma-atr-celulas` | células JSON de Atribuições |
+| `pma-adote-celulas` | células JSON de Adote |
+| `pma-adote-expandir` | HTML do bloco Expandir |
+| `pma-afastamentos-fs` | docs brutos de `afastamentos_admin` |
+| `pma-equipe-fs` | docs brutos de `afastamentos_equipe` |
+| `pma-secao` | última seção visitada (restaura na recarga) |
