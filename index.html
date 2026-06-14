@@ -1105,6 +1105,12 @@
             background: var(--primary-color); color: #fff; border-color: var(--primary-color);
         }
 
+        .equipe-month-block { margin-bottom: 32px; }
+        .equipe-month-title {
+            font-size: 1.05em; font-weight: 700; color: var(--primary-color);
+            margin-bottom: 8px; padding-bottom: 4px;
+            border-bottom: 2px solid var(--primary-color);
+        }
         .equipe-calendar-grid {
             display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 8px;
         }
@@ -7050,30 +7056,18 @@
             renderEquipeCalendar();
         }
 
-        function renderEquipeCalendar() {
-            _aplicarModoEdicao();
-            const year  = equipeCurrentYear;
-            const month = equipeCurrentMonth;
+        function _renderEquipeMes(year, month) {
+            const daysOfWeek = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+            const wrapper = document.createElement('div');
+            wrapper.className = 'equipe-month-block';
 
-            // Seletor de meses
-            const monthSel = document.getElementById('equipe-month-selector');
-            if (monthSel) {
-                monthSel.innerHTML = '';
-                MONTH_NAMES_PT.forEach((nome, i) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'equipe-month-btn' + (i === month ? ' active' : '');
-                    btn.textContent = nome;
-                    btn.onclick = () => { equipeCurrentMonth = i; renderEquipeCalendar(); };
-                    monthSel.appendChild(btn);
-                });
-            }
-
-            const container = document.getElementById('equipe-calendar-container');
-            if (!container) return;
-            container.innerHTML = '';
+            // Título do mês
+            const titulo = document.createElement('div');
+            titulo.className = 'equipe-month-title';
+            titulo.textContent = `${MONTH_NAMES_PT[month]} ${year}`;
+            wrapper.appendChild(titulo);
 
             // Cabeçalho dias da semana
-            const daysOfWeek = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
             const headerGrid = document.createElement('div');
             headerGrid.className = 'equipe-calendar-grid';
             daysOfWeek.forEach(d => {
@@ -7082,12 +7076,12 @@
                 h.textContent = d;
                 headerGrid.appendChild(h);
             });
-            container.appendChild(headerGrid);
+            wrapper.appendChild(headerGrid);
 
             // Grade de dias
-            const firstDay   = new Date(year, month, 1).getDay();
+            const firstDay    = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const monthData  = (equipeAfastamentos[year] || {})[month + 1] || {};
+            const monthData   = (equipeAfastamentos[year] || {})[month + 1] || {};
             const grid = document.createElement('div');
             grid.className = 'equipe-calendar-grid';
 
@@ -7119,7 +7113,53 @@
                 dayDiv.onclick = () => abrirModalEquipe(year, month + 1, day);
                 grid.appendChild(dayDiv);
             }
-            container.appendChild(grid);
+            wrapper.appendChild(grid);
+            return wrapper;
+        }
+
+        function renderEquipeCalendar() {
+            _aplicarModoEdicao();
+
+            // Seletor de meses — destaca o mês do topo
+            const monthSel = document.getElementById('equipe-month-selector');
+            if (monthSel) {
+                monthSel.innerHTML = '';
+                MONTH_NAMES_PT.forEach((nome, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'equipe-month-btn' + (i === equipeCurrentMonth ? ' active' : '');
+                    btn.textContent = nome;
+                    btn.onclick = () => { equipeCurrentMonth = i; renderEquipeCalendar(); };
+                    monthSel.appendChild(btn);
+                });
+            }
+
+            const container = document.getElementById('equipe-calendar-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Renderiza 4 meses consecutivos a partir do mês do topo
+            for (let offset = 0; offset < 4; offset++) {
+                const totalMonth = equipeCurrentMonth + offset;
+                const y = equipeCurrentYear + Math.floor(totalMonth / 12);
+                const m = totalMonth % 12;
+                container.appendChild(_renderEquipeMes(y, m));
+            }
+
+            // Scroll do mouse navega 1 mês por vez
+            container.onwheel = null;
+            container.addEventListener('wheel', function _equipeWheel(e) {
+                e.preventDefault();
+                if (e.deltaY > 0) {
+                    // avança 1 mês
+                    equipeCurrentMonth++;
+                    if (equipeCurrentMonth > 11) { equipeCurrentMonth = 0; equipeCurrentYear++; }
+                } else {
+                    // recua 1 mês
+                    equipeCurrentMonth--;
+                    if (equipeCurrentMonth < 0) { equipeCurrentMonth = 11; equipeCurrentYear--; }
+                }
+                renderEquipeCalendar();
+            }, { passive: false });
         }
 
         function abrirModalEquipe(ano, mes, dia) {
