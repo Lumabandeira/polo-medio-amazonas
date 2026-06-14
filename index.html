@@ -6962,6 +6962,7 @@
         let equipeAfastamentos = {}; // [ano][mes][dia] → [{id, nome, tipo, tipo_custom}]
         let equipeMap          = {}; // id → registro completo
         let _equipeModalAno = null, _equipeModalMes = null, _equipeModalDia = null;
+        let _equipeScrollThrottle = 0;
 
         const EQUIPE_TIPO_LABELS = { ferias: 'Férias', folga: 'Folga', outro: 'Outro' };
 
@@ -7145,18 +7146,21 @@
                 container.appendChild(_renderEquipeMes(y, m));
             }
 
-            // Scroll do mouse navega 1 mês por vez
+            // Scroll do mouse navega 1 mês por vez (throttle 300ms + piso jan/2026)
             container.onwheel = null;
-            container.addEventListener('wheel', function _equipeWheel(e) {
+            container.addEventListener('wheel', function(e) {
                 e.preventDefault();
+                const now = Date.now();
+                if (now - _equipeScrollThrottle < 300) return;
+                _equipeScrollThrottle = now;
                 if (e.deltaY > 0) {
-                    // avança 1 mês
                     equipeCurrentMonth++;
                     if (equipeCurrentMonth > 11) { equipeCurrentMonth = 0; equipeCurrentYear++; }
                 } else {
-                    // recua 1 mês
+                    if (equipeCurrentYear === 2026 && equipeCurrentMonth === 0) return;
                     equipeCurrentMonth--;
                     if (equipeCurrentMonth < 0) { equipeCurrentMonth = 11; equipeCurrentYear--; }
+                    if (equipeCurrentYear < 2026) { equipeCurrentYear = 2026; equipeCurrentMonth = 0; }
                 }
                 renderEquipeCalendar();
             }, { passive: false });
