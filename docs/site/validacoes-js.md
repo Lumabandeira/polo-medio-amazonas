@@ -52,7 +52,8 @@ Firebase onAuthStateChanged()   ← detecta login/logout
 |--------|----------|
 | `loadEquipeFirestore()` | Busca `afastamentos_equipe`, aplica via `_equipeAplicarRegistros()` |
 | `_equipeAplicarRegistros(registros)` | Popula `equipeAfastamentos` e `equipeMap`, re-renderiza |
-| `renderEquipeCalendar()` | Renderiza calendário de badges por pessoa |
+| `_renderEquipeMes(year, month)` | Renderiza um bloco mensal (título + cabeçalho Dom–Sáb + grade); retorna elemento DOM |
+| `renderEquipeCalendar()` | Renderiza os 12 meses do ano selecionado (`equipeCurrentYear`), empilhados verticalmente |
 | `_equipeCorPessoa(nome)` | Retorna cor fixa (EQUIPE_PESSOA_CORES_FIXAS) ou cor da paleta |
 | `abrirModalEquipe(ano, mes, dia)` | Modal de detalhes do dia (todos os afastamentos da equipe) |
 | `salvarEquipeFirestore()` | Grava/atualiza em `afastamentos_equipe` |

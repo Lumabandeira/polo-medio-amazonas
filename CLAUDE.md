@@ -53,7 +53,7 @@ docs/
 
 ---
 
-## Estado atual (sessão 24 — 14/06/2026)
+## Estado atual (sessão 25 — 15/06/2026)
 
 **O que falta implementar:**
 - Cadastrar os outros 36 usuários restantes no Firebase (1 admin + 35 viewers)

@@ -4,6 +4,15 @@
 
 ---
 
+## Sessão 25 — 15/06/2026
+
+- **Férias Equipe refatorada — 12 meses simultâneos com scroll natural da página** — `renderEquipeCalendar()` agora renderiza todos os meses de Janeiro a Dezembro do ano selecionado, empilhados verticalmente. `_renderEquipeMes(year, month)` extraído como helper reutilizável (título + cabeçalho Dom–Sáb + grade). Commits `75e7fd6`, `40472e5`, `2c3dcba`.
+  - Seletor de meses (12 botões) removido — desnecessário com todos os meses visíveis.
+  - Listener de scroll do mouse (`wheel`) removido — navegação pelo scroll natural da página.
+  - Botão 2027 estilizado em amarelo (`#f5e600`) com borda/texto dourado.
+  - Botão "Novo Afastamento" usa `new Date().getMonth()+1` em vez de `equipeCurrentMonth`.
+  - Iterações intermediárias: 4 meses com scroll (throttle 300ms + piso jan/2026) — descartadas em favor da abordagem final mais simples.
+
 ## Sessão 24 — 14/06/2026
 
 - **Bug corrigido — reprocessamento de edições antigas quando cache do Actions expira** — `load_state()` agora busca `ultima_edicao` no Firestore (`automacao_config/estado_diario`) quando o arquivo de cache não existe; `save_state()` também persiste no Firestore a cada execução. Commit `4f9199a`.
