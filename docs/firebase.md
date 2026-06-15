@@ -11,7 +11,7 @@
 ## Autenticação (Firebase Auth)
 
 - Login por e-mail/senha
-- 42 usuários: 3 admins + 39 viewers
+- 44 usuários: 3 admins + 41 viewers
 - **Admins cadastrados:** `bandeira.lkp@gmail.com` (Luma) e `fabiobastos@defensoria.am.def.br` (Fábio Bastos)
 
 ### Como adicionar novos usuários

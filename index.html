@@ -5011,11 +5011,13 @@
         // Formata período de afastamento: "DD-DD/MM" (mesmo mês) ou "DD/MM–DD/MM" (meses diferentes)
         function _formatPeriodoAf(inicio, fim) {
             if (!inicio) return '';
-            const [, mI, dI] = inicio.split('-');
-            if (!fim || inicio === fim) return `${dI}/${mI}`;
-            const [, mF, dF] = fim.split('-');
-            if (mI === mF) return `${dI}-${dF}/${mI}`;
-            return `${dI}/${mI}–${dF}/${mF}`;
+            const [aI, mI, dI] = inicio.split('-');
+            const anoSufixo = (s, a) => `${s}/${a}`;
+            if (!fim || inicio === fim) return anoSufixo(`${dI}/${mI}`, aI);
+            const [aF, mF, dF] = fim.split('-');
+            if (aI === aF && mI === mF) return anoSufixo(`${dI}-${dF}/${mI}`, aI);
+            if (aI === aF) return anoSufixo(`${dI}/${mI}–${dF}/${mF}`, aI);
+            return `${dI}/${mI}/${aI}–${dF}/${mF}/${aF}`;
         }
 
         const DEFENSOR_EMOJI = {
@@ -5064,22 +5066,25 @@
                 const nomeCompleto = defInfo.nome || defKey;
                 const emoji = DEFENSOR_EMOJI[defKey] || '⚫';
 
-                // Agrupa afastamentos por mês de início
-                const porMes = {};
+                // Agrupa afastamentos por ano-mês de início
+                const porAnoMes = {};
                 afasts.forEach(reg => {
                     const inicio = reg.data_inicio || '';
                     if (!inicio) return;
-                    const mesNum = parseInt(inicio.split('-')[1], 10);
-                    if (!porMes[mesNum]) porMes[mesNum] = [];
-                    porMes[mesNum].push(reg);
+                    const [ano, mes] = inicio.split('-');
+                    const chave = `${ano}-${mes}`;
+                    if (!porAnoMes[chave]) porAnoMes[chave] = [];
+                    porAnoMes[chave].push(reg);
                 });
 
                 html += `<h3 style="margin-top:24px;margin-bottom:8px">${emoji} ${nomeCompleto}</h3>`;
                 html += `<ul style="margin-left:20px;margin-bottom:20px">`;
 
-                Object.keys(porMes).sort((a, b) => +a - +b).forEach(mesNum => {
-                    const mesNome = months[mesNum - 1];
-                    const itens = porMes[mesNum]
+                Object.keys(porAnoMes).sort().forEach(chave => {
+                    const [ano, mes] = chave.split('-');
+                    const mesNome = months[parseInt(mes, 10) - 1];
+                    const mesLabel = `${mesNome}/${ano}`;
+                    const itens = porAnoMes[chave]
                         .sort((a, b) => (a.data_inicio || '').localeCompare(b.data_inicio || ''))
                         .map(reg => {
                             const tipoLabel = reg.tipo === 'outro'
@@ -5090,7 +5095,7 @@
                         })
                         .filter(Boolean)
                         .join(', ');
-                    html += `<li><strong>${mesNome}:</strong> ${itens}</li>`;
+                    html += `<li><strong>${mesLabel}:</strong> ${itens}</li>`;
                 });
 
                 html += `</ul>`;
