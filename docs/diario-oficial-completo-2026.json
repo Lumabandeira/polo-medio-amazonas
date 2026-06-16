@@ -4047,5 +4047,61 @@
         "resumo": "Designa Defensor Público de 3ª Classe para atuar cumulativamente na 8ª Defensoria Pública do Polo Médio Amazonas (Itapiranga) a partir de 09 de junho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2669,
+    "data": "2026-06-15",
+    "data_formatada": "15/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2669-2026__publicada_em_15_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 975/2026-GDPG/DPE/AM",
+        "sei": "26.0.000008224-3",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "projeto",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, pelo período de 16/06/2026 a 16/09/2026, membros e servidores relacionados no Anexo Único para comporem o 15º Ciclo do Projeto \"Adote uma Comarca\", com atuação junto à(s) Comarca(s) indicada(s)",
+          "II - ATRIBUIR, a contar do dia 16/06/2026, aos Defensores Públicos, por cada comarca ou grupo de comarcas, a contraprestação na forma do Ato Normativo nº 3/2025-GDPG/DPE/AM",
+          "III - ATRIBUIR, a contar do dia 16/06/2026, aos servidores participantes do projeto, o Adicional previsto no art. 31, XI, da Lei 4.077/2014",
+          "IV - SUSPENDER o pagamento dos adicionais mencionados nos incisos II e III quando os membros e servidores estiverem usufruindo férias, folgas ou licenças"
+        ],
+        "resumo": "Designa membros e servidores do Polo Médio Amazonas (Itacoatiara, Itapiranga, Urucará, Silves, Urucurituba) para o 15º Ciclo do Projeto 'Adote uma Comarca' de 16/06/2026 a 16/09/2026, com atribuição de contraprestação e adicionais."
+      },
+      {
+        "numero": "Portaria Nº 978/2026-GDPG/DPE/AM",
+        "sei": "26.0.000007927-7",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Mariana Silva Paixão para atuar na 3ª Defensoria Pública do Polo do Médio Solim"
+        ],
+        "resumo": "Designa Defensora Pública Mariana Silva Paixão para atuar cumulativamente na 3ª Defensoria Pública do Polo do Médio Solimões."
+      },
+      {
+        "numero": "Portaria Nº 980/2026-GDPG/DPE/AM",
+        "sei": null,
+        "sgi": "2600974",
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Emilly Bianca Ferreira dos Santos, Defensora Pública de 3ª Classe, no trecho Itacoatiara/Silves/Itacoatiara, no período de 16 a 19 de junho de 2026, a fim de realizar sessões do tribunal do júri na comarca de Silves-AM",
+          "II - DETERMINAR o pagamento de diárias à defensora pública acima relacionada"
+        ],
+        "resumo": "Autoriza deslocamento de Defensora Pública para realizar tribunal do júri em Silves-AM de 16 a 19 de junho de 2026, com pagamento de diárias."
+      }
+    ]
   }
 ]
