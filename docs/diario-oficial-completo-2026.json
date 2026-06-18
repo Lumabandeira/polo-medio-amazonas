@@ -4143,5 +4143,50 @@
         "resumo": "Retifica edital de seleção de estagiários para o Polo Médio Amazonas (Silves) e divulga resultado de habilitados"
       }
     ]
+  },
+  {
+    "edicao": 2671,
+    "data": "2026-06-17",
+    "data_formatada": "17/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2671-2026__publicada_em_17_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 620/2026-GSPG/DPE/AM",
+        "sei": "26.0.000008244-8",
+        "sgi": "2600201",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "nomeacao_diretoria",
+          "coordenacao"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Miguel Eduardo de Azevedo Martins Filho para atuar na 5ª Defensoria Pública do Polo do Médio Amazonas, no período de 15 a 24 de julho de 2026",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 10ª Defensoria Pública do Polo do Médio Amazonas (Urucará), no período de 15 a 24 de julho de 2026",
+          "III - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Enio Jorge Lima Brabalho Junior para atuar na 10ª Defensoria Pública do Polo do Médio Amazonas (Urucará), no período de 17 a 28 de agosto de 2026",
+          "I - CESSAR OS EFEITOS, nos períodos de 15 a 26 de julho de 2026 e 17 a 30 de agosto de 2026, a FGD-6 (Coordenadoria do Interior), nos termos da Lei n.º 4.831 de 13 de maio de 2019, concedida à Defensora Pública Emilly Bianca Ferreira dos Santos",
+          "II - DESIGNAR, no período de 15 a 26 de julho de 2026, o Defensor Público Miguel Eduardo de Azevedo Martins Filho como Coordenador do Polo do Médio Amazonas, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019",
+          "III - DESIGNAR, no período de 17 a 30 de agosto de 2026, o Defensor Público Enio Jorge Lima Brabalho Junior como Coordenador do Polo do Médio Amazonas, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019"
+        ],
+        "resumo": "Designa defensores para atuar cumulativamente no Polo do Médio Amazonas e designa coordenadores do polo para os períodos de julho e agosto de 2026"
+      },
+      {
+        "numero": "Portaria Nº 575/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007661-8",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I – DESIGNAR o Defensor Público de 4ª Classe Ian Marcos Martins Palmeira para atuar nas audiências designadas para o dia 02 de junho de 2026, na 1ª Vara da Comarca de Itacoatiara, conforme Anexo Único",
+          "II – DESIGNAR a Defensora Pública de 4ª Classe Érica Andrade de Oliveira para atuar nas audiências designadas para o dia 03 de junho de 2026, na 1ª Vara da Comarca de Itacoatiara, conforme Anexo Único"
+        ],
+        "resumo": "Designa defensores para atuar em audiências na 1ª Vara da Comarca de Itacoatiara nos dias 02 e 03 de junho de 2026"
+      }
+    ]
   }
 ]
