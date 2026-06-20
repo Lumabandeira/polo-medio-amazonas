@@ -4188,5 +4188,30 @@
         "resumo": "Designa defensores para atuar em audiências na 1ª Vara da Comarca de Itacoatiara nos dias 02 e 03 de junho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2673,
+    "data": "2026-06-19",
+    "data_formatada": "19/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2673-2026__publicada_em_19_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 608/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007902-1",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao",
+          "plantao"
+        ],
+        "trechos": [
+          "IV - AUTORIZAR a substituição da Defensora Pública Camila Assunção Cavalcante, designada para a semana 24 do Plantão do Polo do Baixo Amazonas, pelo período de 22/06 a 28/06, por Yáskara Xavier Luciano Lucena",
+          "V - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Polo do Rio Negro-Solimões Polo do Médio Amazonas"
+        ],
+        "resumo": "Autoriza substituição de defensora no Plantão do Polo do Baixo Amazonas e estabelece escala de substituição recíproca incluindo o Polo do Médio Amazonas para cobertura de impedimentos"
+      }
+    ]
   }
 ]
