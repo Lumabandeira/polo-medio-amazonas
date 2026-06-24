@@ -4213,5 +4213,75 @@
         "resumo": "Autoriza substituição de defensora no Plantão do Polo do Baixo Amazonas e estabelece escala de substituição recíproca incluindo o Polo do Médio Amazonas para cobertura de impedimentos"
       }
     ]
+  },
+  {
+    "edicao": 2675,
+    "data": "2026-06-23",
+    "data_formatada": "23/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2675-2026__publicada_em_23_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1033/2026-GDPG/DPE/AM",
+        "sei": "26.0.000008611-7",
+        "sgi": "1878",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "projeto",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Helom César da Silva Nunes, Primeiro Subdefensor Público-Geral, Josué Joel Saraiva Lopes, Analista Jurídico de Defensoria, e Rodrigo Cavalcante dos Santos, Assessor Jurídico DPE-3, nos trechos Manaus/Itacoatiara/Manaus, no período de 26 de julho a 01 de agosto de 2026, a fim de realizarem mutirão carcerário no presídio de Itacoatiara-AM",
+          "II - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, nos trechos Manaus/Itacoatiara/Manaus, no período de 26 de julho a 01 de agosto de 2026, a fim de conduzir o Primeiro Subdefensor Público-Geral e os servidores públicos acima relacionados ao município de Itacoatiara-AM"
+        ],
+        "resumo": "Autoriza deslocamento de defensor público-geral, servidores e auxiliar para Itacoatiara-AM, de 26/07 a 01/08/2026, para realizar mutirão carcerário no presídio"
+      },
+      {
+        "numero": "Portaria Nº 521/2026-GDPG/DPE/AM (alterada por inclusão)",
+        "sei": "26.0.000007816-5",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "servidor",
+          "projeto",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - INCLUIR, a contar de 28 de julho de 2026, pelo período de 1 (um) mês, o servidor Rangel Nascimento Mendonça na Portaria n.º 521/2026-GDPG/DPE/AM, republicada no Diário Oficial Eletrônico da DPE/AM em 11 de maio de 2026, Ano 12, Edição 2647, Pág. 1 de 37, para compor a equipe atuante no Grupo de Trabalho para o Mutirão de Atendimento Previdenciário no Interior para o exercício de 2026",
+          "II - ATRIBUIR ao servidor designado o adicional previsto no art. 31, inciso XI, da Lei n.º 4.077/2014, com redação dada pela Lei n.º 4.831/2019, no valor correspondente ao nível 4 do Anexo XII da mesma lei"
+        ],
+        "resumo": "Inclui servidor Rangel Nascimento Mendonça no Grupo de Trabalho para Mutirão de Atendimento Previdenciário no Interior a partir de 28/07/2026, por 1 mês, com adicional"
+      },
+      {
+        "numero": "Portaria Nº 53/2026-ESUDPAM/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "projeto",
+          "comarca"
+        ],
+        "trechos": [
+          "I – TORNAR PÚBLICO o Resultado Preliminar do Processo Seletivo de Residência Jurídica para o Polo Médio Amazonas – Unidade Descentralizada de Silves/AM, contendo a relação dos(as) candidatos(as) habilitados(as) e classificados(as), bem como dos(as) candidatos(as) não habilitados(as)"
+        ],
+        "resumo": "Torna público resultado preliminar do Processo Seletivo de Residência Jurídica para Polo Médio Amazonas, Unidade de Silves/AM"
+      },
+      {
+        "numero": "Portaria Nº 99/2026-CG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "Art. 1º – DESIGNAR a Subcorregedora-Geral, Dra. Monique Cruz Castellani, para substituir o Corregedor-Geral na 10° Reunião Ordinária do Conselho Superior da Defensoria Pública do Estado do Amazonas, a ser realizada no dia 24 de junho de 2026"
+        ],
+        "resumo": "Designa Subcorregedora-Geral para substituir o Corregedor-Geral na 10ª Reunião Ordinária do Conselho Superior em 24/06/2026"
+      }
+    ]
   }
 ]
