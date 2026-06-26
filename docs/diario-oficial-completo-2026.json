@@ -4283,5 +4283,47 @@
         "resumo": "Designa Subcorregedora-Geral para substituir o Corregedor-Geral na 10ª Reunião Ordinária do Conselho Superior em 24/06/2026"
       }
     ]
+  },
+  {
+    "edicao": 2677,
+    "data": "2026-06-25",
+    "data_formatada": "25/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2677-2026__publicada_em_25_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 660/2026-GSPG/DPE/AM",
+        "sei": "26.0.000008330-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "III - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Rodolfo Pinheiro Bernardo Lôbo para atuar na 11ª Defensoria Pública do Polo Médio Amazonas (Silves), no período de 15 a 24 de julho de 2026",
+          "IV - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Rodolfo Pinheiro Bernardo Lôbo para atuar na 12ª Defensoria Pública do Polo Médio Amazonas (Silves), no período de 15 a 24 de julho de 2026",
+          "XII - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Ali Assaad Hamade de Oliveira para atuar na 9ª Defensoria Pública do Polo do Médio Solimões (Juruá), no período de 22 a 26 de junho de 2026"
+        ],
+        "resumo": "Designa defensores públicos para atuação cumulativa no Polo Médio Amazonas (Silves) e Médio Solimões (Juruá) em julho e junho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 662/2026-GSPG/DPE/AM",
+        "sei": "26.0.000008815-2",
+        "sgi": null,
+        "categorias": [
+          "nomeacao_diretoria",
+          "defensor",
+          "polo_medio",
+          "coordenacao"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, a contar do dia 01 de julho de 2026, a FGD-6 (Coordenadoria do Interior), nos termos da Lei n.º 4.831 de 13 de maio de 2019, concedida ao Defensor Público Vinicius Mariani Cruz Santana",
+          "II - DESIGNAR, a contar do dia 01 de julho de 2026, a Defensora Pública Luisa Martins de Lana Nunes como Coordenadora do Polo do Alto Solimões, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019"
+        ],
+        "resumo": "Cessa coordenação de Vinicius Mariani Cruz Santana e designa Luisa Martins de Lana Nunes como Coordenadora do Polo do Alto Solimões a partir de 01 de julho de 2026"
+      }
+    ]
   }
 ]
