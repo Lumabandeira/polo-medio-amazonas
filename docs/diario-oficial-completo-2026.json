@@ -4325,5 +4325,86 @@
         "resumo": "Cessa coordenação de Vinicius Mariani Cruz Santana e designa Luisa Martins de Lana Nunes como Coordenadora do Polo do Alto Solimões a partir de 01 de julho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2678,
+    "data": "2026-06-30",
+    "data_formatada": "30/06/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/06/Edicao_2678-2026__publicada_em_30_junho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1083/2026-GDPG/DPE/AM",
+        "sei": "26.0.000008921-3",
+        "sgi": "2600965",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de José Maria da Silva Júnior, Assessor Técnico II DPE-1, no trecho Manaus/Itacoatiara/Manaus, no período de 01 a 12 de julho de 2026, a fim de prestar apoio técnico à unidade Defensoria Pública no município de Itacoatiara-AM",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor para Itacoatiara-AM de 01 a 12 de julho de 2026 para prestar apoio técnico"
+      },
+      {
+        "numero": "Portaria Nº 663/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "plantao",
+          "substituicao"
+        ],
+        "trechos": [
+          "IV - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Escala de substituição Polo do Rio Negro-Solimões / Polo do Médio Amazonas",
+          "V - Os Anexos I, II e III da Portaria n.º 298/2026-GSPG/DPE/AM, passam a viger conforme anexo único, desta Portaria, disponibilizado no sítio eletrônico da Defensoria Pública do Estado do Amazonas, no link \"Escala de Plantão - Atendimento e Custódia\"."
+        ],
+        "resumo": "Estabelece escala de substituição entre polos do interior, incluindo Polo do Médio Amazonas com reciprocidade de substitutos automáticos"
+      },
+      {
+        "numero": "Portaria Nº 664/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "plantao"
+        ],
+        "trechos": [
+          "Polo do Médio Amazonas / Polo do Médio Madeira Polo do Madeira"
+        ],
+        "resumo": "Portaria relativa à escala de plantão que inclui o Polo do Médio Amazonas"
+      },
+      {
+        "numero": "Portaria Nº 665/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007963-3",
+        "sgi": "2600944",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Miguel Eduardo de Azevedo Martins Filho para atuar na 11ª Defensoria Pública do Polo Médio Amazonas (Silves), a contar do dia 06 de julho de 2026",
+          "III - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Miguel Eduardo de Azevedo Martins Filho para atuar na 12ª Defensoria Pública do Polo Médio Amazonas (Silves), a contar do dia 06 de julho de 2026",
+          "IV - ATRIBUIR a contraprestação na forma do Ato Normativo nº 3/2025-GDPG/DPE/AM, de 22 de maio de 2025, em complemento com o art. 40, § 3º, da Lei Complementar Estadual nº 01, de 30 de março de 1990, alterado pela Lei Complementar n.º 288, de 02 de junho de 2026, e regulamentado pela Resolução nº 013/2019 do Conselho Superior da Defensoria Pública, observado o limite de duas acumulações."
+        ],
+        "resumo": "Designa cumulativamente defensor Miguel Eduardo para atuar na 11ª e 12ª DP do Polo Médio Amazonas (Silves) a partir de 06 de julho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 666/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "servidor"
+        ],
+        "trechos": [
+          "TORNAR SEM EFEITO o deslocamento da servidora pública Elivania Inhoque, na Portaria n.º 598/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, ano 12, edição 2667, de 11.06.2026, pág. 7/24."
+        ],
+        "resumo": "Torna sem efeito o deslocamento da servidora Elivania Inhoque designada anteriormente para o Polo do Madeira"
+      }
+    ]
   }
 ]
