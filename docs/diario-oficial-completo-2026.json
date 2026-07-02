@@ -4406,5 +4406,29 @@
         "resumo": "Torna sem efeito o deslocamento da servidora Elivania Inhoque designada anteriormente para o Polo do Madeira"
       }
     ]
+  },
+  {
+    "edicao": 2679,
+    "data": "2026-07-01",
+    "data_formatada": "01/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2679-2026__publicada_em_01_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1090/2026-GDPG/DPE/AM",
+        "sei": "26.0.000008932-9",
+        "sgi": "2601194",
+        "categorias": [
+          "comarca",
+          "servidor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Waldir Rosas dos Santos Filho, Auxiliar I de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no dia 01 de julho de 2026, com a fim de conduzir o servidor José Maria da Silva Júnior ao município de Itacoatiara-AM;",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor para Itacoatiara-AM no dia 01/07/2026 e determina pagamento de diárias"
+      }
+    ]
   }
 ]
