@@ -4430,5 +4430,27 @@
         "resumo": "Autoriza deslocamento de servidor para Itacoatiara-AM no dia 01/07/2026 e determina pagamento de diárias"
       }
     ]
+  },
+  {
+    "edicao": 2680,
+    "data": "2026-07-02",
+    "data_formatada": "02/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2680-2026__publicada_em_02_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1105/2026-GDPG/DPE/AM",
+        "sei": "26.0.000008940-0",
+        "sgi": "2600426",
+        "categorias": [
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Nairo Aguiar Cordeiro par"
+        ],
+        "resumo": "Designa defensor público de 2ª classe para atuação cumulativa (texto incompleto no documento)"
+      }
+    ]
   }
 ]
