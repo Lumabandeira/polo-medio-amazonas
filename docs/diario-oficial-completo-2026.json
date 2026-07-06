@@ -4430,5 +4430,96 @@
         "resumo": "Autoriza deslocamento de servidor para Itacoatiara-AM no dia 01/07/2026 e determina pagamento de diárias"
       }
     ]
+  },
+  {
+    "edicao": 2680,
+    "data": "2026-07-02",
+    "data_formatada": "02/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2680-2026__publicada_em_02_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1105/2026-GDPG/DPE/AM",
+        "sei": "26.0.000008940-0",
+        "sgi": "2600426",
+        "categorias": [
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Nairo Aguiar Cordeiro par"
+        ],
+        "resumo": "Designa defensor público de 2ª classe para atuação cumulativa (texto incompleto no documento)"
+      }
+    ]
+  },
+  {
+    "edicao": 2681,
+    "data": "2026-07-03",
+    "data_formatada": "03/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2681-2026__publicada_em_03_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 680/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "servidor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I – DESIGNAR o Defensor Público e os(as) servidores(as) abaixo relacionados(as) para atuarem, sob a Coordenação do Defensor Público Danilo Germano Ribeiro Penha, na Ação Itinerante SEMASC – Colônia Antônio Aleixo, no dia 4 de julho de 2026",
+          "Defensor Público Danilo Germano Ribeiro Penha",
+          "II - ATRIBUIR aos servidores supramencionados a gratificação prevista no art. 31, inciso XI, § 10, Anexo III – XII, da Lei nº 4.077/2014, com redação dada pela Lei nº 4.831/2019, fixada no nível 2, pelo dia trabalhado."
+        ],
+        "resumo": "Designa Defensor Público Danilo Germano Ribeiro Penha e servidores para Ação Itinerante SEMASC na Colônia Antônio Aleixo em 04/07/2026"
+      },
+      {
+        "numero": "Portaria Nº 682/2026-GSPG/DPE/AM",
+        "sei": "26.0.000008920-5",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Gabriel Herzog Kehde para atuar na 1ª Defensoria Pública de 1ª Instância Especializada Na Promoção e Defesa dos Direitos Humanos, da Pessoa Com Deficiência e de Grupos Socialmente Vulneráveis, no período de 03 a 11 de julho de 2026"
+        ],
+        "resumo": "Designa cumulativamente o Defensor Gabriel Herzog Kehde para atuar na 1ª DP Especializada em Direitos Humanos de 03 a 11/07/2026"
+      },
+      {
+        "numero": "EDITAL Nº 75/2026 - ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "A ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS – ESUDPAM E A COORDENAÇÃO DO POLO DO MÉDIO AMAZONAS tornam pública a abertura de Seleção Pública de 01 (uma) vaga de Residente Jurídico para Urucurituba",
+          "1.5 A Residência Jurídica será exercida presencialmente na unidade localizada em Urucurituba/AM",
+          "3.1 A seleção dos(as) candidatos(as) será realizada pelo Polo Médio Amazonas, por meio de Análise de Currículo e Histórico Escolar",
+          "7.6 Quaisquer informações referentes ao processo seletivo poderão ser obtidas pelo e-mail: polomedioamazonas@defensoria.am.def.br"
+        ],
+        "resumo": "Abre seleção pública para 01 vaga de Residente Jurídico no Polo Médio Amazonas em Urucurituba com inscrições de 06 a 08/07/2026"
+      },
+      {
+        "numero": "EDITAL Nº 76/2026 - ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "projeto"
+        ],
+        "trechos": [
+          "A DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS torna pública a realização de PROCESSO SELETIVO, destinado ao preenchimento de 01 (uma) vaga e formação de cadastro de reserva de Residente Jurídico, referente ao 'Projeto Nosso Coração Também é Azul' para pessoas com Transtorno do Espectro Autista",
+          "2.1. As inscrições somente poderão ser realizadas por meio da Coordenação de Estágio Acadêmico da Defensoria Pública, pelo e-mail psicologiacea@defensoria.am.def.br, no período de 06 a 13 de julho de 2026"
+        ],
+        "resumo": "Abre seleção pública para Residente Jurídico no Projeto Nosso Coração Também é Azul com inscrições de 06 a 13/07/2026"
+      }
+    ]
   }
 ]
