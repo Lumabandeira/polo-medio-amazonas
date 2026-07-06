@@ -134,6 +134,44 @@ edicao_do:        "2650"
 data_publicacao_do: "2026-05-06"
 ```
 
+### `prestacoes_contas/{id}` — Prestação de Contas (prontos pagamentos, admin-only)
+```
+tomador:                  "Fábio Bastos de Souza"
+categoria:                "consumo" | "pessoa_juridica" | "pessoa_fisica"
+status:                   "aberto" | "concluido"   ← controla o limite de 2 simultâneos por tomador
+processo_sei:             "26.0.000000661-0"
+valor_recebido:           4000
+valor_concedido:          4000
+data_recebimento:         "YYYY-MM-DD"
+data_inicio_aplicacao:    "YYYY-MM-DD"
+data_fim_aplicacao:       "YYYY-MM-DD"
+prazo_prestacao_contas:   "YYYY-MM-DD"
+memorando_url:            "https://firebasestorage..." | null
+termo_devolucao_url:      "https://firebasestorage..." | null
+comprovante_devolucao_url:"https://firebasestorage..." | null
+despesas: [
+  { tipo: "Recibo" | "Nota Fiscal", numero: "1", data_emissao: "YYYY-MM-DD",
+    fornecedor: "...", descricao: "...", quantidade: 1, valor_unitario: 80, valor_total: 80,
+    recibo_url: "https://..." | null,
+    comprovacao_mercado: { tipo: "pesquisa" | "justificativa_ausencia", url: "https://..." } | null,
+    justificativa_url: "https://..." | null,
+    atesto_url: "https://..." | null,
+    fotos_urls: ["https://...", ...],
+    outros_documentos: [{ nome: "...", url: "https://..." }]
+  }
+]
+criado_por / atualizado_por: "email@..."
+criado_em / atualizado_em:   timestamp
+```
+- **Regra de negócio (client-side, em `_validarCategoriaDisponivel()`):** um mesmo `tomador` pode
+  ter no máximo 2 documentos com `status: "aberto"` ao mesmo tempo, e as categorias desses 2
+  precisam ser diferentes entre si. Marcar como `"concluido"` libera a vaga.
+- **Segurança:** diferente de todas as outras coleções (que liberam leitura a qualquer autenticado),
+  `prestacoes_contas` tem leitura **e** escrita restritas a `isAdmin()` — expõe CPF e dados
+  bancários via `comprovante_devolucao_url`. Ver `firestore.rules` e `storage.rules`.
+- **Storage:** arquivos em `prestacoes-contas/{id}/despesas/{idx}/{campo}-{timestamp}.{ext}` e
+  `prestacoes-contas/{id}/{memorando|termo_devolucao|comprovante_devolucao}-{timestamp}.{ext}`.
+
 ### `automacao_config/estado_diario` — estado da automação (Projeto 1)
 ```
 ultima_edicao:       2680   ← número da última edição processada
@@ -149,6 +187,13 @@ atualizado_em:       timestamp
 - **Leitura:** apenas usuários autenticados
 - **Escrita:** apenas usuários com `role == "admin"`
 - Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`, `remocoes_admin`, `designacoes_cumulativas_admin`, `afastamentos_equipe`
+- **Exceção:** `prestacoes_contas` tem leitura **e** escrita restritas a admin (não apenas escrita) — ver acima.
+
+## Regras de Segurança do Storage
+
+- Bucket `polo-medio-as.firebasestorage.app`, regras em `storage.rules`.
+- `prestacoes-contas/**`: leitura e escrita restritas a `isAdmin()` (checa `usuarios/{uid}.role` via `firestore.get()`).
+- Qualquer outro caminho: bloqueado por padrão (`allow read, write: if false`).
 
 ---
 
@@ -166,3 +211,8 @@ atualizado_em:       timestamp
 | `loadEquipeFirestore()` | Carrega `afastamentos_equipe` |
 | `carregarNotificacoesAutomacao()` | Carrega as 3 coleções de notificações (try/catch independentes) |
 | `get_firestore_client()` | Python — inicializa Firebase Admin SDK |
+| `renderPrestacoesContas()` | Carrega `prestacoes_contas` e renderiza a lista de cards (admin-only) |
+| `salvarPrestacao()` / `_validarCategoriaDisponivel()` | Cria/edita um pronto pagamento, validando o limite de 2 abertos por tomador |
+| `salvarDespesa()` / `excluirDespesa()` | CRUD de linhas do Mapa Demonstrativo dentro do array `despesas[]` |
+| `abrirModalAnexos()` / `_uploadSlotSimples()` / `uploadFotos()` / `adicionarOutroDocumento()` | Upload de anexos por despesa para o Firebase Storage |
+| `uploadDocumentoProcesso()` | Upload dos 3 documentos do processo (Memorando, Termo/Comprovante de Devolução) |

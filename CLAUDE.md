@@ -26,6 +26,7 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 | Entender ou modificar a automação do Diário Oficial | `docs/automacao.md` |
 | Entender decisões de arquitetura ou padrão de cache | `docs/arquitetura.md` |
 | Ver o que foi implementado em sessões anteriores | `docs/historico-sessoes.md` |
+| Mexer na seção Prestação de Contas (prontos pagamentos) | `docs/site/estrutura-html.md` (seção "Prestação de Contas") · `docs/firebase.md` (schema `prestacoes_contas`) |
 
 ---
 
@@ -53,12 +54,19 @@ docs/
 
 ---
 
-## Estado atual (sessão 25 — 15/06/2026)
+## Estado atual (sessão 26 — 06/07/2026)
+
+**Implementado nesta sessão:** seção "💰 Prestação de Contas" (admin-only) — prontos pagamentos
+por tomador (máx. 2 abertos simultâneos, categorias `consumo`/`pessoa_juridica`/`pessoa_fisica`
+distintas entre si), Mapa Demonstrativo de Despesa com totais automáticos, e anexos por despesa
+(Recibo/NF, comprovação de mercado, justificativa, atesto, fotos, outros documentos) com upload
+para Firebase Storage. Ver `docs/site/estrutura-html.md` e `docs/firebase.md`.
 
 **O que falta implementar:**
 - Cadastrar os outros 36 usuários restantes no Firebase (1 admin + 35 viewers)
 - Dados privados da equipe (WhatsApp, contatos internos)
 - Botão "Plantão" — nova seção com escala de plantão (arquitetura a definir)
+- Deploy das `storage.rules` novas no Firebase Console/CLI (`firebase deploy --only storage`) — só existiam Firestore rules até agora, Storage nunca tinha rules configuradas neste projeto
 
 Para o histórico completo do que foi implementado → `docs/historico-sessoes.md`
 

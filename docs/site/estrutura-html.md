@@ -21,6 +21,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | ⛱️ Férias Equipe | `#equipe` | `showSection('equipe')` |
 | 🏘️ Adote | `#adote` | `showSection('adote')` |
 | 📰 Diário Oficial | `#diario` | `showSection('diario')` |
+| 💰 Prestação de Contas | `#prestacao-contas` | `showSection('prestacao-contas')` — **admin-only**, botão fica `display:none` para viewers |
 
 ## Abas dentro da seção Designações (`#designacoes`)
 
@@ -79,6 +80,28 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | Titulares por DP | `titulares_admin/{dpKey}` | modal de edição |
 | Afastamentos | `afastamentos_admin/{id}` | formulário modal completo |
 | Férias Equipe | `afastamentos_equipe/{id}` | formulário modal |
+
+## Prestação de Contas (`#prestacao-contas`, admin-only)
+
+Seção inteira restrita a admin: o botão da landing (`#btn-prestacao-contas`) nasce com `display:none`
+e só é revelado em `_aplicarModoEdicao()`. `showSection('prestacao-contas')` também expulsa
+qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de proteção.
+
+- **Lista** (`#pc-lista-view`): cards agrupados por tomador, um card por "pronto pagamento" (adiantamento).
+  Cada tomador pode ter no máximo **2 prontos pagamentos com `status: "aberto"` simultâneos**,
+  em categorias diferentes entre si (`consumo` | `pessoa_juridica` | `pessoa_fisica`) — regra
+  aplicada em `_validarCategoriaDisponivel()` antes de salvar ou reabrir.
+- **Detalhe** (`#pc-detalhe-view`): réplica do "Mapa Demonstrativo de Despesa" (planilha em papel
+  usada pela Defensoria) — tabela de despesas com totais calculados automaticamente (valor das
+  despesas, saldo remanescente), mais os 3 documentos do processo como um todo (Memorando,
+  Termo de Devolução, Comprovante de Devolução).
+- **Anexos por despesa**: modal com 5 slots fixos (Recibo/NF, Comprovação de mercado — pesquisa
+  *ou* justificativa de ausência, Justificativa da despesa, Atesto, Fotos) + lista livre de
+  "Outros documentos". Upload vai para Firebase Storage em `prestacoes-contas/{prestacaoId}/...`;
+  a URL de download fica salva no array `despesas[]` do documento Firestore.
+- Ver `docs/firebase.md` para o schema completo de `prestacoes_contas/{id}` e as regras de
+  segurança (mais restritas que o padrão do site: leitura **e** escrita admin-only, por causa de
+  CPF/dados bancários nos comprovantes de devolução).
 
 ## Cache localStorage (elimina flash de dados)
 

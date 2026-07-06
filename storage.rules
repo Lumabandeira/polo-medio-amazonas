@@ -1,0 +1,24 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        firestore.get(/databases/(default)/documents/usuarios/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Anexos de Prestação de Contas: dados financeiros/pessoais sensíveis — admin-only
+    match /prestacoes-contas/{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Qualquer outro caminho: bloqueado por padrão
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

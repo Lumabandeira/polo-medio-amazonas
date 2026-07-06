@@ -1082,6 +1082,77 @@
             color: white;
         }
 
+        .btn-prestacao-contas {
+            background: linear-gradient(135deg, #7c2d12 0%, #f97316 100%);
+            color: white;
+        }
+
+        /* ─── Prestação de Contas ────────────────────────────────── */
+        .pc-lista-header {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 12px; margin-bottom: 10px;
+        }
+        .pc-lista-header h2 { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .fp-erro {
+            background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5;
+            border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 0.9em;
+        }
+        .pc-tomador-grupo { margin-bottom: 26px; }
+        .pc-tomador-nome { color: var(--secondary-color); margin-bottom: 12px; font-size: 1.15em; }
+        .pc-cards-row { display: flex; flex-wrap: wrap; gap: 16px; }
+        .pc-card {
+            background: white; border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 16px 18px; min-width: 260px; max-width: 320px; flex: 1 1 260px;
+            cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .pc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.14); }
+        .pc-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
+        .pc-badge-categoria {
+            background: #eef2ff; color: #3730a3; font-size: 0.78em; font-weight: 600;
+            padding: 3px 10px; border-radius: 12px;
+        }
+        .pc-badge-status { font-size: 0.78em; font-weight: 600; padding: 3px 10px; border-radius: 12px; }
+        .pc-status-aberto { background: #fef9c3; color: #854d0e; }
+        .pc-status-concluido { background: #dcfce7; color: #166534; }
+        .pc-card-sei { color: var(--text-secondary); font-size: 0.85em; margin-bottom: 10px; }
+        .pc-card-valores { display: flex; justify-content: space-between; gap: 8px; }
+        .pc-card-valores div { display: flex; flex-direction: column; font-size: 0.82em; color: var(--text-secondary); }
+        .pc-card-valores strong { color: var(--text-primary); font-size: 1.05em; }
+
+        .pc-detalhe-header { display: flex; align-items: center; gap: 16px; margin-bottom: 10px; }
+        .pc-detalhe-header h2 { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .pc-info-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 14px; margin: 16px 0;
+        }
+        .pc-info-grid div { display: flex; flex-direction: column; gap: 2px; }
+        .pc-info-grid span { color: var(--text-secondary); font-size: 0.82em; }
+        .pc-tabela-despesas { font-size: 0.92em; }
+        .pc-tabela-despesas tfoot td { background: #f8fafc; padding: 10px 15px; }
+
+        .pc-anexo-slots { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+        .pc-anexo-slot {
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+            border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 16px;
+        }
+        .pc-anexo-slot.ok { border-color: #86efac; background: #f0fdf4; }
+        .pc-anexo-slot.pendente { border-color: #fde68a; background: #fffbeb; }
+        .pc-anexo-slot-label { font-weight: 600; }
+        .pc-anexo-slot-status { font-size: 0.85em; color: var(--text-secondary); }
+        .pc-anexo-slot-acoes { display: flex; gap: 8px; align-items: center; }
+        .pc-fotos-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+        .pc-foto-item { position: relative; width: 110px; height: 110px; }
+        .pc-foto-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); }
+        .pc-foto-remover {
+            position: absolute; top: -6px; right: -6px; background: #ef4444; color: white;
+            border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 0.8em;
+        }
+        .pc-outro-item {
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px;
+        }
+        .pc-outro-item .pc-foto-remover { position: static; }
+
         /* ─── Seção Equipe ───────────────────────────────────────── */
         #equipe-year-selector { display:flex; gap:8px; margin-bottom:12px; }
         .equipe-year-btn {
@@ -2858,6 +2929,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 </head>
 <!-- Loading Overlay (exibido enquanto Firebase restaura a sessão) -->
 <div id="loading-overlay">
@@ -2939,6 +3011,11 @@
                     <span class="landing-btn-icon">📰</span>
                     <span class="landing-btn-title">Diário Oficial</span>
                     <span class="landing-btn-desc">Portarias e atos que mencionam o Polo Médio Amazonas — jan a abr/2026</span>
+                </button>
+                <button id="btn-prestacao-contas" class="landing-btn btn-prestacao-contas" style="display:none" onclick="showSection('prestacao-contas')">
+                    <span class="landing-btn-icon">💰</span>
+                    <span class="landing-btn-title">Prestação de Contas</span>
+                    <span class="landing-btn-desc">Prontos pagamentos, despesas e anexos comprobatórios — acesso restrito a admins</span>
                 </button>
             </div>
         </div>
@@ -3276,6 +3353,37 @@
                 </div>
             </div>
         </div>
+
+        <!-- Tab: Prestação de Contas (admin-only) -->
+        <div id="prestacao-contas" class="tab-content">
+            <div id="pc-lista-view">
+                <div class="card">
+                    <div class="pc-lista-header">
+                        <h2>💰 Prestação de Contas — Prontos Pagamentos</h2>
+                        <button class="btn-salvar-form" onclick="abrirNovaPrestacao()">+ Novo Pronto Pagamento</button>
+                    </div>
+                    <p style="color:var(--text-secondary);margin-bottom:20px;line-height:1.6;">
+                        Cada tomador pode ter no máximo <strong>2 prontos pagamentos em aberto</strong>, em categorias
+                        diferentes entre si (Consumo, Pessoa Jurídica, Pessoa Física). Página visível apenas para administradores.
+                    </p>
+                    <div id="pc-lista-cards">
+                        <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pc-detalhe-view" style="display:none">
+                <div class="card">
+                    <div class="pc-detalhe-header">
+                        <button class="btn-cancelar-form" onclick="fecharDetalhePrestacao()">← Voltar</button>
+                        <h2 id="pc-detalhe-titulo">Prestação de Contas</h2>
+                    </div>
+                    <div id="pc-detalhe-info" class="pc-detalhe-info"></div>
+                    <div id="pc-detalhe-tabela"></div>
+                    <div id="pc-detalhe-processo"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Formulário de Afastamento (Admin) -->
@@ -3377,6 +3485,139 @@
                         <button type="button" id="btn-salvar-titulares" class="btn-salvar-form" onclick="salvarTitularesDp()">💾 Salvar Alterações</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo/Editar Pronto Pagamento (Prestação de Contas — admin) -->
+    <div id="form-prestacao-overlay" class="form-af-overlay" onclick="fecharFormPrestacao(event)">
+        <div class="form-af-content" onclick="event.stopPropagation()">
+            <div class="form-af-header">
+                <h2 id="form-prestacao-titulo">➕ Novo Pronto Pagamento</h2>
+                <button class="modal-close" onclick="fecharFormPrestacao()">×</button>
+            </div>
+            <div class="form-af-body">
+                <form id="form-prestacao" onsubmit="event.preventDefault(); salvarPrestacao()">
+                    <input type="hidden" id="fp-id">
+                    <div id="fp-erro" class="fp-erro" style="display:none"></div>
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: span 2">
+                            <label>Tomador (servidor)</label>
+                            <input type="text" id="fp-tomador" required placeholder="Nome completo" onchange="_validarCategoriaDisponivel()">
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria</label>
+                            <select id="fp-categoria" required onchange="_validarCategoriaDisponivel()">
+                                <option value="">Selecionar...</option>
+                                <option value="consumo">Consumo</option>
+                                <option value="pessoa_juridica">Pessoa Jurídica</option>
+                                <option value="pessoa_fisica">Pessoa Física</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="grid-column: span 3">
+                            <label>Processo SEI</label>
+                            <input type="text" id="fp-sei" placeholder="ex: 26.0.000000661-0">
+                        </div>
+                        <div class="form-group">
+                            <label>Valor Recebido (R$)</label>
+                            <input type="number" step="0.01" min="0" id="fp-valor-recebido" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor Concedido (R$)</label>
+                            <input type="number" step="0.01" min="0" id="fp-valor-concedido">
+                        </div>
+                        <div class="form-group">
+                            <label>Data do Recebimento</label>
+                            <input type="date" id="fp-data-recebimento">
+                        </div>
+                        <div class="form-group">
+                            <label>Data Inicial de Aplicação</label>
+                            <input type="date" id="fp-data-inicio">
+                        </div>
+                        <div class="form-group">
+                            <label>Data Final para Aplicação</label>
+                            <input type="date" id="fp-data-fim">
+                        </div>
+                        <div class="form-group">
+                            <label>Prazo de Prestação de Contas</label>
+                            <input type="date" id="fp-prazo-pc">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancelar-form" onclick="fecharFormPrestacao()">Cancelar</button>
+                        <button type="submit" id="fp-submit" class="btn-salvar-form">💾 Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nova/Editar Despesa (linha do Mapa Demonstrativo) -->
+    <div id="form-despesa-overlay" class="form-af-overlay" onclick="fecharFormDespesa(event)">
+        <div class="form-af-content" onclick="event.stopPropagation()">
+            <div class="form-af-header">
+                <h2 id="form-despesa-titulo">➕ Nova Despesa</h2>
+                <button class="modal-close" onclick="fecharFormDespesa()">×</button>
+            </div>
+            <div class="form-af-body">
+                <form id="form-despesa" onsubmit="event.preventDefault(); salvarDespesa()">
+                    <input type="hidden" id="fd-prestacao-id">
+                    <input type="hidden" id="fd-idx">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Tipo de Comprovante</label>
+                            <select id="fd-tipo">
+                                <option value="Recibo">Recibo</option>
+                                <option value="Nota Fiscal">Nota Fiscal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nº</label>
+                            <input type="text" id="fd-numero" placeholder="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Data de Emissão</label>
+                            <input type="date" id="fd-data-emissao">
+                        </div>
+                        <div class="form-group" style="grid-column: span 3">
+                            <label>Fornecedor</label>
+                            <input type="text" id="fd-fornecedor" required>
+                        </div>
+                        <div class="form-group form-full">
+                            <label>Descrição do Material/Serviço</label>
+                            <input type="text" id="fd-descricao" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantidade</label>
+                            <input type="number" step="1" min="1" id="fd-quantidade" value="1" oninput="_atualizarValorTotalDespesa()">
+                        </div>
+                        <div class="form-group">
+                            <label>Valor Unitário (R$)</label>
+                            <input type="number" step="0.01" min="0" id="fd-valor-unitario" required oninput="_atualizarValorTotalDespesa()">
+                        </div>
+                        <div class="form-group">
+                            <label>Valor Total (R$)</label>
+                            <input type="number" step="0.01" id="fd-valor-total" readonly style="background:#f1f5f9">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancelar-form" onclick="fecharFormDespesa()">Cancelar</button>
+                        <button type="submit" class="btn-salvar-form">💾 Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Anexos da Despesa -->
+    <div id="modal-anexos-overlay" class="form-af-overlay" onclick="fecharModalAnexos(event)">
+        <div class="form-af-content" onclick="event.stopPropagation()">
+            <div class="form-af-header">
+                <h2 id="modal-anexos-titulo">📎 Anexos da Despesa</h2>
+                <button class="modal-close" onclick="fecharModalAnexos()">×</button>
+            </div>
+            <div class="form-af-body">
+                <div id="modal-anexos-body"></div>
             </div>
         </div>
     </div>
@@ -4404,6 +4645,14 @@
             });
             const colHeader = document.querySelector('.col-editar-dp');
             if (colHeader) colHeader.style.display = isAdmin ? 'table-cell' : 'none';
+            // Prestação de Contas: seção inteira só existe para admin
+            const btnPC = document.getElementById('btn-prestacao-contas');
+            if (btnPC) btnPC.style.display = isAdmin ? 'flex' : 'none';
+            if (!isAdmin) {
+                // Se um viewer estiver na seção (ex: via ?s= na URL) e o role mudar, expulsa pra landing
+                const secPC = document.getElementById('prestacao-contas');
+                if (secPC && secPC.classList.contains('active')) showSection('atribuicoes');
+            }
         }
 
         function _desativarModoEdicao() { /* no-op: botões sempre visíveis para admins */ }
@@ -6531,6 +6780,12 @@
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('diario-oficial').classList.add('active');
                 renderDiario();
+            } else if (tabName === 'prestacao-contas') {
+                // Prestação de Contas: admin-only, sem barra de abas
+                if (userRole !== 'admin') { showSection('atribuicoes'); return; }
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('prestacao-contas').classList.add('active');
+                renderPrestacoesContas();
             } else {
                 // Designações: barra de abas sem o botão Diário Oficial
                 document.querySelector('.tabs').style.display = 'flex';
@@ -8373,8 +8628,9 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db   = firebase.firestore();
+        const auth    = firebase.auth();
+        const db      = firebase.firestore();
+        const storage = firebase.storage();
 
         let currentUser = null;
         let userRole    = null;
@@ -8911,6 +9167,733 @@
             // Carregar JSONs e inicializar renderização
             loadJSONData();
         };
+
+        // =====================================================================
+        // PRESTAÇÃO DE CONTAS — Prontos Pagamentos (admin-only)
+        // =====================================================================
+
+        const PC_CATEGORIA_LABELS = {
+            consumo: 'Consumo',
+            pessoa_juridica: 'Pessoa Jurídica',
+            pessoa_fisica: 'Pessoa Física'
+        };
+        const PC_TOTAL_SLOTS = 5; // recibo, comprovação de mercado, justificativa, atesto, fotos
+
+        let prestacoesContas = [];
+        let _pcAtualId = null;
+        let _anexoPrestacaoId = null;
+        let _anexoDespesaIdx = null;
+
+        function formatarMoeda(v) {
+            const n = Number(v) || 0;
+            return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // ── Carregamento e lista ────────────────────────────────────────
+        async function renderPrestacoesContas() {
+            const cont = document.getElementById('pc-lista-cards');
+            cont.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>';
+            try {
+                const snap = await db.collection('prestacoes_contas').orderBy('criado_em', 'desc').get();
+                prestacoesContas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            } catch (e) {
+                console.error('Erro ao carregar prestações de contas:', e);
+                cont.innerHTML = '<p style="text-align:center;padding:20px;color:#ef4444;">❌ Erro ao carregar dados.</p>';
+                return;
+            }
+            _renderListaPrestacoesCards();
+        }
+
+        function _renderListaPrestacoesCards() {
+            const cont = document.getElementById('pc-lista-cards');
+            document.getElementById('pc-lista-view').style.display = '';
+            document.getElementById('pc-detalhe-view').style.display = 'none';
+
+            if (prestacoesContas.length === 0) {
+                cont.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-secondary);">Nenhum pronto pagamento cadastrado ainda.</p>';
+                return;
+            }
+
+            const porTomador = {};
+            prestacoesContas.forEach(p => {
+                const key = (p.tomador || '—').trim();
+                if (!porTomador[key]) porTomador[key] = [];
+                porTomador[key].push(p);
+            });
+
+            let html = '';
+            Object.keys(porTomador).sort().forEach(tomador => {
+                html += `<div class="pc-tomador-grupo">
+                    <h3 class="pc-tomador-nome">👤 ${esc(tomador)}</h3>
+                    <div class="pc-cards-row">`;
+                porTomador[tomador].forEach(p => {
+                    const despesas = p.despesas || [];
+                    const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
+                    const saldo = (Number(p.valor_recebido) || 0) - totalDespesas;
+                    const statusLabel = p.status === 'concluido' ? '🟢 Concluído' : '🟡 Aberto';
+                    const statusClass = p.status === 'concluido' ? 'pc-status-concluido' : 'pc-status-aberto';
+                    html += `<div class="pc-card" onclick="abrirDetalhePrestacao('${p.id}')">
+                        <div class="pc-card-top">
+                            <span class="pc-badge-categoria">${PC_CATEGORIA_LABELS[p.categoria] || p.categoria || '—'}</span>
+                            <span class="pc-badge-status ${statusClass}">${statusLabel}</span>
+                        </div>
+                        <div class="pc-card-sei">${p.processo_sei ? 'SEI ' + esc(p.processo_sei) : 'Sem processo SEI'}</div>
+                        <div class="pc-card-valores">
+                            <div><span>Recebido</span><strong>${formatarMoeda(p.valor_recebido)}</strong></div>
+                            <div><span>Despesas</span><strong>${formatarMoeda(totalDespesas)}</strong></div>
+                            <div><span>Saldo</span><strong>${formatarMoeda(saldo)}</strong></div>
+                        </div>
+                    </div>`;
+                });
+                html += `</div></div>`;
+            });
+            cont.innerHTML = html;
+        }
+
+        // ── Regra de negócio: 2 abertos por tomador, categorias distintas ──
+        function _prestacoesAbertasDoTomador(tomador, excludeId) {
+            const t = (tomador || '').trim().toLowerCase();
+            return prestacoesContas.filter(p =>
+                (p.tomador || '').trim().toLowerCase() === t &&
+                p.status !== 'concluido' &&
+                p.id !== excludeId
+            );
+        }
+
+        function _validarCategoriaDisponivel() {
+            const erroEl = document.getElementById('fp-erro');
+            const tomador = document.getElementById('fp-tomador').value;
+            const categoria = document.getElementById('fp-categoria').value;
+            const idAtual = document.getElementById('fp-id').value || null;
+            erroEl.style.display = 'none';
+            if (!tomador || !categoria) return true;
+
+            const abertas = _prestacoesAbertasDoTomador(tomador, idAtual);
+            if (abertas.length >= 2) {
+                erroEl.textContent = `❌ ${tomador} já possui 2 prontos pagamentos em aberto (${abertas.map(p => PC_CATEGORIA_LABELS[p.categoria]).join(' e ')}). Conclua um deles antes de abrir outro.`;
+                erroEl.style.display = 'block';
+                return false;
+            }
+            if (abertas.some(p => p.categoria === categoria)) {
+                erroEl.textContent = `❌ ${tomador} já tem um pronto pagamento em aberto na categoria ${PC_CATEGORIA_LABELS[categoria]}. Escolha uma categoria diferente.`;
+                erroEl.style.display = 'block';
+                return false;
+            }
+            return true;
+        }
+
+        // ── Modal Novo/Editar Pronto Pagamento ───────────────────────────
+        function abrirNovaPrestacao() {
+            document.getElementById('form-prestacao-titulo').textContent = '➕ Novo Pronto Pagamento';
+            document.getElementById('form-prestacao').reset();
+            document.getElementById('fp-id').value = '';
+            document.getElementById('fp-erro').style.display = 'none';
+            document.getElementById('form-prestacao-overlay').classList.add('active');
+        }
+
+        function abrirEditarPrestacao(id) {
+            const p = prestacoesContas.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('form-prestacao-titulo').textContent = '✏️ Editar Pronto Pagamento';
+            document.getElementById('fp-id').value = p.id;
+            document.getElementById('fp-tomador').value = p.tomador || '';
+            document.getElementById('fp-categoria').value = p.categoria || '';
+            document.getElementById('fp-sei').value = p.processo_sei || '';
+            document.getElementById('fp-valor-recebido').value = p.valor_recebido || '';
+            document.getElementById('fp-valor-concedido').value = p.valor_concedido || '';
+            document.getElementById('fp-data-recebimento').value = p.data_recebimento || '';
+            document.getElementById('fp-data-inicio').value = p.data_inicio_aplicacao || '';
+            document.getElementById('fp-data-fim').value = p.data_fim_aplicacao || '';
+            document.getElementById('fp-prazo-pc').value = p.prazo_prestacao_contas || '';
+            document.getElementById('fp-erro').style.display = 'none';
+            document.getElementById('form-prestacao-overlay').classList.add('active');
+        }
+
+        function fecharFormPrestacao(event) {
+            if (event && event.target !== event.currentTarget &&
+                !event.target.classList.contains('modal-close')) return;
+            document.getElementById('form-prestacao-overlay').classList.remove('active');
+        }
+
+        async function salvarPrestacao() {
+            const id = document.getElementById('fp-id').value || null;
+            const tomador = document.getElementById('fp-tomador').value.trim();
+            const categoria = document.getElementById('fp-categoria').value;
+
+            if (!_validarCategoriaDisponivel()) return;
+
+            const dados = {
+                tomador,
+                categoria,
+                processo_sei: document.getElementById('fp-sei').value.trim() || null,
+                valor_recebido: Number(document.getElementById('fp-valor-recebido').value) || 0,
+                valor_concedido: Number(document.getElementById('fp-valor-concedido').value) || 0,
+                data_recebimento: document.getElementById('fp-data-recebimento').value || null,
+                data_inicio_aplicacao: document.getElementById('fp-data-inicio').value || null,
+                data_fim_aplicacao: document.getElementById('fp-data-fim').value || null,
+                prazo_prestacao_contas: document.getElementById('fp-prazo-pc').value || null,
+                atualizado_por: currentUser.email,
+                atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            const btn = document.getElementById('fp-submit');
+            btn.disabled = true;
+            btn.textContent = '⏳ Salvando...';
+
+            try {
+                if (id) {
+                    await db.collection('prestacoes_contas').doc(id).update(dados);
+                } else {
+                    dados.despesas = [];
+                    dados.status = 'aberto';
+                    dados.memorando_url = null;
+                    dados.termo_devolucao_url = null;
+                    dados.comprovante_devolucao_url = null;
+                    dados.criado_por = currentUser.email;
+                    dados.criado_em = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('prestacoes_contas').add(dados);
+                }
+                document.getElementById('form-prestacao-overlay').classList.remove('active');
+                mostrarToast('✅ Pronto pagamento salvo com sucesso.');
+                await renderPrestacoesContas();
+            } catch (e) {
+                console.error('Erro ao salvar prestação:', e);
+                mostrarToast('❌ ' + e.message, true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Salvar';
+            }
+        }
+
+        async function marcarPrestacaoConcluida(id) {
+            if (!confirm('Marcar este pronto pagamento como concluído? Isso libera uma vaga para o tomador abrir outro.')) return;
+            try {
+                await db.collection('prestacoes_contas').doc(id).update({
+                    status: 'concluido',
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                mostrarToast('✅ Prestação marcada como concluída.');
+                await renderPrestacoesContas();
+                fecharDetalhePrestacao();
+            } catch (e) {
+                console.error('Erro ao concluir prestação:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function reabrirPrestacao(id) {
+            const p = prestacoesContas.find(x => x.id === id);
+            if (!p) return;
+            const abertas = _prestacoesAbertasDoTomador(p.tomador, id);
+            if (abertas.length >= 2) {
+                mostrarToast(`❌ ${p.tomador} já possui 2 prontos pagamentos em aberto. Conclua um deles antes de reabrir este.`, true);
+                return;
+            }
+            if (abertas.some(a => a.categoria === p.categoria)) {
+                mostrarToast(`❌ ${p.tomador} já tem outro pronto pagamento em aberto na categoria ${PC_CATEGORIA_LABELS[p.categoria]}.`, true);
+                return;
+            }
+            try {
+                await db.collection('prestacoes_contas').doc(id).update({
+                    status: 'aberto',
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                mostrarToast('🔄 Prestação reaberta.');
+                await renderPrestacoesContas();
+            } catch (e) {
+                console.error('Erro ao reabrir prestação:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        // ── Detalhe da prestação: Mapa Demonstrativo ─────────────────────
+        function abrirDetalhePrestacao(id) {
+            _pcAtualId = id;
+            document.getElementById('pc-lista-view').style.display = 'none';
+            document.getElementById('pc-detalhe-view').style.display = '';
+            _renderDetalhePrestacao();
+        }
+
+        function fecharDetalhePrestacao() {
+            _pcAtualId = null;
+            document.getElementById('pc-lista-view').style.display = '';
+            document.getElementById('pc-detalhe-view').style.display = 'none';
+        }
+
+        function _contarAnexosPreenchidos(d) {
+            let n = 0;
+            if (d.recibo_url) n++;
+            if (d.comprovacao_mercado && d.comprovacao_mercado.url) n++;
+            if (d.justificativa_url) n++;
+            if (d.atesto_url) n++;
+            if (d.fotos_urls && d.fotos_urls.length > 0) n++;
+            return n;
+        }
+
+        function _renderDetalhePrestacao() {
+            const p = prestacoesContas.find(x => x.id === _pcAtualId);
+            if (!p) { fecharDetalhePrestacao(); return; }
+
+            document.getElementById('pc-detalhe-titulo').textContent =
+                `💰 ${p.tomador} — ${PC_CATEGORIA_LABELS[p.categoria] || p.categoria}`;
+
+            const despesas = p.despesas || [];
+            const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
+            const saldo = (Number(p.valor_recebido) || 0) - totalDespesas;
+            const statusLabel = p.status === 'concluido' ? '🟢 Concluído' : '🟡 Aberto';
+
+            document.getElementById('pc-detalhe-info').innerHTML = `
+                <div class="pc-info-grid">
+                    <div><span>Processo SEI</span><strong>${p.processo_sei ? esc(p.processo_sei) : '—'}</strong></div>
+                    <div><span>Status</span><strong>${statusLabel}</strong></div>
+                    <div><span>Data do Recebimento</span><strong>${formatarData(p.data_recebimento)}</strong></div>
+                    <div><span>Aplicação</span><strong>${formatarData(p.data_inicio_aplicacao)} a ${formatarData(p.data_fim_aplicacao)}</strong></div>
+                    <div><span>Prazo Prestação de Contas</span><strong>${formatarData(p.prazo_prestacao_contas)}</strong></div>
+                    <div><span>Valor Recebido</span><strong>${formatarMoeda(p.valor_recebido)}</strong></div>
+                    <div><span>Valor Concedido</span><strong>${formatarMoeda(p.valor_concedido)}</strong></div>
+                </div>
+                <div class="form-actions" style="margin:16px 0">
+                    <button class="btn-editar" onclick="abrirEditarPrestacao('${p.id}')">✏️ Editar dados</button>
+                    ${p.status === 'concluido'
+                        ? `<button class="btn-cancelar-form" onclick="reabrirPrestacao('${p.id}')">🔄 Reabrir</button>`
+                        : `<button class="btn-salvar-form" onclick="marcarPrestacaoConcluida('${p.id}')">✅ Marcar como concluído</button>`}
+                </div>
+            `;
+
+            let tabelaHtml = `
+                <h3 style="margin-top:10px">📊 Mapa Demonstrativo de Despesa</h3>
+                <div style="overflow-x:auto">
+                <table class="pc-tabela-despesas">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th><th>Nº</th><th>Data</th><th>Fornecedor</th>
+                            <th>Descrição</th><th>Qtd.</th><th>Valor Unit.</th><th>Valor Total</th>
+                            <th>Anexos</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            if (despesas.length === 0) {
+                tabelaHtml += `<tr><td colspan="10" style="text-align:center;padding:16px;color:var(--text-secondary)">Nenhuma despesa cadastrada.</td></tr>`;
+            }
+
+            despesas.forEach((d, idx) => {
+                const slotsPreenchidos = _contarAnexosPreenchidos(d);
+                tabelaHtml += `<tr>
+                    <td>${esc(d.tipo || '')}</td>
+                    <td>${esc(d.numero || '')}</td>
+                    <td>${formatarData(d.data_emissao)}</td>
+                    <td>${esc(d.fornecedor || '')}</td>
+                    <td>${esc(d.descricao || '')}</td>
+                    <td>${esc(d.quantidade || '')}</td>
+                    <td>${formatarMoeda(d.valor_unitario)}</td>
+                    <td>${formatarMoeda(d.valor_total)}</td>
+                    <td style="text-align:center">
+                        <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="abrirModalAnexos('${p.id}', ${idx})">📎 ${slotsPreenchidos}/${PC_TOTAL_SLOTS}</button>
+                    </td>
+                    <td style="white-space:nowrap">
+                        <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="abrirEditarDespesa('${p.id}', ${idx})">✏️</button>
+                        <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="excluirDespesa('${p.id}', ${idx})">🗑️</button>
+                    </td>
+                </tr>`;
+            });
+
+            tabelaHtml += `</tbody>
+                    <tfoot>
+                        <tr><td colspan="7" style="text-align:right"><strong>Valor das Despesas</strong></td><td colspan="3"><strong>${formatarMoeda(totalDespesas)}</strong></td></tr>
+                        <tr><td colspan="7" style="text-align:right">Valor Recebido</td><td colspan="3">${formatarMoeda(p.valor_recebido)}</td></tr>
+                        <tr><td colspan="7" style="text-align:right"><strong>Saldo Remanescente</strong></td><td colspan="3"><strong>${formatarMoeda(saldo)}</strong></td></tr>
+                    </tfoot>
+                </table>
+                </div>
+                <button class="btn-salvar-form" style="margin-top:12px" onclick="abrirNovaDespesa('${p.id}')">+ Nova Despesa</button>
+            `;
+            document.getElementById('pc-detalhe-tabela').innerHTML = tabelaHtml;
+            document.getElementById('pc-detalhe-processo').innerHTML = _renderDocumentosProcesso(p);
+        }
+
+        function _renderDocumentosProcesso(p) {
+            const slots = [
+                { campo: 'memorando_url', label: '📝 Memorando de encaminhamento' },
+                { campo: 'termo_devolucao_url', label: '📄 Termo de Devolução' },
+                { campo: 'comprovante_devolucao_url', label: '💳 Comprovante de Devolução' }
+            ];
+            let html = `<h3 style="margin-top:24px">📁 Documentos do Processo</h3><div class="pc-anexo-slots">`;
+            slots.forEach(s => {
+                const preenchido = !!p[s.campo];
+                html += `<div class="pc-anexo-slot ${preenchido ? 'ok' : 'pendente'}">
+                    <span class="pc-anexo-slot-label">${s.label}</span>
+                    <span class="pc-anexo-slot-status">${preenchido ? '✅ Anexado' : '⚠️ Pendente'}</span>
+                    <div class="pc-anexo-slot-acoes">
+                        ${preenchido ? `<a href="${esc(p[s.campo])}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                        <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-proc-input-${s.campo}" onchange="uploadDocumentoProcesso('${p.id}', '${s.campo}', this.files[0])">
+                        <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-proc-input-${s.campo}').click()">${preenchido ? '🔄 Substituir' : '⬆️ Enviar'}</button>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            return html;
+        }
+
+        // ── Modal Nova/Editar Despesa ─────────────────────────────────────
+        function abrirNovaDespesa(prestacaoId) {
+            document.getElementById('form-despesa-titulo').textContent = '➕ Nova Despesa';
+            document.getElementById('form-despesa').reset();
+            document.getElementById('fd-prestacao-id').value = prestacaoId;
+            document.getElementById('fd-idx').value = '';
+            document.getElementById('fd-quantidade').value = 1;
+            document.getElementById('fd-valor-total').value = '';
+            document.getElementById('form-despesa-overlay').classList.add('active');
+        }
+
+        function abrirEditarDespesa(prestacaoId, idx) {
+            const p = prestacoesContas.find(x => x.id === prestacaoId);
+            if (!p) return;
+            const d = (p.despesas || [])[idx];
+            if (!d) return;
+            document.getElementById('form-despesa-titulo').textContent = '✏️ Editar Despesa';
+            document.getElementById('fd-prestacao-id').value = prestacaoId;
+            document.getElementById('fd-idx').value = idx;
+            document.getElementById('fd-tipo').value = d.tipo || 'Recibo';
+            document.getElementById('fd-numero').value = d.numero || '';
+            document.getElementById('fd-data-emissao').value = d.data_emissao || '';
+            document.getElementById('fd-fornecedor').value = d.fornecedor || '';
+            document.getElementById('fd-descricao').value = d.descricao || '';
+            document.getElementById('fd-quantidade').value = d.quantidade || 1;
+            document.getElementById('fd-valor-unitario').value = d.valor_unitario || '';
+            document.getElementById('fd-valor-total').value = d.valor_total || '';
+            document.getElementById('form-despesa-overlay').classList.add('active');
+        }
+
+        function fecharFormDespesa(event) {
+            if (event && event.target !== event.currentTarget &&
+                !event.target.classList.contains('modal-close')) return;
+            document.getElementById('form-despesa-overlay').classList.remove('active');
+        }
+
+        function _atualizarValorTotalDespesa() {
+            const qtd = Number(document.getElementById('fd-quantidade').value) || 0;
+            const valorUnit = Number(document.getElementById('fd-valor-unitario').value) || 0;
+            document.getElementById('fd-valor-total').value = (qtd * valorUnit).toFixed(2);
+        }
+
+        async function salvarDespesa() {
+            const prestacaoId = document.getElementById('fd-prestacao-id').value;
+            const idxStr = document.getElementById('fd-idx').value;
+            const p = prestacoesContas.find(x => x.id === prestacaoId);
+            if (!p) return;
+
+            const despesas = (p.despesas || []).slice();
+            const nova = {
+                tipo: document.getElementById('fd-tipo').value,
+                numero: document.getElementById('fd-numero').value.trim(),
+                data_emissao: document.getElementById('fd-data-emissao').value || null,
+                fornecedor: document.getElementById('fd-fornecedor').value.trim(),
+                descricao: document.getElementById('fd-descricao').value.trim(),
+                quantidade: Number(document.getElementById('fd-quantidade').value) || 0,
+                valor_unitario: Number(document.getElementById('fd-valor-unitario').value) || 0,
+                valor_total: Number(document.getElementById('fd-valor-total').value) || 0
+            };
+
+            if (idxStr !== '') {
+                const idx = Number(idxStr);
+                despesas[idx] = { ...despesas[idx], ...nova };
+            } else {
+                nova.recibo_url = null;
+                nova.comprovacao_mercado = null;
+                nova.justificativa_url = null;
+                nova.atesto_url = null;
+                nova.fotos_urls = [];
+                nova.outros_documentos = [];
+                despesas.push(nova);
+            }
+
+            try {
+                await db.collection('prestacoes_contas').doc(prestacaoId).update({
+                    despesas,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                p.despesas = despesas;
+                document.getElementById('form-despesa-overlay').classList.remove('active');
+                mostrarToast('✅ Despesa salva com sucesso.');
+                _renderDetalhePrestacao();
+            } catch (e) {
+                console.error('Erro ao salvar despesa:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function excluirDespesa(prestacaoId, idx) {
+            if (!confirm('Remover esta despesa da lista? Os arquivos já enviados permanecerão no Storage.')) return;
+            const p = prestacoesContas.find(x => x.id === prestacaoId);
+            if (!p) return;
+            const despesas = (p.despesas || []).slice();
+            despesas.splice(idx, 1);
+            try {
+                await db.collection('prestacoes_contas').doc(prestacaoId).update({
+                    despesas,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                p.despesas = despesas;
+                mostrarToast('🗑️ Despesa removida.');
+                _renderDetalhePrestacao();
+            } catch (e) {
+                console.error('Erro ao remover despesa:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        // ── Modal de Anexos por Despesa ───────────────────────────────────
+        function abrirModalAnexos(prestacaoId, idx) {
+            _anexoPrestacaoId = prestacaoId;
+            _anexoDespesaIdx = idx;
+            const p = prestacoesContas.find(x => x.id === prestacaoId);
+            const d = p && (p.despesas || [])[idx];
+            if (!p || !d) return;
+            document.getElementById('modal-anexos-titulo').textContent =
+                `📎 Anexos — ${d.tipo || ''} ${d.numero || ''} (${d.fornecedor || ''})`;
+            _renderCorpoModalAnexos(d);
+            document.getElementById('modal-anexos-overlay').classList.add('active');
+        }
+
+        function fecharModalAnexos(event) {
+            if (event && event.target !== event.currentTarget &&
+                !event.target.classList.contains('modal-close')) return;
+            document.getElementById('modal-anexos-overlay').classList.remove('active');
+            _anexoPrestacaoId = null;
+            _anexoDespesaIdx = null;
+        }
+
+        function _slotAnexoSimples(campo, label, url) {
+            return `<div class="pc-anexo-slot ${url ? 'ok' : 'pendente'}">
+                <span class="pc-anexo-slot-label">${label}</span>
+                <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
+                <div class="pc-anexo-slot-acoes">
+                    ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                    <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-${campo}" onchange="_uploadSlotSimples('${campo}', this.files[0])">
+                    <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-input-${campo}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
+                </div>
+            </div>`;
+        }
+
+        function _renderCorpoModalAnexos(d) {
+            const cm = d.comprovacao_mercado || {};
+            const tipoMercado = cm.tipo || 'pesquisa';
+
+            let html = `
+                <div class="pc-anexo-slots">
+                    ${_slotAnexoSimples('recibo_url', '🧾 Recibo / Nota Fiscal', d.recibo_url)}
+
+                    <div class="pc-anexo-slot ${cm.url ? 'ok' : 'pendente'}">
+                        <span class="pc-anexo-slot-label">
+                            📑 Comprovação de mercado
+                            <select id="pc-mercado-tipo" style="margin-left:8px;font-size:0.85em">
+                                <option value="pesquisa" ${tipoMercado === 'pesquisa' ? 'selected' : ''}>Pesquisa de mercado</option>
+                                <option value="justificativa_ausencia" ${tipoMercado === 'justificativa_ausencia' ? 'selected' : ''}>Justificativa de ausência</option>
+                            </select>
+                        </span>
+                        <span class="pc-anexo-slot-status">${cm.url ? '✅ Anexado' : '⚠️ Pendente'}</span>
+                        <div class="pc-anexo-slot-acoes">
+                            ${cm.url ? `<a href="${esc(cm.url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                            <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-mercado" onchange="_uploadComprovacaoMercado(this.files[0])">
+                            <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-input-mercado').click()">${cm.url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
+                        </div>
+                    </div>
+
+                    ${_slotAnexoSimples('justificativa_url', '📄 Justificativa da despesa', d.justificativa_url)}
+                    ${_slotAnexoSimples('atesto_url', '✅ Atesto', d.atesto_url)}
+                </div>
+
+                <h4 style="margin-top:20px">📷 Fotos</h4>
+                <div class="pc-fotos-grid" id="pc-fotos-grid">
+                    ${(d.fotos_urls || []).map((url, i) => `
+                        <div class="pc-foto-item">
+                            <a href="${esc(url)}" target="_blank" rel="noopener"><img src="${esc(url)}" alt="Foto ${i+1}"></a>
+                            <button type="button" class="pc-foto-remover" onclick="removerFoto(${i})">✕</button>
+                        </div>`).join('')}
+                </div>
+                <input type="file" accept="image/*" multiple style="display:none" id="pc-input-fotos" onchange="uploadFotos(this.files)">
+                <button class="btn-editar" onclick="document.getElementById('pc-input-fotos').click()">📷 Adicionar fotos</button>
+
+                <h4 style="margin-top:20px">📎 Outros documentos</h4>
+                <div id="pc-outros-lista">
+                    ${(d.outros_documentos || []).map((doc, i) => `
+                        <div class="pc-outro-item">
+                            <a href="${esc(doc.url)}" target="_blank" rel="noopener">${esc(doc.nome)}</a>
+                            <button type="button" class="pc-foto-remover" onclick="removerOutroDocumento(${i})">✕</button>
+                        </div>`).join('') || '<p style="color:var(--text-secondary);font-size:0.9em">Nenhum documento avulso.</p>'}
+                </div>
+                <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-outro" onchange="adicionarOutroDocumento(this.files[0])">
+                <button class="btn-editar" style="margin-top:8px" onclick="document.getElementById('pc-input-outro').click()">+ Anexar outro documento</button>
+            `;
+            document.getElementById('modal-anexos-body').innerHTML = html;
+        }
+
+        // ── Upload para Firebase Storage ──────────────────────────────────
+        async function _uploadParaStorage(caminho, file) {
+            if (!file) throw new Error('Nenhum arquivo selecionado.');
+            const MAX_MB = 15;
+            if (file.size > MAX_MB * 1024 * 1024) throw new Error(`Arquivo maior que ${MAX_MB}MB.`);
+            const ref = storage.ref().child(caminho);
+            await ref.put(file);
+            return await ref.getDownloadURL();
+        }
+
+        function _extensaoArquivo(file) {
+            const m = file.name.match(/\.[^.]+$/);
+            return m ? m[0] : '';
+        }
+
+        async function _atualizarDespesaFirestore(prestacaoId, idx, patch) {
+            const p = prestacoesContas.find(x => x.id === prestacaoId);
+            if (!p) throw new Error('Prestação não encontrada.');
+            const despesas = (p.despesas || []).slice();
+            despesas[idx] = { ...despesas[idx], ...patch };
+            await db.collection('prestacoes_contas').doc(prestacaoId).update({
+                despesas,
+                atualizado_por: currentUser.email,
+                atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            p.despesas = despesas;
+            return despesas[idx];
+        }
+
+        async function _uploadSlotSimples(campo, file) {
+            if (!file) return;
+            try {
+                mostrarToast('⏳ Enviando arquivo...');
+                const caminho = `prestacoes-contas/${_anexoPrestacaoId}/despesas/${_anexoDespesaIdx}/${campo}-${Date.now()}${_extensaoArquivo(file)}`;
+                const url = await _uploadParaStorage(caminho, file);
+                const d = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, { [campo]: url });
+                _renderCorpoModalAnexos(d);
+                _renderDetalhePrestacao();
+                mostrarToast('✅ Anexo enviado com sucesso.');
+            } catch (e) {
+                console.error('Erro ao enviar anexo:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function _uploadComprovacaoMercado(file) {
+            if (!file) return;
+            try {
+                mostrarToast('⏳ Enviando arquivo...');
+                const tipo = document.getElementById('pc-mercado-tipo').value;
+                const caminho = `prestacoes-contas/${_anexoPrestacaoId}/despesas/${_anexoDespesaIdx}/comprovacao-mercado-${Date.now()}${_extensaoArquivo(file)}`;
+                const url = await _uploadParaStorage(caminho, file);
+                const d = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, {
+                    comprovacao_mercado: { tipo, url }
+                });
+                _renderCorpoModalAnexos(d);
+                _renderDetalhePrestacao();
+                mostrarToast('✅ Anexo enviado com sucesso.');
+            } catch (e) {
+                console.error('Erro ao enviar comprovação de mercado:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function uploadFotos(fileList) {
+            if (!fileList || fileList.length === 0) return;
+            try {
+                mostrarToast('⏳ Enviando fotos...');
+                const p = prestacoesContas.find(x => x.id === _anexoPrestacaoId);
+                const d = (p.despesas || [])[_anexoDespesaIdx];
+                const urls = (d.fotos_urls || []).slice();
+                for (const file of fileList) {
+                    const caminho = `prestacoes-contas/${_anexoPrestacaoId}/despesas/${_anexoDespesaIdx}/foto-${Date.now()}-${Math.random().toString(36).slice(2,7)}${_extensaoArquivo(file)}`;
+                    const url = await _uploadParaStorage(caminho, file);
+                    urls.push(url);
+                }
+                const dAtualizada = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, { fotos_urls: urls });
+                _renderCorpoModalAnexos(dAtualizada);
+                _renderDetalhePrestacao();
+                mostrarToast('✅ Fotos enviadas com sucesso.');
+            } catch (e) {
+                console.error('Erro ao enviar fotos:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function removerFoto(i) {
+            if (!confirm('Remover esta foto da lista?')) return;
+            const p = prestacoesContas.find(x => x.id === _anexoPrestacaoId);
+            const d = (p.despesas || [])[_anexoDespesaIdx];
+            const urls = (d.fotos_urls || []).slice();
+            urls.splice(i, 1);
+            try {
+                const dAtualizada = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, { fotos_urls: urls });
+                _renderCorpoModalAnexos(dAtualizada);
+                _renderDetalhePrestacao();
+            } catch (e) {
+                console.error('Erro ao remover foto:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function adicionarOutroDocumento(file) {
+            if (!file) return;
+            const nome = prompt('Nome do documento (ex: Ata de cotação, Ofício de resposta...)', file.name);
+            if (nome === null) return;
+            try {
+                mostrarToast('⏳ Enviando arquivo...');
+                const p = prestacoesContas.find(x => x.id === _anexoPrestacaoId);
+                const d = (p.despesas || [])[_anexoDespesaIdx];
+                const outros = (d.outros_documentos || []).slice();
+                const caminho = `prestacoes-contas/${_anexoPrestacaoId}/despesas/${_anexoDespesaIdx}/outro-${Date.now()}${_extensaoArquivo(file)}`;
+                const url = await _uploadParaStorage(caminho, file);
+                outros.push({ nome: nome.trim() || file.name, url });
+                const dAtualizada = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, { outros_documentos: outros });
+                _renderCorpoModalAnexos(dAtualizada);
+                _renderDetalhePrestacao();
+                mostrarToast('✅ Documento anexado com sucesso.');
+            } catch (e) {
+                console.error('Erro ao anexar documento:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function removerOutroDocumento(i) {
+            if (!confirm('Remover este documento da lista?')) return;
+            const p = prestacoesContas.find(x => x.id === _anexoPrestacaoId);
+            const d = (p.despesas || [])[_anexoDespesaIdx];
+            const outros = (d.outros_documentos || []).slice();
+            outros.splice(i, 1);
+            try {
+                const dAtualizada = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, { outros_documentos: outros });
+                _renderCorpoModalAnexos(dAtualizada);
+                _renderDetalhePrestacao();
+            } catch (e) {
+                console.error('Erro ao remover documento:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        // ── Documentos do processo (Memorando, Termo/Comprovante de Devolução) ──
+        async function uploadDocumentoProcesso(prestacaoId, campo, file) {
+            if (!file) return;
+            try {
+                mostrarToast('⏳ Enviando arquivo...');
+                const caminho = `prestacoes-contas/${prestacaoId}/${campo}-${Date.now()}${_extensaoArquivo(file)}`;
+                const url = await _uploadParaStorage(caminho, file);
+                await db.collection('prestacoes_contas').doc(prestacaoId).update({
+                    [campo]: url,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                const p = prestacoesContas.find(x => x.id === prestacaoId);
+                if (p) p[campo] = url;
+                _renderDetalhePrestacao();
+                mostrarToast('✅ Documento enviado com sucesso.');
+            } catch (e) {
+                console.error('Erro ao enviar documento do processo:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
     </script>
 
     <!-- ── Rich Text Editor Toolbar ─────────────────────────────────── -->

@@ -4,6 +4,16 @@
 
 ---
 
+## Sessão 26 — 06/07/2026
+
+- **Nova seção "💰 Prestação de Contas" (admin-only)** — botão na landing só visível para `userRole === 'admin'` (`_aplicarModoEdicao()` + segunda checagem em `showSection()`). Nasce a partir da análise de um processo real de prestação de contas de adiantamento (Memorando, Mapa Demonstrativo, Recibos, Justificativas de ausência de pesquisa de mercado, Atesto, Termo/Comprovante de Devolução, Fotos de reparo).
+  - Coleção nova `prestacoes_contas/{id}`: cada documento é um "pronto pagamento" (adiantamento) de um tomador, com array `despesas[]` replicando as colunas do Mapa Demonstrativo (tipo, nº, data, fornecedor, descrição, qtd., valor unit./total).
+  - Regra de negócio: cada tomador pode ter no máximo 2 prontos pagamentos com `status: "aberto"` simultâneos, em categorias diferentes entre si (`consumo` | `pessoa_juridica` | `pessoa_fisica`) — validada em `_validarCategoriaDisponivel()` antes de criar ou reabrir.
+  - Anexos por despesa: 5 slots fixos (Recibo/NF, comprovação de mercado — pesquisa *ou* justificativa de ausência —, justificativa da despesa, atesto, fotos) + lista livre de outros documentos. Upload via Firebase Storage SDK (`firebase-storage-compat.js`, recém-adicionado ao projeto).
+  - `storage.rules` criado do zero (Storage nunca tinha regras neste projeto) restringindo `prestacoes-contas/**` a admin; `firestore.rules` ganhou regra própria para `prestacoes_contas` com leitura **e** escrita admin-only (diferente do padrão de leitura aberta do resto do site) — expõe CPF/dados bancários via comprovante de devolução em PIX.
+  - Testado no preview simulando estado admin + dados mock via `preview_eval` (sem credenciais reais de Firebase disponíveis nesta sessão): lista de cards, detalhe com totais, validação de limite/categoria, cálculo automático de valor total da despesa — todos corretos, sem erros de console.
+  - **Pendente:** deploy de `storage.rules` no Firebase (`firebase deploy --only storage`) — arquivo criado localmente mas nunca publicado.
+
 ## Sessão 25 — 15/06/2026
 
 - **Férias Equipe refatorada — 12 meses simultâneos com scroll natural da página** — `renderEquipeCalendar()` agora renderiza todos os meses de Janeiro a Dezembro do ano selecionado, empilhados verticalmente. `_renderEquipeMes(year, month)` extraído como helper reutilizável (título + cabeçalho Dom–Sáb + grade). Commits `75e7fd6`, `40472e5`, `2c3dcba`.
