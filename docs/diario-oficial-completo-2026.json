@@ -4561,5 +4561,34 @@
         "resumo": "Cessa designação anterior de Miguel Eduardo de Azevedo Martins Filho na 8ª DP do Polo Médio Amazonas (Itapiranga)"
       }
     ]
+  },
+  {
+    "edicao": 2683,
+    "data": "2026-07-07",
+    "data_formatada": "07/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2683-2026__publicada_em_07_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1115/2026-GDPG/DPE/AM",
+        "sei": "26.0.000006605-1",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "designacoes",
+          "projeto"
+        ],
+        "trechos": [
+          "I – INSTITUIR, pelo período de 30 (trinta) dias, a contar de 1º de julho de 2026, o Grupo de Trabalho com o objetivo de organizar, treinar e executar o \"Meu Pai Tem Nome\" no interior do Estado do Amazonas",
+          "II – DESIGNAR para compor o referido grupo de trabalho: Polo do Médio Amazonas - Ênio Jorge Lima Barbalho Junior - Defensor Público, Luma Karolyne Pantoja Bandeira - Servidora",
+          "III – ENQUADRAR a atuação dos membros como designação especial, para fins de promoção, previsto no inciso V do artigo 17 da Resolução nº 004/2018-CSPDE/AM, contando-se a cada 03 (três) dias como uma designação especial, para fins de pontuação",
+          "IV – DETERMINAR a atuação dos membros como critério de elegibilidade para meritocracia, nos termos do art. 2º, inciso V, da Resolução nº 022/2021-CSDPE/AM",
+          "V – ATRIBUIR, aos servidores, o adicional previsto no art. 31, XI, da Lei n.º 4.077/2014, com redação dada pela Lei n.º 4.831/2019, no valor correspondente ao nível 2, do Anexo XII, da mesma lei"
+        ],
+        "resumo": "Institui Grupo de Trabalho \"Meu Pai Tem Nome\" por 30 dias a partir de 1º de julho de 2026, designando membros do Polo do Médio Amazonas (defensor Ênio Jorge Lima Barbalho Junior e servidora Luma Karolyne Pantoja Bandeira) e outros polos para organizar e executar projeto no interior do Estado"
+      }
+    ]
   }
 ]
