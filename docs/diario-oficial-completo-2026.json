@@ -4521,5 +4521,141 @@
         "resumo": "Abre seleção pública para Residente Jurídico no Projeto Nosso Coração Também é Azul com inscrições de 06 a 13/07/2026"
       }
     ]
+  },
+  {
+    "edicao": 2682,
+    "data": "2026-07-06",
+    "data_formatada": "06/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2682-2026__publicada_em_06_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 679/2026-GSPG/DPE/AM",
+        "sei": "26.0.000006786-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, a contar do dia 06 de julho de 2026, da PORTARIA Nº 458/2026-GSPG/DPE/AM, publicada no dia 06 de maio de 2026, Ano 12, Edição 2644 Pág. 15 de 33, quanto à designação do Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 9ª Defensoria Pública do Polo do Médio Amazonas (Urucurituba);",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 3ª Defensoria Pública do Polo do Médio Amazonas, no período de 06 a 31 de julho de 2026;"
+        ],
+        "resumo": "Cessa designação anterior e designa Eliaquim Antunes de Souza Santos para atuar na 3ª DP do Polo Médio Amazonas (06 a 31 de julho de 2026)"
+      },
+      {
+        "numero": "Portaria Nº 685/2026-GSPG/DPE/AM",
+        "sei": "26.0.000008330-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, a contar do dia 06 de julho de 2026, do inciso I da PORTARIA Nº 611/2026-GSPG/DPE/AM, publicada no dia 12 de junho de 2026, Ano 12, Edição 2668 Pág. 15 de 27, quanto à designação do Defensor Público de 3ª Classe Miguel Eduardo de Azevedo Martins Filho para atuar na 8ª Defensoria Pública do Polo Médio Amazonas (Itapiranga)."
+        ],
+        "resumo": "Cessa designação anterior de Miguel Eduardo de Azevedo Martins Filho na 8ª DP do Polo Médio Amazonas (Itapiranga)"
+      }
+    ]
+  },
+  {
+    "edicao": 2683,
+    "data": "2026-07-07",
+    "data_formatada": "07/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2683-2026__publicada_em_07_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1115/2026-GDPG/DPE/AM",
+        "sei": "26.0.000006605-1",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "designacoes",
+          "projeto"
+        ],
+        "trechos": [
+          "I – INSTITUIR, pelo período de 30 (trinta) dias, a contar de 1º de julho de 2026, o Grupo de Trabalho com o objetivo de organizar, treinar e executar o \"Meu Pai Tem Nome\" no interior do Estado do Amazonas",
+          "II – DESIGNAR para compor o referido grupo de trabalho: Polo do Médio Amazonas - Ênio Jorge Lima Barbalho Junior - Defensor Público, Luma Karolyne Pantoja Bandeira - Servidora",
+          "III – ENQUADRAR a atuação dos membros como designação especial, para fins de promoção, previsto no inciso V do artigo 17 da Resolução nº 004/2018-CSPDE/AM, contando-se a cada 03 (três) dias como uma designação especial, para fins de pontuação",
+          "IV – DETERMINAR a atuação dos membros como critério de elegibilidade para meritocracia, nos termos do art. 2º, inciso V, da Resolução nº 022/2021-CSDPE/AM",
+          "V – ATRIBUIR, aos servidores, o adicional previsto no art. 31, XI, da Lei n.º 4.077/2014, com redação dada pela Lei n.º 4.831/2019, no valor correspondente ao nível 2, do Anexo XII, da mesma lei"
+        ],
+        "resumo": "Institui Grupo de Trabalho \"Meu Pai Tem Nome\" por 30 dias a partir de 1º de julho de 2026, designando membros do Polo do Médio Amazonas (defensor Ênio Jorge Lima Barbalho Junior e servidora Luma Karolyne Pantoja Bandeira) e outros polos para organizar e executar projeto no interior do Estado"
+      }
+    ]
+  },
+  {
+    "edicao": 2684,
+    "data": "2026-07-08",
+    "data_formatada": "08/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2684-2026__publicada_em_08_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1162/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009415-2",
+        "sgi": "2601210",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Jonilson Coelho dos Anjos, Assistente Técnico em Tecnologia da Informação de Defensoria, no trecho Manaus/Urucurituba/Manaus, no período de 08 a 11 de julho de 2026, a fim de prestar apoio técnico na implantação da infraestrutura de tecnologia da informação do futuro Posto de Atendimento Virtual (PAV) do referido município",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor técnico para Urucurituba para implantação de infraestrutura do PAV (08-11/07/2026)"
+      },
+      {
+        "numero": "Portaria Nº 1167/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009435-7",
+        "sgi": "2601261",
+        "categorias": [
+          "defensor",
+          "servidor",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Thiago Nobre Rosas, Defensor Público de 2ª Classe, Karine Casara Batista, Diretora Adjunta DPE-4, e Lúcio Claudio Zahluth Lins, Assistente Técnico de Defensoria, nos trechos Manaus/Borba/Manaus, no dia 13 de julho de 2026, a fim de realizar visita institucional para tratar sobre a realização das atividades preliminares visando à implementação do Projeto \"Gente da 319\", no município de Borba-AM",
+          "II - DETERMINAR o pagamento de diárias ao defensor público e aos servidores públicos acima relacionados."
+        ],
+        "resumo": "Autoriza deslocamento de defensor e servidores para Borba para atividades preliminares do Projeto Gente da 319 (13/07/2026)"
+      },
+      {
+        "numero": "Portaria Nº 1168/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009436-5",
+        "sgi": "2601255; 2601232",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, no trecho Manaus/Manacapuru/Novo Airão/Manaus, no dia 09 de julho de 2026, a fim de conduzir o Defensor Público Ian Marcos Martins Palmeira ao município de Novo Airão-AM",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor para conduzir defensor a Novo Airão (09/07/2026)"
+      },
+      {
+        "numero": "Portaria Nº 1165/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009436-5",
+        "sgi": "2601255",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de [servidor] no trecho Manaus/Itacoatiara/Manaus, no dia 12 de julho de 2026, a fim de realizar o transporte de retorno do servidor público José Maria da Silva Júnior do município de Itacoatiara-AM",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento para Itacoatiara para transporte de retorno de servidor (12/07/2026)"
+      }
+    ]
   }
 ]
