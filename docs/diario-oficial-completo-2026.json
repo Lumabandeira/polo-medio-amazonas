@@ -4590,5 +4590,72 @@
         "resumo": "Institui Grupo de Trabalho \"Meu Pai Tem Nome\" por 30 dias a partir de 1º de julho de 2026, designando membros do Polo do Médio Amazonas (defensor Ênio Jorge Lima Barbalho Junior e servidora Luma Karolyne Pantoja Bandeira) e outros polos para organizar e executar projeto no interior do Estado"
       }
     ]
+  },
+  {
+    "edicao": 2684,
+    "data": "2026-07-08",
+    "data_formatada": "08/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2684-2026__publicada_em_08_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1162/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009415-2",
+        "sgi": "2601210",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Jonilson Coelho dos Anjos, Assistente Técnico em Tecnologia da Informação de Defensoria, no trecho Manaus/Urucurituba/Manaus, no período de 08 a 11 de julho de 2026, a fim de prestar apoio técnico na implantação da infraestrutura de tecnologia da informação do futuro Posto de Atendimento Virtual (PAV) do referido município",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor técnico para Urucurituba para implantação de infraestrutura do PAV (08-11/07/2026)"
+      },
+      {
+        "numero": "Portaria Nº 1167/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009435-7",
+        "sgi": "2601261",
+        "categorias": [
+          "defensor",
+          "servidor",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Thiago Nobre Rosas, Defensor Público de 2ª Classe, Karine Casara Batista, Diretora Adjunta DPE-4, e Lúcio Claudio Zahluth Lins, Assistente Técnico de Defensoria, nos trechos Manaus/Borba/Manaus, no dia 13 de julho de 2026, a fim de realizar visita institucional para tratar sobre a realização das atividades preliminares visando à implementação do Projeto \"Gente da 319\", no município de Borba-AM",
+          "II - DETERMINAR o pagamento de diárias ao defensor público e aos servidores públicos acima relacionados."
+        ],
+        "resumo": "Autoriza deslocamento de defensor e servidores para Borba para atividades preliminares do Projeto Gente da 319 (13/07/2026)"
+      },
+      {
+        "numero": "Portaria Nº 1168/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009436-5",
+        "sgi": "2601255; 2601232",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, no trecho Manaus/Manacapuru/Novo Airão/Manaus, no dia 09 de julho de 2026, a fim de conduzir o Defensor Público Ian Marcos Martins Palmeira ao município de Novo Airão-AM",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor para conduzir defensor a Novo Airão (09/07/2026)"
+      },
+      {
+        "numero": "Portaria Nº 1165/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009436-5",
+        "sgi": "2601255",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de [servidor] no trecho Manaus/Itacoatiara/Manaus, no dia 12 de julho de 2026, a fim de realizar o transporte de retorno do servidor público José Maria da Silva Júnior do município de Itacoatiara-AM",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento para Itacoatiara para transporte de retorno de servidor (12/07/2026)"
+      }
+    ]
   }
 ]
