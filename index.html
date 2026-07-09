@@ -2930,6 +2930,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
 </head>
 <!-- Loading Overlay (exibido enquanto Firebase restaura a sessão) -->
 <div id="loading-overlay">
@@ -3377,6 +3379,7 @@
                     <div class="pc-detalhe-header">
                         <button class="btn-cancelar-form" onclick="fecharDetalhePrestacao()">← Voltar</button>
                         <h2 id="pc-detalhe-titulo">Prestação de Contas</h2>
+                        <button class="btn-editar" style="margin-left:auto" onclick="baixarMapaPDF()">📄 Baixar Mapa (PDF)</button>
                     </div>
                     <div id="pc-detalhe-info" class="pc-detalhe-info"></div>
                     <div id="pc-detalhe-tabela"></div>
@@ -9535,6 +9538,113 @@
             });
             html += `</div>`;
             return html;
+        }
+
+        // ── Exportar Mapa Demonstrativo em PDF (A4 paisagem) ────────────────
+        function _slugify(str) {
+            return String(str || '')
+                .toLowerCase()
+                .normalize('NFD').replace(/[̀-ͯ]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '') || 'tomador';
+        }
+
+        function baixarMapaPDF() {
+            const p = prestacoesContas.find(x => x.id === _pcAtualId);
+            if (!p) return;
+            if (!window.jspdf) {
+                mostrarToast('❌ Biblioteca de PDF ainda não carregou. Tente novamente em instantes.', true);
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+            const marginLeft = 12;
+            const pageWidth = doc.internal.pageSize.getWidth();
+            let y = 14;
+
+            const despesas = p.despesas || [];
+            const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
+            const saldo = (Number(p.valor_recebido) || 0) - totalDespesas;
+
+            // Bloco de cabeçalho (Tomador, datas, valor recebido)
+            const infoRows = [
+                ['TOMADOR:', p.tomador || ''],
+                ['DATA DO RECEBIMENTO:', formatarData(p.data_recebimento)],
+                ['DATA INICIAL DE APLICAÇÃO:', formatarData(p.data_inicio_aplicacao)],
+                ['DATA FINAL PARA APLICAÇÃO:', formatarData(p.data_fim_aplicacao)],
+                ['PRAZO DE PREST. DE CONTAS:', formatarData(p.prazo_prestacao_contas)],
+                ['VALOR RECEBIDO:', formatarMoeda(p.valor_recebido)]
+            ];
+            doc.setFontSize(9);
+            infoRows.forEach(([label, value]) => {
+                doc.setFont(undefined, 'bold');
+                doc.text(label, marginLeft, y);
+                doc.setFont(undefined, 'normal');
+                doc.text(String(value), marginLeft + 48, y);
+                y += 5;
+            });
+            y += 3;
+
+            // Barra de título
+            doc.setFillColor(191, 191, 191);
+            doc.rect(marginLeft, y, pageWidth - marginLeft * 2, 7, 'F');
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(11);
+            doc.text('MAPA DEMONSTRATIVO DE DESPESA', pageWidth / 2, y + 5, { align: 'center' });
+            y += 7;
+
+            const fmtNum = v => (Number(v) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            const body = despesas.map(d => [
+                d.tipo || '', d.numero || '', formatarData(d.data_emissao),
+                d.fornecedor || '', d.descricao || '',
+                String(d.quantidade ?? ''),
+                fmtNum(d.valor_unitario),
+                fmtNum(d.valor_total)
+            ]);
+
+            const totalStyle = { halign: 'right', fontStyle: 'bold', fillColor: [245, 245, 245] };
+            const normalStyle = { halign: 'right', fillColor: [245, 245, 245] };
+            const saldoStyle = { halign: 'right', fontStyle: 'bold', fillColor: [220, 230, 241] };
+            body.push([{ content: 'VALOR DAS DESPESAS:', colSpan: 7, styles: totalStyle }, { content: formatarMoeda(totalDespesas), styles: totalStyle }]);
+            body.push([{ content: 'VALOR CONCEDIDO:', colSpan: 7, styles: normalStyle }, { content: formatarMoeda(p.valor_concedido), styles: normalStyle }]);
+            body.push([{ content: 'SALDO REMANESCENTE:', colSpan: 7, styles: saldoStyle }, { content: formatarMoeda(saldo), styles: saldoStyle }]);
+
+            // Barra "COMPROVANTE DE DESPESA" desenhada à mão sobre Tipo/Nº/Data —
+            // evita usar colSpan/rowSpan no head do AutoTable, que causa perda de
+            // conteúdo na 1ª linha do corpo quando alguma célula quebra em 2 linhas
+            // (bug observado no jsPDF-AutoTable 3.8.4 com header mesclado).
+            const comprovanteWidth = 22 + 10 + 24;
+            doc.setFillColor(230, 230, 230);
+            doc.setDrawColor(0, 0, 0);
+            doc.rect(marginLeft, y, comprovanteWidth, 6, 'FD');
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(8);
+            doc.text('COMPROVANTE DE DESPESA', marginLeft + comprovanteWidth / 2, y + 4, { align: 'center' });
+            y += 6;
+
+            doc.autoTable({
+                startY: y,
+                margin: { left: marginLeft, right: marginLeft },
+                head: [['TIPO', 'Nº', 'DATA DA EMISSÃO', 'FORNECEDOR', 'DESCRIÇÃO DO MATERIAL /SERVIÇO', 'QUANT.', 'VALOR UNIT.', 'VALOR TOTAL']],
+                body,
+                theme: 'grid',
+                styles: { fontSize: 8, cellPadding: 1.5, lineColor: [0, 0, 0], lineWidth: 0.1, textColor: 0, valign: 'middle' },
+                headStyles: { fillColor: [230, 230, 230], textColor: 0, fontStyle: 'bold', halign: 'center' },
+                columnStyles: {
+                    0: { cellWidth: 22 },
+                    1: { cellWidth: 10, halign: 'center' },
+                    2: { cellWidth: 24, halign: 'center' },
+                    3: { cellWidth: 45 },
+                    4: { cellWidth: 'auto' },
+                    5: { cellWidth: 15, halign: 'center' },
+                    6: { cellWidth: 22, halign: 'right' },
+                    7: { cellWidth: 25, halign: 'right' }
+                }
+            });
+
+            doc.save(`mapa-demonstrativo-${_slugify(p.tomador)}-${p.categoria || ''}.pdf`);
         }
 
         // ── Modal Nova/Editar Despesa ─────────────────────────────────────
