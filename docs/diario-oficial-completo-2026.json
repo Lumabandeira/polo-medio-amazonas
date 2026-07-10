@@ -4657,5 +4657,72 @@
         "resumo": "Autoriza deslocamento para Itacoatiara para transporte de retorno de servidor (12/07/2026)"
       }
     ]
+  },
+  {
+    "edicao": 2685,
+    "data": "2026-07-09",
+    "data_formatada": "09/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2685-2026__publicada_em_09_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1177/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009502-7",
+        "sgi": "2601287",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Aldener Maciel da Silva, Auxiliar I de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no período de 10 a 11 de julho de 2026, a fim de conduzir a Defensora Pública Caroline da Silva Braz a a servidora Cássia Caroline Araújo de Oliveira ao município de Itacoatiara-AM"
+        ],
+        "resumo": "Autoriza deslocamento de servidor e defensor ao município de Itacoatiara-AM no período de 10-11 de julho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 1180/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009501-9",
+        "sgi": "2601285",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "servidor",
+          "projeto"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Caroline da Silva Braz, Defensora Pública de 1ª Classe, Cassia Caroline Araújo de Oliveira, Assessora de Defensor Público DPE-3, no trecho Manaus/Itacoatiara/Manaus, no período de 10 a 11 de julho de 2026, a fim de participarem de reunião com mulheres em situação de vulnerabilidade social e violência doméstica atendidas pelo Instituto de Defesa das Mulheres e Meninas Casa de Maria, bem como o fortalecimento das articulações institucionais voltadas à implementação da exposição intitulada \"Autonomia e Reconstrução de Vidas\", no município de Itacoatiara-AM"
+        ],
+        "resumo": "Autoriza deslocamento de defensora e assessora a Itacoatiara-AM para reunião sobre vulnerabilidade social e violência doméstica no período de 10-11 de julho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 705/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009077-7",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "nomeacao_diretoria",
+          "servidor"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, a contar do dia 02 de julho de 2026, da FGS-1 (Subgerência de Núcleo ou Unidade), nos termos do disposto na Lei nº 4.077, de 11 de setembro de 2014 e suas alterações, concedida ao Servidor Público Fábio Bastos de Souza",
+          "II - DESIGNAR, a contar do dia 02 de julho de 2026, a Servidora Pública Luma Karolyne Pantoja Bandeira como Subgerente do Polo do Médio Amazonas, atribuindo-lhe a FGS-1 (Subgerência de Núcleo ou Unidade), nos termos do disposto na Lei nº 4.077, de 11 de setembro de 2014 e suas alterações"
+        ],
+        "resumo": "Cessa FGS-1 de Fábio Bastos de Souza e designa Luma Karolyne Pantoja Bandeira como Subgerente do Polo Médio Amazonas a partir de 02 de julho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 61/2026-ESUDPAM/DPE/AM",
+        "sei": "26.0.000009057-2",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "I – TORNAR PÚBLICO o Resultado Preliminar do Processo Seletivo de Residência Jurídica para o Polo Médio Amazonas – Polo de Atendimento Avançado de Urucurituba/AM, contendo a relação dos(as) candidatos(as) habilitados(as) e classificados(as), bem como das inscrições indeferidas"
+        ],
+        "resumo": "Torna público resultado preliminar de seleção para Residência Jurídica no Polo Médio Amazonas com Polo de Atendimento Avançado em Urucurituba/AM"
+      }
+    ]
   }
 ]
