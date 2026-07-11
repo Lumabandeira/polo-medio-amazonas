@@ -9577,11 +9577,14 @@
                 ['VALOR RECEBIDO:', formatarMoeda(p.valor_recebido)]
             ];
             doc.setFontSize(9);
+            doc.setFont(undefined, 'bold');
+            const maiorLabelWidth = Math.max(...infoRows.map(([label]) => doc.getTextWidth(label)));
+            const valorOffsetX = maiorLabelWidth + 5;
             infoRows.forEach(([label, value]) => {
                 doc.setFont(undefined, 'bold');
                 doc.text(label, marginLeft, y);
                 doc.setFont(undefined, 'normal');
-                doc.text(String(value), marginLeft + 48, y);
+                doc.text(String(value), marginLeft + valorOffsetX, y);
                 y += 5;
             });
             y += 3;
