@@ -216,3 +216,4 @@ atualizado_em:       timestamp
 | `salvarDespesa()` / `excluirDespesa()` | CRUD de linhas do Mapa Demonstrativo dentro do array `despesas[]` |
 | `abrirModalAnexos()` / `_uploadSlotSimples()` / `uploadFotos()` / `adicionarOutroDocumento()` | Upload de anexos por despesa para o Firebase Storage |
 | `uploadDocumentoProcesso()` | Upload dos 3 documentos do processo (Memorando, Termo/Comprovante de Devolução) |
+| `baixarMapaPDF()` | Gera e baixa o Mapa Demonstrativo em PDF (jsPDF + AutoTable, ver `docs/site/estrutura-html.md`) |

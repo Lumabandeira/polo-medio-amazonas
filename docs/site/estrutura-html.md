@@ -102,6 +102,15 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
 - Ver `docs/firebase.md` para o schema completo de `prestacoes_contas/{id}` e as regras de
   segurança (mais restritas que o padrão do site: leitura **e** escrita admin-only, por causa de
   CPF/dados bancários nos comprovantes de devolução).
+- **Exportar em PDF**: botão "📄 Baixar Mapa (PDF)" no cabeçalho do detalhe, função `baixarMapaPDF()`.
+  Usa jsPDF + jsPDF-AutoTable (CDN, `jspdf.umd.min.js` + `jspdf.plugin.autotable.min.js`) para gerar
+  uma página A4 paisagem replicando o layout em papel: bloco de cabeçalho, barra "COMPROVANTE DE
+  DESPESA" desenhada manualmente acima da tabela (em vez de `colSpan`/`rowSpan` no `head` do
+  AutoTable), tabela de despesas e rodapé de totais. Validado com PDF real baixado e aberto no
+  Chrome (fornecedor com nome longo quebrando em 3 linhas, valores corretos, sem sobreposição).
+  Nota: durante o desenvolvimento, a ferramenta de inspeção de PDF usada para conferir o layout
+  mostrou um artefato de renderização que não existe no arquivo real — se for depurar isso de novo,
+  confie no PDF baixado de verdade, não na pré-visualização.
 
 ## Cache localStorage (elimina flash de dados)
 

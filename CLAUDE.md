@@ -58,15 +58,16 @@ docs/
 
 **Implementado nesta sessão:** seção "💰 Prestação de Contas" (admin-only) — prontos pagamentos
 por tomador (máx. 2 abertos simultâneos, categorias `consumo`/`pessoa_juridica`/`pessoa_fisica`
-distintas entre si), Mapa Demonstrativo de Despesa com totais automáticos, e anexos por despesa
+distintas entre si), Mapa Demonstrativo de Despesa com totais automáticos, anexos por despesa
 (Recibo/NF, comprovação de mercado, justificativa, atesto, fotos, outros documentos) com upload
-para Firebase Storage. Ver `docs/site/estrutura-html.md` e `docs/firebase.md`.
+para Firebase Storage, e exportação do Mapa Demonstrativo em PDF A4 paisagem (jsPDF + AutoTable).
+Storage ativado (upgrade pra plano Blaze) e `storage.rules`/`firestore.rules` publicadas no
+Console. Tudo testado e validado com dados reais. Ver `docs/site/estrutura-html.md` e `docs/firebase.md`.
 
 **O que falta implementar:**
 - Cadastrar os outros 36 usuários restantes no Firebase (1 admin + 35 viewers)
 - Dados privados da equipe (WhatsApp, contatos internos)
 - Botão "Plantão" — nova seção com escala de plantão (arquitetura a definir)
-- Deploy das `storage.rules` novas no Firebase Console/CLI (`firebase deploy --only storage`) — só existiam Firestore rules até agora, Storage nunca tinha rules configuradas neste projeto
 
 Para o histórico completo do que foi implementado → `docs/historico-sessoes.md`
 

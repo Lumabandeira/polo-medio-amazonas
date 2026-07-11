@@ -13,6 +13,9 @@
   - `storage.rules` criado do zero (Storage nunca tinha regras neste projeto) restringindo `prestacoes-contas/**` a admin; `firestore.rules` ganhou regra própria para `prestacoes_contas` com leitura **e** escrita admin-only (diferente do padrão de leitura aberta do resto do site) — expõe CPF/dados bancários via comprovante de devolução em PIX.
   - Testado no preview simulando estado admin + dados mock via `preview_eval` (sem credenciais reais de Firebase disponíveis nesta sessão): lista de cards, detalhe com totais, validação de limite/categoria, cálculo automático de valor total da despesa — todos corretos, sem erros de console.
   - **Pendente:** deploy de `storage.rules` no Firebase (`firebase deploy --only storage`) — arquivo criado localmente mas nunca publicado.
+- **Storage e Firestore rules publicadas no Firebase Console** — o projeto estava no plano Spark e o Storage nunca tinha sido ativado; upgrade para Blaze feito pela usuária, bucket criado, `storage.rules` e `firestore.rules` (com a regra de `prestacoes_contas`) publicados manualmente pelo Console (colar-e-publicar, sem CLI). Validado com upload real de anexo.
+- **Exportação do Mapa Demonstrativo em PDF** — botão "📄 Baixar Mapa (PDF)" na tela de detalhe da Prestação de Contas. `baixarMapaPDF()` usa jsPDF + jsPDF-AutoTable (CDN) para gerar uma página A4 paisagem fiel ao modelo em papel, com a barra "COMPROVANTE DE DESPESA" desenhada manualmente acima da tabela (evita `colSpan`/`rowSpan` no `head` do AutoTable). Commit `1cd3d82`.
+  - Durante o desenvolvimento, a ferramenta de inspeção de PDF usada nesta sessão (Read tool) mostrou um artefato de renderização (texto sobreposto) que não existe no arquivo real — confirmado com print do PDF de verdade baixado e aberto no Chrome pela usuária, layout correto. Lição: para depurar PDFs gerados por jsPDF, confiar no arquivo baixado de verdade, não nas ferramentas de preview automatizadas.
 
 ## Sessão 25 — 15/06/2026
 
