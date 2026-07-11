@@ -4724,5 +4724,85 @@
         "resumo": "Torna público resultado preliminar de seleção para Residência Jurídica no Polo Médio Amazonas com Polo de Atendimento Avançado em Urucurituba/AM"
       }
     ]
+  },
+  {
+    "edicao": 2686,
+    "data": "2026-07-10",
+    "data_formatada": "10/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2686-2026__publicada_em_10_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 714/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009079-3",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3.ª Classe Oswaldo Machado Neto, para atuar nas Sessões de Julgamento do Tribunal do Júri da Vara Única da Comarca de Urucurituba nos dias 21 e 23 de julho de 2026, conforme Anexo Único;"
+        ],
+        "resumo": "Designa Oswaldo Machado Neto para atuar nas Sessões de Julgamento do Tribunal do Júri da Comarca de Urucurituba em 21 e 23 de julho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 718/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009531-0",
+        "sgi": "2601288",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Miguel Eduardo de Azevedo Martins Filho, Defensor Público de 3ª Classe, no trecho Itacoatiara/Silves/Itapiranga/Itacoatiara, no período de 20 a 23 de julho de 2026, a fim de realizar atendimentos à população e inspeção carcerária das Comarcas de Silves-AM e Itapiranga-AM, bem como orientação para a equipe da UDI de Silves-AM;"
+        ],
+        "resumo": "Autoriza deslocamento do Defensor Miguel Eduardo de Azevedo Martins Filho para atendimentos e inspeção carcerária em Silves e Itapiranga de 20 a 23 de julho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 719/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009538-8",
+        "sgi": "2601294",
+        "categorias": [
+          "comarca",
+          "servidor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Larice Bruce Pereira, Assistente Defensorial DPE-1, no trecho Itacoatiara/Silves/Itapiranga/Itacoatiara, no período de 20 a 23 de julho de 2026, a fim de auxiliar o Defensor Público Miguel Eduardo de Azevedo Martins Filho nos atendimentos à população e inspeção carcerária das Comarcas de Silves-AM e Itapiranga-AM, bem como em orientações para a equipe da UDI de Silves-AM;"
+        ],
+        "resumo": "Autoriza deslocamento da Assistente Defensorial Larice Bruce Pereira para auxiliar em atendimentos e inspeção em Silves e Itapiranga de 20 a 23 de julho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 692/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009577-9",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "CESSAR OS EFEITOS, a contar do dia 13 de julho de 2026, do inciso VI da PORTARIA Nº 40/2026-GSPG/DPE/AM, publicada no dia 20 de janeiro de 2026, Ano 12, Edição 2576 Pág. 9 de 15, quanto à designação do Defensor Público de 4ª Classe Renato Fernandes Neto para atuar na 5ª Defensoria Pública do Polo do Juruá."
+        ],
+        "resumo": "Cessa designação de Renato Fernandes Neto na 5ª Defensoria Pública do Polo do Juruá a partir de 13 de julho de 2026"
+      },
+      {
+        "numero": "Portaria Nº 674/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "plantao",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "V - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Escala de substituição Polo do Rio Negro-Solimões Polo do Médio Amazonas Polo do Médio Solimões Polo do Baixo Amazonas",
+          "VI - Os Anexos I, II e III da Portaria 674/2026-GSPG/DPE/AM, passam a viger conforme anexo único, desta Portaria, disponibilizado no sítio eletrônico da Defensoria Pública do Estado do Amazonas, no link \"Escala de Plantão - Atendimento e Custódia\"."
+        ],
+        "resumo": "Altera escala de plantão dos Polos, estabelecendo substituição recíproca entre Polo do Médio Amazonas e Polo do Rio Negro-Solimões, com anexos contendo nomes de defensores e servidores"
+      }
+    ]
   }
 ]
