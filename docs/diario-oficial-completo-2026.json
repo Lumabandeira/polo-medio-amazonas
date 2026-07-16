@@ -4804,5 +4804,70 @@
         "resumo": "Altera escala de plantão dos Polos, estabelecendo substituição recíproca entre Polo do Médio Amazonas e Polo do Rio Negro-Solimões, com anexos contendo nomes de defensores e servidores"
       }
     ]
+  },
+  {
+    "edicao": 2689,
+    "data": "2026-07-15",
+    "data_formatada": "15/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2689-2026__publicada_em_15_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 704/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009204-4",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "substituicao",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 4.ª Classe Ian Marcos Martins Palmeira, para atuar na Sessão de Julgamento do Tribunal do Júri da 1ª Vara da Comarca de Manacapuru, no dia 21 de julho de 2026, às 09h, nos autos de n.º 002465-"
+        ],
+        "resumo": "Designa Defensor Público Ian Marcos Martins Palmeira para atuar em sessão de julgamento na Comarca de Manacapuru em 21/07/2026"
+      },
+      {
+        "numero": "Portaria Nº 726/2026-GSPG/DPE/AM",
+        "sei": "26.0.000005350-2",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Thays Lidianne Campos de Azevedo Pereira para atuar na 4ª Defensoria Pública do Polo do Rio Negro - Solimões, no período de 16 de julho a 30 de setembro de 2026;",
+          "II - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Thays Lidianne Campos de Azevedo Pereira para atuar na 5ª Defensoria Pública do Polo do Rio Negro - Solimões, no período de 16 de julho a 30 de setembro de 2026;"
+        ],
+        "resumo": "Designa Defensora Pública Thays Lidianne Campos de Azevedo Pereira cumulativamente em duas defensorias do Polo Rio Negro - Solimões de 16/07 a 30/09/2026"
+      },
+      {
+        "numero": "Portaria Nº 727/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009753-4",
+        "sgi": "2600114",
+        "categorias": [
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Ian Marcos Martins Palmeira para atuar na 2ª Defensoria Pública do Polo de Coari, nos dias 23 e 24 de julho de 2026;",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Enio Jorge Lima Barbalho Junior para atuar na 5ª Defensoria Pública do Polo de Coari, nos dias 23 e 24 de julho de 2026;"
+        ],
+        "resumo": "Designa Defensores Públicos Ian Marcos Martins Palmeira e Enio Jorge Lima Barbalho Junior cumulativamente para atuação no Polo de Coari em 23 e 24/07/2026"
+      },
+      {
+        "numero": "Portaria Nº 725/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009726-7",
+        "sgi": null,
+        "categorias": [
+          "servidor",
+          "nomeacao_diretoria"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, no período de 15 a 26 de julho de 2026, da FGS-1 (Subgerência de Núcleo ou Unidade), nos termos do disposto na Lei nº 4.077, de 11 de setembro de 2014 e suas alterações, concedida ao Servidor Público Ádryan Éber Rabelo Silva;",
+          "II - DESIGNAR, no período de 15 a 26 de julho de 2026, o Servidor Público Rafael Souza Castro como Subgerente do Polo do Médio Solimões, atribuindo-lhe a FGS-1 (Subgerência de Núcleo ou Unidade), nos termos do disposto na Lei nº 4.077, de 11 de setembro de"
+        ],
+        "resumo": "Cessa efeitos de FGS-1 do servidor Ádryan Éber Rabelo Silva e designa Rafael Souza Castro como Subgerente do Polo do Médio Solimões de 15 a 26/07/2026"
+      }
+    ]
   }
 ]
