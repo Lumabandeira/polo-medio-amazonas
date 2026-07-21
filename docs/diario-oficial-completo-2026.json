@@ -4937,5 +4937,34 @@
         "resumo": "Designa defensora pública para atuar cumulativamente na 4ª Defensoria Pública do Polo do Médio Amazonas nos dias 12, 13 e 14 de agosto de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2692,
+    "data": "2026-07-20",
+    "data_formatada": "20/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2692-2026__publicada_em_20_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 734/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "servidor",
+          "comarca"
+        ],
+        "trechos": [
+          "ANALISTA JURIDICO DE DEFENSORIA POLO DO MÉDIO AMAZONAS",
+          "ASSISTENTE TEC.DE DEFENSORIA POLO DO MÉDIO AMAZONAS",
+          "ANALISTA JURIDICO DE DEFENSORIA POLO DO MÉDIO AMAZONAS",
+          "ASSISTENTE TEC.DE DEFENSORIA POLO DO MÉDIO AMAZONAS",
+          "ANALISTA JURIDICO DE DEFENSORIA POLO DO MÉDIO AMAZONAS",
+          "ASSISTENTE TEC.DE DEFENSORIA POLO DO MÉDIO AMAZONAS",
+          "ANALISTA JURIDICO DE DEFENSORIA POLO DO MÉDIO AMAZONAS"
+        ],
+        "resumo": "Designação de analistas jurídicos e assistentes técnicos para atuação no Polo do Médio Amazonas"
+      }
+    ]
   }
 ]
