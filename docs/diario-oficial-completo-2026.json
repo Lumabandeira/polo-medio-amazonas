@@ -4966,5 +4966,39 @@
         "resumo": "Designação de analistas jurídicos e assistentes técnicos para atuação no Polo do Médio Amazonas"
       }
     ]
+  },
+  {
+    "edicao": 2693,
+    "data": "2026-07-21",
+    "data_formatada": "21/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2693-2026__publicada_em_21_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 747/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Gabriela Carvalho Calheiros Falcão para atuar na Defensoria Pública de Autazes, no dia 10 de agosto de 2026;"
+        ],
+        "resumo": "Designa Gabriela Carvalho Calheiros Falcão para atuar cumulativamente na Defensoria Pública de Autazes em 10/08/2026"
+      },
+      {
+        "numero": "Portaria Nº 752/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009638-4",
+        "sgi": null,
+        "categorias": [
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR a liberação de adiantamento para Daniele dos Santos Fernandes, Defensora Pública, matrícula nº 000.922-9 A, no valor de R$ 1.000,00 (um mil reais), por meio de depósito em conta bancária vinculada à tomadora, conforme o artigo 2° da Resolução n. 43/2014-CSDPE/AM, de 19 de setembro de 2014, alterada pela Resolução nº 14/2025CSDPEAM, de 18 de junho de 2025, para custear pequenas despesas de Serviços de Terceiros Pessoa Física, no elemento de despesas 33.90.36.89;"
+        ],
+        "resumo": "Autoriza adiantamento de R$ 1.000,00 para Daniele dos Santos Fernandes, Defensora Pública, para custas de despesas com terceiros"
+      }
+    ]
   }
 ]
