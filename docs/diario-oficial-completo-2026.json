@@ -5000,5 +5000,46 @@
         "resumo": "Autoriza adiantamento de R$ 1.000,00 para Daniele dos Santos Fernandes, Defensora Pública, para custas de despesas com terceiros"
       }
     ]
+  },
+  {
+    "edicao": 2695,
+    "data": "2026-07-23",
+    "data_formatada": "23/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2695-2026__publicada_em_23_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 757/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010179-5",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "nomeacao_diretoria",
+          "coordenacao"
+        ],
+        "trechos": [
+          "I - DESIGNAR, no período de 22 de julho a 05 de agosto de 2026, a Defensora Pública Natália Feitosa de Almeida como Coordenadora do Polo do Médio Solimões, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019."
+        ],
+        "resumo": "Designa Defensora Pública Natália Feitosa de Almeida como Coordenadora do Polo do Médio Solimões (FGD-6) de 22/07 a 05/08/2026"
+      },
+      {
+        "numero": "Portaria Nº 751/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009868-9",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I – DESIGNAR o Defensor Público de 3ª Classe Inácio de Araújo Navarro para atuar nas audiências designadas para o dia 20 de julho de 2026, na 1ª Vara da Comarca de Manacapuru, conforme Anexo Único;",
+          "II – DESIGNAR o Defensor Público de 3ª Classe Wilsomar de Deus Ferreira para atuar nas audiências designadas para o dia 21 de julho de 2026, na 1ª Vara da Comarca de Manacapuru, conforme Anexo Único;",
+          "III – DESIGNAR o Defensor Público de 1ª Classe José Ivan Benaion Cardoso para atuar nas audiências designadas para o dia 21 de julho de 2026, na 1ª Vara da Comarca de Manacapuru, conforme Anexo Único;",
+          "IV – DESIGNAR o Defensor Público de 1ª Classe Marco Aurélio Martins da Silva para atuar nas audiências designadas para o dia 21 de julho de 2026, na 1ª Vara da Comarca de Coari, conforme Anexo Único;"
+        ],
+        "resumo": "Designa defensores públicos para atuar em audiências nas comarcas de Manacapuru e Coari nos dias 20 e 21/07/2026"
+      }
+    ]
   }
 ]
