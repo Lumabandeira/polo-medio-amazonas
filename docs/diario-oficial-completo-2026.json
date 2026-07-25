@@ -5041,5 +5041,70 @@
         "resumo": "Designa defensores públicos para atuar em audiências nas comarcas de Manacapuru e Coari nos dias 20 e 21/07/2026"
       }
     ]
+  },
+  {
+    "edicao": 2696,
+    "data": "2026-07-24",
+    "data_formatada": "24/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2696-2026__publicada_em_24_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 764/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010208-2",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "plantao",
+          "substituicao"
+        ],
+        "trechos": [
+          "Escala de substituição",
+          "Polo do Médio Amazonas"
+        ],
+        "resumo": "Altera a Portaria 635/2026 e estabelece escala de substituição para o Polo do Médio Amazonas e demais polos do interior no 3º trimestre de 2026"
+      },
+      {
+        "numero": "Portaria Nº 767/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010179-5",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Rodolfo Pinheiro Bernardo Lôbo para atuar na 2ª Defensoria Pública do Polo do Médio Solimões, no período de 22 de julho a 05 de agosto de 2026"
+        ],
+        "resumo": "Designa Rodolfo Pinheiro Bernardo Lôbo para atuar cumulativamente na 2ª DP do Polo do Médio Solimões de 22/07 a 05/08/2026"
+      },
+      {
+        "numero": "Portaria Nº 768/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010086-1",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 3ª Defensoria Pública do Polo do Médio Amazonas, no período de 01 a 31 de agosto de 2026"
+        ],
+        "resumo": "Designa Eliaquim Antunes de Souza Santos para atuar cumulativamente na 3ª DP do Polo do Médio Amazonas de 01 a 31/08/2026"
+      },
+      {
+        "numero": "Portaria Nº 776/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010325-9",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I – DESIGNAR o Defensor Público de 2ª Classe Nilson Gomes Oliveira Meireles Ferreira para atuar nas audiências designadas para a 1ª Vara da Comarca de Maués, no dia 06 de julho de 2026, conforme Anexo Único"
+        ],
+        "resumo": "Designa Nilson Gomes Oliveira Meireles Ferreira para atuar em audiências na 1ª Vara da Comarca de Maués em 06/07/2026"
+      }
+    ]
   }
 ]
