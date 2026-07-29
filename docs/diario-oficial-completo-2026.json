@@ -5131,5 +5131,69 @@
         "resumo": "Designa Bruno Henrique Sore cumulativamente na 8ª DP do Polo Médio Amazonas (Itapiranga) de 25/07 a 30/09/2026"
       }
     ]
+  },
+  {
+    "edicao": 2698,
+    "data": "2026-07-28",
+    "data_formatada": "28/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2698-2026__publicada_em_28_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 781/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010194-9",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I – DESIGNAR o Defensor Público de 3ª Classe Rodolfo Pinheiro Bernardo Lobo para atuar nas audiências designadas para o 1º Juizado Especial Criminal da Comarca de Tefé no dia 28 de julho de 2026, conforme Anexo Único"
+        ],
+        "resumo": "Designa Rodolfo Pinheiro Bernardo Lobo para atuar em audiências na Comarca de Tefé em 28/07/2026"
+      },
+      {
+        "numero": "Portaria Nº 782/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010275-9",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3.ª Classe Miguel Eduardo de Azevedo Martins Filho, para atuar na Sessão de Julgamento do Tribunal do Júri da Vara Única da Comarca de Itapiranga no dia 29 de Julho de 2026 às 08h00, conforme Anexo Único"
+        ],
+        "resumo": "Designa Miguel Eduardo de Azevedo Martins Filho para atuar no Tribunal do Júri da Comarca de Itapiranga em 29/07/2026"
+      },
+      {
+        "numero": "Portaria Nº 785/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010275-9",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, a Defensora Pública de 3.ª Classe Carine Teresa Lopes de Sousa Possidônio, para atuar na Sessão de Julgamento do Tribunal do Júri da Vara Única da Comarca de Itapiranga no dia 30 de Julho de 2026 às 08h00, conforme Anexo Único"
+        ],
+        "resumo": "Designa Carine Teresa Lopes de Sousa Possidônio para atuar no Tribunal do Júri da Comarca de Itapiranga em 30/07/2026"
+      },
+      {
+        "numero": "Portaria Nº 765/2026-GSPG/DPE/AM",
+        "sei": "26.0.000008940-0",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "III – DESIGNAR o Defensor Público de 3ª Classe Rodolfo Pinheiro Bernardo Lobo para atuar nas audiências designadas para a 1ª Vara da Comarca de Maués, no dia 22 de julho de 2026, conforme Anexo Único"
+        ],
+        "resumo": "Designa Rodolfo Pinheiro Bernardo Lobo para atuar na Comarca de Maués em 22/07/2026"
+      }
+    ]
   }
 ]
