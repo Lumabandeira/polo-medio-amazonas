@@ -15,12 +15,18 @@
 
 > A 9ª DP (Urucurituba) ficou vaga desde 02/05/2026 (Concurso de Remoção). Eliaquim cobriu a 9ª DP cumulativamente de 04/05/2026 em diante por designação (Portaria registrada em `designacoes_cumulativas_admin` no Firestore).
 
-**Grupo de alternância:** Grupo B (4ª DP)
+> A 3ª DP (Cível, Registros e Previdenciário, Itacoatiara) ficou provisoriamente sem titular após a
+> saída do Ícaro Oliveira Avelar Costa (último dia 01/06/2026 — ver `docs/defensores/icaro.md`).
+> Eliaquim cobre a 3ª DP cumulativamente desde **02/06/2026**, até que um novo defensor seja
+> removido para o polo. Nº de portaria/memorando ainda não informado.
+
+**Grupo de alternância:** Grupo B (4ª DP) — cumulativamente também cobre a 3ª DP (Grupo A) desde 02/06/2026.
 
 ## Histórico de Titularidade
 
 - A partir de **11/01/2026**: assume 4ª DP e 9ª DP, substituindo Mariana Silva Paixão (removida no 11º Concurso de Remoção).
 - A partir de **02/05/2026**: 9ª DP fica vaga formalmente (Concurso de Remoção nº 1/2026); Eliaquim recebe designação cumulativa para a 9ª DP.
+- A partir de **02/06/2026**: recebe designação cumulativa também para a 3ª DP, após a saída do Ícaro.
 
 ## Ausências 2026
 

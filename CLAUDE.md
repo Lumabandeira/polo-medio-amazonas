@@ -4,8 +4,8 @@
 
 Site HTML responsivo (`index.html`) para gerenciar designações semanais e ausências dos Defensores Públicos do Polo Médio Amazonas em 2026. Tecnologias: HTML5, CSS3, JavaScript vanilla. Publicado via GitHub Pages em https://lumabandeira.github.io/polo-medio-amazonas/
 
-- **6 defensores ativos:** Ênio · Thays · Ícaro · Eliaquim · Emilly · Miguel
-- **12 Defensorias Públicas:** DPs 1–6 ocupadas; DPs 7–12 vagas desde 02/05/2026
+- **5 defensores ativos:** Ênio · Thays · Eliaquim · Emilly · Miguel (Ícaro saiu em 01/06/2026 — 3ª DP coberta cumulativamente pelo Eliaquim)
+- **12 Defensorias Públicas:** DPs 1, 2, 4, 5, 6 com titular; 3ª DP vaga (cumulativa); DPs 7–12 vagas desde 02/05/2026
 - **Regra central:** alternância semanal obrigatória entre Grupo A (1ª, 3ª, 6ª DP) e Grupo B (2ª, 4ª, 5ª DP)
 - **Firebase:** Auth + Firestore (`polo-medio-as`). Login obrigatório; admins veem botões de edição.
 
@@ -56,15 +56,26 @@ docs/
 
 ## Estado atual (sessão 27 — 30/07/2026)
 
-**Implementado nesta sessão:** botão de admin para marcar/reativar um defensor como ex-membro
+**Implementado nesta sessão:** controle de admin para marcar/reativar um defensor como ex-membro
 diretamente pelo site (seção "👥 Defensores Públicos"). Antes, só existia edição de titularidade
 por DP (`titulares_admin`); o status geral do defensor (ativo/ex-membro, usado para separar as
 listas) só vinha do campo `ativo` do JSON estático `docs/designacoes-2026.json`, sem forma de
 alterar pela interface. Agora há override em `defensores_admin/{defKey}` (Firestore), carregado
-por `loadDefensoresAdminFirestore()` e gravado por `marcarExMembro()`. Só se aplica a defensores
-com chave no dicionário `defensores` — titulares "livres" continuam com o comportamento automático
-já existente. **Pendente:** publicar o `firestore.rules` atualizado (regra de `defensores_admin`)
-no Console — sem isso a escrita será negada. Ver `docs/firebase.md` e `docs/site/estrutura-html.md`.
+por `loadDefensoresAdminFirestore()` e gravado por `alterarStatusDefensor()`. Só se aplica a
+defensores com chave no dicionário `defensores` — titulares "livres" continuam com o comportamento
+automático já existente. Na UI é um `<select>` de status (🟢 Membro / ⚪ Ex-membro, função
+`statusDefensorSelectHtml()`) — trocado do desenho inicial em botão porque um botão "Ex-membro"
+num card de membro ativo dava a impressão de que ele já era ex-membro. `firestore.rules` (regra de
+`defensores_admin`) já publicada no Console e testada em produção com o Ícaro (marcado como
+ex-membro pela Luma com sucesso). Ver `docs/firebase.md` e `docs/site/estrutura-html.md`.
+
+**Também nesta sessão:** sincronizada a documentação com a saída real do Ícaro do polo (último dia
+01/06/2026, 3ª DP) — `docs/defensores/icaro.md` (agora ex-membro), `docs/defensores/eliaquim.md`
+(cobertura cumulativa da 3ª DP desde 02/06/2026, além da 9ª DP que já cobria) e
+`docs/defensorias/lista-completa.md`. **Pendente:** número de portaria/memorando da designação
+cumulativa do Eliaquim na 3ª DP, e a titularidade da 3ª DP em `titulares_admin` no Firestore ainda
+precisa ser corrigida pelo site (o status 🟢/⚪ não mexe em DP — isso é editado separadamente em
+"Titulares por DP").
 
 **Implementado sessão 26 (06/07/2026):** seção "💰 Prestação de Contas" (admin-only) — prontos
 pagamentos por tomador (máx. 2 abertos simultâneos, categorias `consumo`/`pessoa_juridica`/`pessoa_fisica`
@@ -75,7 +86,6 @@ Storage ativado (upgrade pra plano Blaze) e `storage.rules`/`firestore.rules` pu
 Console. Tudo testado e validado com dados reais.
 
 **O que falta implementar:**
-- Publicar `firestore.rules` atualizado no Console (regra `defensores_admin`)
 - Cadastrar os outros 36 usuários restantes no Firebase (1 admin + 35 viewers)
 - Dados privados da equipe (WhatsApp, contatos internos)
 - Botão "Plantão" — nova seção com escala de plantão (arquitetura a definir)
