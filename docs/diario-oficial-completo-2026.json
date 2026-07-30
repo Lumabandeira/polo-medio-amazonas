@@ -5195,5 +5195,69 @@
         "resumo": "Designa Rodolfo Pinheiro Bernardo Lobo para atuar na Comarca de Maués em 22/07/2026"
       }
     ]
+  },
+  {
+    "edicao": 2699,
+    "data": "2026-07-29",
+    "data_formatada": "29/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2699-2026__publicada_em_29_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1312/2026-GDPG/DPE/AM",
+        "sei": "26.0.000010544-8",
+        "sgi": "2601462, 2601460",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, nos trechos Manaus/Itapiranga/Manaus, no período de 29 a 30 de julho de 2026, a fim de conduzir a Defensora Pública Carine Teresa Lopes de Sousa Possidônio ao munícipio de Itapiranga-AM, bem como prestar apoio logístico durante o período supracitado",
+          "I - AUTORIZAR o deslocamento de Carine Teresa Lopes de Sousa Possidônio, Defensora Pública de 3ª Classe, nos trechos Manaus/Itapiranga/Manaus, no período de 29 a 30 de julho de 2026, a fim de atuar em sessão do Tribunal do Júri da Vara Única da Comarca de Itapiranga-AM"
+        ],
+        "resumo": "Autoriza deslocamento de defensor e servidor para Itapiranga-AM nos dias 29-30 de julho de 2026 para atuar em sessão de Tribunal do Júri"
+      },
+      {
+        "numero": "Portaria Nº 783/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010493-0",
+        "sgi": "2601452",
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Miguel Eduardo de Azevedo Martins Filho, Defensor Público de 3ª Classe, no trecho Itacoatiara/Itapiranga/Itacoatiara, no dia 29 de julho de 2026, a fim de atuar em sessão do Tribunal do Júri, na Comarca de Itapiranga-AM"
+        ],
+        "resumo": "Autoriza deslocamento de defensor de Itacoatiara para Itapiranga-AM no dia 29 de julho de 2026 para atuar em Tribunal do Júri"
+      },
+      {
+        "numero": "Portaria Nº 784/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010372-0",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Ali Assaad Hamade de Oliveira para atuar na 3ª Defensoria Pública do Polo do Rio Negro - Solimões, no período de 01 de agosto a 30 de setembro de 2026",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Danilo Justino Garcia para atuar na 1ª Defensoria Pública do Polo de Maués, no período de 01 de agosto a 20 de outubro de 2026"
+        ],
+        "resumo": "Designa cumulativamente dois defensores públicos para atuação em polos do interior (Rio Negro-Solimões e Maués) em agosto-outubro de 2026"
+      },
+      {
+        "numero": "Portaria Nº 787/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010081-0",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3ª Classe Vinicius Cepil Coelho, para atuar nas Sessões de Julgamento do Tribunal do Júri da 1ª Vara da Comarca de Manacapuru nos dias 27 e 31 de julho de 2026"
+        ],
+        "resumo": "Designa defensor para atuar em sessões de Tribunal do Júri em Manacapuru nos dias 27 e 31 de julho de 2026"
+      }
+    ]
   }
 ]
