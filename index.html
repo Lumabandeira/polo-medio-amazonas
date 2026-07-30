@@ -4171,16 +4171,31 @@
             }
         }
 
-        // Marca/desmarca um defensor (já cadastrado no dicionário JSON) como ex-membro.
-        // tornarExMembro=true → ativo:false (some da lista de ativos, aparece em Ex-membros)
-        // tornarExMembro=false → ativo:true (reativa)
-        async function marcarExMembro(defKey, tornarExMembro) {
+        // Monta o <select> de status (🟢 Membro / ⚪ Ex-membro) exibido nos cards de defensor (admin).
+        function statusDefensorSelectHtml(defKey, isExMembro) {
+            const anterior = isExMembro ? 'ex' : 'ativo';
+            const cor = isExMembro ? '#6b7280' : '#16a34a';
+            return `<select class="status-defensor-select" data-key="${defKey}" data-anterior="${anterior}"
+                        style="font-size:0.78em;font-weight:600;border-radius:5px;padding:3px 6px;cursor:pointer;border:1.5px solid ${cor};color:${cor};background:white;"
+                        onchange="alterarStatusDefensor(this)">
+                        <option value="ativo" ${!isExMembro ? 'selected' : ''}>🟢 Membro</option>
+                        <option value="ex" ${isExMembro ? 'selected' : ''}>⚪ Ex-membro</option>
+                    </select>`;
+        }
+
+        // Aplica a mudança de status (ativo/ex-membro) escolhida no <select> de um card de defensor.
+        async function alterarStatusDefensor(selectEl) {
+            const defKey = selectEl.dataset.key;
+            const anterior = selectEl.dataset.anterior;
+            const novoValor = selectEl.value;
+            if (novoValor === anterior) return;
             const info = jsonDesignacoes.defensores[defKey];
             if (!info) return;
+            const tornarExMembro = novoValor === 'ex';
             const msg = tornarExMembro
                 ? `Marcar ${info.nome} como ex-membro? Ele deixará de aparecer na lista de defensores ativos e nas designações.`
                 : `Reativar ${info.nome} como membro ativo do Polo?`;
-            if (!confirm(msg)) return;
+            if (!confirm(msg)) { selectEl.value = anterior; return; }
             try {
                 await db.collection('defensores_admin').doc(defKey).set({
                     ativo: !tornarExMembro,
@@ -4192,6 +4207,7 @@
             } catch (e) {
                 console.error('Erro ao atualizar status do defensor:', e);
                 mostrarToast('❌ ' + e.message, true);
+                selectEl.value = anterior;
             }
         }
 
@@ -8440,10 +8456,10 @@
                      + `</div>`;
 
             allAtivos.forEach(({ key: defKey, nome: defNome, dps, futDps, isOrphan }) => {
-                const btnExMembro = (isAdminDefensores && !isOrphan)
-                    ? `<button class="btn-editar" style="border-color:#dc2626;color:#dc2626;" title="Marcar como ex-membro" onclick="marcarExMembro('${defKey}', true)">🔻 Ex-membro</button>`
+                const statusSelect = (isAdminDefensores && !isOrphan)
+                    ? statusDefensorSelectHtml(defKey, false)
                     : '';
-                html += `<div class="defensor-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;"><h4>${esc(defNome)}</h4>${btnExMembro}</div><ul>`;
+                html += `<div class="defensor-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;"><h4>${esc(defNome)}</h4>${statusSelect}</div><ul>`;
                 if (dps.length > 0) {
                     dps.forEach(dpKey => {
                         const dp = defensorias[dpKey];
@@ -8530,11 +8546,11 @@
                 // Função auxiliar: renderiza o card de um ex-membro
                 // defKeyReativar: chave em `defensores` para permitir reativação via botão admin; null para "livres"
                 function renderExMembroCard(nome, dpsHist, defKeyReativar) {
-                    const btnReativar = (isAdminDefensores && defKeyReativar)
-                        ? `<button class="btn-editar" style="border-color:#16a34a;color:#16a34a;" title="Reativar como membro ativo" onclick="marcarExMembro('${defKeyReativar}', false)">🔺 Reativar</button>`
+                    const statusSelect = (isAdminDefensores && defKeyReativar)
+                        ? statusDefensorSelectHtml(defKeyReativar, true)
                         : '';
                     let card = `<div class="defensor-card" style="opacity:0.72;border-left:4px solid var(--text-secondary);">`;
-                    card += `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;"><h4 style="color:var(--text-secondary);">${esc(nome)} <span style="font-size:0.8em;font-weight:400;">(ex-membro)</span></h4>${btnReativar}</div><ul>`;
+                    card += `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;"><h4 style="color:var(--text-secondary);">${esc(nome)} <span style="font-size:0.8em;font-weight:400;">(ex-membro)</span></h4>${statusSelect}</div><ul>`;
                     if (dpsHist.length > 0) {
                         dpsHist.forEach(({ dpKey, inicio, fim, portaria_entrada, do_entrada, portaria_saida, do_saida }) => {
                             const dp = defensorias[dpKey];

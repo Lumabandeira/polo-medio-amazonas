@@ -78,7 +78,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | Adote — células da tabela | `secoes/adote_celulas` | contentEditable por TD + RTE |
 | Adote — bloco Expandir | `secoes/adote_expandir` | contentEditable + RTE |
 | Titulares por DP | `titulares_admin/{dpKey}` | modal de edição |
-| Status Ativo/Ex-membro do Defensor | `defensores_admin/{defKey}` | botão 🔻/🔺 no card, em `renderDefensorias()` |
+| Status Ativo/Ex-membro do Defensor | `defensores_admin/{defKey}` | dropdown 🟢 Membro / ⚪ Ex-membro no card, em `renderDefensorias()` |
 | Afastamentos | `afastamentos_admin/{id}` | formulário modal completo |
 | Férias Equipe | `afastamentos_equipe/{id}` | formulário modal |
 

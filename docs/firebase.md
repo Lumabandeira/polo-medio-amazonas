@@ -71,8 +71,8 @@ atualizado_em:  timestamp
 - `defKey` é a mesma chave usada em `jsonDesignacoes.defensores` (ex: `icaro`). Só se aplica a
   defensores já cadastrados nesse dicionário — não afeta titulares "livres" (texto digitado direto
   em `titulares_admin`), que já viram ex-membro automaticamente quando perdem a última DP ativa.
-- Documento só existe quando um admin altera o status pelo site (botão 🔻/🔺 na seção Defensores
-  Públicos). Ausência do doc = usa o campo `ativo` do JSON estático como padrão.
+- Documento só existe quando um admin altera o status pelo site (dropdown 🟢 Membro / ⚪ Ex-membro na
+  seção Defensores Públicos). Ausência do doc = usa o campo `ativo` do JSON estático como padrão.
 - Marcar como ex-membro **não** remove o defensor de nenhuma DP — isso continua sendo feito
   separadamente em `titulares_admin` (seção "Titulares por DP").
 
@@ -222,7 +222,7 @@ atualizado_em:       timestamp
 | `salvarSecao(secaoId)` | Salva HTML no Firestore |
 | `loadTitularesFirestore()` | Carrega `titulares_admin` e mescla com JSON base |
 | `loadDefensoresAdminFirestore()` | Carrega `defensores_admin` e mescla `ativo` no dicionário `defensores` |
-| `marcarExMembro(defKey, tornarExMembro)` | Grava override em `defensores_admin/{defKey}` (botão 🔻 Ex-membro / 🔺 Reativar) |
+| `alterarStatusDefensor(selectEl)` | Grava override em `defensores_admin/{defKey}` a partir do `<select>` 🟢 Membro / ⚪ Ex-membro |
 | `loadAfastamentosFirestore()` | Carrega `afastamentos_admin` e mescla com JSON |
 | `loadEquipeFirestore()` | Carrega `afastamentos_equipe` |
 | `carregarNotificacoesAutomacao()` | Carrega as 3 coleções de notificações (try/catch independentes) |
