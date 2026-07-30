@@ -54,17 +54,28 @@ docs/
 
 ---
 
-## Estado atual (sessão 26 — 06/07/2026)
+## Estado atual (sessão 27 — 30/07/2026)
 
-**Implementado nesta sessão:** seção "💰 Prestação de Contas" (admin-only) — prontos pagamentos
-por tomador (máx. 2 abertos simultâneos, categorias `consumo`/`pessoa_juridica`/`pessoa_fisica`
+**Implementado nesta sessão:** botão de admin para marcar/reativar um defensor como ex-membro
+diretamente pelo site (seção "👥 Defensores Públicos"). Antes, só existia edição de titularidade
+por DP (`titulares_admin`); o status geral do defensor (ativo/ex-membro, usado para separar as
+listas) só vinha do campo `ativo` do JSON estático `docs/designacoes-2026.json`, sem forma de
+alterar pela interface. Agora há override em `defensores_admin/{defKey}` (Firestore), carregado
+por `loadDefensoresAdminFirestore()` e gravado por `marcarExMembro()`. Só se aplica a defensores
+com chave no dicionário `defensores` — titulares "livres" continuam com o comportamento automático
+já existente. **Pendente:** publicar o `firestore.rules` atualizado (regra de `defensores_admin`)
+no Console — sem isso a escrita será negada. Ver `docs/firebase.md` e `docs/site/estrutura-html.md`.
+
+**Implementado sessão 26 (06/07/2026):** seção "💰 Prestação de Contas" (admin-only) — prontos
+pagamentos por tomador (máx. 2 abertos simultâneos, categorias `consumo`/`pessoa_juridica`/`pessoa_fisica`
 distintas entre si), Mapa Demonstrativo de Despesa com totais automáticos, anexos por despesa
 (Recibo/NF, comprovação de mercado, justificativa, atesto, fotos, outros documentos) com upload
 para Firebase Storage, e exportação do Mapa Demonstrativo em PDF A4 paisagem (jsPDF + AutoTable).
 Storage ativado (upgrade pra plano Blaze) e `storage.rules`/`firestore.rules` publicadas no
-Console. Tudo testado e validado com dados reais. Ver `docs/site/estrutura-html.md` e `docs/firebase.md`.
+Console. Tudo testado e validado com dados reais.
 
 **O que falta implementar:**
+- Publicar `firestore.rules` atualizado no Console (regra `defensores_admin`)
 - Cadastrar os outros 36 usuários restantes no Firebase (1 admin + 35 viewers)
 - Dados privados da equipe (WhatsApp, contatos internos)
 - Botão "Plantão" — nova seção com escala de plantão (arquitetura a definir)

@@ -37,6 +37,10 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /defensores_admin/{id} {
+      allow write: if isAdmin();
+    }
+
     match /remocoes_admin/{id} {
       allow write: if isAdmin();
     }

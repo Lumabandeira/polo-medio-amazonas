@@ -62,6 +62,20 @@ atualizado_em: timestamp
 - `fim: ''` = entrada histórica em branco (ainda não preenchida)
 - `fim: 'YYYY-MM-DD'` = histórico com data
 
+### `defensores_admin/{defKey}` — override de status ativo/ex-membro
+```
+ativo:          false   ← ou true (reativação de quem já era ativo=false no JSON base)
+atualizado_por: "email@..."
+atualizado_em:  timestamp
+```
+- `defKey` é a mesma chave usada em `jsonDesignacoes.defensores` (ex: `icaro`). Só se aplica a
+  defensores já cadastrados nesse dicionário — não afeta titulares "livres" (texto digitado direto
+  em `titulares_admin`), que já viram ex-membro automaticamente quando perdem a última DP ativa.
+- Documento só existe quando um admin altera o status pelo site (botão 🔻/🔺 na seção Defensores
+  Públicos). Ausência do doc = usa o campo `ativo` do JSON estático como padrão.
+- Marcar como ex-membro **não** remove o defensor de nenhuma DP — isso continua sendo feito
+  separadamente em `titulares_admin` (seção "Titulares por DP").
+
 ### `afastamentos_admin/{id}` — afastamentos de defensores
 ```
 defensor:         "elton"
@@ -186,7 +200,7 @@ atualizado_em:       timestamp
 
 - **Leitura:** apenas usuários autenticados
 - **Escrita:** apenas usuários com `role == "admin"`
-- Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`, `remocoes_admin`, `designacoes_cumulativas_admin`, `afastamentos_equipe`
+- Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`, `defensores_admin`, `remocoes_admin`, `designacoes_cumulativas_admin`, `afastamentos_equipe`
 - **Exceção:** `prestacoes_contas` tem leitura **e** escrita restritas a admin (não apenas escrita) — ver acima.
 
 ## Regras de Segurança do Storage
@@ -207,6 +221,8 @@ atualizado_em:       timestamp
 | `iniciarEdicao(secaoId)` | Ativa contentEditable + monta toolbar RTE |
 | `salvarSecao(secaoId)` | Salva HTML no Firestore |
 | `loadTitularesFirestore()` | Carrega `titulares_admin` e mescla com JSON base |
+| `loadDefensoresAdminFirestore()` | Carrega `defensores_admin` e mescla `ativo` no dicionário `defensores` |
+| `marcarExMembro(defKey, tornarExMembro)` | Grava override em `defensores_admin/{defKey}` (botão 🔻 Ex-membro / 🔺 Reativar) |
 | `loadAfastamentosFirestore()` | Carrega `afastamentos_admin` e mescla com JSON |
 | `loadEquipeFirestore()` | Carrega `afastamentos_equipe` |
 | `carregarNotificacoesAutomacao()` | Carrega as 3 coleções de notificações (try/catch independentes) |

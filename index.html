@@ -4154,6 +4154,47 @@
             await loadTitularesFirestore();
         }
 
+        // Carrega overrides de status (ativo/ex-membro) de defensores cadastrados no dicionário JSON.
+        // Documento só existe quando um admin já alterou o status pelo site; ausência = usa o padrão do JSON.
+        async function loadDefensoresAdminFirestore() {
+            try {
+                const snapshot = await db.collection('defensores_admin').get();
+                snapshot.forEach(doc => {
+                    const defKey = doc.id;
+                    if (jsonDesignacoes.defensores[defKey]) {
+                        jsonDesignacoes.defensores[defKey].ativo = doc.data().ativo;
+                    }
+                });
+                renderDefensorias();
+            } catch(e) {
+                console.warn('Firestore defensores_admin:', e.message);
+            }
+        }
+
+        // Marca/desmarca um defensor (já cadastrado no dicionário JSON) como ex-membro.
+        // tornarExMembro=true → ativo:false (some da lista de ativos, aparece em Ex-membros)
+        // tornarExMembro=false → ativo:true (reativa)
+        async function marcarExMembro(defKey, tornarExMembro) {
+            const info = jsonDesignacoes.defensores[defKey];
+            if (!info) return;
+            const msg = tornarExMembro
+                ? `Marcar ${info.nome} como ex-membro? Ele deixará de aparecer na lista de defensores ativos e nas designações.`
+                : `Reativar ${info.nome} como membro ativo do Polo?`;
+            if (!confirm(msg)) return;
+            try {
+                await db.collection('defensores_admin').doc(defKey).set({
+                    ativo: !tornarExMembro,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                await loadDefensoresAdminFirestore();
+                mostrarToast(`✅ ${info.nome} ${tornarExMembro ? 'marcado como ex-membro' : 'reativado'}.`);
+            } catch (e) {
+                console.error('Erro ao atualizar status do defensor:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
         // Função para obter dados detalhados de um dia específico
         function getDetalhesDia(ano, mes, dia) {
             const mesData = (detalhesAfastamentos[ano] || {})[mes];
@@ -8381,14 +8422,16 @@
                 }
                 const minDp = dps.length ? Math.min(...dps.map(Number))
                             : futDps.length ? Math.min(...futDps.map(f => parseInt(f.dpKey))) : 999;
-                allAtivos.push({ key: defKey, nome: defInfo.nome, dps, futDps, minDp });
+                allAtivos.push({ key: defKey, nome: defInfo.nome, dps, futDps, minDp, isOrphan: false });
             });
             orphanCurrentMembros.forEach(defKey => {
                 const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
                 const minDp = dps.length ? Math.min(...dps.map(Number)) : 999;
-                allAtivos.push({ key: defKey, nome: defKey, dps, futDps: [], minDp });
+                allAtivos.push({ key: defKey, nome: defKey, dps, futDps: [], minDp, isOrphan: true });
             });
             allAtivos.sort((a, b) => a.minDp - b.minDp);
+
+            const isAdminDefensores = userRole === 'admin';
 
             let html = `<h2>👥 Defensores Públicos</h2>`
                      + `<div class="stats-grid">`
@@ -8396,8 +8439,11 @@
                      + `<div class="stat-card"><h4>Total de Defensorias</h4><div class="number">12</div></div>`
                      + `</div>`;
 
-            allAtivos.forEach(({ key: defKey, nome: defNome, dps, futDps }) => {
-                html += `<div class="defensor-card"><h4>${esc(defNome)}</h4><ul>`;
+            allAtivos.forEach(({ key: defKey, nome: defNome, dps, futDps, isOrphan }) => {
+                const btnExMembro = (isAdminDefensores && !isOrphan)
+                    ? `<button class="btn-editar" style="border-color:#dc2626;color:#dc2626;" title="Marcar como ex-membro" onclick="marcarExMembro('${defKey}', true)">🔻 Ex-membro</button>`
+                    : '';
+                html += `<div class="defensor-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;"><h4>${esc(defNome)}</h4>${btnExMembro}</div><ul>`;
                 if (dps.length > 0) {
                     dps.forEach(dpKey => {
                         const dp = defensorias[dpKey];
@@ -8482,9 +8528,13 @@
                 html += `<div class="ex-membros-body">`;
 
                 // Função auxiliar: renderiza o card de um ex-membro
-                function renderExMembroCard(nome, dpsHist) {
+                // defKeyReativar: chave em `defensores` para permitir reativação via botão admin; null para "livres"
+                function renderExMembroCard(nome, dpsHist, defKeyReativar) {
+                    const btnReativar = (isAdminDefensores && defKeyReativar)
+                        ? `<button class="btn-editar" style="border-color:#16a34a;color:#16a34a;" title="Reativar como membro ativo" onclick="marcarExMembro('${defKeyReativar}', false)">🔺 Reativar</button>`
+                        : '';
                     let card = `<div class="defensor-card" style="opacity:0.72;border-left:4px solid var(--text-secondary);">`;
-                    card += `<h4 style="color:var(--text-secondary);">${esc(nome)} <span style="font-size:0.8em;font-weight:400;">(ex-membro)</span></h4><ul>`;
+                    card += `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;"><h4 style="color:var(--text-secondary);">${esc(nome)} <span style="font-size:0.8em;font-weight:400;">(ex-membro)</span></h4>${btnReativar}</div><ul>`;
                     if (dpsHist.length > 0) {
                         dpsHist.forEach(({ dpKey, inicio, fim, portaria_entrada, do_entrada, portaria_saida, do_saida }) => {
                             const dp = defensorias[dpKey];
@@ -8522,13 +8572,13 @@
                 exMembros.forEach(defKey => {
                     const nome = defensores[defKey].nome;
                     const dpsHist = (defHistorico[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
-                    html += renderExMembroCard(nome, dpsHist);
+                    html += renderExMembroCard(nome, dpsHist, defKey);
                 });
 
                 // Ex-membros "livres" — cadastrados via UI como texto, sem DP ativa
                 orphanExMembros.sort().forEach(defKey => {
                     const dpsHist = (defHistorico[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
-                    html += renderExMembroCard(defKey, dpsHist);
+                    html += renderExMembroCard(defKey, dpsHist, null);
                 });
 
                 html += `</div>`;
@@ -8536,7 +8586,7 @@
 
             document.getElementById('defensores-content').innerHTML = html;
 
-            const isAdmin = userRole === 'admin';
+            const isAdmin = isAdminDefensores;
             let tableHtml = `<h2>📍 Designações Atuais (2026)</h2>`
                           + `<div style="overflow-x:auto"><table style="min-width:600px"><thead><tr><th style="width:28%">Órgão de Atuação</th><th style="min-width:260px">Defensor Público</th><th style="width:28%">Área de Atuação</th>${isAdmin ? '<th style="width:44px;display:none" class="col-editar-dp"></th>' : ''}</tr></thead><tbody>`;
             Object.keys(defensorias).sort((a,b) => parseInt(a)-parseInt(b)).forEach(dpKey => {
@@ -8610,6 +8660,7 @@
                     await loadAfastamentosFirestore();
                     await loadTitularesFirestore();
                     await loadEquipeFirestore();
+                    await loadDefensoresAdminFirestore();
                 }
 
             } catch(err) {
@@ -8689,7 +8740,7 @@
             _aplicarModoEdicao();
 
             // Se os JSONs já carregaram antes da autenticação, carregar dados do Firestore agora
-            if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); loadEquipeFirestore(); }
+            if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); loadEquipeFirestore(); loadDefensoresAdminFirestore(); }
             carregarNotificacoesAutomacao();
 
             // Restaurar seção: parâmetro URL (?s=) tem prioridade sobre sessionStorage
