@@ -71,6 +71,15 @@ atualizado_em:  timestamp
 - `defKey` é a mesma chave usada em `jsonDesignacoes.defensores` (ex: `icaro`). Só se aplica a
   defensores já cadastrados nesse dicionário — não afeta titulares "livres" (texto digitado direto
   em `titulares_admin`), que já viram ex-membro automaticamente quando perdem a última DP ativa.
+- **Armadilha do campo "Nome do defensor" no modal Titulares por DP:** o texto digitado só vira a
+  chave (`eliaquim`, etc.) se bater **exatamente** (case-insensitive) com `defensores[k].nome` ou
+  `nome_curto` do `docs/designacoes-2026.json` já carregado no navegador (`_resolverDefensor()` em
+  `index.html`). Se o texto não bater — nome digitado com erro de grafia, ou o navegador ainda com
+  o JSON antigo em cache no momento do salvamento — o valor é gravado como **texto livre** no
+  Firestore. O card resultante perde o seletor 🟢 Membro / ⚪ Ex-membro (vira "titular livre",
+  `isOrphan: true` em `index.html`), mesmo mostrando o nome certo. Sintoma: card sem a caixinha de
+  status ao lado do nome. Correção: reabrir "Titulares por DP" na(s) DP(s) afetada(s) e reescrever
+  o nome exatamente igual ao do dicionário (com o navegador já com o JSON atualizado em cache).
 - Documento só existe quando um admin altera o status pelo site (dropdown 🟢 Membro / ⚪ Ex-membro na
   seção Defensores Públicos). Ausência do doc = usa o campo `ativo` do JSON estático como padrão.
 - Marcar como ex-membro **não** remove o defensor de nenhuma DP — isso continua sendo feito

@@ -4,6 +4,22 @@
 
 ---
 
+## Sessão 28 — 31/07/2026
+
+- **Correção do nome completo do Defensor Eliaquim** — estava faltando o sobrenome "Santos"
+  ("Eliaquim Antunes de Souza" → "Eliaquim Antunes de Souza Santos"). Corrigido em `index.html`
+  (dropdown de afastamento), `docs/designacoes-2026.json` (campo `nome` da chave `eliaquim`),
+  `docs/escalas/ferias-folgas-2026.md` e `docs/regras/ausencias.md` (tabelas). Commit `7340fb9`.
+  Não alterados: `docs/diario-oficial-completo-2026.json`/`.md` — são transcrições automatizadas
+  do texto literal publicado no Diário Oficial; alterar mudaria uma citação de documento oficial.
+- **Descoberto e documentado o comportamento do campo "Nome do defensor" no modal Titulares por
+  DP** — ao corrigir o nome também nas designações de titular (3ª/4ª/9ª DP) pelo site, o texto
+  digitado não bateu com o `nome` do dicionário no momento do salvamento (JSON ainda em cache no
+  navegador) e foi gravado como texto livre no Firestore, fazendo o card do Eliaquim perder o
+  seletor 🟢 Membro / ⚪ Ex-membro. Ver detalhe do mecanismo (`_resolverDefensor()`) em
+  `docs/firebase.md`. **Pendente de confirmação:** usuária reabrindo "Titulares por DP" nas DPs
+  afetadas para regravar o nome agora que o JSON já está com cache atualizado.
+
 ## Sessão 26 — 06/07/2026
 
 - **Nova seção "💰 Prestação de Contas" (admin-only)** — botão na landing só visível para `userRole === 'admin'` (`_aplicarModoEdicao()` + segunda checagem em `showSection()`). Nasce a partir da análise de um processo real de prestação de contas de adiantamento (Memorando, Mapa Demonstrativo, Recibos, Justificativas de ausência de pesquisa de mercado, Atesto, Termo/Comprovante de Devolução, Fotos de reparo).

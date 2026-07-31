@@ -54,9 +54,23 @@ docs/
 
 ---
 
-## Estado atual (sessão 27 — 30/07/2026)
+## Estado atual (sessão 28 — 31/07/2026)
 
-**Implementado nesta sessão:** controle de admin para marcar/reativar um defensor como ex-membro
+**Implementado nesta sessão:** correção do nome completo do Defensor Eliaquim, que estava sem o
+sobrenome "Santos" ("Eliaquim Antunes de Souza" → "Eliaquim Antunes de Souza Santos") em
+`index.html`, `docs/designacoes-2026.json`, `docs/escalas/ferias-folgas-2026.md` e
+`docs/regras/ausencias.md`. Commit `7340fb9`. As transcrições do Diário Oficial
+(`docs/diario-oficial-completo-2026.json`/`.md`) não foram alteradas por serem citação literal do
+texto oficial publicado.
+
+Ao corrigir também os titulares da 3ª/4ª/9ª DP pelo site, o campo "Nome do defensor" do modal
+"Titulares por DP" não reconheceu o texto digitado como a chave `eliaquim` (JSON ainda em cache no
+navegador no momento do salvamento) e gravou como texto livre no Firestore — o card do Eliaquim em
+"👥 Defensores Públicos" ficou com o nome certo mas sem o seletor 🟢 Membro / ⚪ Ex-membro. Mecanismo
+documentado em `docs/firebase.md` (`_resolverDefensor()`). **Pendente:** confirmar que a usuária
+regravou o nome nessas 3 DPs com o cache já atualizado e que o seletor voltou a aparecer.
+
+**Implementado sessão 27 (30/07/2026):** controle de admin para marcar/reativar um defensor como ex-membro
 diretamente pelo site (seção "👥 Defensores Públicos"). Antes, só existia edição de titularidade
 por DP (`titulares_admin`); o status geral do defensor (ativo/ex-membro, usado para separar as
 listas) só vinha do campo `ativo` do JSON estático `docs/designacoes-2026.json`, sem forma de
