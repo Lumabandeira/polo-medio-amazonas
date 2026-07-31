@@ -94,12 +94,12 @@ O diário **NÃO informa** quem está ausente. Para descobrir:
 | 1ª DP | Ícaro Oliveira Avelar Costa |
 | 2ª DP | José Antônio Pereira da Silva |
 | 3ª DP | Ícaro Oliveira Avelar Costa |
-| 4ª DP | Eliaquim Antunes de Souza |
+| 4ª DP | Eliaquim Antunes de Souza Santos |
 | 5ª DP | Elton Dariva Staub |
 | 6ª DP | Elaine Maria Sousa Frota |
 | 7ª DP | Elaine Maria Sousa Frota |
 | 8ª DP | José Antônio Pereira da Silva |
-| 9ª DP | Eliaquim Antunes de Souza |
+| 9ª DP | Eliaquim Antunes de Souza Santos |
 | 10ª DP | José Antônio Pereira da Silva |
 | 11ª DP | Ícaro Oliveira Avelar Costa |
 | 12ª DP | Elton Dariva Staub |
@@ -270,7 +270,7 @@ Os campos que podem mudar ao sobrescrever:
 
 **Situação:** A tabela já tem esta linha:
 ```html
-<tr><td>20-30/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>5ª DP Criminal</td><td>Eliaquim Antunes de Souza</td><td>-</td><td>SGI 2500800</td></tr>
+<tr><td>20-30/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>5ª DP Criminal</td><td>Eliaquim Antunes de Souza Santos</td><td>-</td><td>SGI 2500800</td></tr>
 ```
 
 **Novo diário informa:** Elaine Maria substitui Elton na 5ª DP de 23 a 30/01 (período parcialmente diferente).
@@ -281,7 +281,7 @@ Os campos que podem mudar ao sobrescrever:
 
 **Resultado após a edição:**
 ```html
-<tr><td>20-22/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>5ª DP Criminal</td><td>Eliaquim Antunes de Souza</td><td>-</td><td>SGI 2500800</td></tr>
+<tr><td>20-22/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>5ª DP Criminal</td><td>Eliaquim Antunes de Souza Santos</td><td>-</td><td>SGI 2500800</td></tr>
 <tr><td>23-30/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>5ª DP Criminal</td><td>Elaine Maria Sousa Frota</td><td><a href="URL_DIARIO" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000008-5</td></tr>
 ```
 
@@ -350,9 +350,9 @@ Cada inciso da portaria = uma verificação completa do Passo 5 + ação corresp
 **HTML gerado (4 linhas):**
 
 ```html
-<tr><td>20-22/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>5ª DP Criminal</td><td>Eliaquim Antunes de Souza</td><td><a href="URL_DIARIO" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000008-5</td></tr>
+<tr><td>20-22/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>5ª DP Criminal</td><td>Eliaquim Antunes de Souza Santos</td><td><a href="URL_DIARIO" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000008-5</td></tr>
 <tr><td>23-30/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>5ª DP Criminal</td><td>Elaine Maria Sousa Frota</td><td><a href="URL_DIARIO" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000008-5</td></tr>
-<tr><td>20-22/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>12ª DP Silves</td><td>Eliaquim Antunes de Souza</td><td><a href="URL_DIARIO" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000008-5</td></tr>
+<tr><td>20-22/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>12ª DP Silves</td><td>Eliaquim Antunes de Souza Santos</td><td><a href="URL_DIARIO" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000008-5</td></tr>
 <tr><td>23-30/01</td><td><strong>Elton Dariva</strong></td><td><span class="tipo-badge tipo-folga">🟡 Não informado</span></td><td>12ª DP Silves</td><td>Elaine Maria Sousa Frota</td><td><a href="URL_DIARIO" target="_blank">Edição 2572 - 14/01/2026</a></td><td>26.0.000000008-5</td></tr>
 ```
 

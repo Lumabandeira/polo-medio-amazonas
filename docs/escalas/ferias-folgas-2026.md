@@ -20,11 +20,11 @@ Fonte oficial: Diário Oficial da DPE/AM — https://diario.defensoria.am.def.br
 | 12-21/01 | José Antônio | 🟢 Licença Especial | 2ª DP Família | Elaine Maria Sousa Frota | [Ed. 2567 - 07/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf) | 25.0.000014378-5 |
 | 12-21/01 | José Antônio | 🟢 Licença Especial | 8ª DP Itapiranga | Ícaro Oliveira Avelar Costa | [Ed. 2567 - 07/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf) | 25.0.000014378-5 |
 | 12-19/01 | José Antônio | 🟢 Licença Especial | 10ª DP Urucará | Elton Dariva Staub | [Ed. 2567 - 07/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf) | 25.0.000014378-5 |
-| 20-21/01 | José Antônio | 🟢 Licença Especial | 10ª DP Urucará | Eliaquim Antunes de Souza | [Ed. 2567 - 07/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf) | 25.0.000014378-5 |
-| 20/01 | Elton Dariva | 🟡 Folga | 5ª DP Criminal | Eliaquim Antunes de Souza | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
-| 20/01 | Elton Dariva | 🟡 Folga | 12ª DP Silves | Eliaquim Antunes de Souza | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
-| 21-22/01 | Elton Dariva | 🔵 Férias | 5ª DP Criminal | Eliaquim Antunes de Souza | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
-| 21-22/01 | Elton Dariva | 🔵 Férias | 12ª DP Silves | Eliaquim Antunes de Souza | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
+| 20-21/01 | José Antônio | 🟢 Licença Especial | 10ª DP Urucará | Eliaquim Antunes de Souza Santos | [Ed. 2567 - 07/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2567-2026__publicada_em_07_janeiro_de_2026.pdf) | 25.0.000014378-5 |
+| 20/01 | Elton Dariva | 🟡 Folga | 5ª DP Criminal | Eliaquim Antunes de Souza Santos | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
+| 20/01 | Elton Dariva | 🟡 Folga | 12ª DP Silves | Eliaquim Antunes de Souza Santos | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
+| 21-22/01 | Elton Dariva | 🔵 Férias | 5ª DP Criminal | Eliaquim Antunes de Souza Santos | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
+| 21-22/01 | Elton Dariva | 🔵 Férias | 12ª DP Silves | Eliaquim Antunes de Souza Santos | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
 | 23-30/01 | Elton Dariva | 🔵 Férias | 5ª DP Criminal | Elaine Maria Sousa Frota | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
 | 23-30/01 | Elton Dariva | 🔵 Férias | 12ª DP Silves | Elaine Maria Sousa Frota | [Ed. 2572 - 14/01/2026](https://diario.defensoria.am.def.br/wp-content/uploads/2026/01/Edicao_2572-2026__publicada_em_14_janeiro_de_2026.pdf) | 26.0.000000008-5 |
 | 22/01-30/01 | José Antônio | 🔵 Férias | 2ª DP Família | Bruna Costa de Farias | — | 26.0.000000067-0 |
@@ -58,10 +58,10 @@ Fonte oficial: Diário Oficial da DPE/AM — https://diario.defensoria.am.def.br
 | 04-13/02 | José Antônio | 🟢 Licença Especial | 8ª DP Itapiranga | — | — | 25.0.000014378-5 |
 | 04-13/02 | José Antônio | 🟢 Licença Especial | 10ª DP Urucará | — | — | 25.0.000014378-5 |
 | 11-13/02 | Ícaro Avelar | 🟡 Folga | 1ª DP Família | — | — | — |
-| 11-13/02 | Ícaro Avelar | 🟡 Folga | 3ª DP Cível | Eliaquim Antunes de Souza | — | — |
+| 11-13/02 | Ícaro Avelar | 🟡 Folga | 3ª DP Cível | Eliaquim Antunes de Souza Santos | — | — |
 | 11-13/02 | Ícaro Avelar | 🟡 Folga | 11ª DP Silves | — | — | — |
 | 19-20/02 | Ícaro Avelar | 🟡 Folga | 1ª DP Família | — | — | — |
-| 19-20/02 | Ícaro Avelar | 🟡 Folga | 3ª DP Cível | Eliaquim Antunes de Souza | — | — |
+| 19-20/02 | Ícaro Avelar | 🟡 Folga | 3ª DP Cível | Eliaquim Antunes de Souza Santos | — | — |
 | 19-20/02 | Ícaro Avelar | 🟡 Folga | 11ª DP Silves | — | — | — |
 | 19/02 | José Antônio | 🟡 Folga | 2ª DP Família | — | — | — |
 | 19/02 | José Antônio | 🟡 Folga | 8ª DP Itapiranga | — | — | — |
