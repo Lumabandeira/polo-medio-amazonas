@@ -17,8 +17,8 @@
   digitado não bateu com o `nome` do dicionário no momento do salvamento (JSON ainda em cache no
   navegador) e foi gravado como texto livre no Firestore, fazendo o card do Eliaquim perder o
   seletor 🟢 Membro / ⚪ Ex-membro. Ver detalhe do mecanismo (`_resolverDefensor()`) em
-  `docs/firebase.md`. **Pendente de confirmação:** usuária reabrindo "Titulares por DP" nas DPs
-  afetadas para regravar o nome agora que o JSON já está com cache atualizado.
+  `docs/firebase.md`. **Resolvido:** usuária reabriu "Titulares por DP" nas 3 DPs afetadas e
+  regravou o nome com o JSON já com cache atualizado — card voltou ao normal, seletor reapareceu.
 
 ## Sessão 26 — 06/07/2026
 

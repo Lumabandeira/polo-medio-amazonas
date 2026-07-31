@@ -67,8 +67,8 @@ Ao corrigir também os titulares da 3ª/4ª/9ª DP pelo site, o campo "Nome do d
 "Titulares por DP" não reconheceu o texto digitado como a chave `eliaquim` (JSON ainda em cache no
 navegador no momento do salvamento) e gravou como texto livre no Firestore — o card do Eliaquim em
 "👥 Defensores Públicos" ficou com o nome certo mas sem o seletor 🟢 Membro / ⚪ Ex-membro. Mecanismo
-documentado em `docs/firebase.md` (`_resolverDefensor()`). **Pendente:** confirmar que a usuária
-regravou o nome nessas 3 DPs com o cache já atualizado e que o seletor voltou a aparecer.
+documentado em `docs/firebase.md` (`_resolverDefensor()`). **Resolvido:** usuária regravou o nome
+nas 3 DPs com o cache já atualizado — seletor voltou a aparecer normalmente.
 
 **Implementado sessão 27 (30/07/2026):** controle de admin para marcar/reativar um defensor como ex-membro
 diretamente pelo site (seção "👥 Defensores Públicos"). Antes, só existia edição de titularidade
