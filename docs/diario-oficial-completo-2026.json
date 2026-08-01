@@ -5361,5 +5361,43 @@
         "resumo": "Designa Defensores para atuar em audiências na 1ª Vara da Comarca de Manacapuru entre 20 e 24 de julho de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2701,
+    "data": "2026-07-31",
+    "data_formatada": "31/07/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/07/Edicao_2701-2026__publicada_em_31_julho_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1032/2026/GDPG/DPE/AM",
+        "sei": "26.0.000010280-5",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Renata Visco Costa de Almeida para atuar na 9ª Defensoria Pública do Polo Médio Amazonas (Urucurituba), no período de 01 de agosto a 30 de setembro de 2026"
+        ],
+        "resumo": "Designa Renata Visco Costa de Almeida para atuar cumulativamente na 9ª DP do Polo Médio Amazonas (Urucurituba) de 01/08 a 30/09/2026"
+      },
+      {
+        "numero": "Portaria Nº 799/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "plantao",
+          "servidor"
+        ],
+        "trechos": [
+          "VIII - AUTORIZAR a substituição do servidor Waldir Rosas dos Santos Filho, designado para a Semana 11 do Plantão de Transporte, que corresponde ao período de 06/09/2026 a 12/09/2026, pelo servidor José Marques Gonçalves Junior",
+          "IX - AUTORIZAR a substituição do servidor José Marques Gonçalves Junior, designado para a Semana 13 do Plantão de Transporte, que corresponde ao período de 20/09/2026 a 26/09/2026, pelo servidor Waldir Rosas dos Santos Filho"
+        ],
+        "resumo": "Autoriza substituições recíprocas entre servidores de plantão de transporte para as semanas 11 e 13 de setembro/2026"
+      }
+    ]
   }
 ]
