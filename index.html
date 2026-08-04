@@ -4884,12 +4884,18 @@
         let _titDpKey = null; // DP sendo editada no modal
 
         // Resolve nome digitado para chave interna (se houver) ou mantém nome livre
+        // Normaliza espaços (colapsa múltiplos/invisíveis em um só) e caixa para comparação tolerante
+        function _normalizarNomeComparacao(s) {
+            return (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+        }
+
         function _resolverDefensor(nomeDigitado) {
             if (!nomeDigitado) return null;
             const defensores = jsonDesignacoes.defensores;
+            const alvo = _normalizarNomeComparacao(nomeDigitado);
             const match = Object.keys(defensores).find(k =>
-                defensores[k].nome.toLowerCase() === nomeDigitado.toLowerCase() ||
-                (defensores[k].nome_curto || '').toLowerCase() === nomeDigitado.toLowerCase()
+                _normalizarNomeComparacao(defensores[k].nome) === alvo ||
+                _normalizarNomeComparacao(defensores[k].nome_curto) === alvo
             );
             return match || nomeDigitado;
         }
