@@ -84,9 +84,11 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | Afastamentos | `afastamentos_admin/{id}` | formulário modal completo |
 | Férias Equipe | `afastamentos_equipe/{id}` | formulário modal |
 
-## Trabalho Remoto (tipo especial dentro de Afastamentos)
+## Trabalho em Trânsito (tipo especial dentro de Afastamentos)
 
-Criado no mesmo modal "Novo Afastamento" da aba Calendário (`abrirFormAfastamento`), selecionando
+Exibido na interface como "💻 Trabalho em Trânsito" (é um tipo de trabalho remoto — o valor
+interno do campo `tipo` continua `trabalho_remoto`, só o rótulo exibido mudou). Criado no mesmo
+modal "Novo Afastamento" da aba Calendário (`abrirFormAfastamento`), selecionando
 `tipo: 'trabalho_remoto'` no `<select id="form-af-tipo">`. Mesma coleção Firestore
 (`afastamentos_admin/{id}`), mas **tratado à parte** em `mergeAfastamentoFirestoreRecord()` — ver
 `_mergeTrabalhoRemotoRecord()` em `index.html`:
@@ -101,7 +103,7 @@ Criado no mesmo modal "Novo Afastamento" da aba Calendário (`abrirFormAfastamen
   normalmente (`detalhesAfastamentos`), inclusive editar/excluir — mas os registros com
   `tipo === 'trabalho_remoto'` são **filtrados fora** de "Lista de Substituições"
   (`renderListaSubstituicoes`) e "Resumo de Afastamentos" (`renderDetalhesAfastamentos`).
-- Resultado: trabalho remoto só aparece no Calendário — não altera Designações semanais, Lista de
+- Resultado: trabalho em trânsito só aparece no Calendário — não altera Designações semanais, Lista de
   Substituições nem Resumo de Afastamentos.
 
 ## Prestação de Contas (`#prestacao-contas`, admin-only)

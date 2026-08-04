@@ -6,7 +6,9 @@
 
 ## Sessão 29 — 04/08/2026
 
-- **Novo tipo "💻 Trabalho Remoto" no Calendário de Afastamentos** — adicionado ao `<select>` de
+- **Novo tipo "💻 Trabalho em Trânsito" no Calendário de Afastamentos** (rótulo ajustado depois de
+  "Trabalho Remoto" — é um tipo de trabalho remoto, o valor interno `tipo: 'trabalho_remoto'`
+  continua o mesmo, só o texto exibido mudou) — adicionado ao `<select>` de
   tipo no modal "Novo Afastamento" (aba Designações → Calendário), gravado na mesma coleção
   `afastamentos_admin/{id}` (campo `tipo: 'trabalho_remoto'`), mas tratado à parte no merge dos
   dados: **não conta como ausência**.
@@ -23,7 +25,7 @@
     normal — pedido explícito da usuária para diferenciar visualmente de uma ausência real.
   - O popup de detalhe do dia (dentro do próprio Calendário) continua mostrando/editando/excluindo
     o registro normalmente, via `detalhesAfastamentos` (mesmo mecanismo dos outros tipos).
-  - Detalhamento técnico completo em `docs/site/estrutura-html.md` (seção "Trabalho Remoto").
+  - Detalhamento técnico completo em `docs/site/estrutura-html.md` (seção "Trabalho em Trânsito").
   - **Não testado em produção** (sem credenciais Firebase nesta sessão) — só verificado que
     `index.html` carrega sem erro de sintaxe/console no preview local.
 

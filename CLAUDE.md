@@ -56,16 +56,17 @@ docs/
 
 ## Estado atual (sessão 29 — 04/08/2026)
 
-**Implementado nesta sessão:** novo tipo "💻 Trabalho Remoto" no formulário "Novo Afastamento" da
+**Implementado nesta sessão:** novo tipo "💻 Trabalho em Trânsito" no formulário "Novo Afastamento" da
 aba Calendário (`abrirFormAfastamento`/`salvarAfastamentoFirestore`, mesma coleção
-`afastamentos_admin/{id}`, campo `tipo: 'trabalho_remoto'`). Diferente dos demais tipos, **não é
+`afastamentos_admin/{id}`, campo `tipo: 'trabalho_remoto'` — é um tipo de trabalho remoto, o valor
+interno não mudou, só o rótulo exibido). Diferente dos demais tipos, **não é
 tratado como ausência**: não exige/mostra substituto (seção "Defensorias Afetadas" fica oculta),
 não entra em `afastamentos[ano][mes][dia]` (o que faz "Designações semanais" tratar o titular como
 ausente) e é filtrado fora de "Lista de Substituições" e "Resumo de Afastamentos". Só afeta a aba
 Calendário: badge transparente com contorno tracejado (nova estrutura `trabalhoRemoto[ano][mes][dia]`
 + mapa `defensorColors`), em vez do badge sólido normal, e aparece no popup de detalhe do dia (onde
 pode ser editado/excluído normalmente). Ver detalhamento completo em
-`docs/site/estrutura-html.md` (seção "Trabalho Remoto"). Ainda não testado em produção com
+`docs/site/estrutura-html.md` (seção "Trabalho em Trânsito"). Ainda não testado em produção com
 Firebase real — só verificado que o `index.html` carrega sem erro de sintaxe/console.
 
 **Implementado sessão 28 (31/07/2026):** correção do nome completo do Defensor Eliaquim, que estava sem o

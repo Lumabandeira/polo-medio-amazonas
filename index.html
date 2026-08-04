@@ -3433,7 +3433,7 @@
                                 <option value="ferias">🔵 Férias</option>
                                 <option value="folga">🟡 Folga</option>
                                 <option value="licenca_especial">🟢 Licença Especial</option>
-                                <option value="trabalho_remoto">💻 Trabalho Remoto</option>
+                                <option value="trabalho_remoto">💻 Trabalho em Trânsito</option>
                                 <option value="outro">✏️ Outro</option>
                             </select>
                         </div>
@@ -3442,7 +3442,7 @@
                             <input type="text" id="form-af-tipo-outro" placeholder="ex: Cedido para outro órgão, Tratamento de saúde...">
                         </div>
                         <div class="form-group form-full" id="form-af-tipo-remoto-aviso" style="display:none;background:#ecfeff;border:1px solid #a5f3fc;border-radius:8px;padding:10px 12px;color:#0e7490;font-size:0.85em">
-                            ℹ️ Trabalho remoto aparece apenas no Calendário — não afeta Designações Semanais, Lista de Substituições nem Resumo de Afastamentos. O defensor continua respondendo normalmente por suas DPs.
+                            ℹ️ Trabalho em trânsito aparece apenas no Calendário — não afeta Designações Semanais, Lista de Substituições nem Resumo de Afastamentos. O defensor continua respondendo normalmente por suas DPs.
                         </div>
                         <div class="form-group" style="grid-column: span 3">
                             <label>Processo</label>
@@ -3703,7 +3703,7 @@
         let jsonAfastamentos = null;
         let jsonDesignacoes  = null;
 
-        const TIPO_LABELS  = { ferias: 'Férias', folga: 'Folga', licenca_especial: 'Licença Especial', trabalho_remoto: 'Trabalho Remoto' };
+        const TIPO_LABELS  = { ferias: 'Férias', folga: 'Folga', licenca_especial: 'Licença Especial', trabalho_remoto: 'Trabalho em Trânsito' };
         const TIPO_CLASSES = { ferias: 'tipo-ferias', folga: 'tipo-folga', licenca_especial: 'tipo-licenca' };
         const TIPO_ICONS   = { ferias: '🔵', folga: '🟡', licenca_especial: '🟢' };
 
@@ -3971,7 +3971,7 @@
                 if (!detalhesAfastamentos[y][m])    detalhesAfastamentos[y][m] = {};
                 if (!detalhesAfastamentos[y][m][d]) detalhesAfastamentos[y][m][d] = [];
                 detalhesAfastamentos[y][m][d].push({
-                    defensor: defNome, tipo: 'Trabalho Remoto',
+                    defensor: defNome, tipo: 'Trabalho em Trânsito',
                     defensoria: '—', substituto: '',
                     processo, link: '', firestoreId: reg.id,
                     afastamento_inicio: reg.data_inicio, afastamento_fim: reg.data_fim,
@@ -4338,7 +4338,7 @@
                     grupo.itens.forEach((item, idx) => {
                         const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' :
                                          item.tipo === 'Folga' ? 'tipo-folga' :
-                                         item.tipo === 'Trabalho Remoto' ? 'tipo-remoto' : 'tipo-licenca';
+                                         item.tipo === 'Trabalho em Trânsito' ? 'tipo-remoto' : 'tipo-licenca';
                         let linkHtml = '-';
                         if (item.link) {
                             const edNum = item.link.match(/Edicao_(\d+)/i);
@@ -4923,7 +4923,7 @@
 
             tipoClass = tipoLabel === 'Férias' ? 'tipo-ferias'
                       : tipoLabel === 'Folga'  ? 'tipo-folga'
-                      : tipoLabel === 'Trabalho Remoto' ? 'tipo-remoto'
+                      : tipoLabel === 'Trabalho em Trânsito' ? 'tipo-remoto'
                       : 'tipo-licenca';
 
             document.getElementById('view-af-body').innerHTML = `
@@ -6194,7 +6194,7 @@
                         const cor = defensorColors[defensor] || '#0e7490';
                         const badge = document.createElement('div');
                         badge.className = `defensor-badge ${defensor}`;
-                        badge.title = `${defensorNames[defensor] || defensor} — Trabalho Remoto`;
+                        badge.title = `${defensorNames[defensor] || defensor} — Trabalho em Trânsito`;
                         badge.style.background = 'transparent';
                         badge.style.border = `1.5px dashed ${cor}`;
                         badge.style.color = cor;
