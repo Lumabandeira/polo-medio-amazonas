@@ -62,3 +62,4 @@ Antes de aplicar destaques, verificar o dia da semana de cada data:
 | `.tipo-ferias` | Badge de férias |
 | `.tipo-folga` | Badge de folga |
 | `.tipo-licenca` | Badge de licença |
+| `.tipo-remoto` | Badge de trabalho remoto — transparente com contorno tracejado, não sólido (não é ausência) |

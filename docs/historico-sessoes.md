@@ -4,6 +4,29 @@
 
 ---
 
+## Sessão 29 — 04/08/2026
+
+- **Novo tipo "💻 Trabalho Remoto" no Calendário de Afastamentos** — adicionado ao `<select>` de
+  tipo no modal "Novo Afastamento" (aba Designações → Calendário), gravado na mesma coleção
+  `afastamentos_admin/{id}` (campo `tipo: 'trabalho_remoto'`), mas tratado à parte no merge dos
+  dados: **não conta como ausência**.
+  - `_mergeTrabalhoRemotoRecord()` (nova função em `index.html`) alimenta uma estrutura própria
+    `trabalhoRemoto[ano][mes][dia]`, separada de `afastamentos[ano][mes][dia]` — por isso não faz
+    "Designações semanais" (`getResponsibleForDPOnDay`) tratar o titular como ausente.
+  - Formulário: `popularDPsAfetadas()` oculta a seção "Defensorias Afetadas" quando o tipo é
+    `trabalho_remoto` — não há substituto, o defensor responde normalmente por suas DPs.
+  - `renderListaSubstituicoes()` e `renderDetalhesAfastamentos()` filtram fora os registros com
+    `tipo === 'trabalho_remoto'` — não aparecem em "Lista de Substituições" nem "Resumo de
+    Afastamentos".
+  - Badge no calendário: transparente com contorno tracejado na cor do próprio defensor
+    (novo mapa `defensorColors`, construído em `buildDefensorNames()`), em vez do badge sólido
+    normal — pedido explícito da usuária para diferenciar visualmente de uma ausência real.
+  - O popup de detalhe do dia (dentro do próprio Calendário) continua mostrando/editando/excluindo
+    o registro normalmente, via `detalhesAfastamentos` (mesmo mecanismo dos outros tipos).
+  - Detalhamento técnico completo em `docs/site/estrutura-html.md` (seção "Trabalho Remoto").
+  - **Não testado em produção** (sem credenciais Firebase nesta sessão) — só verificado que
+    `index.html` carrega sem erro de sintaxe/console no preview local.
+
 ## Sessão 28 — 31/07/2026
 
 - **Correção do nome completo do Defensor Eliaquim** — estava faltando o sobrenome "Santos"

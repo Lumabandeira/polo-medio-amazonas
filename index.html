@@ -464,6 +464,12 @@
             color: #065f46;
         }
 
+        .tipo-remoto {
+            background: transparent;
+            color: #0e7490;
+            border: 1.5px dashed #0e7490;
+        }
+
         .no-data {
             text-align: center;
             padding: 40px;
@@ -3427,12 +3433,16 @@
                                 <option value="ferias">🔵 Férias</option>
                                 <option value="folga">🟡 Folga</option>
                                 <option value="licenca_especial">🟢 Licença Especial</option>
+                                <option value="trabalho_remoto">💻 Trabalho Remoto</option>
                                 <option value="outro">✏️ Outro</option>
                             </select>
                         </div>
                         <div class="form-group form-full" id="form-af-tipo-outro-group" style="display:none">
                             <label>Especificar motivo</label>
                             <input type="text" id="form-af-tipo-outro" placeholder="ex: Cedido para outro órgão, Tratamento de saúde...">
+                        </div>
+                        <div class="form-group form-full" id="form-af-tipo-remoto-aviso" style="display:none;background:#ecfeff;border:1px solid #a5f3fc;border-radius:8px;padding:10px 12px;color:#0e7490;font-size:0.85em">
+                            ℹ️ Trabalho remoto aparece apenas no Calendário — não afeta Designações Semanais, Lista de Substituições nem Resumo de Afastamentos. O defensor continua respondendo normalmente por suas DPs.
                         </div>
                         <div class="form-group" style="grid-column: span 3">
                             <label>Processo</label>
@@ -3693,7 +3703,7 @@
         let jsonAfastamentos = null;
         let jsonDesignacoes  = null;
 
-        const TIPO_LABELS  = { ferias: 'Férias', folga: 'Folga', licenca_especial: 'Licença Especial' };
+        const TIPO_LABELS  = { ferias: 'Férias', folga: 'Folga', licenca_especial: 'Licença Especial', trabalho_remoto: 'Trabalho Remoto' };
         const TIPO_CLASSES = { ferias: 'tipo-ferias', folga: 'tipo-folga', licenca_especial: 'tipo-licenca' };
         const TIPO_ICONS   = { ferias: '🔵', folga: '🟡', licenca_especial: '🟢' };
 
@@ -3705,6 +3715,8 @@
 
         // Nomes e cores para badges no calendário — populados dinamicamente em buildDefensorNames()
         let defensorNames = {};
+        // calKey → cor hex — usado para o contorno transparente do badge de trabalho remoto
+        let defensorColors = {};
 
         // Paleta de cores para defensores sem CSS estático definido
         const BADGE_PALETTE = [
@@ -3714,10 +3726,15 @@
         ];
         // Cores já definidas no CSS estático (não reinjetar)
         const BADGE_CSS_KNOWN = { icaro:true, jose:true, elton:true, eliaquim:true, elaine:true, mariana:true, emilly:true, miguel:true };
+        const BADGE_CSS_KNOWN_COLORS = {
+            icaro:'#3b82f6', jose:'#10b981', elton:'#f59e0b', eliaquim:'#f97316',
+            elaine:'#a855f7', mariana:'#ff69b4', emilly:'#f43f5e', miguel:'#10b981'
+        };
 
         function buildDefensorNames() {
             if (!jsonDesignacoes) return;
             defensorNames = {};
+            defensorColors = { ...BADGE_CSS_KNOWN_COLORS };
             const extraStyles = [];
             let paletteIdx = Object.keys(BADGE_CSS_KNOWN).length;
 
@@ -3727,6 +3744,7 @@
                 if (!BADGE_CSS_KNOWN[calKey]) {
                     const color = BADGE_PALETTE[paletteIdx % BADGE_PALETTE.length];
                     paletteIdx++;
+                    defensorColors[calKey] = color;
                     extraStyles.push(`.defensor-badge.${calKey} { background: ${color}; }`);
                 }
             });
@@ -3793,6 +3811,8 @@
         // afastamentos e detalhesAfastamentos são populados por loadJSONData()
         let afastamentos = {};
         let detalhesAfastamentos = {};
+        // [ano][mes][dia] → [calKey] — trabalho remoto: só afeta o Calendário, nunca conta como ausência
+        let trabalhoRemoto = {};
 
         // Mapa de registros adicionados pelo admin via Firestore
         let afastamentosFirestoreMap = {}; // firestoreId → record completo
@@ -3924,9 +3944,51 @@
 
         // ── Afastamentos do Firestore (admin) ────────────────────────────
 
+        // Trabalho remoto: não é ausência — não entra em afastamentos[], designações semanais,
+        // lista de substituições nem resumo de afastamentos. Só alimenta o Calendário.
+        function _mergeTrabalhoRemotoRecord(reg) {
+            const calKey = defensorCalKey(reg.defensor);
+            const start  = new Date(reg.data_inicio + 'T12:00:00');
+            const end    = new Date(reg.data_fim    + 'T12:00:00');
+            const defInfo = (jsonDesignacoes?.defensores || {})[reg.defensor] || {};
+            const defNome = defInfo.nome_curto || reg.defensor;
+            const processoNum  = reg.processo_sei || reg.portaria_sei || '';
+            const processoTipo = reg.processo_tipo || '';
+            const processo = processoNum ? (processoTipo ? processoTipo + ': ' + processoNum : processoNum) : '';
+
+            let cur = new Date(start);
+            while (cur <= end) {
+                const y = cur.getFullYear();
+                const m = cur.getMonth() + 1;
+                const d = cur.getDate();
+                if (!trabalhoRemoto[y])       trabalhoRemoto[y] = {};
+                if (!trabalhoRemoto[y][m])    trabalhoRemoto[y][m] = {};
+                if (!trabalhoRemoto[y][m][d]) trabalhoRemoto[y][m][d] = [];
+                if (!trabalhoRemoto[y][m][d].includes(calKey)) trabalhoRemoto[y][m][d].push(calKey);
+
+                // Detalhe do dia (usado só pelo popup de dia do próprio Calendário)
+                if (!detalhesAfastamentos[y])       detalhesAfastamentos[y] = {};
+                if (!detalhesAfastamentos[y][m])    detalhesAfastamentos[y][m] = {};
+                if (!detalhesAfastamentos[y][m][d]) detalhesAfastamentos[y][m][d] = [];
+                detalhesAfastamentos[y][m][d].push({
+                    defensor: defNome, tipo: 'Trabalho Remoto',
+                    defensoria: '—', substituto: '',
+                    processo, link: '', firestoreId: reg.id,
+                    afastamento_inicio: reg.data_inicio, afastamento_fim: reg.data_fim,
+                    sub_inicio: null, sub_fim: null
+                });
+                cur.setDate(cur.getDate() + 1);
+            }
+        }
+
         function mergeAfastamentoFirestoreRecord(reg) {
             // Se este registro Firestore substitui um evento JSON base, registra o override
             if (reg.json_base_id) jsonOverrideMap[reg.json_base_id] = reg.id;
+
+            if (reg.tipo === 'trabalho_remoto') {
+                _mergeTrabalhoRemotoRecord(reg);
+                return;
+            }
 
             // 1. Badges do calendário
             const calKey = defensorCalKey(reg.defensor);
@@ -4070,6 +4132,7 @@
         function _afastamentosAplicarCache(registros) {
             afastamentosFirestoreMap = {};
             jsonOverrideMap = {};
+            trabalhoRemoto = {};
             registros.forEach(reg => {
                 afastamentosFirestoreMap[reg.id] = reg;
                 mergeAfastamentoFirestoreRecord(reg);
@@ -4274,7 +4337,8 @@
                     const sepClass = grupoIdx > 0 ? ' grupo-inicio' : '';
                     grupo.itens.forEach((item, idx) => {
                         const tipoClass = item.tipo === 'Férias' ? 'tipo-ferias' :
-                                         item.tipo === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
+                                         item.tipo === 'Folga' ? 'tipo-folga' :
+                                         item.tipo === 'Trabalho Remoto' ? 'tipo-remoto' : 'tipo-licenca';
                         let linkHtml = '-';
                         if (item.link) {
                             const edNum = item.link.match(/Edicao_(\d+)/i);
@@ -4504,6 +4568,8 @@
             const container = document.getElementById('form-af-dps');
             const section   = document.getElementById('form-af-dps-section');
             container.innerHTML = '';
+            // Trabalho remoto nunca precisa de substituto — o defensor continua respondendo por suas DPs
+            if (document.getElementById('form-af-tipo')?.value === 'trabalho_remoto') { section.style.display='none'; return; }
             if (!defensor || !dataInicio || !dataFim) { section.style.display='none'; return; }
             const dps = getDPsDoDefensor(defensor, dataInicio, dataFim);
             if (!dps.length) { section.style.display='none'; return; }
@@ -4518,6 +4584,16 @@
         function onTipoChange() {
             const v = document.getElementById('form-af-tipo').value;
             document.getElementById('form-af-tipo-outro-group').style.display = v==='outro' ? 'block' : 'none';
+            document.getElementById('form-af-tipo-remoto-aviso').style.display = v==='trabalho_remoto' ? 'block' : 'none';
+            if (v === 'trabalho_remoto') {
+                document.getElementById('form-af-dps').innerHTML = '';
+                document.getElementById('form-af-dps-section').style.display = 'none';
+            } else {
+                const defensor = document.getElementById('form-af-defensor').value;
+                const inicio   = document.getElementById('form-af-inicio').value;
+                const fim      = document.getElementById('form-af-fim').value;
+                if (defensor && inicio && fim) popularDPsAfetadas(defensor, inicio, fim, null);
+            }
         }
 
         function onDefensorChange() {
@@ -4638,6 +4714,7 @@
             document.getElementById('form-af-dps').innerHTML = '';
             document.getElementById('form-af-dps-section').style.display = 'none';
             document.getElementById('form-af-tipo-outro-group').style.display = 'none';
+            document.getElementById('form-af-tipo-remoto-aviso').style.display = 'none';
 
             if (firestoreId) {
                 // ── Editar registro Firestore existente ──
@@ -4654,6 +4731,9 @@
                 if (reg.tipo === 'outro') {
                     document.getElementById('form-af-tipo-outro-group').style.display = 'block';
                     document.getElementById('form-af-tipo-outro').value = reg.tipo_custom || '';
+                }
+                if (reg.tipo === 'trabalho_remoto') {
+                    document.getElementById('form-af-tipo-remoto-aviso').style.display = 'block';
                 }
                 if (reg.defensor && reg.data_inicio && reg.data_fim) {
                     popularDPsAfetadas(reg.defensor, reg.data_inicio, reg.data_fim, reg.designacoes_dp || null);
@@ -4843,6 +4923,7 @@
 
             tipoClass = tipoLabel === 'Férias' ? 'tipo-ferias'
                       : tipoLabel === 'Folga'  ? 'tipo-folga'
+                      : tipoLabel === 'Trabalho Remoto' ? 'tipo-remoto'
                       : 'tipo-licenca';
 
             document.getElementById('view-af-body').innerHTML = `
@@ -5347,8 +5428,11 @@
             const defs = jsonDesignacoes?.defensores || {};
 
             // Coleta todos os afastamentos (mesma lógica das outras abas)
+            // Trabalho remoto não é ausência — fica só no Calendário, não entra no Resumo
             const registros = [];
-            Object.values(afastamentosFirestoreMap).forEach(reg => registros.push(reg));
+            Object.values(afastamentosFirestoreMap).forEach(reg => {
+                if (reg.tipo !== 'trabalho_remoto') registros.push(reg);
+            });
             Object.values(jsonEventosMap).forEach(ev => {
                 if (!jsonOverrideMap[ev.id]) registros.push(ev);
             });
@@ -5850,8 +5934,9 @@
             // Coleta todos os afastamentos de ambas as fontes
             const registros = [];
 
-            // Firestore
+            // Firestore — trabalho remoto não é ausência, fica só no Calendário
             Object.values(afastamentosFirestoreMap).forEach(reg => {
+                if (reg.tipo === 'trabalho_remoto') return;
                 registros.push({ origem: 'firestore', reg });
             });
 
@@ -6076,17 +6161,20 @@
                 const dayDiv = document.createElement('div');
                 const monthData = (afastamentos[currentYear] || {})[month + 1];
                 const hasAfastamento = monthData && monthData[day];
-                
+                const remotoMonthData = (trabalhoRemoto[currentYear] || {})[month + 1];
+                const remotoDia = remotoMonthData && remotoMonthData[day];
+                const hasQualquerMarcador = hasAfastamento || remotoDia;
+
                 dayDiv.className = hasAfastamento ? 'calendar-day has-afastamento' : 'calendar-day';
-                
+
                 const dayNumber = document.createElement('div');
                 dayNumber.className = 'day-number';
                 dayNumber.textContent = day;
                 dayDiv.appendChild(dayNumber);
-                
+
                 const markers = document.createElement('div');
                 markers.className = 'day-markers';
-                
+
                 if (hasAfastamento) {
                     const sorted = [...monthData[day]].sort((a, b) => {
                         const aVaga = a.includes('vaga') ? 1 : 0;
@@ -6101,14 +6189,28 @@
                     });
                 }
 
-                // Admin: todos os dias são clicáveis. Outros usuários: só dias com afastamento
-                if (hasAfastamento || userRole === 'admin') {
+                if (remotoDia) {
+                    remotoDia.forEach(defensor => {
+                        const cor = defensorColors[defensor] || '#0e7490';
+                        const badge = document.createElement('div');
+                        badge.className = `defensor-badge ${defensor}`;
+                        badge.title = `${defensorNames[defensor] || defensor} — Trabalho Remoto`;
+                        badge.style.background = 'transparent';
+                        badge.style.border = `1.5px dashed ${cor}`;
+                        badge.style.color = cor;
+                        badge.textContent = `💻 ${defensorNames[defensor] || defensor}`;
+                        markers.appendChild(badge);
+                    });
+                }
+
+                // Admin: todos os dias são clicáveis. Outros usuários: só dias com algum marcador
+                if (hasQualquerMarcador || userRole === 'admin') {
                     dayDiv.onclick = () => openModal(currentYear, month + 1, day);
-                    if (userRole === 'admin' && !hasAfastamento) {
+                    if (userRole === 'admin' && !hasQualquerMarcador) {
                         dayDiv.classList.add('admin-day-hint');
                     }
                 }
-                
+
                 dayDiv.appendChild(markers);
                 grid.appendChild(dayDiv);
             }

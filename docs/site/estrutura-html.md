@@ -52,8 +52,10 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | `afastamentos[ano][mes][dia]` | JSON + Firestore mesclados | badges no calendário |
 | `detalhesAfastamentos[ano][mes][dia]` | JSON + Firestore mesclados | modal de detalhes |
 | `afastamentosFirestoreMap` | `afastamentos_admin` | registros criados via admin |
+| `trabalhoRemoto[ano][mes][dia]` | `afastamentos_admin` (`tipo:'trabalho_remoto'`) | badge transparente no calendário — não é ausência |
 | `equipeAfastamentos[ano][mes][dia]` | `afastamentos_equipe` | calendário Férias Equipe |
 | `defensorNames` | construído de `jsonDesignacoes.defensores` | labels de badge |
+| `defensorColors` | construído de `jsonDesignacoes.defensores` em `buildDefensorNames()` | cor hex por defensor, usada no contorno do badge de trabalho remoto |
 
 ## Nomes/Chaves dos Defensores Ativos
 
@@ -81,6 +83,26 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | Status Ativo/Ex-membro do Defensor | `defensores_admin/{defKey}` | dropdown 🟢 Membro / ⚪ Ex-membro no card, em `renderDefensorias()` |
 | Afastamentos | `afastamentos_admin/{id}` | formulário modal completo |
 | Férias Equipe | `afastamentos_equipe/{id}` | formulário modal |
+
+## Trabalho Remoto (tipo especial dentro de Afastamentos)
+
+Criado no mesmo modal "Novo Afastamento" da aba Calendário (`abrirFormAfastamento`), selecionando
+`tipo: 'trabalho_remoto'` no `<select id="form-af-tipo">`. Mesma coleção Firestore
+(`afastamentos_admin/{id}`), mas **tratado à parte** em `mergeAfastamentoFirestoreRecord()` — ver
+`_mergeTrabalhoRemotoRecord()` em `index.html`:
+
+- **Não** entra em `afastamentos[ano][mes][dia]` (isso é o que faz "Designações semanais" tratar o
+  titular como ausente) — vai para `trabalhoRemoto[ano][mes][dia]` à parte.
+- A seção "Defensorias Afetadas" do formulário fica oculta (`popularDPsAfetadas()` retorna cedo
+  quando o tipo é `trabalho_remoto`) — não há substituto, o defensor responde normalmente por suas DPs.
+- Aparece no calendário como badge **transparente com contorno tracejado** (cor do próprio defensor,
+  via `defensorColors`), em vez do badge sólido normal — diferencia visualmente de uma ausência real.
+- O popup de detalhe do dia (clique na célula, dentro do próprio Calendário) mostra o registro
+  normalmente (`detalhesAfastamentos`), inclusive editar/excluir — mas os registros com
+  `tipo === 'trabalho_remoto'` são **filtrados fora** de "Lista de Substituições"
+  (`renderListaSubstituicoes`) e "Resumo de Afastamentos" (`renderDetalhesAfastamentos`).
+- Resultado: trabalho remoto só aparece no Calendário — não altera Designações semanais, Lista de
+  Substituições nem Resumo de Afastamentos.
 
 ## Prestação de Contas (`#prestacao-contas`, admin-only)
 
