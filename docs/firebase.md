@@ -47,6 +47,7 @@ nome: "..."
 | `adote_info` | `html` (cabeçalho), `atualizado_por`, `atualizado_em` |
 | `adote_celulas` | `celulas` (mapa `"ROW_COL": { html, cellStyle }`), `atualizado_por`, `atualizado_em` |
 | `adote_expandir` | `html`, `atualizado_por`, `atualizado_em` |
+| `plantao_celulas` | `celulas` (mapa `"N_campo": { html, cellStyle }`, campos: `periodo`\|`defensor`\|`assessoria`), `atualizado_por`, `atualizado_em` |
 
 ### `titulares_admin/{dpKey}` — histórico de titulares por DP
 ```

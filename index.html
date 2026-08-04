@@ -1093,6 +1093,11 @@
             color: white;
         }
 
+        .btn-plantao {
+            background: linear-gradient(135deg, #7f1d1d 0%, #ef4444 100%);
+            color: white;
+        }
+
         /* ─── Prestação de Contas ────────────────────────────────── */
         .pc-lista-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -1256,6 +1261,39 @@
         #adote .card h2 {
             color: #0f766e;
             border-bottom-color: #0d9488;
+        }
+
+        /* ─── Seção Plantão ──────────────────────────────────────── */
+        #plantao .card h2 {
+            color: #9a3412;
+            border-bottom-color: #f97316;
+        }
+        .plantao-subtitulo { font-size: 0.85em; color: #64748b; margin: -8px 0 18px; }
+        .plantao-block {
+            margin-bottom: 12px; overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .plantao-table {
+            width: 100%; border-collapse: collapse;
+            min-width: 600px; font-size: 0.9em;
+            table-layout: fixed;
+        }
+        .plantao-table thead th {
+            background: #9a3412; color: white;
+            padding: 10px 12px; text-align: center;
+            font-weight: 700; letter-spacing: 0.03em;
+            word-break: break-word;
+        }
+        .plantao-table td {
+            padding: 9px 11px; border: 1px solid #e2e8f0;
+            vertical-align: middle; text-align: center;
+            word-break: break-word;
+        }
+        .plantao-table tbody tr:nth-child(even) td { background: #fff7ed; }
+        .plantao-cell-editable:focus {
+            outline: 2px solid #f97316; outline-offset: -2px; background: #fff7ed !important;
         }
 
         /* ─── Seção Atribuições ─────────────────────────────────── */
@@ -2984,6 +3022,7 @@
                 <a class="header-nav-btn btn-designacoes" href="?s=designacoes" onclick="showSection('designacoes');return false;">📋 Designações</a>
                 <a class="header-nav-btn btn-equipe" href="?s=equipe" onclick="showSection('equipe');return false;">⛱️ Férias Equipe</a>
                 <a class="header-nav-btn btn-adote" href="?s=adote" onclick="showSection('adote');return false;"><img src="docs/gavel.png" alt="" width="26" height="26" style="vertical-align:middle;margin-right:4px;object-fit:contain"> Adote</a>
+                <a class="header-nav-btn btn-plantao" href="?s=plantao" onclick="showSection('plantao');return false;">🚨 Plantão</a>
                 <a class="header-nav-btn btn-diario" href="?s=diario-oficial" onclick="showSection('diario-oficial');return false;">📰 Diário Oficial</a>
             </div>
         </header>
@@ -3014,6 +3053,11 @@
                     <span class="landing-btn-icon"><img src="docs/gavel.png" alt="Gavel" width="78" height="78" style="object-fit:contain"></span>
                     <span class="landing-btn-title">Adote</span>
                     <span class="landing-btn-desc">Projetos Adote uma Comarca e Expandir Presença, Garantir Direitos</span>
+                </button>
+                <button class="landing-btn btn-plantao" onclick="showSection('plantao')">
+                    <span class="landing-btn-icon">🚨</span>
+                    <span class="landing-btn-title">Plantão</span>
+                    <span class="landing-btn-desc">Escala de plantão cível, criminal e de custódia do Polo Médio Amazonas</span>
                 </button>
                 <button class="landing-btn btn-diario" onclick="showSection('diario-oficial')">
                     <span class="landing-btn-icon">📰</span>
@@ -3315,6 +3359,15 @@
                     <p>28. Urucurituba</p>
                     <br>
                     <p>33. Urucará</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção: Plantão -->
+        <div id="plantao" class="tab-content">
+            <div class="card">
+                <div id="plantao-content">
+                    <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
                 </div>
             </div>
         </div>
@@ -4776,7 +4829,7 @@
         function _aplicarModoEdicao() {
             const isAdmin = userRole === 'admin';
             // Botões de edição das seções (Alternância, Férias, Adote, etc.)
-            document.querySelectorAll('#designacoes .admin-only, #adote .admin-only').forEach(el => {
+            document.querySelectorAll('#designacoes .admin-only, #adote .admin-only, #plantao .admin-only').forEach(el => {
                 el.style.display = isAdmin ? 'inline-flex' : 'none';
             });
             // Células ✏️ por linha na tabela Designações Atuais
@@ -6909,6 +6962,7 @@
             // Encerrar edição de Atribuições/Adote se estava ativa
             if (typeof _atrModoEdicao   !== 'undefined' && _atrModoEdicao)   _atrSairModoEdicao();
             if (typeof _adoteModoEdicao !== 'undefined' && _adoteModoEdicao) _adoteSairModoEdicao();
+            if (typeof _plantaoModoEdicao !== 'undefined' && _plantaoModoEdicao) _plantaoSairModoEdicao();
             document.getElementById('landing').style.display = 'block';
             document.querySelector('.tabs').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
@@ -6943,6 +6997,10 @@
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('adote').classList.add('active');
                 renderAdote();
+            } else if (tabName === 'plantao') {
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('plantao').classList.add('active');
+                renderPlantao();
             } else if (tabName === 'diario-oficial') {
                 // Diário Oficial: sem barra de abas, conteúdo direto
                 document.querySelector('.tabs').style.display = 'none';
@@ -7354,6 +7412,14 @@
         function _rteMountAdote() {
             const toolbar = document.getElementById('rich-editor-toolbar');
             const editBar = document.getElementById('adote-edit-bar');
+            editBar.parentNode.insertBefore(toolbar, editBar.nextSibling);
+            toolbar.style.display = 'flex';
+            _rteMountTabelaHandlers();
+        }
+
+        function _rteMountPlantao() {
+            const toolbar = document.getElementById('rich-editor-toolbar');
+            const editBar = document.getElementById('plantao-edit-bar');
             editBar.parentNode.insertBefore(toolbar, editBar.nextSibling);
             toolbar.style.display = 'flex';
             _rteMountTabelaHandlers();
@@ -8003,6 +8069,217 @@
                 td.innerHTML     = data.html;
             });
             _adoteSairModoEdicao();
+        }
+
+        // =====================================================================
+        // Seção Plantão — Escala de Plantão do Polo do Médio Amazonas
+        // Fonte: Portaria nº 764/2026-GSPG/DPE/AM (altera a Portaria 635/2026),
+        // Anexos I, II e III — semanas 01 a 13 (29/06 a 27/09/2026)
+        // =====================================================================
+        const PLANTAO_COLS = ['periodo','defensor','assessoria'];
+        const PLANTAO_COL_LABELS = {
+            periodo:    'Período',
+            defensor:   'Defensor(a)',
+            assessoria: 'Assessoria'
+        };
+        const PLANTAO_STATIC = [
+            { periodo: '29/06 a 05/07', defensor: 'Eliaquim Antunes de Souza Santos',       assessoria: 'Larice Bruce Pereira' },
+            { periodo: '06/07 a 12/07', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Luma Karolayne Pantoja Bandeira' },
+            { periodo: '13/07 a 19/07', defensor: 'Enio Jorge Lima Barbalho Júnior (F)',      assessoria: 'Larice Bruce Pereira' },
+            { periodo: '20/07 a 26/07', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Larice Bruce Pereira' },
+            { periodo: '27/07 a 02/08', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Natália Cristina de Moraes' },
+            { periodo: '03/08 a 09/08', defensor: 'Eliaquim Antunes de Souza Santos',        assessoria: 'Deborah Loureiro Ohana Lavareda' },
+            { periodo: '10/08 a 16/08', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Fábio Bastos de Souza' },
+            { periodo: '17/08 a 23/08', defensor: 'Enio Jorge Lima Barbalho Júnior',          assessoria: 'Natália Cristina de Moraes' },
+            { periodo: '24/08 a 30/08', defensor: 'Enio Jorge Lima Barbalho Júnior',          assessoria: 'Fábio Bastos de Souza' },
+            { periodo: '31/08 a 06/09', defensor: 'Eliaquim Antunes de Souza Santos',        assessoria: 'Renata Patrícia Torres dos Reis' },
+            { periodo: '07/09 a 13/09', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Larice Bruce Pereira' },
+            { periodo: '14/09 a 20/09', defensor: 'Catarina Lopes Maia (F)',                  assessoria: 'Luma Karolayne Pantoja Bandeira' },
+            { periodo: '21/09 a 27/09', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Natália Cristina de Moraes' }
+        ];
+
+        let _plantaoModoEdicao    = false;
+        let _plantaoCelulaAtiva   = null;
+        let _plantaoCelulasBackup = {};
+        let _plantaoCelulasCache  = null;
+
+        function renderPlantao() {
+            const el = document.getElementById('plantao-content');
+            if (!el) return;
+
+            // Encerrar modo edição se ativo e resgatar toolbar
+            if (_plantaoModoEdicao) _plantaoSairModoEdicao();
+            const _tb = document.getElementById('rich-editor-toolbar');
+            if (_tb && el.contains(_tb)) document.body.appendChild(_tb);
+
+            const isAdmin = userRole === 'admin';
+            const editBar = isAdmin ? `
+                <div id="plantao-edit-bar" style="margin:10px 0 6px;display:flex;gap:8px;align-items:center">
+                    <button class="btn-editar" id="plantao-btn-editar-tabela" onclick="_plantaoEntrarModoEdicao()">
+                        <svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar tabela
+                    </button>
+                    <button class="btn-salvar"   id="plantao-btn-salvar-tabela"   style="display:none" onclick="_plantaoSalvarCelulas()">✓ Salvar</button>
+                    <button class="btn-cancelar" id="plantao-btn-cancelar-tabela" style="display:none" onclick="_plantaoCancelarCelulas()">✕ Cancelar</button>
+                </div>` : '';
+
+            let html = `
+            <h2>🚨 Escala de Plantão — Polo do Médio Amazonas</h2>
+            <p class="plantao-subtitulo">Plantão Cível e de Família / Criminal e de Custódia · Portaria nº 764/2026-GSPG/DPE/AM</p>
+            ${editBar}
+            <div class="plantao-block"><table class="plantao-table">
+                <colgroup>
+                    <col style="width:28%"><col style="width:40%"><col style="width:32%">
+                </colgroup>
+                <thead><tr>`;
+            PLANTAO_COLS.forEach(c => { html += `<th>${PLANTAO_COL_LABELS[c]}</th>`; });
+            html += '</tr></thead><tbody>';
+            PLANTAO_STATIC.forEach((row, idx) => {
+                const r = idx + 1;
+                html += '<tr>';
+                PLANTAO_COLS.forEach(c => {
+                    html += `<td data-plantao-key="${r}_${c}">${row[c]}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+            el.innerHTML = html;
+
+            _plantaoCarregarCelulas();
+        }
+
+        function _plantaoAplicarCelulas(celulas) {
+            Object.entries(celulas).forEach(([key, data]) => {
+                const td = document.querySelector(`[data-plantao-key="${CSS.escape(key)}"]`);
+                if (!td) return;
+                if (data.cellStyle) td.style.cssText = data.cellStyle;
+                if (data.html !== undefined) td.innerHTML = data.html;
+            });
+        }
+
+        // Retorna true se as chaves do cache têm mais linhas do que o PLANTAO_STATIC atual
+        function _plantaoCacheDesatualizado(celulas) {
+            const maxRow = Math.max(...Object.keys(celulas).map(k => parseInt(k) || 0));
+            return maxRow > PLANTAO_STATIC.length;
+        }
+
+        async function _plantaoCarregarCelulas() {
+            // 1. Aplicar do cache em memória (navegação interna)
+            if (_plantaoCelulasCache) { _plantaoAplicarCelulas(_plantaoCelulasCache); }
+            else {
+                // 2. Aplicar do localStorage (F5 / recarga) — síncrono, sem flash
+                try {
+                    const ls = localStorage.getItem('pma-plantao-celulas');
+                    if (ls) {
+                        const cached = JSON.parse(ls);
+                        if (_plantaoCacheDesatualizado(cached)) {
+                            localStorage.removeItem('pma-plantao-celulas');
+                        } else {
+                            _plantaoCelulasCache = cached;
+                            _plantaoAplicarCelulas(cached);
+                        }
+                    }
+                } catch(e) {}
+            }
+            // 3. Sempre buscar do Firestore para manter o cache atualizado
+            try {
+                const doc = await db.collection('secoes').doc('plantao_celulas').get();
+                if (!doc.exists) return;
+                const { celulas } = doc.data();
+                if (!celulas) return;
+                if (_plantaoCacheDesatualizado(celulas)) {
+                    localStorage.removeItem('pma-plantao-celulas');
+                    _plantaoCelulasCache = null;
+                    if (userRole === 'admin') {
+                        await db.collection('secoes').doc('plantao_celulas').delete().catch(() => {});
+                    }
+                    return;
+                }
+                _plantaoCelulasCache = celulas;
+                localStorage.setItem('pma-plantao-celulas', JSON.stringify(celulas));
+                _plantaoAplicarCelulas(celulas);
+            } catch(e) { console.warn('Erro ao carregar células plantão:', e); }
+        }
+
+        function _plantaoOnCellFocus(e) {
+            _plantaoCelulaAtiva = e.currentTarget;
+            _rteTargetEl        = e.currentTarget;
+            _rteSavedRange      = null;
+            _rteUpdateStates();
+        }
+
+        function _plantaoEntrarModoEdicao() {
+            if (_plantaoModoEdicao) return;
+            _plantaoModoEdicao    = true;
+            _plantaoCelulasBackup = {};
+            document.querySelectorAll('[data-plantao-key]').forEach(td => {
+                _plantaoCelulasBackup[td.dataset.plantaoKey] = {
+                    html:      td.innerHTML,
+                    cellStyle: td.getAttribute('style') || ''
+                };
+                td.contentEditable = 'true';
+                td.classList.add('plantao-cell-editable');
+                td.addEventListener('focus', _plantaoOnCellFocus);
+                ['keyup','mouseup','keydown'].forEach(ev => td.addEventListener(ev, _rteSaveRange));
+            });
+            document.getElementById('plantao-btn-editar-tabela').style.display  = 'none';
+            document.getElementById('plantao-btn-salvar-tabela').style.display   = 'inline-flex';
+            document.getElementById('plantao-btn-cancelar-tabela').style.display = 'inline-flex';
+            _rteMountPlantao();
+        }
+
+        function _plantaoSairModoEdicao() {
+            if (!_plantaoModoEdicao) return;
+            _plantaoModoEdicao  = false;
+            _plantaoCelulaAtiva = null;
+            document.querySelectorAll('[data-plantao-key]').forEach(td => {
+                td.contentEditable = 'false';
+                td.classList.remove('plantao-cell-editable');
+                td.removeEventListener('focus', _plantaoOnCellFocus);
+            });
+            _rteUnmount();
+            const bE = document.getElementById('plantao-btn-editar-tabela');
+            const bS = document.getElementById('plantao-btn-salvar-tabela');
+            const bC = document.getElementById('plantao-btn-cancelar-tabela');
+            if (bE) bE.style.display = 'inline-flex';
+            if (bS) bS.style.display = 'none';
+            if (bC) bC.style.display = 'none';
+        }
+
+        async function _plantaoSalvarCelulas() {
+            const btnS = document.getElementById('plantao-btn-salvar-tabela');
+            btnS.disabled = true; btnS.textContent = '⏳ Salvando...';
+            const celulas = {};
+            document.querySelectorAll('[data-plantao-key]').forEach(td => {
+                celulas[td.dataset.plantaoKey] = {
+                    html:      td.innerHTML,
+                    cellStyle: td.getAttribute('style') || ''
+                };
+            });
+            try {
+                await db.collection('secoes').doc('plantao_celulas').set({
+                    celulas,
+                    atualizado_por: currentUser.email,
+                    atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                });
+                _plantaoCelulasCache = celulas;
+                localStorage.setItem('pma-plantao-celulas', JSON.stringify(celulas));
+                btnS.disabled = false; btnS.innerHTML = '✓ Salvar';
+                _plantaoSairModoEdicao();
+                mostrarToast('✅ Tabela salva com sucesso!');
+            } catch(e) {
+                btnS.disabled = false; btnS.innerHTML = '✓ Salvar';
+                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+            }
+        }
+
+        function _plantaoCancelarCelulas() {
+            Object.entries(_plantaoCelulasBackup).forEach(([key, data]) => {
+                const td = document.querySelector(`[data-plantao-key="${CSS.escape(key)}"]`);
+                if (!td) return;
+                td.style.cssText = data.cellStyle;
+                td.innerHTML     = data.html;
+            });
+            _plantaoSairModoEdicao();
         }
 
         function _atrEntrarModoEdicao() {

@@ -20,6 +20,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | 📋 Designações | `#designacoes` | `showSection('designacoes')` |
 | ⛱️ Férias Equipe | `#equipe` | `showSection('equipe')` |
 | 🏘️ Adote | `#adote` | `showSection('adote')` |
+| 🚨 Plantão | `#plantao` | `showSection('plantao')` → `renderPlantao()` |
 | 📰 Diário Oficial | `#diario` | `showSection('diario')` |
 | 💰 Prestação de Contas | `#prestacao-contas` | `showSection('prestacao-contas')` — **admin-only**, botão fica `display:none` para viewers |
 
@@ -83,6 +84,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | Status Ativo/Ex-membro do Defensor | `defensores_admin/{defKey}` | dropdown 🟢 Membro / ⚪ Ex-membro no card, em `renderDefensorias()` |
 | Afastamentos | `afastamentos_admin/{id}` | formulário modal completo |
 | Férias Equipe | `afastamentos_equipe/{id}` | formulário modal |
+| Plantão — células da tabela (período/defensor/assessoria) | `secoes/plantao_celulas` | contentEditable por TD + RTE (mesmo padrão de Adote) |
 
 ## Trabalho em Trânsito (tipo especial dentro de Afastamentos)
 
@@ -146,6 +148,7 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
 | `pma-atr-celulas` | células JSON de Atribuições |
 | `pma-adote-celulas` | células JSON de Adote |
 | `pma-adote-expandir` | HTML do bloco Expandir |
+| `pma-plantao-celulas` | células JSON da tabela de Plantão |
 | `pma-afastamentos-fs` | docs brutos de `afastamentos_admin` |
 | `pma-equipe-fs` | docs brutos de `afastamentos_equipe` |
 | `pma-secao` | última seção visitada (restaura na recarga) |
