@@ -88,7 +88,7 @@ atualizado_em:  timestamp
 ### `afastamentos_admin/{id}` — afastamentos de defensores
 ```
 defensor:         "elton"
-tipo:             "ferias" | "folga" | "licenca_especial" | "outro"
+tipo:             "ferias" | "folga" | "licenca_especial" | "trabalho_remoto" | "outro"
 tipo_custom:      ""
 data_inicio:      "YYYY-MM-DD"
 data_fim:         "YYYY-MM-DD"
@@ -113,6 +113,12 @@ origem:         "automacao-diario-oficial"   ← só na automação
 lido:           false   ← false = aparece no sino azul
 precisa_revisao: true   ← quando data_fim vazia
 ```
+> **`tipo: "trabalho_remoto"`** (exibido na UI como "💻 Trabalho em Trânsito") é especial: **não é
+> ausência**. Sempre grava `designacoes_dp: []` (a UI oculta a seção "Defensorias Afetadas" para
+> esse tipo) e é tratado à parte no merge dos dados no `index.html` — não entra em
+> `afastamentos[ano][mes][dia]` nem aparece em "Lista de Substituições"/"Resumo de Afastamentos",
+> só no Calendário (badge transparente). Ver `docs/site/estrutura-html.md` (seção "Trabalho em
+> Trânsito") para o detalhamento completo.
 
 ### `afastamentos_equipe/{id}` — afastamentos dos servidores
 ```

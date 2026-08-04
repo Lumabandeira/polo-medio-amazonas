@@ -18,6 +18,12 @@ Todo o fluxo acontece via interface admin no próprio site:
 
 > Os dados base continuam nos JSONs (`docs/afastamentos-2026.json`). Registros do Firestore são mesclados por cima em memória. Para corrigir um registro JSON existente, usar o botão ✏️ no modal do dia — isso cria um override no Firestore com campo `json_base_id`.
 
+> **Exceção — tipo "💻 Trabalho em Trânsito":** ao escolher esse tipo no passo 4, o passo 5 (DPs
+> afetadas/substituto) não aparece — não é ausência, o defensor continua respondendo normalmente
+> por suas DPs. Só aparece no Calendário (badge transparente); não altera Designações Semanais,
+> Lista de Substituições nem Resumo de Afastamentos. Ver `docs/firebase.md` e
+> `docs/site/estrutura-html.md`.
+
 ---
 
 ## Atualizar Titular de uma DP
