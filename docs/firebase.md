@@ -47,7 +47,6 @@ nome: "..."
 | `adote_info` | `html` (cabeçalho), `atualizado_por`, `atualizado_em` |
 | `adote_celulas` | `celulas` (mapa `"ROW_COL": { html, cellStyle }`), `atualizado_por`, `atualizado_em` |
 | `adote_expandir` | `html`, `atualizado_por`, `atualizado_em` |
-| `plantao_celulas` | `celulas` (mapa `"N_campo": { html, cellStyle }`, campos: `periodo`\|`defensor`\|`assessoria`), `atualizado_por`, `atualizado_em` |
 
 ### `titulares_admin/{dpKey}` — histórico de titulares por DP
 ```
@@ -133,6 +132,24 @@ criado_por:   "email@..."
 criado_em:    timestamp
 ```
 
+### `plantao_admin/{id}` — escala de plantão do polo (período/defensor/assessoria)
+```
+data_inicio:  "YYYY-MM-DD"
+data_fim:     "YYYY-MM-DD"
+defensor:     "Eliaquim Antunes de Souza Santos"   ← texto livre, nem sempre um dos 6 titulares
+assessoria:   "Larice Bruce Pereira"                ← texto livre
+criado_por:   "email@..."
+criado_em:    timestamp
+atualizado_por / atualizado_em   ← só em edições
+```
+- Cadastro 100% manual pelo admin — sem IA, sem automação (decisão da sessão
+  26, depois que as automações com sino de notificação se mostraram pouco
+  confiáveis). Duas vias no site: formulário de 1 período, ou colar texto CSV
+  (`data_inicio;data_fim;defensor;assessoria`) para importar vários de uma vez.
+- `PLANTAO_SEED_2026` (constante em `index.html`) guarda os 13 períodos
+  extraídos da Portaria nº 764/2026-GSPG/DPE/AM — importados uma única vez via
+  botão que só aparece enquanto a coleção está vazia.
+
 ### `remocoes_admin/{id}` — alterações de titularidade (automação)
 ```
 tipo:              "cessacao_designacao"   ← ausente = concurso de remoção
@@ -216,7 +233,7 @@ atualizado_em:       timestamp
 
 - **Leitura:** apenas usuários autenticados
 - **Escrita:** apenas usuários com `role == "admin"`
-- Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`, `defensores_admin`, `remocoes_admin`, `designacoes_cumulativas_admin`, `afastamentos_equipe`
+- Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`, `defensores_admin`, `remocoes_admin`, `designacoes_cumulativas_admin`, `afastamentos_equipe`, `plantao_admin`
 - **Exceção:** `prestacoes_contas` tem leitura **e** escrita restritas a admin (não apenas escrita) — ver acima.
 
 ## Regras de Segurança do Storage
@@ -241,6 +258,9 @@ atualizado_em:       timestamp
 | `alterarStatusDefensor(selectEl)` | Grava override em `defensores_admin/{defKey}` a partir do `<select>` 🟢 Membro / ⚪ Ex-membro |
 | `loadAfastamentosFirestore()` | Carrega `afastamentos_admin` e mescla com JSON |
 | `loadEquipeFirestore()` | Carrega `afastamentos_equipe` |
+| `loadPlantaoFirestore()` | Carrega `plantao_admin`, ordena por `data_inicio` |
+| `salvarPlantaoFirestore()` / `confirmarDeletarPlantao()` | CRUD de 1 período via formulário modal |
+| `_plantaoParseCSV()` / `_plantaoConfirmarImportacaoCsv()` | Importação em lote via texto CSV colado (parsing 100% local, sem IA) |
 | `carregarNotificacoesAutomacao()` | Carrega as 3 coleções de notificações (try/catch independentes) |
 | `get_firestore_client()` | Python — inicializa Firebase Admin SDK |
 | `renderPrestacoesContas()` | Carrega `prestacoes_contas` e renderiza a lista de cards (admin-only) |

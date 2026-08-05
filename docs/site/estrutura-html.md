@@ -84,7 +84,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | Status Ativo/Ex-membro do Defensor | `defensores_admin/{defKey}` | dropdown 🟢 Membro / ⚪ Ex-membro no card, em `renderDefensorias()` |
 | Afastamentos | `afastamentos_admin/{id}` | formulário modal completo |
 | Férias Equipe | `afastamentos_equipe/{id}` | formulário modal |
-| Plantão — células da tabela (período/defensor/assessoria) | `secoes/plantao_celulas` | contentEditable por TD + RTE (mesmo padrão de Adote) |
+| Plantão (período/defensor/assessoria) | `plantao_admin/{id}` | formulário modal (1 período) **ou** colar CSV em lote — ver seção própria abaixo |
 
 ## Trabalho em Trânsito (tipo especial dentro de Afastamentos)
 
@@ -107,6 +107,31 @@ modal "Novo Afastamento" da aba Calendário (`abrirFormAfastamento`), selecionan
   (`renderListaSubstituicoes`) e "Resumo de Afastamentos" (`renderDetalhesAfastamentos`).
 - Resultado: trabalho em trânsito só aparece no Calendário — não altera Designações semanais, Lista de
   Substituições nem Resumo de Afastamentos.
+
+## Plantão (`#plantao`)
+
+Lista dinâmica (não mais tabela de tamanho fixo) na coleção `plantao_admin/{id}`
+— schema: `data_inicio`, `data_fim` (YYYY-MM-DD), `defensor`, `assessoria`
+(texto livre — plantonistas nem sempre são os 6 titulares do polo), `criado_por`,
+`criado_em`. Renderizada por `renderPlantao()`, ordenada por `data_inicio`.
+
+**Decisão da sessão 26:** sem IA e sem automação de PDF. As automações
+existentes (sinos de notificação de afastamentos/remoções/designações
+cumulativas) não têm se mostrado confiáveis na prática, então o cadastro de
+Plantão é 100% manual, com duas vias:
+
+- **Um período por vez** — botão "➕ Novo período" → modal (`abrirFormPlantao`,
+  `salvarPlantaoFirestore`) idêntico em espírito ao modal de Férias Equipe.
+- **Vários de uma vez** — botão "📋 Importar CSV" → cola texto (uma linha por
+  período, `data_inicio;data_fim;defensor;assessoria`, aceita `;`, Tab ou `,`
+  como separador) → `_plantaoParseCSV()` faz o parsing 100% local (sem rede,
+  sem IA) → pré-visualização com linhas ok/erro → confirma e grava em lote.
+- **Migração inicial**: `PLANTAO_SEED_2026` guarda os 13 períodos extraídos da
+  Portaria nº 764/2026-GSPG/DPE/AM; um botão "⬇️ Importar dados iniciais"
+  aparece só enquanto `plantao_admin` está vazia e grava esse seed uma única vez.
+
+Cache local: `pma-plantao-fs` (docs brutos de `plantao_admin`, mesmo padrão de
+`pma-equipe-fs`).
 
 ## Prestação de Contas (`#prestacao-contas`, admin-only)
 
@@ -148,7 +173,7 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
 | `pma-atr-celulas` | células JSON de Atribuições |
 | `pma-adote-celulas` | células JSON de Adote |
 | `pma-adote-expandir` | HTML do bloco Expandir |
-| `pma-plantao-celulas` | células JSON da tabela de Plantão |
+| `pma-plantao-fs` | docs brutos de `plantao_admin` |
 | `pma-afastamentos-fs` | docs brutos de `afastamentos_admin` |
 | `pma-equipe-fs` | docs brutos de `afastamentos_equipe` |
 | `pma-secao` | última seção visitada (restaura na recarga) |

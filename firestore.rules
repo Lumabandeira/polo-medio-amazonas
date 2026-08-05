@@ -33,6 +33,10 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /plantao_admin/{id} {
+      allow write: if isAdmin();
+    }
+
     match /titulares_admin/{id} {
       allow write: if isAdmin();
     }

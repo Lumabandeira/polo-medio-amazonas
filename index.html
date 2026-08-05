@@ -1292,9 +1292,17 @@
             word-break: break-word;
         }
         .plantao-table tbody tr:nth-child(even) td { background: #fff7ed; }
-        .plantao-cell-editable:focus {
-            outline: 2px solid #f97316; outline-offset: -2px; background: #fff7ed !important;
+        .plantao-actions-bar { display:flex; gap:8px; align-items:center; margin:10px 0 16px; flex-wrap:wrap; }
+        .plantao-csv-help {
+            font-size: 0.82em; color: #64748b; background: #fff7ed;
+            border: 1px solid #fed7aa; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;
         }
+        .plantao-csv-help code { background: #ffedd5; padding: 1px 5px; border-radius: 4px; }
+        #plantao-csv-preview table { width:100%; border-collapse:collapse; font-size:0.88em; }
+        #plantao-csv-preview th { background:#f8fafc; padding:6px 8px; text-align:left; border-bottom:2px solid var(--border-color); }
+        #plantao-csv-preview td { padding:6px 8px; border-bottom:1px solid var(--border-color); vertical-align:top; }
+        #plantao-csv-preview tr.linha-erro td { background:#fef2f2; color:#b91c1c; }
+        #plantao-csv-preview .linha-erro-msg { font-size:0.85em; color:#b91c1c; }
 
         /* ─── Seção Atribuições ─────────────────────────────────── */
         .atr-header {
@@ -3368,6 +3376,67 @@
             <div class="card">
                 <div id="plantao-content">
                     <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário Plantão: novo período / edição -->
+        <div id="plantao-form-overlay" class="form-af-overlay" onclick="fecharFormPlantao(event)">
+            <div class="form-af-content" style="max-width:560px" onclick="event.stopPropagation()">
+                <div class="form-af-header" style="background:linear-gradient(135deg,#7f1d1d,#ef4444)">
+                    <h2 id="plantao-form-titulo">➕ Novo Período de Plantão</h2>
+                    <button class="form-af-close" onclick="fecharFormPlantao()">×</button>
+                </div>
+                <div class="form-af-body">
+                    <form id="plantao-form" onsubmit="event.preventDefault();salvarPlantaoFirestore()">
+                        <input type="hidden" id="plantao-form-id">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                            <div class="form-group">
+                                <label>DATA INÍCIO</label>
+                                <input type="date" id="plantao-form-inicio" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group">
+                                <label>DATA FIM</label>
+                                <input type="date" id="plantao-form-fim" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group" style="grid-column:1/-1">
+                                <label>DEFENSOR(A)</label>
+                                <input type="text" id="plantao-form-defensor" placeholder="ex: Eliaquim Antunes de Souza Santos" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group" style="grid-column:1/-1">
+                                <label>ASSESSORIA</label>
+                                <input type="text" id="plantao-form-assessoria" placeholder="ex: Larice Bruce Pereira" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                        </div>
+                        <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border-color)">
+                            <button type="button" class="btn-cancelar" onclick="fecharFormPlantao()">Cancelar</button>
+                            <button type="submit" id="plantao-form-submit" class="btn-salvar-form">💾 Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Importar CSV: vários períodos de uma vez -->
+        <div id="plantao-csv-overlay" class="form-af-overlay" onclick="fecharCsvPlantao(event)">
+            <div class="form-af-content" style="max-width:720px" onclick="event.stopPropagation()">
+                <div class="form-af-header" style="background:linear-gradient(135deg,#7f1d1d,#ef4444)">
+                    <h2>📋 Importar Períodos via CSV</h2>
+                    <button class="form-af-close" onclick="fecharCsvPlantao()">×</button>
+                </div>
+                <div class="form-af-body">
+                    <div class="plantao-csv-help">
+                        Uma linha por período. Campos separados por <code>;</code> (ponto e vírgula) ou Tab
+                        (colando direto do Excel): <code>data_início;data_fim;defensor;assessoria</code><br>
+                        Datas em <code>DD/MM</code> ou <code>DD/MM/AAAA</code>. Exemplo:<br>
+                        <code>29/06/2026;05/07/2026;Eliaquim Antunes de Souza Santos;Larice Bruce Pereira</code>
+                    </div>
+                    <textarea id="plantao-csv-textarea" rows="8" style="width:100%;padding:10px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.88em;font-family:monospace;" placeholder="29/06/2026;05/07/2026;Eliaquim Antunes de Souza Santos;Larice Bruce Pereira"></textarea>
+                    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px;">
+                        <button type="button" class="btn-cancelar" onclick="fecharCsvPlantao()">Cancelar</button>
+                        <button type="button" class="btn-editar" onclick="_plantaoPreviewCsv()">🔍 Pré-visualizar</button>
+                    </div>
+                    <div id="plantao-csv-preview" style="margin-top:16px;"></div>
                 </div>
             </div>
         </div>
@@ -6962,7 +7031,6 @@
             // Encerrar edição de Atribuições/Adote se estava ativa
             if (typeof _atrModoEdicao   !== 'undefined' && _atrModoEdicao)   _atrSairModoEdicao();
             if (typeof _adoteModoEdicao !== 'undefined' && _adoteModoEdicao) _adoteSairModoEdicao();
-            if (typeof _plantaoModoEdicao !== 'undefined' && _plantaoModoEdicao) _plantaoSairModoEdicao();
             document.getElementById('landing').style.display = 'block';
             document.querySelector('.tabs').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
@@ -7412,14 +7480,6 @@
         function _rteMountAdote() {
             const toolbar = document.getElementById('rich-editor-toolbar');
             const editBar = document.getElementById('adote-edit-bar');
-            editBar.parentNode.insertBefore(toolbar, editBar.nextSibling);
-            toolbar.style.display = 'flex';
-            _rteMountTabelaHandlers();
-        }
-
-        function _rteMountPlantao() {
-            const toolbar = document.getElementById('rich-editor-toolbar');
-            const editBar = document.getElementById('plantao-edit-bar');
             editBar.parentNode.insertBefore(toolbar, editBar.nextSibling);
             toolbar.style.display = 'flex';
             _rteMountTabelaHandlers();
@@ -8073,213 +8133,318 @@
 
         // =====================================================================
         // Seção Plantão — Escala de Plantão do Polo do Médio Amazonas
-        // Fonte: Portaria nº 764/2026-GSPG/DPE/AM (altera a Portaria 635/2026),
-        // Anexos I, II e III — semanas 01 a 13 (29/06 a 27/09/2026)
+        // Coleção Firestore: plantao_admin/{id}. Cadastro manual (form) ou em
+        // lote (colar CSV) — sem IA, sem automação (decisão da sessão 26).
         // =====================================================================
-        const PLANTAO_COLS = ['periodo','defensor','assessoria'];
-        const PLANTAO_COL_LABELS = {
-            periodo:    'Período',
-            defensor:   'Defensor(a)',
-            assessoria: 'Assessoria'
-        };
-        const PLANTAO_STATIC = [
-            { periodo: '29/06 a 05/07', defensor: 'Eliaquim Antunes de Souza Santos',       assessoria: 'Larice Bruce Pereira' },
-            { periodo: '06/07 a 12/07', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Luma Karolayne Pantoja Bandeira' },
-            { periodo: '13/07 a 19/07', defensor: 'Enio Jorge Lima Barbalho Júnior (F)',      assessoria: 'Larice Bruce Pereira' },
-            { periodo: '20/07 a 26/07', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Larice Bruce Pereira' },
-            { periodo: '27/07 a 02/08', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Natália Cristina de Moraes' },
-            { periodo: '03/08 a 09/08', defensor: 'Eliaquim Antunes de Souza Santos',        assessoria: 'Deborah Loureiro Ohana Lavareda' },
-            { periodo: '10/08 a 16/08', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Fábio Bastos de Souza' },
-            { periodo: '17/08 a 23/08', defensor: 'Enio Jorge Lima Barbalho Júnior',          assessoria: 'Natália Cristina de Moraes' },
-            { periodo: '24/08 a 30/08', defensor: 'Enio Jorge Lima Barbalho Júnior',          assessoria: 'Fábio Bastos de Souza' },
-            { periodo: '31/08 a 06/09', defensor: 'Eliaquim Antunes de Souza Santos',        assessoria: 'Renata Patrícia Torres dos Reis' },
-            { periodo: '07/09 a 13/09', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Larice Bruce Pereira' },
-            { periodo: '14/09 a 20/09', defensor: 'Catarina Lopes Maia (F)',                  assessoria: 'Luma Karolayne Pantoja Bandeira' },
-            { periodo: '21/09 a 27/09', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Natália Cristina de Moraes' }
+
+        // Seed inicial extraído da Portaria nº 764/2026-GSPG/DPE/AM (Anexos I-III,
+        // semanas 01-13, 29/06 a 27/09/2026) — importado uma única vez pelo admin.
+        const PLANTAO_SEED_2026 = [
+            { data_inicio: '2026-06-29', data_fim: '2026-07-05', defensor: 'Eliaquim Antunes de Souza Santos',       assessoria: 'Larice Bruce Pereira' },
+            { data_inicio: '2026-07-06', data_fim: '2026-07-12', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Luma Karolayne Pantoja Bandeira' },
+            { data_inicio: '2026-07-13', data_fim: '2026-07-19', defensor: 'Enio Jorge Lima Barbalho Júnior (F)',      assessoria: 'Larice Bruce Pereira' },
+            { data_inicio: '2026-07-20', data_fim: '2026-07-26', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Larice Bruce Pereira' },
+            { data_inicio: '2026-07-27', data_fim: '2026-08-02', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Natália Cristina de Moraes' },
+            { data_inicio: '2026-08-03', data_fim: '2026-08-09', defensor: 'Eliaquim Antunes de Souza Santos',        assessoria: 'Deborah Loureiro Ohana Lavareda' },
+            { data_inicio: '2026-08-10', data_fim: '2026-08-16', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Fábio Bastos de Souza' },
+            { data_inicio: '2026-08-17', data_fim: '2026-08-23', defensor: 'Enio Jorge Lima Barbalho Júnior',          assessoria: 'Natália Cristina de Moraes' },
+            { data_inicio: '2026-08-24', data_fim: '2026-08-30', defensor: 'Enio Jorge Lima Barbalho Júnior',          assessoria: 'Fábio Bastos de Souza' },
+            { data_inicio: '2026-08-31', data_fim: '2026-09-06', defensor: 'Eliaquim Antunes de Souza Santos',        assessoria: 'Renata Patrícia Torres dos Reis' },
+            { data_inicio: '2026-09-07', data_fim: '2026-09-13', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Larice Bruce Pereira' },
+            { data_inicio: '2026-09-14', data_fim: '2026-09-20', defensor: 'Catarina Lopes Maia (F)',                  assessoria: 'Luma Karolayne Pantoja Bandeira' },
+            { data_inicio: '2026-09-21', data_fim: '2026-09-27', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Natália Cristina de Moraes' }
         ];
 
-        let _plantaoModoEdicao    = false;
-        let _plantaoCelulaAtiva   = null;
-        let _plantaoCelulasBackup = {};
-        let _plantaoCelulasCache  = null;
+        let plantaoRegistros = []; // [{id, data_inicio, data_fim, defensor, assessoria}]
+        let plantaoMap       = {}; // id -> registro
+
+        function _fmtPlantaoData(str) {
+            if (!str) return '';
+            const [y, m, d] = str.split('-');
+            return `${d}/${m}/${y}`;
+        }
+
+        function _fmtPlantaoPeriodo(inicio, fim) {
+            if (!inicio || !fim) return '—';
+            const [yi, mi, di] = inicio.split('-');
+            const [yf, mf, df] = fim.split('-');
+            return yi === yf ? `${di}/${mi} a ${df}/${mf}` : `${di}/${mi}/${yi} a ${df}/${mf}/${yf}`;
+        }
+
+        function _plantaoAplicarRegistros(registros) {
+            plantaoRegistros = registros.slice().sort((a, b) => (a.data_inicio || '').localeCompare(b.data_inicio || ''));
+            plantaoMap = {};
+            plantaoRegistros.forEach(r => { plantaoMap[r.id] = r; });
+        }
+
+        async function loadPlantaoFirestore() {
+            // 1. Cache localStorage — aplica sincronamente antes de qualquer rede
+            try {
+                const ls = localStorage.getItem('pma-plantao-fs');
+                if (ls) {
+                    _plantaoAplicarRegistros(JSON.parse(ls));
+                    if (document.getElementById('plantao')?.classList.contains('active')) renderPlantao();
+                }
+            } catch(e) {}
+
+            // 2. Sempre busca do Firestore para manter o cache atualizado
+            try {
+                const snap = await db.collection('plantao_admin').get();
+                const registros = [];
+                snap.forEach(doc => registros.push({ id: doc.id, ...doc.data() }));
+                localStorage.setItem('pma-plantao-fs', JSON.stringify(registros));
+                _plantaoAplicarRegistros(registros);
+            } catch(e) { console.warn('Erro ao carregar plantão:', e); }
+
+            if (document.getElementById('plantao')?.classList.contains('active')) renderPlantao();
+        }
 
         function renderPlantao() {
             const el = document.getElementById('plantao-content');
             if (!el) return;
-
-            // Encerrar modo edição se ativo e resgatar toolbar
-            if (_plantaoModoEdicao) _plantaoSairModoEdicao();
-            const _tb = document.getElementById('rich-editor-toolbar');
-            if (_tb && el.contains(_tb)) document.body.appendChild(_tb);
-
             const isAdmin = userRole === 'admin';
-            const editBar = isAdmin ? `
-                <div id="plantao-edit-bar" style="margin:10px 0 6px;display:flex;gap:8px;align-items:center">
-                    <button class="btn-editar" id="plantao-btn-editar-tabela" onclick="_plantaoEntrarModoEdicao()">
-                        <svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar tabela
-                    </button>
-                    <button class="btn-salvar"   id="plantao-btn-salvar-tabela"   style="display:none" onclick="_plantaoSalvarCelulas()">✓ Salvar</button>
-                    <button class="btn-cancelar" id="plantao-btn-cancelar-tabela" style="display:none" onclick="_plantaoCancelarCelulas()">✕ Cancelar</button>
+
+            const migrarBtn = (isAdmin && plantaoRegistros.length === 0)
+                ? `<button class="btn-salvar" style="display:inline-flex" onclick="_plantaoImportarSeed()">⬇️ Importar dados iniciais (${PLANTAO_SEED_2026.length} períodos — Portaria 764/2026)</button>`
+                : '';
+            const acoesBar = isAdmin ? `
+                <div class="plantao-actions-bar">
+                    <button class="btn-editar" onclick="abrirFormPlantao(null)">➕ Novo período</button>
+                    <button class="btn-editar" onclick="abrirCsvPlantao()">📋 Importar CSV</button>
+                    ${migrarBtn}
                 </div>` : '';
 
             let html = `
             <h2>🚨 Escala de Plantão — Polo do Médio Amazonas</h2>
             <p class="plantao-subtitulo">Plantão Cível e de Família / Criminal e de Custódia · Portaria nº 764/2026-GSPG/DPE/AM</p>
-            ${editBar}
-            <div class="plantao-block"><table class="plantao-table">
-                <colgroup>
-                    <col style="width:28%"><col style="width:40%"><col style="width:32%">
-                </colgroup>
-                <thead><tr>`;
-            PLANTAO_COLS.forEach(c => { html += `<th>${PLANTAO_COL_LABELS[c]}</th>`; });
-            html += '</tr></thead><tbody>';
-            PLANTAO_STATIC.forEach((row, idx) => {
-                const r = idx + 1;
-                html += '<tr>';
-                PLANTAO_COLS.forEach(c => {
-                    html += `<td data-plantao-key="${r}_${c}">${row[c]}</td>`;
+            ${acoesBar}`;
+
+            if (plantaoRegistros.length === 0) {
+                html += `<p style="text-align:center;padding:20px;color:var(--text-secondary);">Nenhum período cadastrado ainda.</p>`;
+            } else {
+                html += `<div class="plantao-block"><table class="plantao-table">
+                    <colgroup><col style="width:24%"><col style="width:${isAdmin ? '36%' : '40%'}"><col style="width:${isAdmin ? '28%' : '36%'}">${isAdmin ? '<col style="width:12%">' : ''}</colgroup>
+                    <thead><tr><th>Período</th><th>Defensor(a)</th><th>Assessoria</th>${isAdmin ? '<th>Ações</th>' : ''}</tr></thead><tbody>`;
+                plantaoRegistros.forEach(r => {
+                    html += `<tr>
+                        <td>${_fmtPlantaoPeriodo(r.data_inicio, r.data_fim)}</td>
+                        <td>${r.defensor || ''}</td>
+                        <td>${r.assessoria || ''}</td>
+                        ${isAdmin ? `<td style="white-space:nowrap">
+                            <button class="btn-acao-tabela btn-editar-af" title="Editar" onclick="abrirFormPlantao('${r.id}')">✏️</button>
+                            <button class="btn-acao-tabela btn-deletar-af" title="Excluir" onclick="confirmarDeletarPlantao('${r.id}')">🗑️</button>
+                        </td>` : ''}
+                    </tr>`;
                 });
-                html += '</tr>';
-            });
-            html += '</tbody></table></div>';
+                html += '</tbody></table></div>';
+            }
             el.innerHTML = html;
-
-            _plantaoCarregarCelulas();
         }
 
-        function _plantaoAplicarCelulas(celulas) {
-            Object.entries(celulas).forEach(([key, data]) => {
-                const td = document.querySelector(`[data-plantao-key="${CSS.escape(key)}"]`);
-                if (!td) return;
-                if (data.cellStyle) td.style.cssText = data.cellStyle;
-                if (data.html !== undefined) td.innerHTML = data.html;
-            });
-        }
+        // ── Formulário: novo período / edição ────────────────────────────────
+        function abrirFormPlantao(id) {
+            const overlay = document.getElementById('plantao-form-overlay');
+            document.getElementById('plantao-form').reset();
+            document.getElementById('plantao-form-id').value = '';
 
-        // Retorna true se as chaves do cache têm mais linhas do que o PLANTAO_STATIC atual
-        function _plantaoCacheDesatualizado(celulas) {
-            const maxRow = Math.max(...Object.keys(celulas).map(k => parseInt(k) || 0));
-            return maxRow > PLANTAO_STATIC.length;
-        }
-
-        async function _plantaoCarregarCelulas() {
-            // 1. Aplicar do cache em memória (navegação interna)
-            if (_plantaoCelulasCache) { _plantaoAplicarCelulas(_plantaoCelulasCache); }
-            else {
-                // 2. Aplicar do localStorage (F5 / recarga) — síncrono, sem flash
-                try {
-                    const ls = localStorage.getItem('pma-plantao-celulas');
-                    if (ls) {
-                        const cached = JSON.parse(ls);
-                        if (_plantaoCacheDesatualizado(cached)) {
-                            localStorage.removeItem('pma-plantao-celulas');
-                        } else {
-                            _plantaoCelulasCache = cached;
-                            _plantaoAplicarCelulas(cached);
-                        }
-                    }
-                } catch(e) {}
+            if (id && plantaoMap[id]) {
+                const reg = plantaoMap[id];
+                document.getElementById('plantao-form-titulo').textContent = '✏️ Editar Período de Plantão';
+                document.getElementById('plantao-form-id').value         = id;
+                document.getElementById('plantao-form-inicio').value     = reg.data_inicio || '';
+                document.getElementById('plantao-form-fim').value        = reg.data_fim    || '';
+                document.getElementById('plantao-form-defensor').value   = reg.defensor    || '';
+                document.getElementById('plantao-form-assessoria').value = reg.assessoria  || '';
+            } else {
+                document.getElementById('plantao-form-titulo').textContent = '➕ Novo Período de Plantão';
             }
-            // 3. Sempre buscar do Firestore para manter o cache atualizado
+            overlay.classList.add('active');
+        }
+
+        function fecharFormPlantao(e) {
+            if (e && e.target !== document.getElementById('plantao-form-overlay')) return;
+            document.getElementById('plantao-form-overlay').classList.remove('active');
+        }
+
+        async function salvarPlantaoFirestore() {
+            const submitBtn = document.getElementById('plantao-form-submit');
+            submitBtn.disabled = true; submitBtn.innerHTML = '⏳ Salvando...';
             try {
-                const doc = await db.collection('secoes').doc('plantao_celulas').get();
-                if (!doc.exists) return;
-                const { celulas } = doc.data();
-                if (!celulas) return;
-                if (_plantaoCacheDesatualizado(celulas)) {
-                    localStorage.removeItem('pma-plantao-celulas');
-                    _plantaoCelulasCache = null;
-                    if (userRole === 'admin') {
-                        await db.collection('secoes').doc('plantao_celulas').delete().catch(() => {});
-                    }
-                    return;
-                }
-                _plantaoCelulasCache = celulas;
-                localStorage.setItem('pma-plantao-celulas', JSON.stringify(celulas));
-                _plantaoAplicarCelulas(celulas);
-            } catch(e) { console.warn('Erro ao carregar células plantão:', e); }
-        }
+                const id         = document.getElementById('plantao-form-id').value;
+                const inicio     = document.getElementById('plantao-form-inicio').value;
+                const fim        = document.getElementById('plantao-form-fim').value;
+                const defensor   = document.getElementById('plantao-form-defensor').value.trim();
+                const assessoria = document.getElementById('plantao-form-assessoria').value.trim();
 
-        function _plantaoOnCellFocus(e) {
-            _plantaoCelulaAtiva = e.currentTarget;
-            _rteTargetEl        = e.currentTarget;
-            _rteSavedRange      = null;
-            _rteUpdateStates();
-        }
+                if (!inicio)      throw new Error('Informe a data de início.');
+                if (!fim)         throw new Error('Informe a data de fim.');
+                if (fim < inicio) throw new Error('Data fim não pode ser anterior à data início.');
+                if (!defensor)    throw new Error('Informe o(a) defensor(a).');
+                if (!assessoria)  throw new Error('Informe a assessoria.');
 
-        function _plantaoEntrarModoEdicao() {
-            if (_plantaoModoEdicao) return;
-            _plantaoModoEdicao    = true;
-            _plantaoCelulasBackup = {};
-            document.querySelectorAll('[data-plantao-key]').forEach(td => {
-                _plantaoCelulasBackup[td.dataset.plantaoKey] = {
-                    html:      td.innerHTML,
-                    cellStyle: td.getAttribute('style') || ''
-                };
-                td.contentEditable = 'true';
-                td.classList.add('plantao-cell-editable');
-                td.addEventListener('focus', _plantaoOnCellFocus);
-                ['keyup','mouseup','keydown'].forEach(ev => td.addEventListener(ev, _rteSaveRange));
-            });
-            document.getElementById('plantao-btn-editar-tabela').style.display  = 'none';
-            document.getElementById('plantao-btn-salvar-tabela').style.display   = 'inline-flex';
-            document.getElementById('plantao-btn-cancelar-tabela').style.display = 'inline-flex';
-            _rteMountPlantao();
-        }
-
-        function _plantaoSairModoEdicao() {
-            if (!_plantaoModoEdicao) return;
-            _plantaoModoEdicao  = false;
-            _plantaoCelulaAtiva = null;
-            document.querySelectorAll('[data-plantao-key]').forEach(td => {
-                td.contentEditable = 'false';
-                td.classList.remove('plantao-cell-editable');
-                td.removeEventListener('focus', _plantaoOnCellFocus);
-            });
-            _rteUnmount();
-            const bE = document.getElementById('plantao-btn-editar-tabela');
-            const bS = document.getElementById('plantao-btn-salvar-tabela');
-            const bC = document.getElementById('plantao-btn-cancelar-tabela');
-            if (bE) bE.style.display = 'inline-flex';
-            if (bS) bS.style.display = 'none';
-            if (bC) bC.style.display = 'none';
-        }
-
-        async function _plantaoSalvarCelulas() {
-            const btnS = document.getElementById('plantao-btn-salvar-tabela');
-            btnS.disabled = true; btnS.textContent = '⏳ Salvando...';
-            const celulas = {};
-            document.querySelectorAll('[data-plantao-key]').forEach(td => {
-                celulas[td.dataset.plantaoKey] = {
-                    html:      td.innerHTML,
-                    cellStyle: td.getAttribute('style') || ''
-                };
-            });
-            try {
-                await db.collection('secoes').doc('plantao_celulas').set({
-                    celulas,
-                    atualizado_por: currentUser.email,
+                const dados = {
+                    data_inicio: inicio, data_fim: fim, defensor, assessoria,
+                    atualizado_por: firebase.auth().currentUser?.email || '',
                     atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
-                });
-                _plantaoCelulasCache = celulas;
-                localStorage.setItem('pma-plantao-celulas', JSON.stringify(celulas));
-                btnS.disabled = false; btnS.innerHTML = '✓ Salvar';
-                _plantaoSairModoEdicao();
-                mostrarToast('✅ Tabela salva com sucesso!');
+                };
+
+                if (id) {
+                    await db.collection('plantao_admin').doc(id).update(dados);
+                } else {
+                    dados.criado_por = firebase.auth().currentUser?.email || '';
+                    dados.criado_em  = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('plantao_admin').add(dados);
+                }
+                fecharFormPlantao();
+                mostrarToast('✅ Período salvo!');
+                await loadPlantaoFirestore();
             } catch(e) {
-                btnS.disabled = false; btnS.innerHTML = '✓ Salvar';
-                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+                mostrarToast('❌ Erro: ' + e.message, true);
+            } finally {
+                submitBtn.disabled = false; submitBtn.innerHTML = '💾 Salvar';
             }
         }
 
-        function _plantaoCancelarCelulas() {
-            Object.entries(_plantaoCelulasBackup).forEach(([key, data]) => {
-                const td = document.querySelector(`[data-plantao-key="${CSS.escape(key)}"]`);
-                if (!td) return;
-                td.style.cssText = data.cellStyle;
-                td.innerHTML     = data.html;
+        async function confirmarDeletarPlantao(id) {
+            const reg = plantaoMap[id];
+            if (!reg) return;
+            if (!confirm(`Excluir período de ${reg.defensor} (${_fmtPlantaoPeriodo(reg.data_inicio, reg.data_fim)})?`)) return;
+            try {
+                await db.collection('plantao_admin').doc(id).delete();
+                mostrarToast('✅ Período excluído.');
+                await loadPlantaoFirestore();
+            } catch(e) {
+                mostrarToast('❌ Erro ao excluir: ' + e.message, true);
+            }
+        }
+
+        // ── Importação em lote via CSV (100% local, sem IA) ──────────────────
+        function abrirCsvPlantao() {
+            document.getElementById('plantao-csv-textarea').value = '';
+            document.getElementById('plantao-csv-preview').innerHTML = '';
+            document.getElementById('plantao-csv-overlay').classList.add('active');
+        }
+
+        function fecharCsvPlantao(e) {
+            if (e && e.target !== document.getElementById('plantao-csv-overlay')) return;
+            document.getElementById('plantao-csv-overlay').classList.remove('active');
+        }
+
+        // Aceita DD/MM, DD/MM/AAAA ou YYYY-MM-DD. Sem ano explícito, assume o ano corrente.
+        function _plantaoParseData(str) {
+            if (!str) return '';
+            str = str.trim();
+            let m = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if (m) return str;
+            m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (m) { const [, d, mth, y] = m; return `${y}-${mth.padStart(2,'0')}-${d.padStart(2,'0')}`; }
+            m = str.match(/^(\d{1,2})\/(\d{1,2})$/);
+            if (m) { const [, d, mth] = m; return `${new Date().getFullYear()}-${mth.padStart(2,'0')}-${d.padStart(2,'0')}`; }
+            return '';
+        }
+
+        function _plantaoParseCSV(texto) {
+            const linhas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            return linhas.map((linha, idx) => {
+                let campos = linha.includes('\t') ? linha.split('\t')
+                           : linha.includes(';')  ? linha.split(';')
+                           : linha.split(',');
+                campos = campos.map(c => c.trim());
+
+                if (campos.length !== 4) {
+                    return { linha: idx + 1, ok: false, raw: linha, erro: `Esperado 4 campos, encontrado ${campos.length}` };
+                }
+                const [inicioRaw, fimRaw, defensor, assessoria] = campos;
+                const data_inicio = _plantaoParseData(inicioRaw);
+                const data_fim    = _plantaoParseData(fimRaw);
+
+                if (!data_inicio) return { linha: idx + 1, ok: false, raw: linha, erro: `Data início inválida: "${inicioRaw}"` };
+                if (!data_fim)    return { linha: idx + 1, ok: false, raw: linha, erro: `Data fim inválida: "${fimRaw}"` };
+                if (data_fim < data_inicio) return { linha: idx + 1, ok: false, raw: linha, erro: 'Data fim anterior à data início' };
+                if (!defensor)    return { linha: idx + 1, ok: false, raw: linha, erro: 'Defensor(a) vazio' };
+                if (!assessoria)  return { linha: idx + 1, ok: false, raw: linha, erro: 'Assessoria vazia' };
+
+                return { linha: idx + 1, ok: true, data_inicio, data_fim, defensor, assessoria };
             });
-            _plantaoSairModoEdicao();
+        }
+
+        let _plantaoCsvParsed = [];
+
+        function _plantaoPreviewCsv() {
+            const texto = document.getElementById('plantao-csv-textarea').value;
+            _plantaoCsvParsed = _plantaoParseCSV(texto);
+            const el = document.getElementById('plantao-csv-preview');
+
+            if (_plantaoCsvParsed.length === 0) {
+                el.innerHTML = '<p style="color:var(--text-secondary)">Nenhuma linha para importar.</p>';
+                return;
+            }
+
+            let html = '<table><thead><tr><th></th><th>Linha</th><th>Período</th><th>Defensor(a)</th><th>Assessoria</th></tr></thead><tbody>';
+            _plantaoCsvParsed.forEach((r, i) => {
+                if (r.ok) {
+                    html += `<tr>
+                        <td><input type="checkbox" checked data-csv-idx="${i}"></td>
+                        <td>${r.linha}</td>
+                        <td>${_fmtPlantaoPeriodo(r.data_inicio, r.data_fim)}</td>
+                        <td>${r.defensor}</td>
+                        <td>${r.assessoria}</td>
+                    </tr>`;
+                } else {
+                    html += `<tr class="linha-erro">
+                        <td><input type="checkbox" disabled></td>
+                        <td>${r.linha}</td>
+                        <td colspan="3">"${r.raw}" — <span class="linha-erro-msg">${r.erro}</span></td>
+                    </tr>`;
+                }
+            });
+            html += '</tbody></table>';
+
+            const validas = _plantaoCsvParsed.filter(r => r.ok).length;
+            html += `<div style="display:flex;justify-content:flex-end;margin-top:12px;">
+                <button class="btn-salvar-form" onclick="_plantaoConfirmarImportacaoCsv()">💾 Confirmar importação (${validas})</button>
+            </div>`;
+            el.innerHTML = html;
+        }
+
+        async function _plantaoConfirmarImportacaoCsv() {
+            const checkboxes = document.querySelectorAll('#plantao-csv-preview input[data-csv-idx]:checked');
+            const indices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.csvIdx));
+            if (indices.length === 0) { mostrarToast('❌ Nenhuma linha selecionada.', true); return; }
+
+            try {
+                await Promise.all(indices.map(i => {
+                    const r = _plantaoCsvParsed[i];
+                    return db.collection('plantao_admin').add({
+                        data_inicio: r.data_inicio, data_fim: r.data_fim,
+                        defensor: r.defensor, assessoria: r.assessoria,
+                        criado_por: firebase.auth().currentUser?.email || '',
+                        criado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }));
+                fecharCsvPlantao();
+                mostrarToast(`✅ ${indices.length} período(s) importado(s)!`);
+                await loadPlantaoFirestore();
+            } catch(e) {
+                mostrarToast('❌ Erro ao importar: ' + e.message, true);
+            }
+        }
+
+        // ── Migração única dos períodos extraídos da Portaria 764/2026 ───────
+        async function _plantaoImportarSeed() {
+            if (plantaoRegistros.length > 0) return;
+            if (!confirm(`Importar os ${PLANTAO_SEED_2026.length} períodos iniciais (Portaria 764/2026)?`)) return;
+            try {
+                await Promise.all(PLANTAO_SEED_2026.map(r => db.collection('plantao_admin').add({
+                    ...r,
+                    criado_por: firebase.auth().currentUser?.email || '',
+                    criado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                })));
+                mostrarToast('✅ Períodos iniciais importados!');
+                await loadPlantaoFirestore();
+            } catch(e) {
+                mostrarToast('❌ Erro ao importar: ' + e.message, true);
+            }
         }
 
         function _atrEntrarModoEdicao() {
@@ -9141,7 +9306,7 @@
             _aplicarModoEdicao();
 
             // Se os JSONs já carregaram antes da autenticação, carregar dados do Firestore agora
-            if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); loadEquipeFirestore(); loadDefensoresAdminFirestore(); }
+            if (jsonDataLoaded) { loadAfastamentosFirestore(); loadTitularesFirestore(); loadEquipeFirestore(); loadDefensoresAdminFirestore(); loadPlantaoFirestore(); }
             carregarNotificacoesAutomacao();
 
             // Restaurar seção: parâmetro URL (?s=) tem prioridade sobre sessionStorage
