@@ -4,6 +4,41 @@
 
 ---
 
+## Sessão 30 — 04/08/2026
+
+- **Nova seção "🚨 Plantão"** (nav superior + landing page) — escala de plantão cível/criminal
+  do Polo do Médio Amazonas. Dados extraídos de PDF real (Portaria nº 764/2026-GSPG/DPE/AM,
+  Anexos I-III, 13 semanas de 29/06 a 27/09/2026), lido diretamente na conversa (Read tool,
+  não automação) e revisado pela usuária antes de virar dado "oficial" no site.
+  - **Primeira versão (revertida):** tabela de tamanho fixo com células `contentEditable` + RTE,
+    no mesmo padrão de "Adote" (`secoes/plantao_celulas`). Descartada porque não permitia
+    adicionar/remover períodos — só editar texto de células já existentes.
+  - **Versão final:** lista dinâmica na coleção `plantao_admin/{id}` (schema:
+    `data_inicio`/`data_fim`/`defensor`/`assessoria`), mesmo padrão de CRUD já usado em Férias
+    Equipe. Duas vias de cadastro, **nenhuma usa IA**:
+    - Formulário de 1 período (`abrirFormPlantao`/`salvarPlantaoFirestore`).
+    - Importação em lote colando texto CSV (`data_inicio;data_fim;defensor;assessoria`, aceita
+      `;`, Tab ou `,`) — parsing 100% local em `_plantaoParseCSV()`, com pré-visualização
+      (linhas ok/erro) antes de confirmar. A dica no modal sugere copiar o PDF da portaria para
+      um chat de IA (ChatGPT etc.) e pedir o texto já em CSV — a extração acontece fora do site,
+      com revisão humana antes de colar.
+    - `PLANTAO_SEED_2026` guarda os 13 períodos da Portaria 764/2026; botão "⬇️ Importar dados
+      iniciais" grava esse seed uma única vez (some depois que a coleção deixa de estar vazia).
+  - Campo de descrição + link da portaria, editável (`secoes/plantao_info`), mesmo padrão do
+    link de resolução em Atribuições.
+  - **Decisão explícita da usuária: sem sino de notificação, sem automação de PDF via IA para
+    esta função.** Os sinos existentes (afastamentos/remoções/designações cumulativas) não têm
+    se mostrado confiáveis na prática e serão removidos futuramente — não fazia sentido
+    replicar o padrão aqui.
+  - **Pegadinha descoberta nesta sessão:** editar/commitar `firestore.rules` no repositório
+    **não publica** a regra no Firebase — é preciso `firebase deploy --only firestore:rules
+    --project polo-medio-as`. A escrita em `plantao_admin` falhou com "Missing or insufficient
+    permissions" até o deploy manual ser feito (CLI já estava instalado e autenticado neste
+    ambiente). Ver `docs/firebase.md`.
+  - Commits: `2cceac4` (primeira versão), `d396e68` (refactor pra lista dinâmica),
+    `c0fa01e` (campo de descrição/link), mais ajustes de estilo (`6482140`, `beba695`,
+    `11e31ee`, `30b266e`, `2122788`, `12a7fb6`, `73c10d5`, `6bd2949`, `3b32c8d`).
+
 ## Sessão 29 — 04/08/2026
 
 - **Novo tipo "💻 Trabalho em Trânsito" no Calendário de Afastamentos** (rótulo ajustado depois de

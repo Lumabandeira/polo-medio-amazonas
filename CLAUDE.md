@@ -27,6 +27,7 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 | Entender decisões de arquitetura ou padrão de cache | `docs/arquitetura.md` |
 | Ver o que foi implementado em sessões anteriores | `docs/historico-sessoes.md` |
 | Mexer na seção Prestação de Contas (prontos pagamentos) | `docs/site/estrutura-html.md` (seção "Prestação de Contas") · `docs/firebase.md` (schema `prestacoes_contas`) |
+| Mexer na seção Plantão (escala de plantão do interior) | `docs/site/estrutura-html.md` (seção "Plantão") · `docs/firebase.md` (schema `plantao_admin`/`plantao_info`) |
 
 ---
 
@@ -54,9 +55,18 @@ docs/
 
 ---
 
-## Estado atual (sessão 29 — 04/08/2026)
+## Estado atual (sessão 30 — 04/08/2026)
 
-**Implementado nesta sessão:** novo tipo "💻 Trabalho em Trânsito" no formulário "Novo Afastamento" da
+**Implementado nesta sessão:** nova seção "🚨 Plantão" (nav + landing) com a escala de plantão
+do Polo do Médio Amazonas, extraída da Portaria nº 764/2026-GSPG/DPE/AM. Lista dinâmica em
+`plantao_admin/{id}` (não tabela fixa) — cadastro via formulário de 1 período ou colando texto
+CSV em lote (parsing 100% local), **sem IA e sem automação de PDF** por decisão explícita da
+usuária, já que os sinos de notificação existentes não têm se mostrado confiáveis. Campo de
+descrição/link da portaria editável (`secoes/plantao_info`). Descoberta importante: commitar
+`firestore.rules` não publica a regra — precisa `firebase deploy --only firestore:rules`. Ver
+`docs/historico-sessoes.md` (sessão 30) para o detalhamento completo.
+
+**Implementado sessão 29 (04/08/2026):** novo tipo "💻 Trabalho em Trânsito" no formulário "Novo Afastamento" da
 aba Calendário (`abrirFormAfastamento`/`salvarAfastamentoFirestore`, mesma coleção
 `afastamentos_admin/{id}`, campo `tipo: 'trabalho_remoto'` — é um tipo de trabalho remoto, o valor
 interno não mudou, só o rótulo exibido). Diferente dos demais tipos, **não é
@@ -115,7 +125,8 @@ Console. Tudo testado e validado com dados reais.
 **O que falta implementar:**
 - Cadastrar os outros 36 usuários restantes no Firebase (1 admin + 35 viewers)
 - Dados privados da equipe (WhatsApp, contatos internos)
-- Botão "Plantão" — nova seção com escala de plantão (arquitetura a definir)
+- Remoção futura dos sinos de notificação/automação de PDF (afastamentos/remoções/designações
+  cumulativas) — decisão da sessão 30, não têm se mostrado confiáveis na prática
 
 Para o histórico completo do que foi implementado → `docs/historico-sessoes.md`
 
