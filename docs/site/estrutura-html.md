@@ -130,6 +130,13 @@ Plantão é 100% manual, com duas vias:
   Portaria nº 764/2026-GSPG/DPE/AM; um botão "⬇️ Importar dados iniciais"
   aparece só enquanto `plantao_admin` está vazia e grava esse seed uma única vez.
 
+**Descrição/link da portaria (editável):** logo abaixo do título, campo de texto
++ link opcional, mesmo padrão do link de resolução em Atribuições
+(`_atrEditarResolucao`/`_atrSalvarResolucao`) — aqui `_plantaoEditarInfo()` /
+`_plantaoSalvarInfo()` / `_plantaoCarregarInfo()`, gravando em `secoes/plantao_info`
+(`nome`, `url`). Se o documento não existir ou os campos estiverem vazios, cai no
+texto padrão `PLANTAO_INFO_PADRAO` (constante em `index.html`).
+
 Cache local: `pma-plantao-fs` (docs brutos de `plantao_admin`, mesmo padrão de
 `pma-equipe-fs`).
 

@@ -8218,10 +8218,16 @@
                     <button class="btn-editar" onclick="abrirCsvPlantao()">📋 Importar CSV</button>
                     ${migrarBtn}
                 </div>` : '';
+            const btnEditarInfo = isAdmin ? `
+                <button class="btn-editar" onclick="_plantaoEditarInfo()" style="margin-left:10px;vertical-align:middle">
+                    <svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar link
+                </button>` : '';
 
             let html = `
             <h2>🚨 Escala de Plantão — Polo do Médio Amazonas</h2>
-            <p class="plantao-subtitulo">Plantão Cível e de Família / Criminal e de Custódia · Portaria nº 764/2026-GSPG/DPE/AM</p>
+            <div class="plantao-subtitulo" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px">
+                <span id="plantao-info-link"><em style="color:#94a3b8;font-size:0.85em">[carregando...]</em></span>${btnEditarInfo}
+            </div>
             ${acoesBar}`;
 
             if (plantaoRegistros.length === 0) {
@@ -8244,6 +8250,67 @@
                 html += '</tbody></table></div>';
             }
             el.innerHTML = html;
+            _plantaoCarregarInfo();
+        }
+
+        // ── Descrição + link da portaria (editável) ──────────────────────────
+        const PLANTAO_INFO_PADRAO = 'Plantão Cível e de Família / Criminal e de Custódia · Portaria nº 764/2026-GSPG/DPE/AM';
+
+        async function _plantaoCarregarInfo() {
+            const linkEl = document.getElementById('plantao-info-link');
+            if (!linkEl) return;
+            try {
+                const doc = await db.collection('secoes').doc('plantao_info').get();
+                const data = doc.exists ? doc.data() : {};
+                const url      = (data.url  || '').trim();
+                const nomeCru  = (data.nome || '').trim();
+                const nome     = nomeCru || PLANTAO_INFO_PADRAO;
+
+                // Guarda valores crus (sem fallback) para preencher o form de edição
+                linkEl.dataset.url  = url;
+                linkEl.dataset.nome = nomeCru;
+
+                linkEl.innerHTML = url
+                    ? `<a href="${url}" target="_blank" rel="noopener" style="color:#c2410c;font-weight:600">${nome}</a>`
+                    : `<span style="color:#475569">${nome}</span>`;
+            } catch(e) {
+                linkEl.innerHTML = `<span style="color:#475569">${PLANTAO_INFO_PADRAO}</span>`;
+            }
+        }
+
+        function _plantaoEditarInfo() {
+            const linkEl = document.getElementById('plantao-info-link');
+            if (!linkEl) return;
+            const nomeAtual = linkEl.dataset.nome || PLANTAO_INFO_PADRAO;
+            const urlAtual  = linkEl.dataset.url  || '';
+            linkEl.innerHTML = `
+                <span style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap">
+                    <input id="plantao-info-nome" type="text" placeholder="Descrição (ex: Plantão Cível... Portaria nº ...)"
+                        value="${nomeAtual}"
+                        style="border:1.5px solid #f97316;border-radius:4px;padding:3px 8px;font-size:0.83em;width:340px;outline:none">
+                    <input id="plantao-info-url" type="url" placeholder="https://... (link da portaria, opcional)"
+                        value="${urlAtual}"
+                        style="border:1.5px solid #f97316;border-radius:4px;padding:3px 8px;font-size:0.83em;width:260px;outline:none">
+                    <button class="btn-salvar" style="display:inline-flex" onclick="_plantaoSalvarInfo()">✓ Salvar</button>
+                    <button class="btn-cancelar" style="display:inline-flex" onclick="_plantaoCarregarInfo()">✕</button>
+                </span>`;
+            document.getElementById('plantao-info-nome').focus();
+        }
+
+        async function _plantaoSalvarInfo() {
+            const nome = (document.getElementById('plantao-info-nome').value || '').trim();
+            const url  = (document.getElementById('plantao-info-url').value  || '').trim();
+            try {
+                await db.collection('secoes').doc('plantao_info').set({
+                    nome, url,
+                    atualizado_por: currentUser.email,
+                    atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                });
+                await _plantaoCarregarInfo();
+                mostrarToast('✅ Salvo com sucesso!');
+            } catch(e) {
+                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+            }
         }
 
         // ── Formulário: novo período / edição ────────────────────────────────

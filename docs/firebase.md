@@ -47,6 +47,7 @@ nome: "..."
 | `adote_info` | `html` (cabeçalho), `atualizado_por`, `atualizado_em` |
 | `adote_celulas` | `celulas` (mapa `"ROW_COL": { html, cellStyle }`), `atualizado_por`, `atualizado_em` |
 | `adote_expandir` | `html`, `atualizado_por`, `atualizado_em` |
+| `plantao_info` | `nome`, `url` (link da portaria, opcional), `atualizado_por`, `atualizado_em` — se vazio, cai no texto padrão `PLANTAO_INFO_PADRAO` no `index.html` |
 
 ### `titulares_admin/{dpKey}` — histórico de titulares por DP
 ```
