@@ -5399,5 +5399,29 @@
         "resumo": "Autoriza substituições recíprocas entre servidores de plantão de transporte para as semanas 11 e 13 de setembro/2026"
       }
     ]
+  },
+  {
+    "edicao": 2704,
+    "data": "2026-08-05",
+    "data_formatada": "05/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2704-2026__publicada_em_05_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1303/2026-GDPG/DPE/AM",
+        "sei": "26.0.000010722-0",
+        "sgi": "2601466",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - CONSIDERAR AUTORIZADO o deslocamento de Vinicius Cepil Coelho, Defensor Público de 3ª Classe, no trecho Manaus/Itapiranga/Manaus, nos dias 27 e 31 de julho de 2026, a fim de realizar sessões do Tribunal do Júri na comarca de Itapiranga-AM;",
+          "II - DETERMINAR o pagamento de diárias ao defensor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de Vinicius Cepil Coelho para Itapiranga em 27 e 31 de julho de 2026 para realizar sessões do Tribunal do Júri"
+      }
+    ]
   }
 ]
