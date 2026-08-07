@@ -5423,5 +5423,29 @@
         "resumo": "Autoriza deslocamento de Vinicius Cepil Coelho para Itapiranga em 27 e 31 de julho de 2026 para realizar sessões do Tribunal do Júri"
       }
     ]
+  },
+  {
+    "edicao": 2705,
+    "data": "2026-08-06",
+    "data_formatada": "06/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2705-2026__publicada_em_06_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1360/2026-GDPG/DPE/AM",
+        "sei": "26.0.0000010393-3",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "servidor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "PRORROGAR, a contar de 1º de setembro de 2026, pelo período de 2 (dois) meses, os efeitos da Portaria n.º 1075/2026-GDPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM em 30 de junho de 2026, Ano 12, Edição 2678, Pág. 4 de 35, referente à designação dos servidores Elaine Cristina da Silva Nascimento e Francisco Patrick Barbosa Chagas para atuação junto à 5ª e à 6ª Defensorias Públicas do Polo do Médio Amazonas, respectivamente, sem prejuízo de suas atribuições ordinárias e após o horário regular de expediente."
+        ],
+        "resumo": "Prorroga por 2 meses a designação dos servidores Elaine Cristina da Silva Nascimento e Francisco Patrick Barbosa Chagas para atuação cumulativa junto à 5ª e 6ª Defensorias Públicas do Polo do Médio Amazonas a partir de 1º de setembro de 2026"
+      }
+    ]
   }
 ]
