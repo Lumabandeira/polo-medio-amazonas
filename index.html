@@ -1429,6 +1429,51 @@
             background-color: #eff6ff !important;
         }
 
+        /* ─── Seção Escala Semanal (derivada — somente leitura) ─────── */
+        .escala-header { margin-bottom: 22px; }
+        .escala-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 6px;
+        }
+        .escala-sub {
+            font-size: 0.83em;
+            color: #64748b;
+            line-height: 1.5;
+        }
+        .escala-table th, .escala-table td {
+            border: 1px solid #e2b8b8;
+        }
+        .escala-table th {
+            text-align: center;
+            font-size: 0.85em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #9f1d1d 0%, #dc2626 100%);
+        }
+        .escala-table td {
+            text-align: center;
+            vertical-align: middle;
+            font-size: 0.86em;
+            line-height: 1.5;
+        }
+        .escala-table td.escala-semana-cell {
+            font-weight: 600;
+            color: #1e3a8a;
+            white-space: nowrap;
+            text-align: left;
+        }
+        .escala-table td.escala-audiencia-cell {
+            background: #fdeaea;
+        }
+        .escala-seg-divider {
+            display: block;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px dashed #cbd5e1;
+        }
+        .escala-vazio { color: #cbd5e1; font-style: italic; }
+
         .landing-btn-icon {
             font-size: 3.5em;
         }
@@ -3028,6 +3073,7 @@
             <p>Itacoatiara, Itapiranga, São Sebastião do Uatumã, Silves, Urucará e Urucurituba</p>
             <div id="header-nav">
                 <a class="header-nav-btn btn-atribuicoes" href="?s=atribuicoes" onclick="showSection('atribuicoes');return false;">⚖️ Atribuições</a>
+                <a class="header-nav-btn btn-escala" href="?s=escala-semanal" onclick="showSection('escala-semanal');return false;">📋 Escala Semanal</a>
                 <a class="header-nav-btn btn-designacoes" href="?s=designacoes" onclick="showSection('designacoes');return false;">📋 Designações</a>
                 <a class="header-nav-btn btn-equipe" href="?s=equipe" onclick="showSection('equipe');return false;">⛱️ Férias Equipe</a>
                 <a class="header-nav-btn btn-adote" href="?s=adote" onclick="showSection('adote');return false;"><img src="docs/gavel.png" alt="" width="26" height="26" style="vertical-align:middle;margin-right:4px;object-fit:contain"> Adote</a>
@@ -3047,6 +3093,11 @@
                     <span class="landing-btn-icon">⚖️</span>
                     <span class="landing-btn-title">Atribuições</span>
                     <span class="landing-btn-desc">Colidências e substituições automáticas das defensorias</span>
+                </button>
+                <button class="landing-btn btn-escala" onclick="showSection('escala-semanal')">
+                    <span class="landing-btn-icon">📋</span>
+                    <span class="landing-btn-title">Escala Semanal</span>
+                    <span class="landing-btn-desc">Atendimentos, audiências e plantão de cada semana, por Defensoria</span>
                 </button>
                 <button class="landing-btn btn-designacoes" onclick="showSection('designacoes')">
                     <span class="landing-btn-icon">📋</span>
@@ -3339,6 +3390,24 @@
                             <button type="submit" id="equipe-form-submit" class="btn-salvar-form">💾 Salvar</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção: Escala Semanal (derivada de Designações Semanais + Plantão) -->
+        <div id="escala-semanal" class="tab-content">
+            <div class="card">
+                <div class="escala-header">
+                    <div class="escala-title">📋 Escala Semanal — Atendimentos, Audiências e Plantão</div>
+                    <div class="escala-sub">
+                        Gerada automaticamente a partir das Designações Semanais e do Plantão cadastrado —
+                        não é editável diretamente aqui. Para corrigir algo, altere a fonte correspondente
+                        (Designações, afastamentos/substitutos ou Plantão).
+                    </div>
+                </div>
+                <div id="escala-filter-container" style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;"></div>
+                <div id="escala-content">
+                    <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
                 </div>
             </div>
         </div>
@@ -4036,15 +4105,19 @@
             const mm = String(mes).padStart(2,'0');
             const dd = String(dia).padStart(2,'0');
             const date = new Date(`2026-${mm}-${dd}T12:00:00`);
-            let best = undefined, bestStart = null;
+            let best = undefined, bestStart = null, encontrouIntervalo = false;
             for (const h of dp.historico_titulares) {
                 const s = new Date(h.inicio + 'T12:00:00');
                 const e = h.fim ? new Date(h.fim + 'T12:00:00') : new Date(2027, 0, 1);
                 if (date >= s && date <= e) {
+                    encontrouIntervalo = true;
                     if (bestStart === null || s > bestStart) { best = h.defensor; bestStart = s; } // null = vaga
                 }
             }
-            return best;
+            // Nenhum intervalo do histórico cobre esta data: DP sem titular designado
+            // (vaga) — não confundir com "JSON ainda não carregado" (undefined, acima),
+            // que é o único caso que deve cair no fallback estático do chamador.
+            return encontrouIntervalo ? best : null;
         }
 
         // ===== Placeholders — mantidos para compatibilidade com syncFromSheets =====
@@ -4278,6 +4351,7 @@
                 renderDesignacoes();
                 renderListaSubstituicoes();
                 renderDetalhesAfastamentos();
+                if (document.getElementById('escala-semanal')?.classList.contains('active')) renderEscalaSemanal();
             } catch(e) {
                 console.warn('Firestore afastamentos_admin:', e.message);
             }
@@ -4309,6 +4383,7 @@
                 if (document.getElementById('atribuicoes')?.classList.contains('active')) {
                     renderAtribuicoes();
                 }
+                if (document.getElementById('escala-semanal')?.classList.contains('active')) renderEscalaSemanal();
             } catch(e) {
                 console.warn('Firestore titulares_admin:', e.message);
             }
@@ -6892,6 +6967,206 @@
         }
 
         // =====================================================================
+        // ESCALA SEMANAL (Atendimentos, Audiências e Plantão) — somente leitura
+        // Tudo derivado de outras fontes: DPS_CONFIG/getWeekGroup (mesma lógica
+        // de Designações Semanais) + getResponsibleForDPOnDay (titular vigente,
+        // afastamento e substituto) + plantaoRegistros (Firestore plantao_admin).
+        // Nenhum dado é digitado diretamente nesta tabela.
+        // =====================================================================
+
+        // Resolve o responsável de uma DP em cada dia útil (seg-sex) da semana e
+        // agrupa dias consecutivos com o mesmo responsável em "segmentos" — só
+        // aparece mais de um segmento quando há troca de titular/substituto no
+        // meio da semana.
+        function segmentarResponsavelSemana(dp, weekStart) {
+            const segmentos = [];
+            for (let i = 0; i < 5; i++) {
+                const d = new Date(weekStart);
+                d.setDate(d.getDate() + i);
+                const resp = getResponsibleForDPOnDay(dp, d.getFullYear(), d.getMonth() + 1, d.getDate());
+                const last = segmentos[segmentos.length - 1];
+                if (last && last.name === resp.name && last.isSub === resp.isSub && last.semCobertura === resp.semCobertura) {
+                    last.fim = d;
+                } else {
+                    segmentos.push({ name: resp.name, isSub: resp.isSub, semCobertura: resp.semCobertura, inicio: d, fim: d });
+                }
+            }
+            return segmentos;
+        }
+
+        // Par (DP-ativo, DP-outro) para uma semana, conforme o mesmo grupo A/B
+        // que já destaca "quem faz atendimento" em Designações Semanais.
+        function _escalaParDaSemana(dpPrincipal, dpPar, weekGroup) {
+            return dpPrincipal.group === weekGroup ? [dpPrincipal, dpPar] : [dpPar, dpPrincipal];
+        }
+
+        function gerarEscalaSemanaData(week) {
+            const [famAtivo, famOutro]           = _escalaParDaSemana(DPS_CONFIG[0], DPS_CONFIG[1], week.group);
+            const [civelAtivo]                   = _escalaParDaSemana(DPS_CONFIG[2], DPS_CONFIG[3], week.group);
+            const [crimAtivo, crimOutro]         = _escalaParDaSemana(DPS_CONFIG[4], DPS_CONFIG[5], week.group);
+            const [silvesAtivo]                  = _escalaParDaSemana(DPS_CONFIG[10], DPS_CONFIG[11], week.group);
+
+            return {
+                atendimentoFamilia:  { dp: famAtivo,   segmentos: segmentarResponsavelSemana(famAtivo, week.start) },
+                audienciaFamilia:    { dp: famOutro,   segmentos: segmentarResponsavelSemana(famOutro, week.start) },
+                civel:               { dp: civelAtivo, segmentos: segmentarResponsavelSemana(civelAtivo, week.start) },
+                atendimentoCriminal: { dp: crimAtivo,  segmentos: segmentarResponsavelSemana(crimAtivo, week.start) },
+                audienciaCriminal:   { dp: crimOutro,  segmentos: segmentarResponsavelSemana(crimOutro, week.start) },
+                ssu:                 { dp: DPS_CONFIG[6], segmentos: segmentarResponsavelSemana(DPS_CONFIG[6], week.start) },
+                silves:              { dp: silvesAtivo, segmentos: segmentarResponsavelSemana(silvesAtivo, week.start) },
+                plantao: _escalaBuscarPlantao(week.start)
+            };
+        }
+
+        function _escalaBuscarPlantao(weekStart) {
+            // Monta a data a partir dos componentes locais (não usar toISOString,
+            // que converte para UTC e desloca o dia em fusos negativos como Manaus).
+            const iso = `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, '0')}-${String(weekStart.getDate()).padStart(2, '0')}`;
+            return (plantaoRegistros || []).find(r => r.data_inicio === iso) || null;
+        }
+
+        function _escalaRenderCelula(entry) {
+            const dpNum = entry.dp.label.match(/^(\d+)ª/)[1];
+            const segs  = entry.segmentos;
+            if (!segs.length) return '<span class="escala-vazio">—</span>';
+            return segs.map((seg, i) => {
+                let nomeHtml;
+                if (seg.semCobertura) {
+                    nomeHtml = '<span class="escala-vazio" title="Titular ausente — sem substituto definido">—</span>';
+                } else if (seg.isSub) {
+                    nomeHtml = `<em title="Substituto">${seg.name}</em>`;
+                } else {
+                    nomeHtml = seg.name;
+                }
+                let periodo = '';
+                if (segs.length > 1) {
+                    periodo = i === 0 ? ` até ${fmtDay(seg.fim)}` : ` a partir de ${fmtDay(seg.inicio)}`;
+                }
+                const linha = `${nomeHtml} <small>(${dpNum}ª DP)</small>${periodo}`;
+                return i === 0 ? linha : `<span class="escala-seg-divider">${linha}</span>`;
+            }).join('');
+        }
+
+        function _escalaRenderPlantaoCelula(periodo) {
+            if (!periodo) return '<span class="escala-vazio">—</span>';
+            let html = periodo.defensor || '—';
+            if (periodo.assessoria) html += `<br><small style="color:#64748b">${periodo.assessoria}</small>`;
+            return html;
+        }
+
+        function generateEscalaWeekRowHTML(week) {
+            const d = gerarEscalaSemanaData(week);
+            return `<tr>
+                <td class="escala-semana-cell">${formatWeekTitle(week.start, week.end)}</td>
+                <td>${_escalaRenderCelula(d.atendimentoFamilia)}</td>
+                <td class="escala-audiencia-cell">${_escalaRenderCelula(d.audienciaFamilia)}</td>
+                <td>${_escalaRenderCelula(d.civel)}</td>
+                <td>${_escalaRenderCelula(d.atendimentoCriminal)}</td>
+                <td class="escala-audiencia-cell">${_escalaRenderCelula(d.audienciaCriminal)}</td>
+                <td>${_escalaRenderPlantaoCelula(d.plantao)}</td>
+                <td>${_escalaRenderCelula(d.ssu)}</td>
+                <td>${_escalaRenderCelula(d.silves)}</td>
+            </tr>`;
+        }
+
+        // Filtro por mês escopado ao container da Escala Semanal — reaproveita as
+        // classes .month-filter-btn/.month-section (mesmo CSS), mas com busca
+        // restrita para não interferir no filtro de Designações Semanais.
+        function filterEscalaByMonth(month) {
+            document.querySelectorAll('#escala-content .month-section').forEach(s => {
+                s.style.display = 'none';
+                s.classList.add('hidden');
+            });
+            const selected = document.getElementById('escala-month-' + month);
+            if (selected) { selected.style.display = 'block'; selected.classList.remove('hidden'); }
+            document.querySelectorAll('#escala-filter-container .month-filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-month') === month);
+            });
+        }
+
+        function renderEscalaSemanal() {
+            const filterDiv  = document.getElementById('escala-filter-container');
+            const contentDiv = document.getElementById('escala-content');
+            if (!filterDiv || !contentDiv) return;
+
+            if (!jsonDesignacoes) {
+                contentDiv.innerHTML = '<p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Aguardando carregamento dos dados...</p>';
+                setTimeout(renderEscalaSemanal, 800);
+                return;
+            }
+
+            // Mesma grade de semanas (segunda a domingo) de Designações Semanais
+            const weeks = [];
+            const mon = new Date(2026, 0, 5);
+            while (mon.getFullYear() === 2026) {
+                const sun = new Date(mon); sun.setDate(sun.getDate() + 6);
+                const end = sun.getFullYear() === 2026 ? sun : new Date(2026, 11, 31);
+                weeks.push({ start: new Date(mon), end, group: getWeekGroup(new Date(mon)) });
+                mon.setDate(mon.getDate() + 7);
+            }
+            // Recesso forense até 06/01: a primeira semana começa em 07/01
+            if (weeks.length > 0) weeks[0].start = new Date(2026, 0, 7);
+
+            const byMonth = {};
+            weeks.forEach(w => {
+                const m = w.start.getMonth();
+                if (!byMonth[m]) byMonth[m] = [];
+                byMonth[m].push(w);
+            });
+
+            const currentMonthIdx = new Date().getMonth();
+
+            filterDiv.innerHTML = '';
+            MONTH_IDS_PT.forEach((id, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'month-filter-btn' + (i === currentMonthIdx ? ' active' : '');
+                btn.setAttribute('data-month', id);
+                btn.textContent = MONTH_NAMES_PT[i];
+                btn.onclick = () => filterEscalaByMonth(id);
+                filterDiv.appendChild(btn);
+            });
+
+            contentDiv.innerHTML = '';
+            MONTH_IDS_PT.forEach((id, mi) => {
+                const section = document.createElement('div');
+                section.id        = 'escala-month-' + id;
+                section.className = 'month-section';
+                if (mi !== currentMonthIdx) section.style.display = 'none';
+
+                const h3 = document.createElement('h3');
+                h3.style.cssText = 'margin-top:30px;margin-bottom:15px;color:var(--primary-color);';
+                h3.textContent   = `Escala Semanal - ${MONTH_NAMES_PT[mi]} 2026`;
+                section.appendChild(h3);
+
+                const wrap = document.createElement('div');
+                wrap.style.overflowX = 'auto';
+                let html = `<table class="escala-table"><thead>
+                    <tr>
+                        <th rowspan="2">Semana</th>
+                        <th colspan="6">Itacoatiara</th>
+                        <th colspan="2">UDIS</th>
+                    </tr>
+                    <tr>
+                        <th>Atendimento<br>Família</th>
+                        <th>Audiência<br>Família</th>
+                        <th>Atendimento e<br>Audiência Cível</th>
+                        <th>Atendimento<br>Criminal</th>
+                        <th>Audiência<br>Criminal</th>
+                        <th>Plantão</th>
+                        <th>São Sebastião<br>do Uatumã</th>
+                        <th>Silves</th>
+                    </tr>
+                </thead><tbody>`;
+                (byMonth[mi] || []).forEach(week => { html += generateEscalaWeekRowHTML(week); });
+                html += '</tbody></table>';
+                wrap.innerHTML = html;
+                section.appendChild(wrap);
+
+                contentDiv.appendChild(section);
+            });
+        }
+
+        // =====================================================================
         // SINCRONIZAÇÃO COM GOOGLE SHEETS
         // =====================================================================
 
@@ -7074,6 +7349,10 @@
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('plantao').classList.add('active');
                 renderPlantao();
+            } else if (tabName === 'escala-semanal') {
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('escala-semanal').classList.add('active');
+                renderEscalaSemanal();
             } else if (tabName === 'diario-oficial') {
                 // Diário Oficial: sem barra de abas, conteúdo direto
                 document.querySelector('.tabs').style.display = 'none';
@@ -8197,6 +8476,7 @@
                 if (ls) {
                     _plantaoAplicarRegistros(JSON.parse(ls));
                     if (document.getElementById('plantao')?.classList.contains('active')) renderPlantao();
+                    if (document.getElementById('escala-semanal')?.classList.contains('active')) renderEscalaSemanal();
                 }
             } catch(e) {}
 
@@ -8210,6 +8490,7 @@
             } catch(e) { console.warn('Erro ao carregar plantão:', e); }
 
             if (document.getElementById('plantao')?.classList.contains('active')) renderPlantao();
+            if (document.getElementById('escala-semanal')?.classList.contains('active')) renderEscalaSemanal();
         }
 
         function renderPlantao() {
