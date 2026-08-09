@@ -7162,7 +7162,7 @@
             if (!key || /vaga/i.test(String(key))) return { nome: 'Vaga', vaga: true };
 
             const info = jsonDesignacoes.defensores && jsonDesignacoes.defensores[key];
-            const nome = info ? (info.nome_curto || info.nome) : (defensorNames[key] || key);
+            const nome = info ? (info.nome_curto || info.nome) : key;
             return { nome: nome.toUpperCase(), vaga: false };
         }
 
