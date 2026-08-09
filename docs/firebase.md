@@ -62,6 +62,10 @@ atualizado_em: timestamp
 - `fim: null` = titular ativo
 - `fim: ''` = entrada histórica em branco (ainda não preenchida)
 - `fim: 'YYYY-MM-DD'` = histórico com data
+- **Lacuna (nenhuma entrada cobrindo uma data, ex: última entrada com `fim` preenchido e
+  nada cadastrado depois) = DP vaga a partir dali.** `getTitularForDPOnDay()` retorna `null`
+  nesse caso (corrigido na sessão 31 — antes retornava `undefined` e caía num fallback
+  estático que reexibia o titular "natural" antigo da DP, mesmo já ex-membro).
 
 ### `defensores_admin/{defKey}` — override de status ativo/ex-membro
 ```

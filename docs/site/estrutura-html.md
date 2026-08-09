@@ -1,6 +1,6 @@
 # Estrutura do Site (index.html)
 
-> Atualizado em 14/06/2026 — reflete sessões 1–24
+> Atualizado em 09/08/2026 — reflete sessões 1–31
 
 ## Arquivo Único
 
@@ -17,6 +17,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | Botão na Landing | ID da seção | Função JS |
 |-----------------|-------------|----------|
 | ⚖️ Atribuições | `#atribuicoes` | `showSection('atribuicoes')` |
+| 📋 Escala Semanal | `#escala-semanal` | `showSection('escala-semanal')` → `renderEscalaSemanal()` |
 | 📋 Designações | `#designacoes` | `showSection('designacoes')` |
 | ⛱️ Férias Equipe | `#equipe` | `showSection('equipe')` |
 | 🏘️ Adote | `#adote` | `showSection('adote')` |
@@ -139,6 +140,36 @@ texto padrão `PLANTAO_INFO_PADRAO` (constante em `index.html`).
 
 Cache local: `pma-plantao-fs` (docs brutos de `plantao_admin`, mesmo padrão de
 `pma-equipe-fs`).
+
+## Escala Semanal (`#escala-semanal`)
+
+Tabela **somente leitura** com Atendimento/Audiência de Família, Cível e Criminal,
+Plantão, e as duas UDIS (São Sebastião do Uatumã e Silves) — uma linha por semana,
+com filtro por mês (mesmo padrão visual de Designações Semanais, mas com filtro
+isolado: `filterEscalaByMonth()` só busca dentro de `#escala-content`, não afeta o
+filtro de `#designacoes-content`). Não existe nenhum Firestore próprio nem edição —
+tudo é calculado em `renderEscalaSemanal()` a partir de outras fontes já existentes:
+
+- **Semanas**: mesma grade segunda-domingo do ano (com o ajuste do recesso forense,
+  1ª semana começa 07/01) usada em `renderDesignacoes()`.
+- **Quem faz Atendimento vs. Audiência**: reaproveita `DPS_CONFIG`/`getWeekGroup()` —
+  a mesma lógica que já destaca amarelo/azul em Designações Semanais. Dentro de cada
+  par (1ª/2ª Família, 3ª/4ª Cível, 5ª/6ª Criminal, 11ª/12ª Silves), a DP do grupo
+  ativo na semana = Atendimento; a outra = Audiência. **Cível e Silves mostram só uma
+  coluna** (o par "acumula" atendimento+audiência na mesma pessoa, conforme o Anexo I
+  da Resolução 013/2023 — ver linha "Audiências" na tabela de Atribuições).
+- **Quem é a pessoa em cada dia**: `getResponsibleForDPOnDay()` (mesma função de
+  Designações Semanais — já considera titular vigente, afastamento e substituto).
+  `segmentarResponsavelSemana()` percorre os 5 dias úteis e agrupa em "segmentos":
+  se o responsável muda no meio da semana, a célula mostra as duas partes
+  (`"até DD/MM"` / `"a partir de DD/MM"`) separadas por uma linha pontilhada.
+- **Plantão**: `_escalaBuscarPlantao()` casa a segunda-feira da semana com
+  `data_inicio` em `plantaoRegistros` (mesma coleção `plantao_admin` da seção
+  Plantão) — fica em branco nas semanas sem período cadastrado.
+
+Estética própria (`escala-*` no CSS): cabeçalho em gradiente vermelho (diferente do
+azul padrão do site), grade visível em todas as células, e fundo levemente mais
+claro nas colunas de Audiência para diferenciar de Atendimento.
 
 ## Prestação de Contas (`#prestacao-contas`, admin-only)
 

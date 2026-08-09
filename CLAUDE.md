@@ -28,6 +28,7 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 | Ver o que foi implementado em sessões anteriores | `docs/historico-sessoes.md` |
 | Mexer na seção Prestação de Contas (prontos pagamentos) | `docs/site/estrutura-html.md` (seção "Prestação de Contas") · `docs/firebase.md` (schema `prestacoes_contas`) |
 | Mexer na seção Plantão (escala de plantão do interior) | `docs/site/estrutura-html.md` (seção "Plantão") · `docs/firebase.md` (schema `plantao_admin`/`plantao_info`) |
+| Mexer na seção Escala Semanal (atendimento/audiência/plantão por semana) | `docs/site/estrutura-html.md` (seção "Escala Semanal") — somente leitura, sem Firestore próprio |
 
 ---
 
@@ -55,9 +56,24 @@ docs/
 
 ---
 
-## Estado atual (sessão 30 — 04/08/2026)
+## Estado atual (sessão 31 — 09/08/2026)
 
-**Implementado nesta sessão:** nova seção "🚨 Plantão" (nav + landing) com a escala de plantão
+**Implementado nesta sessão:** nova seção "📋 Escala Semanal" (nav + landing, logo após
+Atribuições) — tabela somente leitura de Atendimento/Audiência de Família, Cível e Criminal,
+Plantão e as duas UDIS, uma linha por semana. **100% derivada de fontes já existentes** (mesma
+lógica de `DPS_CONFIG`/`getWeekGroup()` de Designações Semanais + `getResponsibleForDPOnDay()` +
+`plantao_admin`) — sem Firestore próprio, sem edição direta na tabela. Segmenta dia a dia dentro
+da semana quando o responsável muda no meio dela. Ver `docs/site/estrutura-html.md` (seção
+"Escala Semanal") e `docs/historico-sessoes.md` (sessão 31) para o detalhamento completo.
+
+Também nesta sessão: nova linha "Audiências" na tabela de Atribuições (texto do Anexo I da
+Resolução 013/2023, depois resumido); dois bugfixes de titularidade — `_atrResolverDefensor()`
+mostrava titulares livres (nomes fora do dicionário `defensores`) como vaga por engano, e
+`getTitularForDPOnDay()` reexibia ex-defensores como titulares atuais quando havia lacuna no
+`historico_titulares` sem entrada de vaga explícita (afeta Designações Semanais e Escala
+Semanal). Ver `docs/firebase.md`.
+
+**Implementado sessão 30 (04/08/2026):** nova seção "🚨 Plantão" (nav + landing) com a escala de plantão
 do Polo do Médio Amazonas, extraída da Portaria nº 764/2026-GSPG/DPE/AM. Lista dinâmica em
 `plantao_admin/{id}` (não tabela fixa) — cadastro via formulário de 1 período ou colando texto
 CSV em lote (parsing 100% local), **sem IA e sem automação de PDF** por decisão explícita da

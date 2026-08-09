@@ -4,6 +4,53 @@
 
 ---
 
+## Sessão 31 — 09/08/2026
+
+- **Lida a íntegra do ANEXO I da Resolução nº 13/2023-CSDPE/AM** (atribuições do Polo do Médio
+  Amazonas, já com a alteração da Resolução 017/2026 de 7/5/2026) e comparada com a tabela
+  "Atribuições" já existente no site — confirmado que todos os campos batiam (atribuição/matéria,
+  dígitos pares/ímpares, colidência, substituições, extrajudicial). A comparação inicial de
+  colidência apontou divergência, mas era erro de leitura de direção da minha parte — a usuária
+  corrigiu (o texto "DP-X é colidente da DP-Y" pertence à *linha* da DP-Y na tabela) e, refeita
+  corretamente, os dados do site já estavam certos.
+- **Nova linha "Audiências"** na tabela de Atribuições (1ª-6ª DP, texto do regime de revezamento
+  do Anexo I, depois resumido para versão mais direta a pedido da usuária — ex: "Reveza com a 2ª
+  DP, se responsável pelo atendimento, não acumula audiências").
+- **Bugfix em `_atrResolverDefensor()`** (tabela Atribuições): titulares livres (nomes fora do
+  dicionário `defensores`) caíam num fallback (`defensorNames[key]`) que `_atualizarNomesVaga()`
+  preenche com rótulo genérico `"Nª DP (vaga)"` para *qualquer* chave fora do dicionário — inclusive
+  titulares livres reais, não só vagas de fato. A 8ª e a 9ª DP apareciam como vaga mesmo tendo
+  titular. Corrigido para usar o nome/chave digitado diretamente, igual ao padrão já usado em
+  Designações → Defensorias.
+- **Nova seção "📋 Escala Semanal"** (nav superior + landing page, posicionada logo após
+  Atribuições) — tabela somente leitura de Atendimento/Audiência de Família, Cível e Criminal,
+  Plantão e as duas UDIS, uma linha por semana. **Não é editável e não tem Firestore próprio** —
+  100% derivada de fontes já existentes (mesma lógica de `DPS_CONFIG`/`getWeekGroup()` de
+  Designações Semanais para saber quem faz atendimento x audiência, `getResponsibleForDPOnDay()`
+  para o responsável do dia, e `plantao_admin` para a coluna Plantão). Detalhamento completo em
+  `docs/site/estrutura-html.md` (seção "Escala Semanal").
+  - Decisão explícita da usuária durante o planejamento: preencher via fontes de dados, nunca
+    editar a tabela em si diretamente.
+  - Segmentação dia a dia dentro da semana (mostra "até DD/MM... a partir de DD/MM" quando o
+    responsável muda no meio da semana), a pedido da usuária, replicando o comportamento de uma
+    planilha de referência que ela usa manualmente.
+- **Bugfix em `getTitularForDPOnDay()`** — descoberto ao testar a Escala Semanal, mas afeta
+  também Designações Semanais: quando nenhum intervalo do `historico_titulares` de uma DP cobre a
+  data pedida (ex: última entrada com `fim` preenchido e nada cadastrado depois), a função
+  retornava `undefined`, que o chamador (`getResponsibleForDPOnDay`) trata como "JSON ainda não
+  carregado" e cai num fallback estático hardcoded (o titular "natural" de cada DP em
+  `DPS_CONFIG`) — reexibindo ex-defensores como titulares atuais (ex: Ícaro voltando a aparecer na
+  3ª DP a partir de 01/09/2026, mesmo já vaga). Corrigido para retornar `null` explicitamente
+  nesse caso, tratado corretamente como vaga. Ver `docs/firebase.md`.
+- Estética da Escala Semanal ajustada a pedido da usuária: grade visível em todas as células,
+  cabeçalho em vermelho mais vivo (gradiente `#9f1d1d → #dc2626`, diferente do azul padrão do
+  site e do tom rosado da planilha de referência), cabeçalho em negrito, e fundo levemente mais
+  claro (`#fdeaea`) nas colunas de Audiência para diferenciar de Atendimento.
+- Commits: `06631c1` (linha Audiências), `0e6f325` (textos resumidos), `379c662` (bugfix titular
+  livre), `8168688` (seção Escala Semanal + bugfix titular vaga + estética + reordenação de botão).
+
+---
+
 ## Sessão 30 — 04/08/2026
 
 - **Nova seção "🚨 Plantão"** (nav superior + landing page) — escala de plantão cível/criminal
