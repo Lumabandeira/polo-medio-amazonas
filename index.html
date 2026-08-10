@@ -3258,6 +3258,7 @@
                         <option value="12">12ª DP</option>
                     </select>
                 </div>
+                <div id="ls-filter-container" style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;"></div>
                 <div id="lista-substituicoes-container">
                     <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
                 </div>
@@ -5552,6 +5553,9 @@
         let currentMonth = new Date().getMonth(); // mês vigente (0=Jan … 11=Dez)
         let currentYear  = new Date().getFullYear();
         let filtroListaDP = null;
+        // Lista fixa (não usa MONTH_IDS_PT aqui — essa const só é declarada mais abaixo no arquivo)
+        let filtroListaMes = ['janeiro','fevereiro','marco','abril','maio','junho',
+            'julho','agosto','setembro','outubro','novembro','dezembro'][new Date().getMonth()];
         let notificacoesData = [];
         let remocaoNotifData = [];
         let designacaoNotifData = [];
@@ -6207,16 +6211,41 @@
                 porMes[mesNum].push(item);
             });
 
+            // Botões de filtro por mês — escopados a este container, não interferem
+            // nos filtros de mês de Designações Diárias nem de Escala Semanal.
+            const lsFilterDiv = document.getElementById('ls-filter-container');
+            if (lsFilterDiv) {
+                lsFilterDiv.innerHTML = '';
+                MONTH_IDS_PT.forEach((id, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'month-filter-btn' + (id === filtroListaMes ? ' active' : '');
+                    btn.setAttribute('data-month', id);
+                    btn.textContent = MONTH_NAMES_PT[i];
+                    btn.onclick = () => filterListaSubstituicoesByMonth(id);
+                    lsFilterDiv.appendChild(btn);
+                });
+            }
+
             let html = '';
-            Object.keys(porMes).sort((a, b) => +a - +b).forEach(mesNum => {
-                html += `<h3 style="margin:28px 0 12px;color:var(--primary-color);border-bottom:2px solid var(--primary-color);padding-bottom:6px">${months[mesNum - 1]} 2026</h3>`;
+            MONTH_IDS_PT.forEach((id, mi) => {
+                const mesNum = mi + 1;
+                const itensDoMes = porMes[mesNum] || [];
+                html += `<div class="month-section" id="ls-month-${id}"${id === filtroListaMes ? '' : ' style="display:none"'}>`;
+                html += `<h3 style="margin:28px 0 12px;color:var(--primary-color);border-bottom:2px solid var(--primary-color);padding-bottom:6px">${MONTH_NAMES_PT[mi]} 2026</h3>`;
+
+                if (itensDoMes.length === 0) {
+                    html += `<p style="text-align:center;padding:20px;color:var(--text-secondary)">Nenhuma substituição registrada em ${MONTH_NAMES_PT[mi]}.</p>`;
+                    html += '</div>';
+                    return;
+                }
+
                 html += `<div style="overflow-x:auto"><table class="modal-table"><thead><tr>
                     <th>Defensor</th><th>Tipo</th><th>Defensoria Afetada</th>
                     <th>Substituto</th><th>Diário Oficial</th><th>Processo</th>
                     <th style="width:80px">Ações</th>
                 </tr></thead><tbody>`;
 
-                porMes[mesNum].forEach(({ origem, reg }, regIdx) => {
+                itensDoMes.forEach(({ origem, reg }, regIdx) => {
                     // Resolve campos comuns
                     let defNome, tipoLabel, processo, firestoreId, jsonEventoId;
                     let linhas = []; // { dp, subNome, subInicio, subFim, link }
@@ -6320,9 +6349,24 @@
                 });
 
                 html += '</tbody></table></div>';
+                html += '</div>';
             });
 
             container.innerHTML = html;
+        }
+
+        // Filtro de mês escopado à Lista de Substituições — não interfere nos
+        // filtros de mês de Designações Diárias nem de Escala Semanal.
+        function filterListaSubstituicoesByMonth(month) {
+            filtroListaMes = month;
+            document.querySelectorAll('#lista-substituicoes-container .month-section').forEach(s => {
+                s.style.display = 'none';
+            });
+            const selected = document.getElementById('ls-month-' + month);
+            if (selected) selected.style.display = 'block';
+            document.querySelectorAll('#ls-filter-container .month-filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-month') === month);
+            });
         }
 
         function changeMonth(direction) {
