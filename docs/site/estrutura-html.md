@@ -1,6 +1,6 @@
 # Estrutura do Site (index.html)
 
-> Atualizado em 09/08/2026 — reflete sessões 1–31
+> Atualizado em 09/08/2026 — reflete sessões 1–32
 
 ## Arquivo Único
 
@@ -23,19 +23,37 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | 🏘️ Adote | `#adote` | `showSection('adote')` |
 | 🚨 Plantão | `#plantao` | `showSection('plantao')` → `renderPlantao()` |
 | 📰 Diário Oficial | `#diario` | `showSection('diario')` |
-| 💰 Prestação de Contas | `#prestacao-contas` | `showSection('prestacao-contas')` — **admin-only**, botão fica `display:none` para viewers |
+| 💰 Prestação de Contas | `#prestacao-contas` | `showSection('prestacao-contas')` — **admin-only**. Tem botão tanto na landing (`#btn-prestacao-contas`) quanto no header-nav (`#header-btn-prestacao-contas`, ao lado de Diário Oficial, largura reduzida com texto em 2 linhas pra caber na barra); ambos ficam `display:none` para viewers e são mostrados/ocultados juntos na mesma checagem de admin. |
 
 ## Abas dentro da seção Designações (`#designacoes`)
+
+Ordem na barra (sessão 32): Defensorias · Calendários de afastamentos · Lista de Substituições · Resumo de Afastamentos · Designações diárias.
 
 | ID da aba | Nome | Função de render |
 |-----------|------|-----------------|
 | `defensorias` | 📋 Defensorias | `renderDefensorias()` |
-| `designacoes-semanais` | 📅 Designações semanais | `renderDesignacoes()` |
-| `calendario` | 📅 Calendário | `renderCalendar()` |
-| `lista-substituicoes` | 📋 Lista de Substituições | `renderListaSubstituicoes()` |
+| `calendario` | 📅 Calendários de afastamentos | `renderCalendar()` |
+| `lista-substituicoes` | 📋 Lista de Substituições | `renderListaSubstituicoes()` — tem filtro por mês próprio (ver abaixo) |
 | `detalhes` | 📊 Resumo de Afastamentos | `renderDetalhesAfastamentos()` |
+| `designacoes-periodo` | 📅 Designações diárias | `renderDesignacoes()` — nome do id no código não mudou (só o rótulo visível), continua `designacoes-periodo` |
 
 > ⚠️ A aba "Tabela Completa" foi **removida** em sessão anterior. O Calendário Visual é a aba principal de ausências.
+
+### Filtro por mês em Lista de Substituições (sessão 32)
+
+Antes a lista só criava uma seção por mês para os que tinham registro, tudo em rolagem
+contínua. Agora `renderListaSubstituicoes()` sempre gera as 12 seções (`.month-section`,
+id `ls-month-{mês}`), com botões de filtro (`#ls-filter-container`, mesma classe visual
+`.month-filter-btn` das outras duas grades de mês do site) que mostram só o mês
+selecionado — meses sem registro exibem uma mensagem em vez de sumir da navegação.
+
+- `filterListaSubstituicoesByMonth(mes)` busca apenas dentro de `#lista-substituicoes-container`
+  e `#ls-filter-container` — não interfere no filtro de Designações Diárias
+  (`filterByMonth`, global) nem no da Escala Semanal (`filterEscalaByMonth`, escopado a
+  `#escala-content`). Os três reaproveitam as mesmas classes CSS mas nunca se enxergam.
+- `filtroListaMes` (variável global, padrão = mês atual) guarda a seleção e **persiste**
+  quando o filtro "Filtrar por DP" muda (o dropdown já existente, `filtroListaDP`) —
+  trocar de DP não volta pro mês padrão.
 
 ## Sinos de Notificação (admin only, barra de abas)
 
@@ -52,7 +70,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | `jsonDesignacoes` | `docs/designacoes-2026.json` | defensores, DPs, historico_titulares |
 | `jsonAfastamentos` | `docs/afastamentos-2026.json` | eventos base de afastamentos |
 | `afastamentos[ano][mes][dia]` | JSON + Firestore mesclados | badges no calendário |
-| `detalhesAfastamentos[ano][mes][dia]` | JSON + Firestore mesclados | modal de detalhes |
+| `detalhesAfastamentos[ano][mes][dia]` | JSON + Firestore mesclados | modal de detalhes — `_afastamentosAplicarCache()` (sessão 32) limpa as entradas de origem Firestore (`item.firestoreId`) antes de remesclar, pra função ser segura mesmo se rodar mais de uma vez na sessão (antes duplicava linhas no popup do dia) |
 | `afastamentosFirestoreMap` | `afastamentos_admin` | registros criados via admin |
 | `trabalhoRemoto[ano][mes][dia]` | `afastamentos_admin` (`tipo:'trabalho_remoto'`) | badge transparente no calendário — não é ausência |
 | `equipeAfastamentos[ano][mes][dia]` | `afastamentos_equipe` | calendário Férias Equipe |

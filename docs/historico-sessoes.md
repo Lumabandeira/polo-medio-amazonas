@@ -4,6 +4,42 @@
 
 ---
 
+## Sessão 32 — 09/08/2026
+
+- **Bugfix real de duplicação de afastamentos**, encontrado pela usuária ao testar a Escala
+  Semanal: no popup de detalhe do dia (aba Calendário), férias/folgas vindas do Firestore
+  apareciam duas vezes (ex: Emilly e Miguel em agosto/2026), embora a Lista de Substituições
+  mostrasse corretamente. Causa: `_afastamentosAplicarCache()` só empilhava os registros do
+  Firestore em `detalhesAfastamentos` via `mergeAfastamentoFirestoreRecord()`, sem nunca limpar
+  entradas de uma aplicação anterior — se a função rodasse mais de uma vez na sessão, cada
+  afastamento duplicava. Corrigido removendo as entradas de origem Firestore antes de remesclar
+  a cada chamada. Ver `docs/site/estrutura-html.md`.
+- **Filtro por mês em Lista de Substituições** — botões Janeiro-Dezembro iguais aos de
+  Designações Diárias e Escala Semanal, mas escopados ao próprio container (`filterListaSubstituicoesByMonth`),
+  sem interferir nos outros dois filtros de mês da página. Todos os 12 meses viram seção
+  (antes só os que tinham registro); mês selecionado persiste ao trocar o filtro de DP.
+- **Ajustes estéticos e de nomenclatura na navegação**, a pedido da usuária:
+  - Botão Plantão → laranja (`#f97316` → `#fed7aa`); Escala Semanal herdou o vermelho que
+    era do Plantão (`#7f1d1d` → `#ef4444`). Testadas variações mais claras de ambos os tons
+    (com preview visual antes de aplicar) — a usuária optou por manter os tons originais
+    depois de testar.
+  - Sub-aba "Designações semanais" → **"Designações diárias"** (rótulo, título `<h2>`, texto
+    descritivo, aviso em Trabalho em Trânsito e legenda da Escala Semanal) e **movida** para
+    depois de "Resumo de Afastamentos" na barra. "Calendário" → **"Calendários de
+    afastamentos"**. Só rótulos visíveis mudaram — nenhum `id` ou função interna foi tocado.
+  - Card "Designações" na landing: nova descrição ("Designações dos Defensores, Afastamentos
+    e Substituições").
+  - Removido o contador "Total de Defensores" em 👥 Defensores Públicos, mantendo só "Total
+    de Defensorias".
+- **Botão "Prestação de Contas" também no header-nav** (antes só existia na landing) — ao
+  lado de Diário Oficial, largura reduzida com texto em duas linhas pra caber na barra,
+  admin-only (mostrado/ocultado junto com o card da landing na mesma checagem de role).
+- Commits: `3a20d13` (estética/nomenclatura), `4505ce6` (bugfix duplicação), `05344fa`
+  (legenda Escala Semanal), `0007c39` (filtro de mês em Lista de Substituições), `895f8a2`
+  (botão Prestação de Contas no header).
+
+---
+
 ## Sessão 31 — 09/08/2026
 
 - **Lida a íntegra do ANEXO I da Resolução nº 13/2023-CSDPE/AM** (atribuições do Polo do Médio

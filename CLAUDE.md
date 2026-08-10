@@ -56,9 +56,21 @@ docs/
 
 ---
 
-## Estado atual (sessão 31 — 09/08/2026)
+## Estado atual (sessão 32 — 09/08/2026)
 
-**Implementado nesta sessão:** nova seção "📋 Escala Semanal" (nav + landing, logo após
+**Implementado nesta sessão:** bugfix real de duplicação de afastamentos no popup de
+detalhe do dia (`_afastamentosAplicarCache()` não limpava as entradas do Firestore em
+`detalhesAfastamentos` antes de remesclar — corrigido); filtro por mês em Lista de
+Substituições (mesmo padrão visual de Designações Diárias/Escala Semanal, escopado pra não
+interferir nos outros); ajustes de estética/nomenclatura na navegação a pedido da usuária
+(Plantão laranja, Escala Semanal com o vermelho que era do Plantão, "Designações semanais"
+→ "Designações diárias" e "Calendário" → "Calendários de afastamentos", reordenação de
+abas, nova descrição do card Designações, removido contador "Total de Defensores"); botão
+"Prestação de Contas" agora também no header-nav (antes só na landing). Ver
+`docs/site/estrutura-html.md` e `docs/historico-sessoes.md` (sessão 32) para o
+detalhamento completo.
+
+**Implementado sessão 31 (09/08/2026):** nova seção "📋 Escala Semanal" (nav + landing, logo após
 Atribuições) — tabela somente leitura de Atendimento/Audiência de Família, Cível e Criminal,
 Plantão e as duas UDIS, uma linha por semana. **100% derivada de fontes já existentes** (mesma
 lógica de `DPS_CONFIG`/`getWeekGroup()` de Designações Semanais + `getResponsibleForDPOnDay()` +
