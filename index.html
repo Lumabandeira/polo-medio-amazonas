@@ -4338,6 +4338,18 @@
             afastamentosFirestoreMap = {};
             jsonOverrideMap = {};
             trabalhoRemoto = {};
+            // Remove entradas do Firestore de uma aplicação anterior antes de remesclar
+            // (mantém intactas as de JSON, que só são reconstruídas por
+            // buildDetalhesFromJSONEventos). mergeAfastamentoFirestoreRecord() só empilha
+            // em detalhesAfastamentos — sem essa limpeza, chamar esta função mais de uma
+            // vez na sessão duplica as linhas no popup de detalhe do dia.
+            Object.values(detalhesAfastamentos).forEach(porAno =>
+                Object.values(porAno).forEach(porMes =>
+                    Object.keys(porMes).forEach(dia => {
+                        porMes[dia] = porMes[dia].filter(item => !item.firestoreId);
+                    })
+                )
+            );
             registros.forEach(reg => {
                 afastamentosFirestoreMap[reg.id] = reg;
                 mergeAfastamentoFirestoreRecord(reg);
