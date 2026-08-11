@@ -5608,5 +5608,29 @@
         "resumo": "Designa José Wellington de Brito Mendes cumulativamente na 10ª DP do Polo Médio Amazonas (Urucará) de 17-31/08/2026"
       }
     ]
+  },
+  {
+    "edicao": 2707,
+    "data": "2026-08-10",
+    "data_formatada": "10/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2707-2026__publicada_em_10_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1406/2026-GDPG/DPE/AM",
+        "sei": "26.0.000011014-0",
+        "sgi": "2351",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Ana Karoline Santos Pinto Rocha, Defensora Publica de 2ª classe, e Luiza Lydia Arruda da Silva Cabral Chaves, Diretora Adjunta DPE-4, no trecho Manaus/Itacoatiara/Manaus, no período de 10 a 12 de agosto de 2026, a fim de participar da programação da campanha \"Agosto Lilás\", no município de Itacoatiara-AM",
+          "II - DETERMINAR o pagamento de diárias à defensora pública e à servidora pública acima relacionadas."
+        ],
+        "resumo": "Autoriza deslocamento de defensora e servidora para Itacoatiara no período de 10-12/08/2026 para participar da campanha 'Agosto Lilás'"
+      }
+    ]
   }
 ]
