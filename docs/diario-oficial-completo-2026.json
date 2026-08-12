@@ -5632,5 +5632,87 @@
         "resumo": "Autoriza deslocamento de defensora e servidora para Itacoatiara no período de 10-12/08/2026 para participar da campanha 'Agosto Lilás'"
       }
     ]
+  },
+  {
+    "edicao": 2708,
+    "data": "2026-08-11",
+    "data_formatada": "11/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2708-2026__publicada_em_11_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1432/2026-GDPG/DPE/AM",
+        "sei": "26.0.000011105-7",
+        "sgi": "2601541",
+        "categorias": [
+          "comarca",
+          "servidor",
+          "projeto"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Paulo Roberto de Carvalho, Auxiliar I de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no período de 10 a 12 de agosto de 2026, a fim de realizar a condução da Dra. Ana Karoline Santos Pinto Rocha e da servidora Luiza Lydia Arruda da Silva Cabral Chaves ao município Itacoatiara-AM, bem como prestar apoio logísticas durante a execução das atividades institucionais",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor a Itacoatiara para apoio logístico ao Projeto Gente da 319 (10-12 ago/2026)"
+      },
+      {
+        "numero": "Portaria Nº 76/2026-ESUDPAM/DPE/AM",
+        "sei": "25.0.000006671-3",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "CONSIDERANDO a responsabilidade da Escola Superior da Defensoria Pública pelo planejamento, organização e execução do Processo Seletivo de Estágio de Graduação para o Polo Médio Amazonas, com sede em Itacoatiara/AM",
+          "I - PRORROGAR, por 01 (um) ano, a validade do Processo Seletivo de Estágio de Graduação, nos termos do item 7.4 do Edital nº 47/2025 - ESUDPAM/DPE/AM."
+        ],
+        "resumo": "Prorroga por 1 ano a validade do Processo Seletivo de Estágio para o Polo Médio Amazonas com sede em Itacoatiara"
+      },
+      {
+        "numero": "Edital Nº 87/2026 - ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "A ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS - ESUDPAM e a COORDENAÇÃO DO POLO MÉDIO AMAZONAS, no uso de suas atribuições institucionais, tornam pública a abertura de Seleção Pública para o preenchimento de 01 (uma) vaga e formação de Cadastro de Reserva para Estagiário de Graduação para a Unidade Descentralizada do Interior em São Sebastião do Uatumã/AM",
+          "1.5 O estágio será realizado presencialmente na Unidade de Interior da Defensoria em São Sebastião do Uatumã/AM, localizada na rua Justino de Melo, nº 81, no bairro Centro de São Sebastião do Uatumã/AM.",
+          "1.6 As atividades do estagiário serão orientadas e supervisionadas por Defensor Público ou por servidor do quadro de pessoal da DPE/AM"
+        ],
+        "resumo": "Abre seleção pública para 1 vaga de estagiário de graduação em São Sebastião do Uatumã com validade de 1 ano"
+      },
+      {
+        "numero": "Edital Nº 88/2026 - ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca"
+        ],
+        "trechos": [
+          "A DIRETORA DA ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS e a COORDENAÇÃO DA UNIDADE DE PRESIDENTE FIGUEIREDO, no uso de suas atribuições e considerando as disposições da Resolução nº 10/2019 – CSDPE/AM",
+          "I – TORNAR PÚBLICO o Resultado Final do EDITAL Nº 80/2026-ESUDPAM/DPE/AM dos candidatos(as) habilitados(as) no Processo Seletivo de Estágio de Graduação para a unidade de Presidente Figueiredo"
+        ],
+        "resumo": "Publica resultado final do processo seletivo de estágio para unidade de Presidente Figueiredo (Polo Médio)"
+      },
+      {
+        "numero": "Portaria Nº 426/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor"
+        ],
+        "trechos": [
+          "4.1 A seleção será feita pelo Defensor Público Ênio Jorge Lima Barbalho Júnior, mediante análise do currículo dos(as) candidatos(as)"
+        ],
+        "resumo": "Designa Defensor Público Ênio Jorge Lima Barbalho Júnior para seleção de estágio do Polo Médio Amazonas"
+      }
+    ]
   }
 ]
