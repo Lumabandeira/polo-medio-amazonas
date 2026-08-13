@@ -5714,5 +5714,42 @@
         "resumo": "Designa Defensor Público Ênio Jorge Lima Barbalho Júnior para seleção de estágio do Polo Médio Amazonas"
       }
     ]
+  },
+  {
+    "edicao": 2709,
+    "data": "2026-08-12",
+    "data_formatada": "12/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2709-2026__publicada_em_12_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 830/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "substituicao",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Daniele dos Santos Fernandes para atuar na 10ª Defensoria Pública do Polo do Alto Solimões (São Paulo de Olivença), no período de 07 de agosto a 30 de setembro de 2026"
+        ],
+        "resumo": "Designa Daniele dos Santos Fernandes para atuar cumulativamente na 10ª DP do Polo do Alto Solimões de 07/08 a 30/09/2026"
+      },
+      {
+        "numero": "Portaria Nº 838/2026-GSPG/DPE/AM",
+        "sei": "26.0.000011278-9",
+        "sgi": "2600447, 2600508 e 2600511",
+        "categorias": [
+          "defensor",
+          "substituicao",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 1ª Classe Marco Aurélio Martins da Silva para atuar na 1ª Defensoria Pública do Polo Baixo Amazonas, nos períodos de 10 a 13 de agosto e 17 a 26 de agosto de 2026"
+        ],
+        "resumo": "Designa Marco Aurélio Martins da Silva para atuar cumulativamente na 1ª DP do Polo Baixo Amazonas nos períodos de 10-13/08 e 17-26/08/2026"
+      }
+    ]
   }
 ]
