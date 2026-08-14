@@ -5751,5 +5751,60 @@
         "resumo": "Designa Marco Aurélio Martins da Silva para atuar cumulativamente na 1ª DP do Polo Baixo Amazonas nos períodos de 10-13/08 e 17-26/08/2026"
       }
     ]
+  },
+  {
+    "edicao": 2710,
+    "data": "2026-08-13",
+    "data_formatada": "13/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2710-2026__publicada_em_13_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1438/2026-GDPG/DPE/AM",
+        "sei": "26.0.000011322-0",
+        "sgi": "2601564",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - CONSIDERAR AUTORIZADO o deslocamento de Jonilson Coelho dos Anjos, Assistente Técnico em Tecnologia da Informação de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no período de 10 a 12 de agosto de 2026, a fim de realizar suporte técnico presencial na campanha \"Agosto Lilás\""
+        ],
+        "resumo": "Autoriza deslocamento de servidor para Itacoatiara para suporte técnico na campanha Agosto Lilás (10-12/08/2026)"
+      },
+      {
+        "numero": "Portaria Nº 827/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010669-0",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Arthur de Oliveira Cavalcante para atuar na 2ª Defensoria Pública do Polo do Médio Madeira, a contar do dia 24 de agosto de 2026",
+          "III - DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Patricia Sousa Barros Leal para atuar na 3ª Defensoria Pública do Polo do Médio Madeira, a contar do dia 24 de agosto de 2026",
+          "IV - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Arthur de Oliveira Cavalcante para atuar na 7ª Defensoria Pública do Polo do Médio Madeira (Nova Olinda do Norte), a contar do dia 24 de agosto de 2026",
+          "V - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Danilo Justino Garcia para atuar na 6ª Defensoria Pública do Polo Médio Madeira (Borba"
+        ],
+        "resumo": "Designa defensores para atuar cumulativamente no Polo Médio Madeira a partir de 24/08/2026"
+      },
+      {
+        "numero": "Portaria Nº 77/2026-ESUDPAM/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "A DIRETORA DA ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS E A COORDENAÇÃO DO POLO MÉDIO AMAZONAS, no uso das atribuições",
+          "CONSIDERANDO a responsabilidade da Escola Superior da Defensoria Pública pelo planejamento, organização e execução do Processo Seletivo de Estágio de Graduação do Polo Médio Amazonas / Unidade Descentralizada do Interior em São Sebastião do Uatumã da Defensoria Pública do Estado do Amazonas",
+          "V - COMUNICAR que os integrantes da equipe de fiscais e de apoio farão jus à concessão de 1 (um) dia de dispensa de suas atividades, não concomitante, a título de contraprestação, nem cumulável, a ser usufruído no período de 1 (um) ano",
+          "VI – INFORMAR que o membro poderá requerer a substituição da folga concedida no inciso III da presente portaria pelo reconhecimento da atuação como fiscal para fins de cumprimento do inciso V da Resolução nº 029/2026-CSDPE/AM"
+        ],
+        "resumo": "Divulga fiscais e avaliadores para Processo Seletivo de Estágio de Graduação do Polo Médio Amazonas em São Sebastião do Uatumã (17/08/2026)"
+      }
+    ]
   }
 ]
