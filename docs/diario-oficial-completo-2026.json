@@ -5806,5 +5806,68 @@
         "resumo": "Divulga fiscais e avaliadores para Processo Seletivo de Estágio de Graduação do Polo Médio Amazonas em São Sebastião do Uatumã (17/08/2026)"
       }
     ]
+  },
+  {
+    "edicao": 2711,
+    "data": "2026-08-17",
+    "data_formatada": "17/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2711-2026__publicada_em_17_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1462/2026-GDPG/DPE/AM",
+        "sei": "26.0.000009982-0",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "ALTERAR o trecho de deslocamento do Defensor Público Vinicius Cepil Coelho autorizado pela Portaria n.º 1336/2026/GDPG/DPE/AM, publicada no D.O.E DPE/AM ano 12, edição 2704, pág. 1/15, publicada no dia 05.08.2026, de Manaus/Itapiranga/Manaus para Manaus/Manacapuru/Manaus."
+        ],
+        "resumo": "Altera deslocamento do Defensor Público Vinicius Cepil Coelho de Itapiranga para Manacapuru"
+      },
+      {
+        "numero": "Portaria Nº 87/2026-ESUDPAM/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "A DIRETORA DA ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS e a COORDENAÇÃO DO POLO MÉDIO AMAZONAS, no uso das suas atribuições, tornam pública a Relação Preliminar das inscrições dos candidatos da Seleção Pública de Estagiário de Graduação, nos termos do Edital nº 87/2026.",
+          "Art. 2º. Consideram-se indeferidas as inscrições dos candidatos relacionados no Anexo II, que não atenderam aos requisitos relativos à área de formação, conforme previsto no item 1.1 do Edital, ou que não atenderam ao disposto no item 1.5 quanto à atuação presencial na cidade de São Sebastião do Uatumã."
+        ],
+        "resumo": "Divulga relação preliminar de inscrições para Seleção Pública de Estagiário de Graduação do Polo Médio Amazonas, incluindo vagas em São Sebastião do Uatumã"
+      },
+      {
+        "numero": "Portaria Nº 78/2026-ESUDPAM/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "projeto"
+        ],
+        "trechos": [
+          "A DIRETORA DA ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS E A COORDENAÇÃO DO POLO PURUS, no uso das atribuições, previsto no item 1.5 quanto à atuação presencial na cidade de São Sebastião do Uatumã."
+        ],
+        "resumo": "Portaria sobre Processo Seletivo de Estágio de Graduação para Pauini/AM com requisito de atuação em São Sebastião do Uatumã"
+      },
+      {
+        "numero": "Portaria Nº 849/2026-GSPG/DPE/AM",
+        "sei": "26.0.000011080-8",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, a Defensora Pública de 3.ª Classe Carine Teresa Lopes de Sousa Possidônio, para atuar nas Sessões de Julgamento do Tribunal do Júri da Vara Única da Comarca de Itapiranga nos dias 22 e 23 de setembro de 2026, conforme Anexo Único;"
+        ],
+        "resumo": "Designa Defensora Pública Carine Teresa Lopes de Sousa Possidônio para atuar no Tribunal do Júri de Itapiranga nos dias 22 e 23 de setembro de 2026"
+      }
+    ]
   }
 ]
