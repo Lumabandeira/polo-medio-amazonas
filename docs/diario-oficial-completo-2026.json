@@ -5869,5 +5869,29 @@
         "resumo": "Designa Defensora Pública Carine Teresa Lopes de Sousa Possidônio para atuar no Tribunal do Júri de Itapiranga nos dias 22 e 23 de setembro de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2712,
+    "data": "2026-08-18",
+    "data_formatada": "18/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2712-2026__publicada_em_18_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 80/2026-ESUDPAM/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "A DIRETORA DA ESCOLA SUPERIOR E A COORDENAÇÃO DO POLO MÉDIO AMAZONAS DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS, no uso de suas atribuições, e considerando as disposições da Resolução nº 10/2019 – CSDPE/AM (estágio)",
+          "I – TORNAR PÚBLICO o Resultado Preliminar, em ordem de classificação, dos(as) candidatos(as) do Processo Seletivo de Estágio de Graduação para a Unidade Descentralizada do Interior de São Sebastião do Uatumã/AM, conforme o Anexo I desta Portaria"
+        ],
+        "resumo": "Publica resultado preliminar do processo seletivo de estágio de graduação para a Unidade Descentralizada de São Sebastião do Uatumã/AM do Polo Médio Amazonas"
+      }
+    ]
   }
 ]
