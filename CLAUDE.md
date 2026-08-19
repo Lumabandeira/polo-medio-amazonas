@@ -28,6 +28,7 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 | Ver o que foi implementado em sessões anteriores | `docs/historico-sessoes.md` |
 | Mexer na seção Prestação de Contas (prontos pagamentos) | `docs/site/estrutura-html.md` (seção "Prestação de Contas") · `docs/firebase.md` (schema `prestacoes_contas`) |
 | Mexer na seção Plantão (escala de plantão do interior) | `docs/site/estrutura-html.md` (seção "Plantão") · `docs/firebase.md` (schema `plantao_admin`/`plantao_info`) |
+| Mexer na seção Viagens e Eventos (tabelas de viagens/eventos da equipe) | `docs/site/estrutura-html.md` (seção "Viagens e Eventos") · `docs/firebase.md` (schema `viagens_tabela1`/`viagens_tabela2`) |
 | Mexer na seção Escala Semanal (atendimento/audiência/plantão por semana) | `docs/site/estrutura-html.md` (seção "Escala Semanal") — somente leitura, sem Firestore próprio |
 
 ---
@@ -56,9 +57,27 @@ docs/
 
 ---
 
-## Estado atual (sessão 32 — 09/08/2026)
+## Estado atual (sessão 33 — 19/08/2026)
 
-**Implementado nesta sessão:** bugfix real de duplicação de afastamentos no popup de
+**Implementado nesta sessão:** nova seção "🧳 Viagens e Eventos" (nav + landing, logo após
+Adote, botão visível a todos os usuários logados — só a edição é admin-only). Duas tabelas
+independentes (`VIAGENS_TABELAS[1]`/`[2]` em `index.html`): "Eventos e Próximas Viagens
+Previstas" (Data/Membro/Motivo) e "Viagens Trimestrais" (Local/Data/Motivo/Membro), seed
+inicial extraído do PDF fornecido pela usuária. Padrão novo no site: linhas guardadas como
+array ordenado `linhas:[{id,celulas:[...]}]` (não o mapa `ROW_COL` de Atribuições/Adote,
+porque é preciso inserir/excluir linha em **qualquer posição, exceto o cabeçalho**) e célula em
+modo edição é `<textarea>` puro (sem RTE) em vez de `contentEditable` — decisão explícita da
+usuária por "texto pré-formatado" simples. Cada linha ganha ➕ inserir-acima / 🗑️ excluir no
+modo edição; `_viagensColetar()` sincroniza os `<textarea>` visíveis antes de qualquer
+inserir/excluir, então editar uma linha e depois inserir/excluir outra não perde o que já foi
+digitado. Testado no navegador (sem login real — verificação via console simulando
+`userRole='admin'`): renderização das duas tabelas, entrar/sair modo edição, inserir acima,
+excluir com confirmação, cancelar restaura snapshot original, e escaping contra
+HTML/script injection na célula. `firestore.rules` não precisou de alteração — `secoes/{id}`
+já cobre escrita admin-only genericamente. Ver `docs/site/estrutura-html.md` (seção "Viagens e
+Eventos") e `docs/firebase.md` para o detalhamento completo.
+
+**Implementado sessão 32 (09/08/2026):** bugfix real de duplicação de afastamentos no popup de
 detalhe do dia (`_afastamentosAplicarCache()` não limpava as entradas do Firestore em
 `detalhesAfastamentos` antes de remesclar — corrigido); filtro por mês em Lista de
 Substituições (mesmo padrão visual de Designações Diárias/Escala Semanal, escopado pra não

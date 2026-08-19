@@ -1112,6 +1112,11 @@
             color: white;
         }
 
+        .btn-viagens {
+            background: linear-gradient(135deg, #5b21b6 0%, #a78bfa 100%);
+            color: white;
+        }
+
         /* ─── Prestação de Contas ────────────────────────────────── */
         .pc-lista-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -1487,6 +1492,84 @@
             border-top: 1px dashed #cbd5e1;
         }
         .escala-vazio { color: #cbd5e1; font-style: italic; }
+
+        /* ─── Seção Viagens e Eventos ────────────────────────────── */
+        #viagens-eventos .card h2 { color: #5b21b6; border-bottom-color: #7c3aed; }
+        .viagens-header { margin-bottom: 18px; }
+        .viagens-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #5b21b6;
+            margin-bottom: 6px;
+        }
+        .viagens-sub {
+            font-size: 0.85em;
+            color: #64748b;
+            line-height: 1.5;
+        }
+        .viagens-block { margin-bottom: 30px; }
+        .viagens-block h3 {
+            color: #5b21b6;
+            margin: 0 0 8px;
+            font-size: 1.15em;
+        }
+        .viagens-edit-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+        .viagens-table-wrap {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .viagens-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 480px;
+            font-size: 0.9em;
+        }
+        .viagens-table th {
+            background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%);
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        .viagens-table th.viagens-th-acoes { text-align: center; width: 90px; }
+        .viagens-table td {
+            padding: 9px 14px;
+            border: 1px solid #e2e8f0;
+            vertical-align: top;
+        }
+        .viagens-cell-view { white-space: pre-wrap; line-height: 1.5; }
+        .viagens-table tbody tr:nth-child(even) td { background: #f5f3ff; }
+        .viagens-cell-input {
+            width: 100%;
+            min-height: 40px;
+            border: 1.5px solid #a78bfa;
+            border-radius: 5px;
+            padding: 5px 7px;
+            font-family: inherit;
+            font-size: 0.95em;
+            resize: vertical;
+            background: #faf5ff;
+        }
+        .viagens-cell-input:focus {
+            outline: none;
+            border-color: #5b21b6;
+            background: white;
+        }
+        .viagens-row-acoes { text-align: center; white-space: nowrap; }
+        .viagens-row-btn {
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1em;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        .viagens-row-btn:hover { background: #ede9fe; }
+        .viagens-row-btn-del:hover { background: #fee2e2; }
+        .viagens-add-row { margin-top: 10px; }
 
         .landing-btn-icon {
             font-size: 3.5em;
@@ -3091,6 +3174,7 @@
                 <a class="header-nav-btn btn-designacoes" href="?s=designacoes" onclick="showSection('designacoes');return false;">📋 Designações</a>
                 <a class="header-nav-btn btn-equipe" href="?s=equipe" onclick="showSection('equipe');return false;">⛱️ Férias Equipe</a>
                 <a class="header-nav-btn btn-adote" href="?s=adote" onclick="showSection('adote');return false;"><img src="docs/gavel.png" alt="" width="26" height="26" style="vertical-align:middle;margin-right:4px;object-fit:contain"> Adote</a>
+                <a class="header-nav-btn btn-viagens" href="?s=viagens-eventos" onclick="showSection('viagens-eventos');return false;">🧳 Viagens e Eventos</a>
                 <a class="header-nav-btn btn-plantao" href="?s=plantao" onclick="showSection('plantao');return false;">🚨 Plantão</a>
                 <a class="header-nav-btn btn-diario" href="?s=diario-oficial" onclick="showSection('diario-oficial');return false;">📰 Diário Oficial</a>
                 <a id="header-btn-prestacao-contas" class="header-nav-btn btn-prestacao-contas" href="?s=prestacao-contas" onclick="showSection('prestacao-contas');return false;" style="display:none">💰 Prestação de Contas</a>
@@ -3128,6 +3212,11 @@
                     <span class="landing-btn-icon"><img src="docs/gavel.png" alt="Gavel" width="78" height="78" style="object-fit:contain"></span>
                     <span class="landing-btn-title">Adote</span>
                     <span class="landing-btn-desc">Projetos Adote uma Comarca e Expandir Presença, Garantir Direitos</span>
+                </button>
+                <button class="landing-btn btn-viagens" onclick="showSection('viagens-eventos')">
+                    <span class="landing-btn-icon">🧳</span>
+                    <span class="landing-btn-title">Viagens e Eventos</span>
+                    <span class="landing-btn-desc">Agenda de eventos, próximas viagens e viagens trimestrais da equipe</span>
                 </button>
                 <button class="landing-btn btn-plantao" onclick="showSection('plantao')">
                     <span class="landing-btn-icon">🚨</span>
@@ -3453,6 +3542,15 @@
                     <p>28. Urucurituba</p>
                     <br>
                     <p>33. Urucará</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção: Viagens e Eventos -->
+        <div id="viagens-eventos" class="tab-content">
+            <div class="card">
+                <div id="viagens-eventos-content">
+                    <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
                 </div>
             </div>
         </div>
@@ -7384,6 +7482,9 @@
             // Encerrar edição de Atribuições/Adote se estava ativa
             if (typeof _atrModoEdicao   !== 'undefined' && _atrModoEdicao)   _atrSairModoEdicao();
             if (typeof _adoteModoEdicao !== 'undefined' && _adoteModoEdicao) _adoteSairModoEdicao();
+            if (typeof _viagensState !== 'undefined') {
+                Object.keys(_viagensState).forEach(k => { if (_viagensState[k]) _viagensState[k].modoEdicao = false; });
+            }
             document.getElementById('landing').style.display = 'block';
             document.querySelector('.tabs').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
@@ -7426,6 +7527,10 @@
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('escala-semanal').classList.add('active');
                 renderEscalaSemanal();
+            } else if (tabName === 'viagens-eventos') {
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('viagens-eventos').classList.add('active');
+                renderViagensEventos();
             } else if (tabName === 'diario-oficial') {
                 // Diário Oficial: sem barra de abas, conteúdo direto
                 document.querySelector('.tabs').style.display = 'none';
@@ -8965,6 +9070,274 @@
                 td.innerHTML     = data.html;
             });
             _atrSairModoEdicao();
+        }
+
+        // =====================================================================
+        // Viagens e Eventos — duas tabelas de linhas livres (texto puro,
+        // sem RTE), com inserir/excluir linha em qualquer posição (exceto
+        // cabeçalho). Cada tabela é um doc Firestore próprio em secoes/.
+        // =====================================================================
+        const VIAGENS_TABELAS = {
+            1: {
+                titulo: '🧳 Eventos e Próximas Viagens Previstas',
+                colunas: ['Data', 'Membro/Servidor', 'Motivo'],
+                doc: 'viagens_tabela1',
+                cacheKey: 'pma-viagens-tabela1',
+                seed: [
+                    ['21 a 23/05/2026', 'Emilly', 'Inauguração do PAV de Urucará'],
+                    ['26 a 28/05/2026', 'Enio', 'Justiça em Ação – DPE e UEA'],
+                    ['25 a 29/05/2026', 'Eliaquim e Natália', 'Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba'],
+                    ['08 a 12/06/2026', 'Emilly e Miguel', 'Sessões do Tribunal do Júri em Itacoatiara'],
+                    ['09 a 12/06/2026', 'Corregedoria', 'Correição Ordinária'],
+                    ['15 a 18/06/2026', 'Miguel e Larice', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais em Itapiranga'],
+                    ['15 a 19/06/2026', 'Eliaquim, Fábio', 'Mutirão Previdenciário em Itacoatiara'],
+                    ['27 a 31/07/2026', 'Roger e dois servidores', 'Mutirão carcerário em Itacoatiara'],
+                    ['14 a 18/09/2026', 'Projeto Institucional Meu Pedaço de Chão', 'SEI 26.0.000007745-2 - Ações extrajudiciais voltadas à regularização fundiária em favor da população em situação de vulnerabilidade social do Município de Urucurituba/AM.'],
+                ]
+            },
+            2: {
+                titulo: '📅 Viagens Trimestrais',
+                colunas: ['Local', 'Data', 'Motivo', 'Membro/Servidor'],
+                doc: 'viagens_tabela2',
+                cacheKey: 'pma-viagens-tabela2',
+                seed: [
+                    ['Urucurituba', '25 a 29/05/2026', 'Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba', 'Eliaquim e Natália'],
+                    ['Itapiranga', '15 a 18/06/2026', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', 'Miguel e Larice'],
+                    ['Silves', '25 a 28/05/2026', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', 'Ícaro'],
+                    ['Urucará', '22 a 26/06/2026', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', 'Emilly'],
+                    ['São Sebastião do Uatumã', '29/06/2026 a 03/07/2026', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', 'Enio'],
+                ]
+            }
+        };
+
+        let _viagensState = { 1: null, 2: null };
+
+        function _viagensUid() {
+            return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+        }
+
+        function _viagensEscHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s == null ? '' : String(s);
+            return d.innerHTML;
+        }
+
+        function renderViagensEventos() {
+            const el = document.getElementById('viagens-eventos-content');
+            if (!el) return;
+            const isAdmin = userRole === 'admin';
+
+            let html = `
+                <div class="viagens-header">
+                    <div class="viagens-title">🧳 Eventos e Próximas Viagens</div>
+                    <div class="viagens-sub">Agenda de eventos, viagens previstas e viagens trimestrais da equipe do Polo Médio Amazonas.</div>
+                </div>`;
+
+            [1, 2].forEach(n => {
+                const cfg = VIAGENS_TABELAS[n];
+                const editBar = isAdmin ? `
+                    <div class="viagens-edit-bar">
+                        <button class="btn-editar" id="viagens-btn-editar-${n}" onclick="_viagensEntrarModoEdicao(${n})">
+                            <svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar tabela
+                        </button>
+                        <button class="btn-salvar" id="viagens-btn-salvar-${n}" style="display:none" onclick="_viagensSalvar(${n})">✓ Salvar</button>
+                        <button class="btn-cancelar" id="viagens-btn-cancelar-${n}" style="display:none" onclick="_viagensCancelar(${n})">✕ Cancelar</button>
+                    </div>` : '';
+
+                const ths = cfg.colunas.map(c => `<th>${c}</th>`).join('');
+
+                html += `
+                    <div class="viagens-block">
+                        <h3>${cfg.titulo}</h3>
+                        ${editBar}
+                        <div class="viagens-table-wrap">
+                            <table class="viagens-table">
+                                <thead><tr>${ths}<th id="viagens-th-acoes-${n}" class="viagens-th-acoes" style="display:none">Ações</th></tr></thead>
+                                <tbody id="viagens-tbody-${n}">
+                                    <tr><td colspan="${cfg.colunas.length + 1}" style="text-align:center;color:#94a3b8;padding:18px">⏳ Carregando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="viagens-add-row" id="viagens-add-row-${n}" style="display:none">
+                            <button type="button" class="btn-editar" onclick="_viagensAdicionarLinha(${n})">➕ Adicionar linha</button>
+                        </div>
+                    </div>`;
+            });
+
+            el.innerHTML = html;
+            _viagensCarregarTabela(1);
+            _viagensCarregarTabela(2);
+        }
+
+        function _viagensRenderTabela(n) {
+            const cfg   = VIAGENS_TABELAS[n];
+            const st    = _viagensState[n];
+            const tbody = document.getElementById('viagens-tbody-' + n);
+            if (!tbody || !st) return;
+            const editando = st.modoEdicao;
+
+            if (!st.linhas.length) {
+                tbody.innerHTML = `<tr><td colspan="${cfg.colunas.length + 1}" style="text-align:center;color:#94a3b8;font-style:italic;padding:18px">Nenhum registro cadastrado.</td></tr>`;
+            } else {
+                tbody.innerHTML = st.linhas.map(row => {
+                    const cels = cfg.colunas.map((_, i) => {
+                        const val = row.celulas[i] || '';
+                        if (editando) {
+                            return `<td><textarea class="viagens-cell-input" data-row-id="${row.id}" data-col="${i}" rows="2">${_viagensEscHtml(val)}</textarea></td>`;
+                        }
+                        return `<td class="viagens-cell-view">${_viagensEscHtml(val)}</td>`;
+                    }).join('');
+                    const acoes = editando ? `
+                        <td class="viagens-row-acoes">
+                            <button type="button" class="viagens-row-btn" title="Inserir linha acima" onclick="_viagensInserirAcima(${n}, '${row.id}')">➕</button>
+                            <button type="button" class="viagens-row-btn viagens-row-btn-del" title="Excluir linha" onclick="_viagensExcluirLinha(${n}, '${row.id}')">🗑️</button>
+                        </td>` : '';
+                    return `<tr data-row-id="${row.id}">${cels}${acoes}</tr>`;
+                }).join('');
+            }
+
+            const thAcoes = document.getElementById('viagens-th-acoes-' + n);
+            if (thAcoes) thAcoes.style.display = editando ? 'table-cell' : 'none';
+            const addWrap = document.getElementById('viagens-add-row-' + n);
+            if (addWrap) addWrap.style.display = editando ? 'block' : 'none';
+        }
+
+        function _viagensAplicarLinhas(n, linhas) {
+            if (!_viagensState[n]) _viagensState[n] = { linhas: [], modoEdicao: false, backup: null, carregado: false };
+            _viagensState[n].linhas = (linhas || []).map(r => ({
+                id: r.id || _viagensUid(),
+                celulas: (r.celulas || []).slice()
+            }));
+            _viagensRenderTabela(n);
+        }
+
+        async function _viagensCarregarTabela(n) {
+            const cfg = VIAGENS_TABELAS[n];
+            if (!_viagensState[n]) _viagensState[n] = { linhas: [], modoEdicao: false, backup: null, carregado: false };
+            const st = _viagensState[n];
+
+            // 1. Cache em memória / localStorage (evita flash) — mesmo padrão de _atrCarregarCelulas
+            if (st.carregado) {
+                _viagensRenderTabela(n);
+            } else {
+                try {
+                    const ls = localStorage.getItem(cfg.cacheKey);
+                    if (ls) _viagensAplicarLinhas(n, JSON.parse(ls));
+                    else _viagensAplicarLinhas(n, cfg.seed.map(cel => ({ celulas: cel })));
+                } catch(e) {
+                    _viagensAplicarLinhas(n, cfg.seed.map(cel => ({ celulas: cel })));
+                }
+            }
+
+            // 2. Sempre buscar do Firestore para manter atualizado
+            try {
+                const doc = await db.collection('secoes').doc(cfg.doc).get();
+                if (doc.exists && doc.data().linhas) {
+                    const linhas = doc.data().linhas;
+                    _viagensAplicarLinhas(n, linhas);
+                    localStorage.setItem(cfg.cacheKey, JSON.stringify(linhas));
+                }
+                st.carregado = true;
+            } catch(e) {
+                console.warn('Erro ao carregar ' + cfg.doc + ':', e);
+            }
+        }
+
+        // Sincroniza os <textarea> visíveis de volta para o array em memória
+        // antes de qualquer operação estrutural (inserir/excluir/salvar).
+        function _viagensColetar(n) {
+            const st = _viagensState[n];
+            if (!st || !st.modoEdicao) return;
+            document.querySelectorAll(`#viagens-tbody-${n} tr[data-row-id]`).forEach(tr => {
+                const row = st.linhas.find(r => r.id === tr.dataset.rowId);
+                if (!row) return;
+                tr.querySelectorAll('textarea.viagens-cell-input').forEach(ta => {
+                    row.celulas[parseInt(ta.dataset.col, 10)] = ta.value;
+                });
+            });
+        }
+
+        function _viagensEntrarModoEdicao(n) {
+            const st = _viagensState[n];
+            if (!st) return;
+            st.backup = JSON.parse(JSON.stringify(st.linhas));
+            st.modoEdicao = true;
+            _viagensRenderTabela(n);
+            document.getElementById('viagens-btn-editar-' + n).style.display   = 'none';
+            document.getElementById('viagens-btn-salvar-' + n).style.display   = 'inline-flex';
+            document.getElementById('viagens-btn-cancelar-' + n).style.display = 'inline-flex';
+        }
+
+        function _viagensSairModoEdicao(n) {
+            const st = _viagensState[n];
+            if (!st) return;
+            st.modoEdicao = false;
+            st.backup = null;
+            _viagensRenderTabela(n);
+            const be = document.getElementById('viagens-btn-editar-' + n);
+            const bs = document.getElementById('viagens-btn-salvar-' + n);
+            const bc = document.getElementById('viagens-btn-cancelar-' + n);
+            if (be) be.style.display = 'inline-flex';
+            if (bs) bs.style.display = 'none';
+            if (bc) bc.style.display = 'none';
+        }
+
+        function _viagensCancelar(n) {
+            const st = _viagensState[n];
+            if (!st) return;
+            if (st.backup) st.linhas = st.backup;
+            _viagensSairModoEdicao(n);
+        }
+
+        function _viagensAdicionarLinha(n) {
+            _viagensColetar(n);
+            const cfg = VIAGENS_TABELAS[n];
+            _viagensState[n].linhas.push({ id: _viagensUid(), celulas: cfg.colunas.map(() => '') });
+            _viagensRenderTabela(n);
+        }
+
+        function _viagensInserirAcima(n, rowId) {
+            _viagensColetar(n);
+            const st  = _viagensState[n];
+            const cfg = VIAGENS_TABELAS[n];
+            const idx = st.linhas.findIndex(r => r.id === rowId);
+            const novo = { id: _viagensUid(), celulas: cfg.colunas.map(() => '') };
+            if (idx === -1) st.linhas.push(novo); else st.linhas.splice(idx, 0, novo);
+            _viagensRenderTabela(n);
+        }
+
+        function _viagensExcluirLinha(n, rowId) {
+            _viagensColetar(n);
+            if (!confirm('Excluir esta linha?')) return;
+            const st = _viagensState[n];
+            st.linhas = st.linhas.filter(r => r.id !== rowId);
+            _viagensRenderTabela(n);
+        }
+
+        async function _viagensSalvar(n) {
+            _viagensColetar(n);
+            const st   = _viagensState[n];
+            const cfg  = VIAGENS_TABELAS[n];
+            const btnS = document.getElementById('viagens-btn-salvar-' + n);
+            btnS.disabled    = true;
+            btnS.textContent = '⏳ Salvando...';
+            try {
+                const linhas = st.linhas.map(r => ({ id: r.id, celulas: r.celulas }));
+                await db.collection('secoes').doc(cfg.doc).set({
+                    linhas,
+                    atualizado_por: currentUser.email,
+                    atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                });
+                localStorage.setItem(cfg.cacheKey, JSON.stringify(linhas));
+                btnS.disabled  = false;
+                btnS.innerHTML = '✓ Salvar';
+                _viagensSairModoEdicao(n);
+                mostrarToast('✅ Tabela salva com sucesso!');
+            } catch(e) {
+                btnS.disabled  = false;
+                btnS.innerHTML = '✓ Salvar';
+                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+            }
         }
 
         let diarioLoaded = false;

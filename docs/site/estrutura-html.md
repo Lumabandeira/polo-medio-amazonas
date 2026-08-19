@@ -21,6 +21,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | 📋 Designações | `#designacoes` | `showSection('designacoes')` |
 | ⛱️ Férias Equipe | `#equipe` | `showSection('equipe')` |
 | 🏘️ Adote | `#adote` | `showSection('adote')` |
+| 🧳 Viagens e Eventos | `#viagens-eventos` | `showSection('viagens-eventos')` → `renderViagensEventos()` |
 | 🚨 Plantão | `#plantao` | `showSection('plantao')` → `renderPlantao()` |
 | 📰 Diário Oficial | `#diario` | `showSection('diario')` |
 | 💰 Prestação de Contas | `#prestacao-contas` | `showSection('prestacao-contas')` — **admin-only**. Tem botão tanto na landing (`#btn-prestacao-contas`) quanto no header-nav (`#header-btn-prestacao-contas`, ao lado de Diário Oficial, largura reduzida com texto em 2 linhas pra caber na barra); ambos ficam `display:none` para viewers e são mostrados/ocultados juntos na mesma checagem de admin. |
@@ -220,6 +221,53 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   mostrou um artefato de renderização que não existe no arquivo real — se for depurar isso de novo,
   confie no PDF baixado de verdade, não na pré-visualização.
 
+## Viagens e Eventos (`#viagens-eventos`)
+
+Botão visível a **todos os usuários logados** (viewer e admin), diferente de Prestação de
+Contas — só os controles de edição (Editar tabela / adicionar linha / inserir linha acima /
+excluir linha) são admin-only, decididos no próprio `renderViagensEventos()` via
+`userRole === 'admin'` (mesmo padrão de `renderAtribuicoes()`/`renderPlantao()`, não usa a
+lista `.admin-only` de `_aplicarModoEdicao()`).
+
+Duas tabelas independentes, empilhadas na mesma seção (config em `VIAGENS_TABELAS[1]`/`[2]`
+no `index.html`):
+
+| # | Título | Colunas | Doc Firestore | Cache localStorage |
+|---|--------|---------|---------------|---------------------|
+| 1 | 🧳 Eventos e Próximas Viagens Previstas | Data · Membro/Servidor · Motivo | `secoes/viagens_tabela1` | `pma-viagens-tabela1` |
+| 2 | 📅 Viagens Trimestrais | Local · Data · Motivo · Membro/Servidor | `secoes/viagens_tabela2` | `pma-viagens-tabela2` |
+
+**Modelo de dados:** array ordenado `linhas: [{ id, celulas: [...] }]` — **não** é o mapa
+`ROW_COL` usado em Atribuições/Adote, porque aquele mapa assume grade de tamanho fixo e aqui
+é preciso inserir/excluir linha em qualquer posição (exceto cabeçalho, que fica fora do array
+— é `<thead>` estático gerado a partir de `VIAGENS_TABELAS[n].colunas`). `id` por linha
+(`_viagensUid()`) garante estabilidade ao reordenar.
+
+**Célula — texto puro, sem RTE:** diferente de Atribuições/Adote (contentEditable + editor de
+texto rico), aqui cada célula em modo edição vira um `<textarea>` (`viagens-cell-input`), sem
+negrito/cor/link. Em modo leitura, o texto é escapado via `_viagensEscHtml()` (usa
+`textContent`→`innerHTML` de um `<div>` auxiliar) e exibido com `white-space:pre-wrap`, que
+preserva quebras de linha nativamente sem precisar converter `\n` em `<br>`. Testado contra
+injeção de HTML/script — conteúdo malicioso é sempre renderizado como texto, nunca como tag.
+
+**Inserir/excluir linha em qualquer posição (exceto cabeçalho):** padrão novo, não existia
+antes no site. Em modo edição, cada `<tr>` ganha dois botões (`viagens-row-acoes`): ➕ insere
+linha vazia acima daquela linha (`_viagensInserirAcima`), 🗑️ exclui a linha
+(`_viagensExcluirLinha`, com `confirm()`). Botão "➕ Adicionar linha" no rodapé
+(`_viagensAdicionarLinha`) acrescenta no final. Antes de qualquer operação estrutural,
+`_viagensColetar(n)` sincroniza os `<textarea>` visíveis de volta pro array em memória — assim
+inserir/excluir uma linha não perde edições já digitadas em outras linhas.
+
+**Editar/Salvar/Cancelar:** `_viagensEntrarModoEdicao(n)` tira um snapshot profundo
+(`JSON.parse(JSON.stringify(...))`) em `st.backup` antes de habilitar edição;
+`_viagensCancelar(n)` restaura esse snapshot; `_viagensSalvar(n)` coleta os valores finais e
+grava `{ linhas, atualizado_por, atualizado_em }` no Firestore.
+
+**Seed inicial:** `VIAGENS_TABELAS[n].seed` — dados extraídos do PDF "Nova Funcionalidade no
+site" (sessão 33). Serve só como fallback de exibição enquanto o doc Firestore não existir
+(mesmo espírito de `PLANTAO_INFO_PADRAO`) — nunca é gravado automaticamente; só passa a existir
+no Firestore quando um admin salva a tabela pela primeira vez.
+
 ## Cache localStorage (elimina flash de dados)
 
 | Chave | Conteúdo |
@@ -230,6 +278,8 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
 | `pma-adote-celulas` | células JSON de Adote |
 | `pma-adote-expandir` | HTML do bloco Expandir |
 | `pma-plantao-fs` | docs brutos de `plantao_admin` |
+| `pma-viagens-tabela1` | linhas da tabela "Eventos e Próximas Viagens Previstas" |
+| `pma-viagens-tabela2` | linhas da tabela "Viagens Trimestrais" |
 | `pma-afastamentos-fs` | docs brutos de `afastamentos_admin` |
 | `pma-equipe-fs` | docs brutos de `afastamentos_equipe` |
 | `pma-secao` | última seção visitada (restaura na recarga) |

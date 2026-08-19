@@ -11,7 +11,7 @@
 ## Autenticação (Firebase Auth)
 
 - Login por e-mail/senha
-- 46 usuários: 5 admins + 41 viewers
+- 47 usuários: 5 admins + 42 viewers
 - **Admins cadastrados:** `bandeira.lkp@gmail.com` (Luma) · `fabiobastos@defensoria.am.def.br` (Fábio Bastos) · `eniojunior@defensoria.am.def.br` (Ênio Jorge Lima Barbalho Junior) · `miguelfilho@defensoria.am.def.br` (Miguel Eduardo de Azevedo Martins Filho)
 
 ### Como adicionar novos usuários
@@ -48,6 +48,8 @@ nome: "..."
 | `adote_celulas` | `celulas` (mapa `"ROW_COL": { html, cellStyle }`), `atualizado_por`, `atualizado_em` |
 | `adote_expandir` | `html`, `atualizado_por`, `atualizado_em` |
 | `plantao_info` | `nome`, `url` (link da portaria, opcional), `atualizado_por`, `atualizado_em` — se vazio, cai no texto padrão `PLANTAO_INFO_PADRAO` no `index.html` |
+| `viagens_tabela1` | `linhas` (array `[{ id, celulas: [data, membro, motivo] }]`), `atualizado_por`, `atualizado_em` — tabela "Eventos e Próximas Viagens Previstas" |
+| `viagens_tabela2` | `linhas` (array `[{ id, celulas: [local, data, motivo, membro] }]`), `atualizado_por`, `atualizado_em` — tabela "Viagens Trimestrais" |
 
 ### `titulares_admin/{dpKey}` — histórico de titulares por DP
 ```
