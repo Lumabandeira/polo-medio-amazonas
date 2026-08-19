@@ -57,9 +57,32 @@ docs/
 
 ---
 
-## Estado atual (sessão 33 — 19/08/2026)
+## Estado atual (sessão 34 — 19/08/2026)
 
-**Implementado nesta sessão:** nova seção "🧳 Viagens e Eventos" (nav + landing, logo após
+**Implementado nesta sessão:** reformulação de "🧳 Viagens e Eventos" (sessão 33) em duas
+sub-abas — 📅 Calendário e 📋 Lista, lendo a mesma fonte de dados. Trocado o modelo de dados
+da v1 (doc único `secoes/viagens_tabela{1,2}` com array de linhas em texto livre) por
+coleções (`viagens_tabela1_admin/{id}`, `viagens_tabela2_admin/{id}`, um doc por evento) com
+`data_inicio`/`data_fim` reais — só assim o Calendário consegue posicionar cada evento nos
+dias certos. O Calendário mostra as duas tabelas juntas num único grid mensal, cada evento
+como uma **barra colorida contínua** ao longo de todo o intervalo de datas (não precisa clicar
+pra ver do que se trata — rótulo no primeiro dia, hover mostra o detalhe completo), com
+empilhamento automático (algoritmo de "lanes") quando dois eventos se sobrepõem no tempo.
+Clicar em qualquer dia abre modal com os eventos daquele dia + botões de adicionar (um por
+tabela) com data pré-preenchida. A Lista passou a ordenar automaticamente por data (decisão da
+usuária: trocou o inserir/excluir-linha-em-qualquer-posição da v1 por isso, já que agora tem
+datas reais) e ganhou filtro por mês + "Ano todo". Cor da seção trocada de roxo → rosa/coral →
+cinza-grafite (paleta final, a pedido da usuária, aplicada em botão/cabeçalhos/bordas de forma
+consistente). `firestore.rules` recebeu `viagens_tabela1_admin`/`viagens_tabela2_admin`
+(admin-only write) — **publicado em produção** via `firebase deploy --only firestore:rules`
+(login interativo da usuária, `bandeira.lkp@gmail.com`; a service account do repo não tinha
+permissão pra isso). Testado no navegador via console (sem login real): renderização do calendário com
+lanes/barras contínuas, modal de dia, formulário com pré-preenchimento e alternância de campos
+por tabela, validação de datas, filtro de lista, troca de sub-abas, e escaping seguro (inclusive
+em atributos `title`). Ver `docs/site/estrutura-html.md` (seção "Viagens e Eventos") e
+`docs/firebase.md` para o detalhamento completo.
+
+**Implementado sessão 33 (19/08/2026):** primeira versão de "🧳 Viagens e Eventos" (nav + landing, logo após
 Adote, botão visível a todos os usuários logados — só a edição é admin-only). Duas tabelas
 independentes (`VIAGENS_TABELAS[1]`/`[2]` em `index.html`): "Eventos e Próximas Viagens
 Previstas" (Data/Membro/Motivo) e "Viagens Trimestrais" (Local/Data/Motivo/Membro), seed

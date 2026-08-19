@@ -53,6 +53,14 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /viagens_tabela1_admin/{id} {
+      allow write: if isAdmin();
+    }
+
+    match /viagens_tabela2_admin/{id} {
+      allow write: if isAdmin();
+    }
+
     // Prestação de Contas: dados financeiros/pessoais sensíveis (CPF, dados bancários)
     // — leitura e escrita restritas a admin, diferente do padrão de leitura aberta acima.
     match /prestacoes_contas/{id} {

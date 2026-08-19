@@ -1113,7 +1113,7 @@
         }
 
         .btn-viagens {
-            background: linear-gradient(135deg, #9d174d 0%, #fb7185 100%);
+            background: linear-gradient(135deg, #334155 0%, #94a3b8 100%);
             color: white;
         }
 
@@ -1494,12 +1494,12 @@
         .escala-vazio { color: #cbd5e1; font-style: italic; }
 
         /* ─── Seção Viagens e Eventos ────────────────────────────── */
-        #viagens-eventos .card h2 { color: #9d174d; border-bottom-color: #fb7185; }
+        #viagens-eventos .card h2 { color: #334155; border-bottom-color: #94a3b8; }
         .viagens-header { margin-bottom: 18px; }
         .viagens-title {
             font-size: 1.3em;
             font-weight: 700;
-            color: #9d174d;
+            color: #334155;
             margin-bottom: 6px;
         }
         .viagens-sub {
@@ -1509,11 +1509,10 @@
         }
         .viagens-block { margin-bottom: 30px; }
         .viagens-block h3 {
-            color: #9d174d;
+            color: #334155;
             margin: 0 0 8px;
             font-size: 1.15em;
         }
-        .viagens-edit-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
         .viagens-table-wrap {
             overflow-x: auto;
             border-radius: 10px;
@@ -1527,49 +1526,111 @@
             font-size: 0.9em;
         }
         .viagens-table th {
-            background: linear-gradient(135deg, #9d174d 0%, #e11d48 100%);
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
             color: white;
             padding: 10px 14px;
             text-align: left;
             font-weight: 700;
             letter-spacing: 0.02em;
         }
-        .viagens-table th.viagens-th-acoes { text-align: center; width: 90px; }
         .viagens-table td {
             padding: 9px 14px;
             border: 1px solid #e2e8f0;
             vertical-align: top;
         }
         .viagens-cell-view { white-space: pre-wrap; line-height: 1.5; }
-        .viagens-table tbody tr:nth-child(even) td { background: #fff1f2; }
-        .viagens-cell-input {
-            width: 100%;
-            min-height: 40px;
-            border: 1.5px solid #fda4af;
-            border-radius: 5px;
-            padding: 5px 7px;
-            font-family: inherit;
-            font-size: 0.95em;
-            resize: vertical;
-            background: #fff1f2;
-        }
-        .viagens-cell-input:focus {
-            outline: none;
-            border-color: #9d174d;
+        .viagens-table tbody tr:nth-child(even) td { background: #f1f5f9; }
+
+        .viagens-subtabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .viagens-subtab-btn {
+            padding: 8px 18px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 24px;
             background: white;
-        }
-        .viagens-row-acoes { text-align: center; white-space: nowrap; }
-        .viagens-row-btn {
-            border: none;
-            background: none;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.9em;
             cursor: pointer;
-            font-size: 1em;
-            padding: 2px 5px;
-            border-radius: 4px;
+            font-family: inherit;
         }
-        .viagens-row-btn:hover { background: #ffe4e6; }
-        .viagens-row-btn-del:hover { background: #fee2e2; }
-        .viagens-add-row { margin-top: 10px; }
+        .viagens-subtab-btn.active { background: #334155; color: white; border-color: #334155; }
+
+        .viagens-cal-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 6px 0 16px;
+            flex-wrap: wrap;
+        }
+        .viagens-cal-nav h3 { margin: 0; font-size: 1.1em; color: #334155; }
+        .viagens-cal-nav button {
+            padding: 6px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            color: #334155;
+        }
+        .viagens-cal-year-btn.active { background: #334155; color: white; border-color: #334155; }
+
+        .viagens-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+        .viagens-cal-dow {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.78em;
+            color: #64748b;
+            padding: 6px 0;
+            text-transform: uppercase;
+        }
+        .viagens-cal-day {
+            min-height: 78px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 4px;
+            cursor: pointer;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .viagens-cal-day:hover { border-color: #94a3b8; }
+        .viagens-cal-day.empty { border: none; cursor: default; background: transparent; }
+        .viagens-cal-day.hoje { border-color: #334155; box-shadow: inset 0 0 0 1.5px #334155; }
+        .viagens-cal-daynum { font-size: 0.78em; color: #64748b; }
+        .viagens-cal-bar {
+            font-size: 0.72em;
+            padding: 2px 5px;
+            line-height: 1.35;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .viagens-cal-bar.t1 { background: #e2e8f0; color: #334155; }
+        .viagens-cal-bar.t2 { background: #dbeafe; color: #1e40af; }
+        .viagens-cal-bar.solo  { border-radius: 5px; }
+        .viagens-cal-bar.start { border-radius: 5px 0 0 5px; }
+        .viagens-cal-bar.mid   { border-radius: 0; }
+        .viagens-cal-bar.end   { border-radius: 0 5px 5px 0; }
+        .viagens-cal-bar.empty-spacer { visibility: hidden; }
+        .viagens-cal-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            font-size: 0.85em;
+            color: #64748b;
+            flex-wrap: wrap;
+        }
+        .viagens-cal-legend .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            margin-right: 5px;
+            vertical-align: -1px;
+        }
 
         .landing-btn-icon {
             font-size: 3.5em;
@@ -3551,6 +3612,79 @@
             <div class="card">
                 <div id="viagens-eventos-content">
                     <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Viagens: detalhe do dia -->
+        <div id="viagens-dia-overlay" class="form-af-overlay" onclick="_viagensFecharDiaModal(event)">
+            <div class="form-af-content" style="max-width:640px" onclick="event.stopPropagation()">
+                <div class="form-af-header" style="background:linear-gradient(135deg,#334155,#64748b)">
+                    <h2 id="viagens-dia-date">📅</h2>
+                    <button class="form-af-close" onclick="_viagensFecharDiaModal()">×</button>
+                </div>
+                <div class="form-af-body">
+                    <div id="viagens-dia-lista"></div>
+                    <div style="margin-top:16px;text-align:right;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+                        <button class="btn-salvar admin-only" onclick="_viagensAbrirForm(1,null,_viagensDiaAtual.ano,_viagensDiaAtual.mes,_viagensDiaAtual.dia)">➕ Evento/Viagem</button>
+                        <button class="btn-salvar admin-only" onclick="_viagensAbrirForm(2,null,_viagensDiaAtual.ano,_viagensDiaAtual.mes,_viagensDiaAtual.dia)">➕ Viagem Trimestral</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Viagens: formulário de evento -->
+        <div id="viagens-form-overlay" class="form-af-overlay" onclick="_viagensFecharForm(event)">
+            <div class="form-af-content" style="max-width:560px" onclick="event.stopPropagation()">
+                <div class="form-af-header" style="background:linear-gradient(135deg,#334155,#64748b)">
+                    <h2 id="viagens-form-titulo">➕ Novo Evento</h2>
+                    <button class="form-af-close" onclick="_viagensFecharForm()">×</button>
+                </div>
+                <div class="form-af-body">
+                    <p id="viagens-form-titulo-tabela" style="margin:-8px 0 14px;font-size:0.85em;color:var(--text-secondary);font-weight:600"></p>
+                    <form id="viagens-form" onsubmit="event.preventDefault();_viagensSalvarEvento()">
+                        <input type="hidden" id="viagens-form-id">
+                        <input type="hidden" id="viagens-form-tabela">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+                            <div class="form-group" id="viagens-form-local-group" style="grid-column:1/-1;display:none">
+                                <label>LOCAL</label>
+                                <select id="viagens-form-local" onchange="document.getElementById('viagens-form-local-outro-group').style.display=this.value==='outro'?'block':'none'" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;background:#fff;">
+                                    <option value="">Selecione…</option>
+                                    <option value="Itacoatiara">Itacoatiara</option>
+                                    <option value="Itapiranga">Itapiranga</option>
+                                    <option value="São Sebastião do Uatumã">São Sebastião do Uatumã</option>
+                                    <option value="Silves">Silves</option>
+                                    <option value="Urucará">Urucará</option>
+                                    <option value="Urucurituba">Urucurituba</option>
+                                    <option value="outro">Outro…</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="viagens-form-local-outro-group" style="display:none;grid-column:1/-1">
+                                <label>ESPECIFICAR LOCAL</label>
+                                <input type="text" id="viagens-form-local-outro" placeholder="ex: Manaus" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group">
+                                <label>DATA INÍCIO</label>
+                                <input type="date" id="viagens-form-inicio" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group">
+                                <label>DATA FIM</label>
+                                <input type="date" id="viagens-form-fim" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group" style="grid-column:1/-1">
+                                <label>MEMBRO/SERVIDOR</label>
+                                <input type="text" id="viagens-form-membro" placeholder="ex: Eliaquim e Natália" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                            </div>
+                            <div class="form-group" style="grid-column:1/-1">
+                                <label>MOTIVO</label>
+                                <textarea id="viagens-form-motivo" required rows="3" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;font-family:inherit;resize:vertical;"></textarea>
+                            </div>
+                        </div>
+                        <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border-color)">
+                            <button type="button" class="btn-cancelar" onclick="_viagensFecharForm()">Cancelar</button>
+                            <button type="submit" id="viagens-form-submit" class="btn-salvar-form">💾 Salvar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -7482,9 +7616,6 @@
             // Encerrar edição de Atribuições/Adote se estava ativa
             if (typeof _atrModoEdicao   !== 'undefined' && _atrModoEdicao)   _atrSairModoEdicao();
             if (typeof _adoteModoEdicao !== 'undefined' && _adoteModoEdicao) _adoteSairModoEdicao();
-            if (typeof _viagensState !== 'undefined') {
-                Object.keys(_viagensState).forEach(k => { if (_viagensState[k]) _viagensState[k].modoEdicao = false; });
-            }
             document.getElementById('landing').style.display = 'block';
             document.querySelector('.tabs').style.display = 'none';
             document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'none'; });
@@ -9073,48 +9204,40 @@
         }
 
         // =====================================================================
-        // Viagens e Eventos — duas tabelas de linhas livres (texto puro,
-        // sem RTE), com inserir/excluir linha em qualquer posição (exceto
-        // cabeçalho). Cada tabela é um doc Firestore próprio em secoes/.
+        // Viagens e Eventos — Calendário + Lista sobre a mesma fonte de dados.
+        // Cada evento é um documento em viagens_tabela{1,2}_admin/{id}, com
+        // data_inicio/data_fim reais (YYYY-MM-DD) — é isso que permite o
+        // Calendário posicionar o evento nos dias certos. A Lista lê a mesma
+        // coleção, sempre ordenada por data_inicio (sem reordenação manual).
         // =====================================================================
         const VIAGENS_TABELAS = {
             1: {
                 titulo: '🧳 Eventos e Próximas Viagens Previstas',
-                colunas: ['Data', 'Membro/Servidor', 'Motivo'],
-                doc: 'viagens_tabela1',
                 cacheKey: 'pma-viagens-tabela1',
                 seed: [
-                    ['21 a 23/05/2026', 'Emilly', 'Inauguração do PAV de Urucará'],
-                    ['26 a 28/05/2026', 'Enio', 'Justiça em Ação – DPE e UEA'],
-                    ['25 a 29/05/2026', 'Eliaquim e Natália', 'Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba'],
-                    ['08 a 12/06/2026', 'Emilly e Miguel', 'Sessões do Tribunal do Júri em Itacoatiara'],
-                    ['09 a 12/06/2026', 'Corregedoria', 'Correição Ordinária'],
-                    ['15 a 18/06/2026', 'Miguel e Larice', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais em Itapiranga'],
-                    ['15 a 19/06/2026', 'Eliaquim, Fábio', 'Mutirão Previdenciário em Itacoatiara'],
-                    ['27 a 31/07/2026', 'Roger e dois servidores', 'Mutirão carcerário em Itacoatiara'],
-                    ['14 a 18/09/2026', 'Projeto Institucional Meu Pedaço de Chão', 'SEI 26.0.000007745-2 - Ações extrajudiciais voltadas à regularização fundiária em favor da população em situação de vulnerabilidade social do Município de Urucurituba/AM.'],
+                    { data_inicio:'2026-05-21', data_fim:'2026-05-23', membro:'Emilly', motivo:'Inauguração do PAV de Urucará' },
+                    { data_inicio:'2026-05-26', data_fim:'2026-05-28', membro:'Enio', motivo:'Justiça em Ação – DPE e UEA' },
+                    { data_inicio:'2026-05-25', data_fim:'2026-05-29', membro:'Eliaquim e Natália', motivo:'Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba' },
+                    { data_inicio:'2026-06-08', data_fim:'2026-06-12', membro:'Emilly e Miguel', motivo:'Sessões do Tribunal do Júri em Itacoatiara' },
+                    { data_inicio:'2026-06-09', data_fim:'2026-06-12', membro:'Corregedoria', motivo:'Correição Ordinária' },
+                    { data_inicio:'2026-06-15', data_fim:'2026-06-18', membro:'Miguel e Larice', motivo:'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais em Itapiranga' },
+                    { data_inicio:'2026-06-15', data_fim:'2026-06-19', membro:'Eliaquim, Fábio', motivo:'Mutirão Previdenciário em Itacoatiara' },
+                    { data_inicio:'2026-07-27', data_fim:'2026-07-31', membro:'Roger e dois servidores', motivo:'Mutirão carcerário em Itacoatiara' },
+                    { data_inicio:'2026-09-14', data_fim:'2026-09-18', membro:'Projeto Institucional Meu Pedaço de Chão', motivo:'SEI 26.0.000007745-2 - Ações extrajudiciais voltadas à regularização fundiária em favor da população em situação de vulnerabilidade social do Município de Urucurituba/AM.' },
                 ]
             },
             2: {
                 titulo: '📅 Viagens Trimestrais',
-                colunas: ['Local', 'Data', 'Motivo', 'Membro/Servidor'],
-                doc: 'viagens_tabela2',
                 cacheKey: 'pma-viagens-tabela2',
                 seed: [
-                    ['Urucurituba', '25 a 29/05/2026', 'Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba', 'Eliaquim e Natália'],
-                    ['Itapiranga', '15 a 18/06/2026', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', 'Miguel e Larice'],
-                    ['Silves', '25 a 28/05/2026', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', 'Ícaro'],
-                    ['Urucará', '22 a 26/06/2026', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', 'Emilly'],
-                    ['São Sebastião do Uatumã', '29/06/2026 a 03/07/2026', 'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', 'Enio'],
+                    { local:'Urucurituba', data_inicio:'2026-05-25', data_fim:'2026-05-29', motivo:'Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba', membro:'Eliaquim e Natália' },
+                    { local:'Itapiranga', data_inicio:'2026-06-15', data_fim:'2026-06-18', motivo:'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', membro:'Miguel e Larice' },
+                    { local:'Silves', data_inicio:'2026-05-25', data_fim:'2026-05-28', motivo:'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', membro:'Ícaro' },
+                    { local:'Urucará', data_inicio:'2026-06-22', data_fim:'2026-06-26', motivo:'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', membro:'Emilly' },
+                    { local:'São Sebastião do Uatumã', data_inicio:'2026-06-29', data_fim:'2026-07-03', motivo:'Atendimentos presenciais, inspeção carcerária e atendimentos prisionais', membro:'Enio' },
                 ]
             }
         };
-
-        let _viagensState = { 1: null, 2: null };
-
-        function _viagensUid() {
-            return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-        }
 
         function _viagensEscHtml(s) {
             const d = document.createElement('div');
@@ -9122,222 +9245,448 @@
             return d.innerHTML;
         }
 
+        function _viagensEscAttr(s) {
+            return _viagensEscHtml(s).replace(/"/g, '&quot;');
+        }
+
+        function _viagensHojeStr() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        let _viagensEventos      = { 1: [], 2: [] };
+        let _viagensCarregadoFlg = { 1: false, 2: false };
+        let _viagensListaFiltro  = { 1: 'todos', 2: 'todos' };
+        let _viagensSubTab       = 'calendario';
+        let _viagensCalAno       = new Date().getFullYear();
+        let _viagensCalMes       = new Date().getMonth();
+        let _viagensDiaAtual     = null;
+
         function renderViagensEventos() {
             const el = document.getElementById('viagens-eventos-content');
             if (!el) return;
             const isAdmin = userRole === 'admin';
 
-            let html = `
+            const listaBlocos = [1, 2].map(n => {
+                const cfg  = VIAGENS_TABELAS[n];
+                const cols = n === 2 ? ['Local', 'Data', 'Motivo', 'Membro/Servidor'] : ['Data', 'Membro/Servidor', 'Motivo'];
+                const ths  = cols.map(c => `<th>${c}</th>`).join('') + (isAdmin ? '<th style="width:90px;text-align:center">Ações</th>' : '');
+                return `
+                    <div class="viagens-block">
+                        <h3>${cfg.titulo}</h3>
+                        <div id="viagens-lista-filtro-${n}" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;"></div>
+                        ${isAdmin ? `<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                            <button type="button" class="btn-editar" onclick="_viagensAbrirForm(${n},null)">➕ Novo Evento</button>
+                            <span id="viagens-seed-${n}"></span>
+                        </div>` : ''}
+                        <div class="viagens-table-wrap">
+                            <table class="viagens-table">
+                                <thead><tr>${ths}</tr></thead>
+                                <tbody id="viagens-lista-tbody-${n}"><tr><td colspan="${cols.length + 1}" style="text-align:center;color:#94a3b8;padding:18px">⏳ Carregando...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            el.innerHTML = `
                 <div class="viagens-header">
                     <div class="viagens-title">🧳 Eventos e Próximas Viagens</div>
                     <div class="viagens-sub">Agenda de eventos, viagens previstas e viagens trimestrais da equipe do Polo Médio Amazonas.</div>
-                </div>`;
-
-            [1, 2].forEach(n => {
-                const cfg = VIAGENS_TABELAS[n];
-                const editBar = isAdmin ? `
-                    <div class="viagens-edit-bar">
-                        <button class="btn-editar" id="viagens-btn-editar-${n}" onclick="_viagensEntrarModoEdicao(${n})">
-                            <svg class="btn-icon-pen" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Editar tabela
-                        </button>
-                        <button class="btn-salvar" id="viagens-btn-salvar-${n}" style="display:none" onclick="_viagensSalvar(${n})">✓ Salvar</button>
-                        <button class="btn-cancelar" id="viagens-btn-cancelar-${n}" style="display:none" onclick="_viagensCancelar(${n})">✕ Cancelar</button>
-                    </div>` : '';
-
-                const ths = cfg.colunas.map(c => `<th>${c}</th>`).join('');
-
-                html += `
-                    <div class="viagens-block">
-                        <h3>${cfg.titulo}</h3>
-                        ${editBar}
-                        <div class="viagens-table-wrap">
-                            <table class="viagens-table">
-                                <thead><tr>${ths}<th id="viagens-th-acoes-${n}" class="viagens-th-acoes" style="display:none">Ações</th></tr></thead>
-                                <tbody id="viagens-tbody-${n}">
-                                    <tr><td colspan="${cfg.colunas.length + 1}" style="text-align:center;color:#94a3b8;padding:18px">⏳ Carregando...</td></tr>
-                                </tbody>
-                            </table>
+                </div>
+                <div class="viagens-subtabs">
+                    <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'calendario' ? ' active' : ''}" onclick="_viagensMudarSubTab('calendario', this)">📅 Calendário</button>
+                    <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'lista' ? ' active' : ''}" onclick="_viagensMudarSubTab('lista', this)">📋 Lista</button>
+                </div>
+                <div id="viagens-view-calendario" style="display:${_viagensSubTab === 'calendario' ? 'block' : 'none'}">
+                    <div class="viagens-cal-nav">
+                        <div style="display:flex;gap:8px;">
+                            <button type="button" class="viagens-cal-year-btn" data-ano="2026" onclick="_viagensMudarAno(2026)">2026</button>
+                            <button type="button" class="viagens-cal-year-btn" data-ano="2027" onclick="_viagensMudarAno(2027)">2027</button>
                         </div>
-                        <div class="viagens-add-row" id="viagens-add-row-${n}" style="display:none">
-                            <button type="button" class="btn-editar" onclick="_viagensAdicionarLinha(${n})">➕ Adicionar linha</button>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <button type="button" onclick="_viagensMudarMes(-1)">← Mês anterior</button>
+                            <h3 id="viagens-cal-titulo"></h3>
+                            <button type="button" onclick="_viagensMudarMes(1)">Próximo mês →</button>
                         </div>
-                    </div>`;
+                    </div>
+                    <div id="viagens-cal-grid" class="viagens-cal-grid"></div>
+                    <div class="viagens-cal-legend">
+                        <span><span class="dot" style="background:#e2e8f0"></span>Eventos e Próximas Viagens Previstas</span>
+                        <span><span class="dot" style="background:#dbeafe"></span>Viagens Trimestrais</span>
+                    </div>
+                </div>
+                <div id="viagens-view-lista" style="display:${_viagensSubTab === 'lista' ? 'block' : 'none'}">${listaBlocos}</div>`;
+
+            Promise.all([_viagensCarregarEventos(1), _viagensCarregarEventos(2)]).then(() => {
+                _viagensRenderCalendario();
+                [1, 2].forEach(n => {
+                    _viagensRenderListaFiltro(n);
+                    _viagensRenderLista(n);
+                    const seedEl = document.getElementById('viagens-seed-' + n);
+                    if (seedEl && isAdmin && _viagensEventos[n].length === 0) {
+                        seedEl.innerHTML = `<button type="button" class="btn-salvar" style="display:inline-flex" onclick="_viagensImportarSeed(${n})">⬇️ Importar dados iniciais (${VIAGENS_TABELAS[n].seed.length})</button>`;
+                    }
+                });
             });
-
-            el.innerHTML = html;
-            _viagensCarregarTabela(1);
-            _viagensCarregarTabela(2);
         }
 
-        function _viagensRenderTabela(n) {
-            const cfg   = VIAGENS_TABELAS[n];
-            const st    = _viagensState[n];
-            const tbody = document.getElementById('viagens-tbody-' + n);
-            if (!tbody || !st) return;
-            const editando = st.modoEdicao;
-
-            if (!st.linhas.length) {
-                tbody.innerHTML = `<tr><td colspan="${cfg.colunas.length + 1}" style="text-align:center;color:#94a3b8;font-style:italic;padding:18px">Nenhum registro cadastrado.</td></tr>`;
-            } else {
-                tbody.innerHTML = st.linhas.map(row => {
-                    const cels = cfg.colunas.map((_, i) => {
-                        const val = row.celulas[i] || '';
-                        if (editando) {
-                            return `<td><textarea class="viagens-cell-input" data-row-id="${row.id}" data-col="${i}" rows="2">${_viagensEscHtml(val)}</textarea></td>`;
-                        }
-                        return `<td class="viagens-cell-view">${_viagensEscHtml(val)}</td>`;
-                    }).join('');
-                    const acoes = editando ? `
-                        <td class="viagens-row-acoes">
-                            <button type="button" class="viagens-row-btn" title="Inserir linha acima" onclick="_viagensInserirAcima(${n}, '${row.id}')">➕</button>
-                            <button type="button" class="viagens-row-btn viagens-row-btn-del" title="Excluir linha" onclick="_viagensExcluirLinha(${n}, '${row.id}')">🗑️</button>
-                        </td>` : '';
-                    return `<tr data-row-id="${row.id}">${cels}${acoes}</tr>`;
-                }).join('');
-            }
-
-            const thAcoes = document.getElementById('viagens-th-acoes-' + n);
-            if (thAcoes) thAcoes.style.display = editando ? 'table-cell' : 'none';
-            const addWrap = document.getElementById('viagens-add-row-' + n);
-            if (addWrap) addWrap.style.display = editando ? 'block' : 'none';
+        function _viagensMudarSubTab(tab, btnEl) {
+            _viagensSubTab = tab;
+            document.getElementById('viagens-view-calendario').style.display = tab === 'calendario' ? 'block' : 'none';
+            document.getElementById('viagens-view-lista').style.display      = tab === 'lista' ? 'block' : 'none';
+            document.querySelectorAll('.viagens-subtab-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
         }
 
-        function _viagensAplicarLinhas(n, linhas) {
-            if (!_viagensState[n]) _viagensState[n] = { linhas: [], modoEdicao: false, backup: null, carregado: false };
-            _viagensState[n].linhas = (linhas || []).map(r => ({
-                id: r.id || _viagensUid(),
-                celulas: (r.celulas || []).slice()
-            }));
-            _viagensRenderTabela(n);
-        }
-
-        async function _viagensCarregarTabela(n) {
+        // ── Carregamento (Firestore, com cache local pra evitar flash) ─────
+        async function _viagensCarregarEventos(n) {
             const cfg = VIAGENS_TABELAS[n];
-            if (!_viagensState[n]) _viagensState[n] = { linhas: [], modoEdicao: false, backup: null, carregado: false };
-            const st = _viagensState[n];
-
-            // 1. Cache em memória / localStorage (evita flash) — mesmo padrão de _atrCarregarCelulas
-            if (st.carregado) {
-                _viagensRenderTabela(n);
-            } else {
+            if (!_viagensCarregadoFlg[n]) {
                 try {
                     const ls = localStorage.getItem(cfg.cacheKey);
-                    if (ls) _viagensAplicarLinhas(n, JSON.parse(ls));
-                    else _viagensAplicarLinhas(n, cfg.seed.map(cel => ({ celulas: cel })));
-                } catch(e) {
-                    _viagensAplicarLinhas(n, cfg.seed.map(cel => ({ celulas: cel })));
-                }
+                    if (ls) _viagensEventos[n] = JSON.parse(ls);
+                } catch(e) {}
             }
-
-            // 2. Sempre buscar do Firestore para manter atualizado
             try {
-                const doc = await db.collection('secoes').doc(cfg.doc).get();
-                if (doc.exists && doc.data().linhas) {
-                    const linhas = doc.data().linhas;
-                    _viagensAplicarLinhas(n, linhas);
-                    localStorage.setItem(cfg.cacheKey, JSON.stringify(linhas));
-                }
-                st.carregado = true;
+                const snap = await db.collection('viagens_tabela' + n + '_admin').get();
+                const eventos = [];
+                snap.forEach(doc => eventos.push({ id: doc.id, ...doc.data() }));
+                eventos.sort((a, b) => a.data_inicio < b.data_inicio ? -1 : a.data_inicio > b.data_inicio ? 1 : 0);
+                _viagensEventos[n] = eventos;
+                const cacheavel = eventos.map(ev => ({
+                    id: ev.id, data_inicio: ev.data_inicio, data_fim: ev.data_fim,
+                    membro: ev.membro, motivo: ev.motivo, local: ev.local
+                }));
+                localStorage.setItem(cfg.cacheKey, JSON.stringify(cacheavel));
             } catch(e) {
-                console.warn('Erro ao carregar ' + cfg.doc + ':', e);
+                console.warn('Erro ao carregar viagens_tabela' + n + '_admin:', e);
             }
+            _viagensCarregadoFlg[n] = true;
         }
 
-        // Sincroniza os <textarea> visíveis de volta para o array em memória
-        // antes de qualquer operação estrutural (inserir/excluir/salvar).
-        function _viagensColetar(n) {
-            const st = _viagensState[n];
-            if (!st || !st.modoEdicao) return;
-            document.querySelectorAll(`#viagens-tbody-${n} tr[data-row-id]`).forEach(tr => {
-                const row = st.linhas.find(r => r.id === tr.dataset.rowId);
-                if (!row) return;
-                tr.querySelectorAll('textarea.viagens-cell-input').forEach(ta => {
-                    row.celulas[parseInt(ta.dataset.col, 10)] = ta.value;
+        // ── Calendário ──────────────────────────────────────────────────
+        function _viagensEventosDoMes(ano, mesIdx0) {
+            const mm = String(mesIdx0 + 1).padStart(2, '0');
+            const diasNoMes = new Date(ano, mesIdx0 + 1, 0).getDate();
+            const mesIni = `${ano}-${mm}-01`;
+            const mesFim = `${ano}-${mm}-${String(diasNoMes).padStart(2, '0')}`;
+            const todos = [];
+            [1, 2].forEach(n => {
+                (_viagensEventos[n] || []).forEach(ev => {
+                    if (ev.data_inicio <= mesFim && ev.data_fim >= mesIni) todos.push({ tabela: n, ...ev });
                 });
             });
+            todos.sort((a, b) => a.data_inicio < b.data_inicio ? -1 : a.data_inicio > b.data_inicio ? 1 : 0);
+            const laneFim = [];
+            todos.forEach(ev => {
+                let lane = laneFim.findIndex(fim => fim < ev.data_inicio);
+                if (lane === -1) { lane = laneFim.length; laneFim.push(ev.data_fim); }
+                else { laneFim[lane] = ev.data_fim; }
+                ev.lane = lane;
+            });
+            return { eventos: todos, maxLane: laneFim.length };
         }
 
-        function _viagensEntrarModoEdicao(n) {
-            const st = _viagensState[n];
-            if (!st) return;
-            st.backup = JSON.parse(JSON.stringify(st.linhas));
-            st.modoEdicao = true;
-            _viagensRenderTabela(n);
-            document.getElementById('viagens-btn-editar-' + n).style.display   = 'none';
-            document.getElementById('viagens-btn-salvar-' + n).style.display   = 'inline-flex';
-            document.getElementById('viagens-btn-cancelar-' + n).style.display = 'inline-flex';
+        function _viagensRotuloEvento(ev) {
+            return ev.tabela === 2 ? (ev.local || '') : (ev.membro || '');
         }
 
-        function _viagensSairModoEdicao(n) {
-            const st = _viagensState[n];
-            if (!st) return;
-            st.modoEdicao = false;
-            st.backup = null;
-            _viagensRenderTabela(n);
-            const be = document.getElementById('viagens-btn-editar-' + n);
-            const bs = document.getElementById('viagens-btn-salvar-' + n);
-            const bc = document.getElementById('viagens-btn-cancelar-' + n);
-            if (be) be.style.display = 'inline-flex';
-            if (bs) bs.style.display = 'none';
-            if (bc) bc.style.display = 'none';
+        function _viagensDetalheEvento(ev) {
+            const periodo = ev.data_inicio === ev.data_fim
+                ? formatarData(ev.data_inicio)
+                : `${formatarData(ev.data_inicio)} a ${formatarData(ev.data_fim)}`;
+            return ev.tabela === 2
+                ? `${ev.local} — ${periodo} — ${ev.motivo} — ${ev.membro}`
+                : `${ev.membro} — ${periodo} — ${ev.motivo}`;
         }
 
-        function _viagensCancelar(n) {
-            const st = _viagensState[n];
-            if (!st) return;
-            if (st.backup) st.linhas = st.backup;
-            _viagensSairModoEdicao(n);
+        function _viagensMudarAno(ano) { _viagensCalAno = ano; _viagensRenderCalendario(); }
+
+        function _viagensMudarMes(delta) {
+            _viagensCalMes += delta;
+            if (_viagensCalMes < 0)  { _viagensCalMes = 11; _viagensCalAno--; }
+            if (_viagensCalMes > 11) { _viagensCalMes = 0;  _viagensCalAno++; }
+            _viagensRenderCalendario();
         }
 
-        function _viagensAdicionarLinha(n) {
-            _viagensColetar(n);
-            const cfg = VIAGENS_TABELAS[n];
-            _viagensState[n].linhas.push({ id: _viagensUid(), celulas: cfg.colunas.map(() => '') });
-            _viagensRenderTabela(n);
+        function _viagensRenderCalendario() {
+            const container = document.getElementById('viagens-cal-grid');
+            const tituloEl  = document.getElementById('viagens-cal-titulo');
+            if (!container || !tituloEl) return;
+            const ano = _viagensCalAno, mesIdx0 = _viagensCalMes;
+            tituloEl.textContent = `${months[mesIdx0]} ${ano}`;
+            document.querySelectorAll('.viagens-cal-year-btn').forEach(b => {
+                b.classList.toggle('active', parseInt(b.dataset.ano, 10) === ano);
+            });
+
+            const { eventos, maxLane } = _viagensEventosDoMes(ano, mesIdx0);
+            const firstDow   = new Date(ano, mesIdx0, 1).getDay();
+            const diasNoMes  = new Date(ano, mesIdx0 + 1, 0).getDate();
+            const hojeStr    = _viagensHojeStr();
+
+            let html = '';
+            daysOfWeek.forEach(d => html += `<div class="viagens-cal-dow">${d}</div>`);
+            for (let i = 0; i < firstDow; i++) html += '<div class="viagens-cal-day empty"></div>';
+
+            for (let dia = 1; dia <= diasNoMes; dia++) {
+                const diaStr = `${ano}-${String(mesIdx0 + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                let bars = '';
+                for (let lane = 0; lane < maxLane; lane++) {
+                    const ev = eventos.find(e => e.lane === lane && e.data_inicio <= diaStr && e.data_fim >= diaStr);
+                    if (!ev) { bars += `<div class="viagens-cal-bar empty-spacer">&nbsp;</div>`; continue; }
+                    const isStart = ev.data_inicio === diaStr || dia === 1;
+                    const isEnd   = ev.data_fim === diaStr || dia === diasNoMes;
+                    const cls     = isStart && isEnd ? 'solo' : isStart ? 'start' : isEnd ? 'end' : 'mid';
+                    const texto   = isStart ? _viagensEscHtml(_viagensRotuloEvento(ev)) : '&nbsp;';
+                    bars += `<div class="viagens-cal-bar t${ev.tabela} ${cls}" title="${_viagensEscAttr(_viagensDetalheEvento(ev))}" onclick="event.stopPropagation();_viagensAbrirDiaModal(${ano},${mesIdx0 + 1},${dia})">${texto}</div>`;
+                }
+                html += `<div class="viagens-cal-day${diaStr === hojeStr ? ' hoje' : ''}" onclick="_viagensAbrirDiaModal(${ano},${mesIdx0 + 1},${dia})">
+                    <div class="viagens-cal-daynum">${dia}</div>${bars}
+                </div>`;
+            }
+            container.innerHTML = html;
         }
 
-        function _viagensInserirAcima(n, rowId) {
-            _viagensColetar(n);
-            const st  = _viagensState[n];
-            const cfg = VIAGENS_TABELAS[n];
-            const idx = st.linhas.findIndex(r => r.id === rowId);
-            const novo = { id: _viagensUid(), celulas: cfg.colunas.map(() => '') };
-            if (idx === -1) st.linhas.push(novo); else st.linhas.splice(idx, 0, novo);
-            _viagensRenderTabela(n);
+        // ── Modal de detalhe do dia ─────────────────────────────────────
+        function _viagensAbrirDiaModal(ano, mes, dia) {
+            _viagensDiaAtual = { ano, mes, dia };
+            const diaStr  = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+            const overlay = document.getElementById('viagens-dia-overlay');
+            const dateEl  = document.getElementById('viagens-dia-date');
+            const listaEl = document.getElementById('viagens-dia-lista');
+            const isAdmin = userRole === 'admin';
+
+            dateEl.textContent = `📅 ${dia} de ${months[mes - 1]} de ${ano}`;
+
+            const eventos = [1, 2].flatMap(n => (_viagensEventos[n] || [])
+                .filter(ev => ev.data_inicio <= diaStr && ev.data_fim >= diaStr)
+                .map(ev => ({ tabela: n, ...ev })));
+            eventos.sort((a, b) => a.data_inicio < b.data_inicio ? -1 : 1);
+
+            if (!eventos.length) {
+                listaEl.innerHTML = '<p style="color:var(--text-secondary);text-align:center;">Nenhum evento nesta data.</p>';
+            } else {
+                let html = '<table style="width:100%;border-collapse:collapse;font-size:0.9em;"><thead><tr style="background:#f1f5f9;">' +
+                    '<th style="padding:8px;text-align:left;">Tipo</th><th style="padding:8px;text-align:left;">Detalhe</th>';
+                if (isAdmin) html += '<th style="padding:8px;text-align:center;">Ações</th>';
+                html += '</tr></thead><tbody>';
+                eventos.forEach(ev => {
+                    const tipoLabel = ev.tabela === 1 ? '🧳 Evento/Viagem' : '📅 Viagem Trimestral';
+                    const periodo = ev.data_inicio === ev.data_fim
+                        ? formatarData(ev.data_inicio)
+                        : `${formatarData(ev.data_inicio)} a ${formatarData(ev.data_fim)}`;
+                    const detalhe = ev.tabela === 2
+                        ? `<strong>${_viagensEscHtml(ev.local)}</strong><br>${periodo}<br>${_viagensEscHtml(ev.motivo)}<br><span style="color:var(--text-secondary)">${_viagensEscHtml(ev.membro)}</span>`
+                        : `<strong>${_viagensEscHtml(ev.membro)}</strong><br>${periodo}<br>${_viagensEscHtml(ev.motivo)}`;
+                    const acoes = isAdmin ? `<td style="text-align:center;white-space:nowrap">
+                        <button class="btn-acao-tabela btn-editar-af" title="Editar" onclick="_viagensAbrirForm(${ev.tabela},'${ev.id}')">✏️</button>
+                        <button class="btn-acao-tabela btn-deletar-af" title="Excluir" onclick="_viagensConfirmarExcluir(${ev.tabela},'${ev.id}')">🗑️</button>
+                    </td>` : '';
+                    html += `<tr style="border-top:1px solid var(--border-color)"><td style="padding:8px">${tipoLabel}</td><td style="padding:8px">${detalhe}</td>${acoes}</tr>`;
+                });
+                html += '</tbody></table>';
+                listaEl.innerHTML = html;
+            }
+
+            overlay.querySelectorAll('.admin-only').forEach(elx => { elx.style.display = isAdmin ? 'inline-flex' : 'none'; });
+            overlay.classList.add('active');
         }
 
-        function _viagensExcluirLinha(n, rowId) {
-            _viagensColetar(n);
-            if (!confirm('Excluir esta linha?')) return;
-            const st = _viagensState[n];
-            st.linhas = st.linhas.filter(r => r.id !== rowId);
-            _viagensRenderTabela(n);
+        function _viagensFecharDiaModal(e) {
+            if (e && e.target !== document.getElementById('viagens-dia-overlay')) return;
+            document.getElementById('viagens-dia-overlay').classList.remove('active');
         }
 
-        async function _viagensSalvar(n) {
-            _viagensColetar(n);
-            const st   = _viagensState[n];
-            const cfg  = VIAGENS_TABELAS[n];
-            const btnS = document.getElementById('viagens-btn-salvar-' + n);
-            btnS.disabled    = true;
-            btnS.textContent = '⏳ Salvando...';
+        // ── Formulário de evento (criar/editar) ─────────────────────────
+        function _viagensAbrirForm(tabela, id, ano, mes, dia) {
+            const overlay = document.getElementById('viagens-form-overlay');
+            document.getElementById('viagens-form').reset();
+            document.getElementById('viagens-form-id').value = '';
+            document.getElementById('viagens-form-tabela').value = tabela;
+            document.getElementById('viagens-form-local-group').style.display = tabela === 2 ? 'block' : 'none';
+            document.getElementById('viagens-form-local-outro-group').style.display = 'none';
+            document.getElementById('viagens-form-titulo-tabela').textContent = VIAGENS_TABELAS[tabela].titulo;
+
+            const municipios = ['Itacoatiara', 'Itapiranga', 'São Sebastião do Uatumã', 'Silves', 'Urucará', 'Urucurituba'];
+
+            if (id) {
+                const ev = (_viagensEventos[tabela] || []).find(e => e.id === id);
+                if (ev) {
+                    document.getElementById('viagens-form-titulo').textContent = '✏️ Editar Evento';
+                    document.getElementById('viagens-form-id').value      = id;
+                    document.getElementById('viagens-form-inicio').value  = ev.data_inicio || '';
+                    document.getElementById('viagens-form-fim').value     = ev.data_fim || '';
+                    document.getElementById('viagens-form-membro').value  = ev.membro || '';
+                    document.getElementById('viagens-form-motivo').value  = ev.motivo || '';
+                    if (tabela === 2) {
+                        const conhecido = municipios.includes(ev.local);
+                        document.getElementById('viagens-form-local').value = conhecido ? ev.local : 'outro';
+                        if (!conhecido) {
+                            document.getElementById('viagens-form-local-outro-group').style.display = 'block';
+                            document.getElementById('viagens-form-local-outro').value = ev.local || '';
+                        }
+                    }
+                }
+            } else {
+                document.getElementById('viagens-form-titulo').textContent = '➕ Novo Evento';
+                if (ano && mes && dia) {
+                    const dateStr = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                    document.getElementById('viagens-form-inicio').value = dateStr;
+                    document.getElementById('viagens-form-fim').value    = dateStr;
+                }
+            }
+            document.getElementById('viagens-dia-overlay').classList.remove('active');
+            overlay.classList.add('active');
+        }
+
+        function _viagensFecharForm(e) {
+            if (e && e.target !== document.getElementById('viagens-form-overlay')) return;
+            document.getElementById('viagens-form-overlay').classList.remove('active');
+        }
+
+        async function _viagensSalvarEvento() {
+            const submitBtn = document.getElementById('viagens-form-submit');
+            submitBtn.disabled = true; submitBtn.innerHTML = '⏳ Salvando...';
             try {
-                const linhas = st.linhas.map(r => ({ id: r.id, celulas: r.celulas }));
-                await db.collection('secoes').doc(cfg.doc).set({
-                    linhas,
+                const tabela = parseInt(document.getElementById('viagens-form-tabela').value, 10);
+                const id     = document.getElementById('viagens-form-id').value;
+                const inicio = document.getElementById('viagens-form-inicio').value;
+                const fim    = document.getElementById('viagens-form-fim').value;
+                const membro = document.getElementById('viagens-form-membro').value.trim();
+                const motivo = document.getElementById('viagens-form-motivo').value.trim();
+
+                if (!inicio) throw new Error('Informe a data de início.');
+                if (!fim)    throw new Error('Informe a data de fim.');
+                if (fim < inicio) throw new Error('Data fim não pode ser anterior à data início.');
+                if (!membro) throw new Error('Informe o membro/servidor.');
+                if (!motivo) throw new Error('Informe o motivo.');
+
+                const dados = {
+                    data_inicio: inicio, data_fim: fim, membro, motivo,
                     atualizado_por: currentUser.email,
                     atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
-                });
-                localStorage.setItem(cfg.cacheKey, JSON.stringify(linhas));
-                btnS.disabled  = false;
-                btnS.innerHTML = '✓ Salvar';
-                _viagensSairModoEdicao(n);
-                mostrarToast('✅ Tabela salva com sucesso!');
+                };
+
+                if (tabela === 2) {
+                    const sel = document.getElementById('viagens-form-local').value;
+                    const local = sel === 'outro' ? document.getElementById('viagens-form-local-outro').value.trim() : sel;
+                    if (!local) throw new Error('Informe o local.');
+                    dados.local = local;
+                }
+
+                const colRef = db.collection('viagens_tabela' + tabela + '_admin');
+                if (id) {
+                    await colRef.doc(id).update(dados);
+                } else {
+                    dados.criado_por = currentUser.email;
+                    dados.criado_em  = firebase.firestore.FieldValue.serverTimestamp();
+                    await colRef.add(dados);
+                }
+
+                _viagensFecharForm();
+                mostrarToast('✅ Evento salvo!');
+                await _viagensCarregarEventos(tabela);
+                _viagensRenderCalendario();
+                _viagensRenderListaFiltro(tabela);
+                _viagensRenderLista(tabela);
             } catch(e) {
-                btnS.disabled  = false;
-                btnS.innerHTML = '✓ Salvar';
-                mostrarToast('❌ Erro ao salvar: ' + e.message, true);
+                mostrarToast('❌ Erro: ' + e.message, true);
+            } finally {
+                submitBtn.disabled = false; submitBtn.innerHTML = '💾 Salvar';
             }
+        }
+
+        async function _viagensConfirmarExcluir(tabela, id) {
+            const ev = (_viagensEventos[tabela] || []).find(e => e.id === id);
+            if (!ev) return;
+            const label = tabela === 2 ? ev.local : ev.membro;
+            const periodo = ev.data_inicio === ev.data_fim
+                ? formatarData(ev.data_inicio)
+                : `${formatarData(ev.data_inicio)} a ${formatarData(ev.data_fim)}`;
+            if (!confirm(`Excluir o evento "${label}" (${periodo})?`)) return;
+            try {
+                await db.collection('viagens_tabela' + tabela + '_admin').doc(id).delete();
+                mostrarToast('✅ Evento excluído!');
+                document.getElementById('viagens-dia-overlay').classList.remove('active');
+                await _viagensCarregarEventos(tabela);
+                _viagensRenderCalendario();
+                _viagensRenderListaFiltro(tabela);
+                _viagensRenderLista(tabela);
+            } catch(e) {
+                mostrarToast('❌ Erro: ' + e.message, true);
+            }
+        }
+
+        // ── Importação do seed inicial (só quando a coleção está vazia) ──
+        async function _viagensImportarSeed(n) {
+            const cfg = VIAGENS_TABELAS[n];
+            if (!confirm(`Importar os ${cfg.seed.length} registros iniciais para "${cfg.titulo}"?`)) return;
+            try {
+                const batch = db.batch();
+                const col = db.collection('viagens_tabela' + n + '_admin');
+                cfg.seed.forEach(item => {
+                    const ref = col.doc();
+                    batch.set(ref, {
+                        ...item,
+                        criado_por: currentUser.email,
+                        criado_em:  firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                await batch.commit();
+                mostrarToast('✅ Dados iniciais importados!');
+                await _viagensCarregarEventos(n);
+                renderViagensEventos();
+            } catch(e) {
+                mostrarToast('❌ Erro: ' + e.message, true);
+            }
+        }
+
+        // ── Lista (por tabela, ordenada por data, com filtro de mês) ────
+        function _viagensRenderListaFiltro(n) {
+            const el = document.getElementById('viagens-lista-filtro-' + n);
+            if (!el) return;
+            const atual = _viagensListaFiltro[n];
+            let html = `<button type="button" class="month-filter-btn${atual === 'todos' ? ' active' : ''}" onclick="_viagensFiltrarMes(${n},'todos')">Ano todo</button>`;
+            months.forEach((m, idx) => {
+                const val = String(idx + 1).padStart(2, '0');
+                html += `<button type="button" class="month-filter-btn${atual === val ? ' active' : ''}" onclick="_viagensFiltrarMes(${n},'${val}')">${m}</button>`;
+            });
+            el.innerHTML = html;
+        }
+
+        function _viagensFiltrarMes(n, val) {
+            _viagensListaFiltro[n] = val;
+            _viagensRenderListaFiltro(n);
+            _viagensRenderLista(n);
+        }
+
+        function _viagensRenderLista(n) {
+            const tbody = document.getElementById('viagens-lista-tbody-' + n);
+            if (!tbody) return;
+            const isAdmin = userRole === 'admin';
+            const filtro  = _viagensListaFiltro[n];
+            let eventos = _viagensEventos[n] || [];
+            if (filtro !== 'todos') eventos = eventos.filter(ev => ev.data_inicio.substring(5, 7) === filtro);
+
+            if (!eventos.length) {
+                const cols = (n === 2 ? 4 : 3) + (isAdmin ? 1 : 0);
+                tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;color:#94a3b8;font-style:italic;padding:18px">Nenhum evento cadastrado${filtro !== 'todos' ? ' neste mês' : ''}.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = eventos.map(ev => {
+                const periodo = ev.data_inicio === ev.data_fim
+                    ? formatarData(ev.data_inicio)
+                    : `${formatarData(ev.data_inicio)} a ${formatarData(ev.data_fim)}`;
+                const acoes = isAdmin ? `<td style="text-align:center;white-space:nowrap">
+                    <button class="btn-acao-tabela btn-editar-af" title="Editar" onclick="_viagensAbrirForm(${n},'${ev.id}')">✏️</button>
+                    <button class="btn-acao-tabela btn-deletar-af" title="Excluir" onclick="_viagensConfirmarExcluir(${n},'${ev.id}')">🗑️</button>
+                </td>` : '';
+                if (n === 2) {
+                    return `<tr><td class="viagens-cell-view">${_viagensEscHtml(ev.local)}</td><td class="viagens-cell-view">${periodo}</td><td class="viagens-cell-view">${_viagensEscHtml(ev.motivo)}</td><td class="viagens-cell-view">${_viagensEscHtml(ev.membro)}</td>${acoes}</tr>`;
+                }
+                return `<tr><td class="viagens-cell-view">${periodo}</td><td class="viagens-cell-view">${_viagensEscHtml(ev.membro)}</td><td class="viagens-cell-view">${_viagensEscHtml(ev.motivo)}</td>${acoes}</tr>`;
+            }).join('');
         }
 
         let diarioLoaded = false;

@@ -224,49 +224,81 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
 ## Viagens e Eventos (`#viagens-eventos`)
 
 Botão visível a **todos os usuários logados** (viewer e admin), diferente de Prestação de
-Contas — só os controles de edição (Editar tabela / adicionar linha / inserir linha acima /
-excluir linha) são admin-only, decididos no próprio `renderViagensEventos()` via
-`userRole === 'admin'` (mesmo padrão de `renderAtribuicoes()`/`renderPlantao()`, não usa a
-lista `.admin-only` de `_aplicarModoEdicao()`).
+Contas — só os controles de edição (➕/✏️/🗑️) são admin-only, decididos no próprio
+`renderViagensEventos()`/`_viagensAbrirDiaModal()` via `userRole === 'admin'`.
 
-Duas tabelas independentes, empilhadas na mesma seção (config em `VIAGENS_TABELAS[1]`/`[2]`
-no `index.html`):
+Duas sub-abas próprias da seção (`_viagensSubTab`, não usa o sistema global de abas de
+Designações): **📅 Calendário** e **📋 Lista** — ambas leem a mesma fonte de dados, dois
+tipos de evento guardados em coleções separadas:
 
-| # | Título | Colunas | Doc Firestore | Cache localStorage |
-|---|--------|---------|---------------|---------------------|
-| 1 | 🧳 Eventos e Próximas Viagens Previstas | Data · Membro/Servidor · Motivo | `secoes/viagens_tabela1` | `pma-viagens-tabela1` |
-| 2 | 📅 Viagens Trimestrais | Local · Data · Motivo · Membro/Servidor | `secoes/viagens_tabela2` | `pma-viagens-tabela2` |
+| # | Título | Campos | Coleção Firestore | Cache localStorage |
+|---|--------|--------|--------------------|---------------------|
+| 1 | 🧳 Eventos e Próximas Viagens Previstas | `data_inicio`, `data_fim`, `membro`, `motivo` | `viagens_tabela1_admin/{id}` | `pma-viagens-tabela1` |
+| 2 | 📅 Viagens Trimestrais | `local`, `data_inicio`, `data_fim`, `motivo`, `membro` | `viagens_tabela2_admin/{id}` | `pma-viagens-tabela2` |
 
-**Modelo de dados:** array ordenado `linhas: [{ id, celulas: [...] }]` — **não** é o mapa
-`ROW_COL` usado em Atribuições/Adote, porque aquele mapa assume grade de tamanho fixo e aqui
-é preciso inserir/excluir linha em qualquer posição (exceto cabeçalho, que fica fora do array
-— é `<thead>` estático gerado a partir de `VIAGENS_TABELAS[n].colunas`). `id` por linha
-(`_viagensUid()`) garante estabilidade ao reordenar.
+**Por que coleção (um doc por evento) e não um doc único com array:** o Calendário precisa
+posicionar cada evento nos dias certos, o que exige datas reais (`data_inicio`/`data_fim` em
+`YYYY-MM-DD`) em vez do texto livre que a v1 desta seção usava (ex: `"21 a 23/05/2026"`). Com
+datas reais, a Lista passou a fazer sentido **ordenada automaticamente por `data_inicio`** —
+substituiu o mecanismo de inserir/excluir linha em posição arbitrária da v1 (decisão da
+usuária: adicionar/remover continua livre, só não há mais reordenação manual fora da ordem
+cronológica).
 
-**Célula — texto puro, sem RTE:** diferente de Atribuições/Adote (contentEditable + editor de
-texto rico), aqui cada célula em modo edição vira um `<textarea>` (`viagens-cell-input`), sem
-negrito/cor/link. Em modo leitura, o texto é escapado via `_viagensEscHtml()` (usa
-`textContent`→`innerHTML` de um `<div>` auxiliar) e exibido com `white-space:pre-wrap`, que
-preserva quebras de linha nativamente sem precisar converter `\n` em `<br>`. Testado contra
-injeção de HTML/script — conteúdo malicioso é sempre renderizado como texto, nunca como tag.
+### Calendário
 
-**Inserir/excluir linha em qualquer posição (exceto cabeçalho):** padrão novo, não existia
-antes no site. Em modo edição, cada `<tr>` ganha dois botões (`viagens-row-acoes`): ➕ insere
-linha vazia acima daquela linha (`_viagensInserirAcima`), 🗑️ exclui a linha
-(`_viagensExcluirLinha`, com `confirm()`). Botão "➕ Adicionar linha" no rodapé
-(`_viagensAdicionarLinha`) acrescenta no final. Antes de qualquer operação estrutural,
-`_viagensColetar(n)` sincroniza os `<textarea>` visíveis de volta pro array em memória — assim
-inserir/excluir uma linha não perde edições já digitadas em outras linhas.
+`_viagensRenderCalendario()` desenha uma grade mensal (navegação por ano fixo 2026/2027 +
+mês anterior/próximo, `_viagensCalAno`/`_viagensCalMes`) com os eventos das **duas tabelas ao
+mesmo tempo**, coloridos por tipo (cinza-grafite = tabela 1, azul = tabela 2) — não há seletor
+de tabela no calendário.
 
-**Editar/Salvar/Cancelar:** `_viagensEntrarModoEdicao(n)` tira um snapshot profundo
-(`JSON.parse(JSON.stringify(...))`) em `st.backup` antes de habilitar edição;
-`_viagensCancelar(n)` restaura esse snapshot; `_viagensSalvar(n)` coleta os valores finais e
-grava `{ linhas, atualizado_por, atualizado_em }` no Firestore.
+- **Barra contínua ao longo do intervalo, sem precisar clicar:** cada evento aparece como uma
+  barra colorida em todos os dias entre `data_inicio` e `data_fim` — cantos arredondados só
+  nas pontas reais (`start`/`end`/`solo`), quadrados no meio (`mid`), texto do rótulo
+  (`_viagensRotuloEvento`: `membro` na tabela 1, `local` na tabela 2) só no primeiro dia pra
+  não repetir a mesma frase em cada célula. Hover mostra o detalhe completo via `title`
+  (`_viagensDetalheEvento`, escapado com `_viagensEscAttr` — cuidado extra pra aspas dentro de
+  atributo, que `_viagensEscHtml` sozinho não cobre).
+- **Empilhamento sem sobrepor:** `_viagensEventosDoMes()` faz um algoritmo guloso de "lanes"
+  (varre os eventos do mês ordenados por `data_inicio`, cada evento pega a primeira lane cujo
+  último evento já terminou) — eventos que se sobrepõem no tempo (ex: dois eventos que passam
+  por 15/06) ficam em lanes diferentes e alinhadas verticalmente em todos os dias do mês; dias
+  sem evento numa lane recebem um spacer invisível (`.empty-spacer`) só pra manter o
+  alinhamento das lanes abaixo.
+- **Destaque do dia de hoje:** classe `.hoje` comparando com `_viagensHojeStr()`.
+- **Clique em qualquer dia** (mesmo vazio) → `_viagensAbrirDiaModal(ano,mes,dia)` — modal
+  lista os eventos das duas tabelas que cobrem aquele dia, com ✏️/🗑️ por admin, e dois botões
+  "➕" (um por tabela) que já abrem o formulário com a data pré-preenchida.
 
-**Seed inicial:** `VIAGENS_TABELAS[n].seed` — dados extraídos do PDF "Nova Funcionalidade no
-site" (sessão 33). Serve só como fallback de exibição enquanto o doc Firestore não existir
-(mesmo espírito de `PLANTAO_INFO_PADRAO`) — nunca é gravado automaticamente; só passa a existir
-no Firestore quando um admin salva a tabela pela primeira vez.
+### Formulário de evento
+
+Um único modal (`#viagens-form-overlay`) reaproveitado pelas duas tabelas —
+`_viagensAbrirForm(tabela, id, ano, mes, dia)` alterna a visibilidade do grupo "Local"
+(`#viagens-form-local-group`, só tabela 2) e preenche o formulário se `id` for passado
+(edição). Campo Local é um `<select>` fixo com os 6 municípios do Polo (Itacoatiara,
+Itapiranga, São Sebastião do Uatumã, Silves, Urucará, Urucurituba) + opção "Outro" que revela
+um campo de texto livre — decisão da usuária pra evitar erro de digitação/duplicidade
+("Urucara" vs "Urucará"). `_viagensSalvarEvento()` valida datas (fim ≥ início) e campos
+obrigatórios antes de gravar.
+
+### Lista
+
+Uma tabela por tipo (mesmo layout visual da v1), lida de `_viagensEventos[n]` — sempre
+ordenada por `data_inicio` (nunca reordenada manualmente). Filtro por mês
+(`_viagensRenderListaFiltro`, mesmo padrão visual `.month-filter-btn` de Lista de
+Substituições/Escala Semanal) com um botão extra "Ano todo" que remove o filtro
+(`_viagensListaFiltro[n]`, padrão `'todos'`). Texto das células (`motivo`/`membro`/`local`)
+sempre escapado via `_viagensEscHtml()` — nunca interpretado como HTML, mesmo em modo leitura.
+
+**Seed inicial:** `VIAGENS_TABELAS[n].seed` — os mesmos registros do PDF "Nova Funcionalidade
+no site" (sessão 33), agora com `data_inicio`/`data_fim` reais em vez do texto livre original.
+Só aparece um botão "⬇️ Importar dados iniciais" (admin, na Lista) quando a coleção
+correspondente está vazia — `_viagensImportarSeed(n)` grava tudo num único `db.batch()`. Nunca
+roda sozinho; é sempre uma ação explícita do admin.
+
+**Regra do Firestore:** `viagens_tabela1_admin`/`viagens_tabela2_admin` têm `allow write: if
+isAdmin()` em `firestore.rules` (leitura já coberta pela regra genérica de qualquer coleção).
+Precisa de `firebase deploy --only firestore:rules` pra valer em produção — mesma pegadinha já
+documentada na sessão do Plantão (commitar a regra sozinho não publica).
 
 ## Cache localStorage (elimina flash de dados)
 

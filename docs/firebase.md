@@ -48,8 +48,32 @@ nome: "..."
 | `adote_celulas` | `celulas` (mapa `"ROW_COL": { html, cellStyle }`), `atualizado_por`, `atualizado_em` |
 | `adote_expandir` | `html`, `atualizado_por`, `atualizado_em` |
 | `plantao_info` | `nome`, `url` (link da portaria, opcional), `atualizado_por`, `atualizado_em` — se vazio, cai no texto padrão `PLANTAO_INFO_PADRAO` no `index.html` |
-| `viagens_tabela1` | `linhas` (array `[{ id, celulas: [data, membro, motivo] }]`), `atualizado_por`, `atualizado_em` — tabela "Eventos e Próximas Viagens Previstas" |
-| `viagens_tabela2` | `linhas` (array `[{ id, celulas: [local, data, motivo, membro] }]`), `atualizado_por`, `atualizado_em` — tabela "Viagens Trimestrais" |
+
+### `viagens_tabela1_admin/{id}` — Eventos e Próximas Viagens Previstas
+```
+data_inicio:    "YYYY-MM-DD"
+data_fim:       "YYYY-MM-DD"   ← igual a data_inicio quando é um evento de 1 dia só
+membro:         "Eliaquim e Natália"
+motivo:         "Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba"
+criado_por:     "email@..."
+criado_em:      timestamp
+atualizado_por: "email@..."
+atualizado_em:  timestamp
+```
+
+### `viagens_tabela2_admin/{id}` — Viagens Trimestrais
+```
+local:          "Urucurituba"   ← um dos 6 municípios do Polo, ou texto livre (opção "Outro" no form)
+data_inicio:    "YYYY-MM-DD"
+data_fim:       "YYYY-MM-DD"
+motivo:         "..."
+membro:         "..."
+criado_por / criado_em / atualizado_por / atualizado_em: idem acima
+```
+
+Ambas coleções alimentam o Calendário e a Lista da seção "🧳 Viagens e Eventos" a partir da
+mesma fonte — ver `docs/site/estrutura-html.md`. Regra do Firestore: `allow write: if
+isAdmin()` (leitura já coberta pela regra genérica de qualquer coleção).
 
 ### `titulares_admin/{dpKey}` — histórico de titulares por DP
 ```
