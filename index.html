@@ -9494,14 +9494,16 @@
                     const isStart = ev.data_inicio === diaStr || dia === 1;
                     const isEnd   = ev.data_fim === diaStr || dia === diasNoMes;
                     const cls     = isStart && isEnd ? 'solo' : isStart ? 'start' : isEnd ? 'end' : 'mid';
+                    const offset = _viagensDiffDias(ev.data_inicio, diaStr);
                     let texto;
                     if (ev.tabela === 1) {
-                        const offset = _viagensDiffDias(ev.data_inicio, diaStr);
                         texto = offset === 0
                             ? _viagensEscHtml(_viagensRotuloEvento(ev))
                             : (_viagensEscHtml((ev.motivoChunks || [])[offset - 1] || '') || '&nbsp;');
                     } else {
-                        texto = isStart ? _viagensEscHtml(_viagensRotuloEvento(ev)) : '&nbsp;';
+                        texto = offset === 0 ? _viagensEscHtml(_viagensRotuloEvento(ev))
+                            : offset === 1 ? (_viagensEscHtml(ev.membro || '') || '&nbsp;')
+                            : '&nbsp;';
                     }
                     bars += `<div class="viagens-cal-bar t${ev.tabela} ${cls}" title="${_viagensEscAttr(_viagensDetalheEvento(ev))}" onclick="event.stopPropagation();_viagensAbrirDiaModal(${ano},${mesIdx0 + 1},${dia})">${texto}</div>`;
                 }

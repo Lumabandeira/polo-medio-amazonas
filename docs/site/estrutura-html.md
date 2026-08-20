@@ -263,8 +263,13 @@ numa grade de um mês só).
   (`_viagensDetalheEvento`, escapado com `_viagensEscAttr` — cuidado extra pra aspas dentro de
   atributo, que `_viagensEscHtml` sozinho não cobre).
 - **Motivo distribuído nos dias seguintes (só Tabela 1):** decisão da usuária de restringir só
-  à Tabela 1 (Eventos e Próximas Viagens) — a Tabela 2 continua só com o `local` no 1º dia e
-  vazio no resto. `_viagensEventosDoMes()` pré-calcula `ev.motivoChunks` só para eventos da
+  à Tabela 1 (Eventos e Próximas Viagens) — a Tabela 2 tem um comportamento próprio, mais
+  simples: `local` no offset 0 (1º dia do evento), `membro` fixo no offset 1 (2º dia), vazio
+  do offset 2 em diante — não é uma distribuição/empacotamento, é só um segundo campo fixo
+  (pedido da usuária depois de ver o Local sozinho na barra). Ambos os offsets usam
+  `_viagensDiffDias(data_inicio, diaStr)`, então em evento de 1 dia só o `membro` nunca aparece
+  na barra (só no hover/clique — não existe "2º dia"). `_viagensEventosDoMes()` pré-calcula
+  `ev.motivoChunks` só para eventos da
   tabela 1 (`_viagensDistribuirMotivo(motivo, nDiasContinuacao)`) — empacota o **máximo de
   palavras inteiras** que cabem em cada dia (nunca corta no meio), até `VIAGENS_MOTIVO_MAX_CHARS`
   (22 caracteres, afinado empiricamente pro font-size/padding de `.viagens-cal-bar` em 1280px —
