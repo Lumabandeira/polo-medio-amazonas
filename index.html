@@ -9382,6 +9382,44 @@
         }
 
         // ── Calendário ──────────────────────────────────────────────────
+        // Diferença em dias corridos entre duas datas "YYYY-MM-DD" (UTC, sem fuso/DST)
+        function _viagensDiffDias(a, b) {
+            const [ay, am, ad] = a.split('-').map(Number);
+            const [by, bm, bd] = b.split('-').map(Number);
+            return Math.round((Date.UTC(by, bm - 1, bd) - Date.UTC(ay, am - 1, ad)) / 86400000);
+        }
+
+        // Divide o Motivo em nChunks pedaços (sem cortar palavra no meio), pra fluir
+        // um pedaço por dia nos dias seguintes ao 1º dia do evento na Tabela 1.
+        function _viagensDistribuirMotivo(motivo, nChunks) {
+            if (nChunks <= 0) return [];
+            const texto = (motivo || '').trim();
+            if (!texto) return new Array(nChunks).fill('');
+            if (nChunks === 1) return [texto];
+            const palavras = texto.split(/\s+/);
+            const alvoPorChunk = texto.length / nChunks;
+            const chunks = [];
+            let atual = [];
+            let atualLen = 0;
+            palavras.forEach((palavra, i) => {
+                atual.push(palavra);
+                atualLen += palavra.length + 1;
+                const restamPalavras = palavras.length - i - 1;
+                const restamChunks   = nChunks - chunks.length - 1;
+                if (atualLen >= alvoPorChunk && restamChunks > 0 && restamPalavras >= restamChunks) {
+                    chunks.push(atual.join(' '));
+                    atual = []; atualLen = 0;
+                }
+            });
+            chunks.push(atual.join(' '));
+            while (chunks.length > nChunks) {
+                const ultimo = chunks.pop();
+                chunks[chunks.length - 1] = (chunks[chunks.length - 1] + ' ' + ultimo).trim();
+            }
+            while (chunks.length < nChunks) chunks.push('');
+            return chunks;
+        }
+
         function _viagensEventosDoMes(ano, mesIdx0) {
             const mm = String(mesIdx0 + 1).padStart(2, '0');
             const diasNoMes = new Date(ano, mesIdx0 + 1, 0).getDate();
@@ -9390,7 +9428,14 @@
             const todos = [];
             [1, 2].forEach(n => {
                 (_viagensEventos[n] || []).forEach(ev => {
-                    if (ev.data_inicio <= mesFim && ev.data_fim >= mesIni) todos.push({ tabela: n, ...ev });
+                    if (ev.data_inicio <= mesFim && ev.data_fim >= mesIni) {
+                        const full = { tabela: n, ...ev };
+                        if (n === 1) {
+                            const dur = _viagensDiffDias(ev.data_inicio, ev.data_fim) + 1;
+                            full.motivoChunks = _viagensDistribuirMotivo(ev.motivo, Math.max(dur - 1, 0));
+                        }
+                        todos.push(full);
+                    }
                 });
             });
             todos.sort((a, b) => a.data_inicio < b.data_inicio ? -1 : a.data_inicio > b.data_inicio ? 1 : 0);
@@ -9451,7 +9496,15 @@
                     const isStart = ev.data_inicio === diaStr || dia === 1;
                     const isEnd   = ev.data_fim === diaStr || dia === diasNoMes;
                     const cls     = isStart && isEnd ? 'solo' : isStart ? 'start' : isEnd ? 'end' : 'mid';
-                    const texto   = isStart ? _viagensEscHtml(_viagensRotuloEvento(ev)) : '&nbsp;';
+                    let texto;
+                    if (ev.tabela === 1) {
+                        const offset = _viagensDiffDias(ev.data_inicio, diaStr);
+                        texto = offset === 0
+                            ? _viagensEscHtml(_viagensRotuloEvento(ev))
+                            : (_viagensEscHtml((ev.motivoChunks || [])[offset - 1] || '') || '&nbsp;');
+                    } else {
+                        texto = isStart ? _viagensEscHtml(_viagensRotuloEvento(ev)) : '&nbsp;';
+                    }
                     bars += `<div class="viagens-cal-bar t${ev.tabela} ${cls}" title="${_viagensEscAttr(_viagensDetalheEvento(ev))}" onclick="event.stopPropagation();_viagensAbrirDiaModal(${ano},${mesIdx0 + 1},${dia})">${texto}</div>`;
                 }
                 html += `<div class="viagens-cal-day${diaStr === hojeStr ? ' hoje' : ''}" onclick="_viagensAbrirDiaModal(${ano},${mesIdx0 + 1},${dia})">

@@ -262,6 +262,18 @@ numa grade de um mês só).
   não repetir a mesma frase em cada célula. Hover mostra o detalhe completo via `title`
   (`_viagensDetalheEvento`, escapado com `_viagensEscAttr` — cuidado extra pra aspas dentro de
   atributo, que `_viagensEscHtml` sozinho não cobre).
+- **Motivo distribuído nos dias seguintes (só Tabela 1):** decisão da usuária de restringir só
+  à Tabela 1 (Eventos e Próximas Viagens) — a Tabela 2 continua só com o `local` no 1º dia e
+  vazio no resto. `_viagensEventosDoMes()` pré-calcula `ev.motivoChunks` só para eventos da
+  tabela 1 (`_viagensDistribuirMotivo(motivo, nDiasContinuacao)`) — divide o Motivo em
+  `duração_total − 1` pedaços, sempre por palavra inteira (nunca corta no meio), balanceados
+  pelo tamanho do texto. No render, `_viagensDiffDias(data_inicio, diaStr)` calcula o offset
+  real do dia dentro do evento (não relativo à grade visível): offset 0 = Membro/Servidor,
+  offset N = `motivoChunks[N-1]`. Evento de 1 dia só não tem "dias seguintes" — o Motivo fica
+  só no hover/clique, igual antes. Se o evento atravessa a virada do mês, o texto continua
+  fluindo normalmente na página do mês seguinte (o offset é sempre relativo à data real de
+  início, não ao 1º dia visível) — o nome do Membro **não** reaparece nessa página nova,
+  decisão explícita da usuária.
 - **Empilhamento sem sobrepor:** `_viagensEventosDoMes()` faz um algoritmo guloso de "lanes"
   (varre os eventos do mês ordenados por `data_inicio`, cada evento pega a primeira lane cujo
   último evento já terminou) — eventos que se sobrepõem no tempo (ex: dois eventos que passam
