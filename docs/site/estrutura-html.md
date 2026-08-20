@@ -246,10 +246,14 @@ cronológica).
 
 ### Calendário
 
-`_viagensRenderCalendario()` desenha uma grade mensal (navegação por ano fixo 2026/2027 +
-mês anterior/próximo, `_viagensCalAno`/`_viagensCalMes`) com os eventos das **duas tabelas ao
+`_viagensRenderCalendario()` desenha uma grade mensal com os eventos das **duas tabelas ao
 mesmo tempo**, coloridos por tipo (cinza-grafite = tabela 1, azul = tabela 2) — não há seletor
-de tabela no calendário.
+de tabela no calendário. Navegação: botões de ano fixo (2026/2027, `_viagensCalAno`) + uma
+linha de 12 botões de mês (`#viagens-cal-mes-filtro`, mesmo estilo `.viagens-filtro-btn` da
+Lista, `_viagensMudarMesDireto(idx)` seta `_viagensCalMes` direto) — substituiu as setas
+"Mês anterior/Próximo mês" da v1 a pedido da usuária, pra reaproveitar visualmente o mesmo
+seletor que ela já gostava na Lista. Sem botão "Ano todo" aqui (não tem equivalente visual
+numa grade de um mês só).
 
 - **Barra contínua ao longo do intervalo, sem precisar clicar:** cada evento aparece como uma
   barra colorida em todos os dias entre `data_inicio` e `data_fim` — cantos arredondados só
@@ -283,10 +287,13 @@ obrigatórios antes de gravar.
 ### Lista
 
 Uma tabela por tipo (mesmo layout visual da v1), lida de `_viagensEventos[n]` — sempre
-ordenada por `data_inicio` (nunca reordenada manualmente). Filtro por mês
-(`_viagensRenderListaFiltro`, mesmo padrão visual `.month-filter-btn` de Lista de
-Substituições/Escala Semanal) com um botão extra "Ano todo" que remove o filtro
-(`_viagensListaFiltro[n]`, padrão `'todos'`). Texto das células (`motivo`/`membro`/`local`)
+ordenada por `data_inicio` (nunca reordenada manualmente). Filtro por ano + mês
+(`_viagensRenderListaFiltro`, classe própria `.viagens-filtro-btn` — não usa mais a
+`.month-filter-btn` genérica do site, pra não puxar o tamanho/cor padrão das outras seções):
+dois botões de ano fixo (2026/2027, `_viagensFiltrarAno`) à esquerda, depois "Ano todo"
+(remove o filtro de mês dentro do ano selecionado) + os 12 meses (`_viagensFiltrarMes`).
+`_viagensListaFiltro[n]` é `{ ano, mes }` — `_viagensAnoMesAtual()` inicializa com o ano
+vigente (`new Date().getFullYear()`) e `mes: 'todos'`. Texto das células (`motivo`/`membro`/`local`)
 sempre escapado via `_viagensEscHtml()` — nunca interpretado como HTML, mesmo em modo leitura.
 
 **Seed inicial:** `VIAGENS_TABELAS[n].seed` — os mesmos registros do PDF "Nova Funcionalidade

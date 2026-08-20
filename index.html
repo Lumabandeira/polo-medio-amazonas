@@ -1510,9 +1510,26 @@
         .viagens-block { margin-bottom: 30px; }
         .viagens-block h3 {
             color: #334155;
-            margin: 0 0 8px;
-            font-size: 1.15em;
+            margin: 0 0 14px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 10px;
         }
+        .viagens-filtro-btn {
+            padding: 5px 12px;
+            background: white;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.78em;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .viagens-filtro-btn:hover { background: #f1f5f9; border-color: #94a3b8; color: #334155; }
+        .viagens-filtro-btn.active { background: #334155; color: white; border-color: #334155; }
         .viagens-table-wrap {
             overflow-x: auto;
             border-radius: 10px;
@@ -1531,6 +1548,7 @@
             padding: 10px 14px;
             text-align: left;
             font-weight: 700;
+            font-size: 1.1em;
             letter-spacing: 0.02em;
         }
         .viagens-table td {
@@ -1563,7 +1581,6 @@
             margin: 6px 0 16px;
             flex-wrap: wrap;
         }
-        .viagens-cal-nav h3 { margin: 0; font-size: 1.1em; color: #334155; }
         .viagens-cal-nav button {
             padding: 6px 14px;
             border: 1.5px solid #cbd5e1;
@@ -9254,9 +9271,13 @@
             return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
+        function _viagensAnoMesAtual() {
+            return { ano: new Date().getFullYear(), mes: 'todos' };
+        }
+
         let _viagensEventos      = { 1: [], 2: [] };
         let _viagensCarregadoFlg = { 1: false, 2: false };
-        let _viagensListaFiltro  = { 1: 'todos', 2: 'todos' };
+        let _viagensListaFiltro  = { 1: _viagensAnoMesAtual(), 2: _viagensAnoMesAtual() };
         let _viagensSubTab       = 'calendario';
         let _viagensCalAno       = new Date().getFullYear();
         let _viagensCalMes       = new Date().getMonth();
@@ -9274,7 +9295,7 @@
                 return `
                     <div class="viagens-block">
                         <h3>${cfg.titulo}</h3>
-                        <div id="viagens-lista-filtro-${n}" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;"></div>
+                        <div id="viagens-lista-filtro-${n}" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;"></div>
                         ${isAdmin ? `<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                             <button type="button" class="btn-editar" onclick="_viagensAbrirForm(${n},null)">➕ Novo Evento</button>
                             <span id="viagens-seed-${n}"></span>
@@ -9303,12 +9324,8 @@
                             <button type="button" class="viagens-cal-year-btn" data-ano="2026" onclick="_viagensMudarAno(2026)">2026</button>
                             <button type="button" class="viagens-cal-year-btn" data-ano="2027" onclick="_viagensMudarAno(2027)">2027</button>
                         </div>
-                        <div style="display:flex;align-items:center;gap:10px;">
-                            <button type="button" onclick="_viagensMudarMes(-1)">← Mês anterior</button>
-                            <h3 id="viagens-cal-titulo"></h3>
-                            <button type="button" onclick="_viagensMudarMes(1)">Próximo mês →</button>
-                        </div>
                     </div>
+                    <div id="viagens-cal-mes-filtro" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;"></div>
                     <div id="viagens-cal-grid" class="viagens-cal-grid"></div>
                     <div class="viagens-cal-legend">
                         <span><span class="dot" style="background:#e2e8f0"></span>Eventos e Próximas Viagens Previstas</span>
@@ -9402,22 +9419,19 @@
 
         function _viagensMudarAno(ano) { _viagensCalAno = ano; _viagensRenderCalendario(); }
 
-        function _viagensMudarMes(delta) {
-            _viagensCalMes += delta;
-            if (_viagensCalMes < 0)  { _viagensCalMes = 11; _viagensCalAno--; }
-            if (_viagensCalMes > 11) { _viagensCalMes = 0;  _viagensCalAno++; }
-            _viagensRenderCalendario();
-        }
+        function _viagensMudarMesDireto(idx) { _viagensCalMes = idx; _viagensRenderCalendario(); }
 
         function _viagensRenderCalendario() {
             const container = document.getElementById('viagens-cal-grid');
-            const tituloEl  = document.getElementById('viagens-cal-titulo');
-            if (!container || !tituloEl) return;
+            const mesFiltroEl = document.getElementById('viagens-cal-mes-filtro');
+            if (!container || !mesFiltroEl) return;
             const ano = _viagensCalAno, mesIdx0 = _viagensCalMes;
-            tituloEl.textContent = `${months[mesIdx0]} ${ano}`;
             document.querySelectorAll('.viagens-cal-year-btn').forEach(b => {
                 b.classList.toggle('active', parseInt(b.dataset.ano, 10) === ano);
             });
+            mesFiltroEl.innerHTML = months.map((m, idx) =>
+                `<button type="button" class="viagens-filtro-btn${idx === mesIdx0 ? ' active' : ''}" onclick="_viagensMudarMesDireto(${idx})">${m}</button>`
+            ).join('');
 
             const { eventos, maxLane } = _viagensEventosDoMes(ano, mesIdx0);
             const firstDow   = new Date(ano, mesIdx0, 1).getDay();
@@ -9641,21 +9655,30 @@
             }
         }
 
-        // ── Lista (por tabela, ordenada por data, com filtro de mês) ────
+        // ── Lista (por tabela, ordenada por data, com filtro de ano/mês) ─
         function _viagensRenderListaFiltro(n) {
             const el = document.getElementById('viagens-lista-filtro-' + n);
             if (!el) return;
             const atual = _viagensListaFiltro[n];
-            let html = `<button type="button" class="month-filter-btn${atual === 'todos' ? ' active' : ''}" onclick="_viagensFiltrarMes(${n},'todos')">Ano todo</button>`;
+            let html = [2026, 2027].map(ano =>
+                `<button type="button" class="viagens-filtro-btn${atual.ano === ano ? ' active' : ''}" onclick="_viagensFiltrarAno(${n},${ano})">${ano}</button>`
+            ).join('');
+            html += `<button type="button" class="viagens-filtro-btn${atual.mes === 'todos' ? ' active' : ''}" onclick="_viagensFiltrarMes(${n},'todos')">Ano todo</button>`;
             months.forEach((m, idx) => {
                 const val = String(idx + 1).padStart(2, '0');
-                html += `<button type="button" class="month-filter-btn${atual === val ? ' active' : ''}" onclick="_viagensFiltrarMes(${n},'${val}')">${m}</button>`;
+                html += `<button type="button" class="viagens-filtro-btn${atual.mes === val ? ' active' : ''}" onclick="_viagensFiltrarMes(${n},'${val}')">${m}</button>`;
             });
             el.innerHTML = html;
         }
 
+        function _viagensFiltrarAno(n, ano) {
+            _viagensListaFiltro[n].ano = ano;
+            _viagensRenderListaFiltro(n);
+            _viagensRenderLista(n);
+        }
+
         function _viagensFiltrarMes(n, val) {
-            _viagensListaFiltro[n] = val;
+            _viagensListaFiltro[n].mes = val;
             _viagensRenderListaFiltro(n);
             _viagensRenderLista(n);
         }
@@ -9665,12 +9688,12 @@
             if (!tbody) return;
             const isAdmin = userRole === 'admin';
             const filtro  = _viagensListaFiltro[n];
-            let eventos = _viagensEventos[n] || [];
-            if (filtro !== 'todos') eventos = eventos.filter(ev => ev.data_inicio.substring(5, 7) === filtro);
+            let eventos = (_viagensEventos[n] || []).filter(ev => ev.data_inicio.substring(0, 4) === String(filtro.ano));
+            if (filtro.mes !== 'todos') eventos = eventos.filter(ev => ev.data_inicio.substring(5, 7) === filtro.mes);
 
             if (!eventos.length) {
                 const cols = (n === 2 ? 4 : 3) + (isAdmin ? 1 : 0);
-                tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;color:#94a3b8;font-style:italic;padding:18px">Nenhum evento cadastrado${filtro !== 'todos' ? ' neste mês' : ''}.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;color:#94a3b8;font-style:italic;padding:18px">Nenhum evento cadastrado ${filtro.mes !== 'todos' ? 'neste mês' : 'neste ano'}.</td></tr>`;
                 return;
             }
 
