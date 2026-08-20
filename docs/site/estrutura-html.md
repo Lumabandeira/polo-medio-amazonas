@@ -265,9 +265,14 @@ numa grade de um mês só).
 - **Motivo distribuído nos dias seguintes (só Tabela 1):** decisão da usuária de restringir só
   à Tabela 1 (Eventos e Próximas Viagens) — a Tabela 2 continua só com o `local` no 1º dia e
   vazio no resto. `_viagensEventosDoMes()` pré-calcula `ev.motivoChunks` só para eventos da
-  tabela 1 (`_viagensDistribuirMotivo(motivo, nDiasContinuacao)`) — divide o Motivo em
-  `duração_total − 1` pedaços, sempre por palavra inteira (nunca corta no meio), balanceados
-  pelo tamanho do texto. No render, `_viagensDiffDias(data_inicio, diaStr)` calcula o offset
+  tabela 1 (`_viagensDistribuirMotivo(motivo, nDiasContinuacao)`) — empacota o **máximo de
+  palavras inteiras** que cabem em cada dia (nunca corta no meio), até `VIAGENS_MOTIVO_MAX_CHARS`
+  (22 caracteres, afinado empiricamente pro font-size/padding de `.viagens-cal-bar` em 1280px —
+  testado sem overflow real, via `scrollWidth > clientWidth`, em motivos curtos e longos) — não
+  é mais uma divisão balanceada por tamanho médio (v1 dessa feature), é greedy: cada dia pega o
+  quanto couber, sobra vai pro(s) dia(s) seguinte(s); se o texto acabar antes dos dias, os dias
+  restantes ficam vazios; se os dias acabarem antes do texto, o resto só aparece no hover/clique.
+  No render, `_viagensDiffDias(data_inicio, diaStr)` calcula o offset
   real do dia dentro do evento (não relativo à grade visível): offset 0 = Membro/Servidor,
   offset N = `motivoChunks[N-1]`. Evento de 1 dia só não tem "dias seguintes" — o Motivo fica
   só no hover/clique, igual antes. Se o evento atravessa a virada do mês, o texto continua

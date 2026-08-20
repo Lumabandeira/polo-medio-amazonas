@@ -9389,33 +9389,31 @@
             return Math.round((Date.UTC(by, bm - 1, bd) - Date.UTC(ay, am - 1, ad)) / 86400000);
         }
 
-        // Divide o Motivo em nChunks pedaços (sem cortar palavra no meio), pra fluir
-        // um pedaço por dia nos dias seguintes ao 1º dia do evento na Tabela 1.
+        // Quantos caracteres cabem numa célula de dia do calendário sem cortar
+        // (afinado empiricamente pro font-size/padding de .viagens-cal-bar em 1280px).
+        const VIAGENS_MOTIVO_MAX_CHARS = 22;
+
+        // Divide o Motivo em até nChunks pedaços, empacotando o máximo de palavras
+        // inteiras que cabem em cada dia (nunca corta palavra no meio) — sobra de
+        // texto que não coube nos dias disponíveis fica só visível no hover/clique.
         function _viagensDistribuirMotivo(motivo, nChunks) {
             if (nChunks <= 0) return [];
             const texto = (motivo || '').trim();
             if (!texto) return new Array(nChunks).fill('');
-            if (nChunks === 1) return [texto];
             const palavras = texto.split(/\s+/);
-            const alvoPorChunk = texto.length / nChunks;
             const chunks = [];
-            let atual = [];
-            let atualLen = 0;
-            palavras.forEach((palavra, i) => {
-                atual.push(palavra);
-                atualLen += palavra.length + 1;
-                const restamPalavras = palavras.length - i - 1;
-                const restamChunks   = nChunks - chunks.length - 1;
-                if (atualLen >= alvoPorChunk && restamChunks > 0 && restamPalavras >= restamChunks) {
-                    chunks.push(atual.join(' '));
-                    atual = []; atualLen = 0;
+            let atual = '';
+            palavras.forEach(palavra => {
+                if (chunks.length >= nChunks) return;
+                const candidato = atual ? atual + ' ' + palavra : palavra;
+                if (!atual || candidato.length <= VIAGENS_MOTIVO_MAX_CHARS) {
+                    atual = candidato;
+                } else {
+                    chunks.push(atual);
+                    atual = palavra;
                 }
             });
-            chunks.push(atual.join(' '));
-            while (chunks.length > nChunks) {
-                const ultimo = chunks.pop();
-                chunks[chunks.length - 1] = (chunks[chunks.length - 1] + ' ' + ultimo).trim();
-            }
+            if (atual && chunks.length < nChunks) chunks.push(atual);
             while (chunks.length < nChunks) chunks.push('');
             return chunks;
         }
