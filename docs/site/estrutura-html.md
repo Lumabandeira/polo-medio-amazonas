@@ -135,6 +135,30 @@ Lista dinâmica (não mais tabela de tamanho fixo) na coleção `plantao_admin/{
 (texto livre — plantonistas nem sempre são os 6 titulares do polo), `criado_por`,
 `criado_em`. Renderizada por `renderPlantao()`, ordenada por `data_inicio`.
 
+**Link de portaria por período:** cada linha da tabela tem uma coluna "Portaria"
+(`_plantaoLinkPortariaHtml()`), resolvida nesta ordem de prioridade:
+1. `alteracao_url`/`alteracao_numero` — preenchidos só quando esse período específico
+   foi alterado por uma portaria pontual publicada depois da portaria geral (ex.:
+   substituição de um plantonista numa semana). Renderiza como badge laranja "🔄",
+   com `alteracao_obs` (texto livre) como `title` (tooltip). É o único caso em que a
+   linha mostra sua própria portaria em destaque — não mostra a original ao lado
+   (decisão explícita: só a que vale hoje).
+2. `portaria_url`/`portaria_numero` — portaria própria do período, quando diferente
+   da geral (raro).
+3. Fallback: link geral da seção (`plantaoInfoAtual`, ver abaixo) — cache síncrono
+   de `secoes/plantao_info`, atualizado por `_plantaoCarregarInfo()` e replicado nas
+   células via `_plantaoAtualizarColunaPortaria()` (evita recursão entre
+   `renderPlantao()` ↔ `_plantaoCarregarInfo()`, já que ambos se chamam).
+
+Todos os campos de texto livre desses 5 campos passam por `esc()`; o `title`
+(tooltip) do badge de alteração usa `esc(...).replace(/"/g, '&quot;')`
+(mesmo padrão de `_viagensEscAttr()`, necessário porque `esc()` sozinho não escapa
+aspas — seguro em texto de nó HTML, mas não dentro de um atributo).
+
+Editável só pelo formulário de 1 período (`abrirFormPlantao`/`salvarPlantaoFirestore`)
+— **não** pelo CSV em lote nem pelo seed inicial, que continuam com só os 4 campos
+base (alteração de portaria é exceção pontual, não vale complicar o parser de CSV).
+
 **Decisão da sessão 26:** sem IA e sem automação de PDF. As automações
 existentes (sinos de notificação de afastamentos/remoções/designações
 cumulativas) não têm se mostrado confiáveis na prática, então o cadastro de

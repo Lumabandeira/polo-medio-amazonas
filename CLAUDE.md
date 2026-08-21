@@ -57,6 +57,35 @@ docs/
 
 ---
 
+## Estado atual (sessão 35 — 21/08/2026)
+
+**Implementado nesta sessão:** correção de um typo de longa data ("Karolayne" → "Karolyne",
+nome da servidora Luma Karolyne Pantoja Bandeira) que só existia no seed `PLANTAO_SEED_2026`
+de `index.html` — corrigido no código e nos 2 documentos já gravados em `plantao_admin` que
+tinham herdado o erro (script Python pontual com `firebase-service-account.json`, sem alterar
+`firestore.rules`). Também investigado por que a coleção `plantao_admin` apareceu vazia no
+site (ver `docs/historico-sessoes.md` sessão 35 para o diagnóstico — conclusão: exclusão manual
+fora do repositório, sem processo automático capaz disso).
+
+Principal: cada linha da tabela de Plantão ganhou uma coluna "Portaria" com link para o
+diário oficial que definiu aquele período — antes só havia um link geral fixo no topo da
+página (`plantao_info`), sem diferenciar períodos alterados por portaria pontual posterior
+(caso já ocorrido antes, ver histórico de substituições no Diário Oficial). 5 campos novos e
+opcionais em `plantao_admin/{id}`: `portaria_numero`/`portaria_url` (portaria própria do
+período, raro) e `alteracao_numero`/`alteracao_url`/`alteracao_obs` (quando a escala foi
+alterada por portaria pontual — vira badge laranja "🔄" em destaque, sem mostrar a portaria
+original ao lado, decisão explícita da usuária). Linhas sem portaria própria caem no link geral
+(`plantaoInfoAtual`, cache síncrono de `secoes/plantao_info` — decisão para funcionar em toda
+linha sem repetir leitura do Firestore). Só editável pelo formulário de 1 período — CSV/seed
+continuam com os 4 campos base. `_plantaoLinkPortariaHtml()`/`_plantaoAtualizarColunaPortaria()`
+em `index.html`. Testado no navegador local (servidor estático `.claude/launch.json`, sem login
+real, `userRole='admin'` simulado via console) — 4 casos (sem portaria própria, com portaria
+própria, com alteração, e um payload de XSS no `alteracao_obs`). O teste revelou e corrigiu um
+bug real: o `title` do badge usa `esc(...).replace(/"/g, '&quot;')` (não só `esc()`), porque o
+helper `esc()` do site só escapa `&`/`<`/`>` (seguro em texto de nó HTML, mas não dentro de um
+atributo) — mesmo padrão já usado em `_viagensEscAttr()`. Ver `docs/site/estrutura-html.md`
+(seção "Plantão") e `docs/firebase.md` para o detalhamento completo.
+
 ## Estado atual (sessão 34 — 19/08/2026)
 
 **Implementado nesta sessão:** reformulação de "🧳 Viagens e Eventos" (sessão 33) em duas

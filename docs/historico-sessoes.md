@@ -4,6 +4,39 @@
 
 ---
 
+## Sessão 35 — 21/08/2026
+
+- **Diagnóstico de esvaziamento de `plantao_admin`**: usuária relatou que a Escala de Plantão
+  apareceu vazia no site (botão "Importar dados iniciais" reapareceu). Investigação: backups
+  locais (`backups/firestore/2026-08-10_*`) confirmaram 12 períodos gravados em 05/08/2026;
+  nenhum script do repositório (backup, backfill, limpeza) toca `plantao_admin`, e o único
+  caminho de exclusão do site (`confirmarDeletarPlantao()`) apaga 1 período por vez com
+  confirmação individual — conclusão: exclusão manual fora do fluxo normal (Console do Firebase
+  ou clique período a período), não um bug do site. Usuária reimportou o seed pelo botão.
+- **Correção de typo**: "Karolayne" → "Karolyne" (nome da servidora Luma Karolyne Pantoja
+  Bandeira) — erro isolado em `PLANTAO_SEED_2026` (`index.html`), divergente do resto do
+  repositório. Corrigido no código e nos 2 documentos já gravados que tinham herdado o erro via
+  reimportação do seed (script Python pontual com a service account).
+- **Link de portaria por período na Escala de Plantão**: nova coluna "Portaria" na tabela —
+  antes só existia um link geral fixo no topo (`plantao_info`), sem diferenciar períodos
+  alterados por portaria pontual posterior à publicação original (já ocorreu antes, ver
+  substituições no Diário Oficial). 5 campos novos opcionais em `plantao_admin/{id}`:
+  `portaria_numero`/`portaria_url` (portaria própria do período) e
+  `alteracao_numero`/`alteracao_url`/`alteracao_obs` (quando a escala foi alterada — vira badge
+  laranja "🔄" em destaque; decisão explícita da usuária de não mostrar a portaria original ao
+  lado). Linhas sem portaria própria caem no link geral, cacheado em `plantaoInfoAtual` para uso
+  síncrono em toda a tabela sem repetir leitura do Firestore por linha. Editável só pelo
+  formulário de 1 período — CSV e seed continuam com os 4 campos base (caso raro, não compensa
+  complicar o parser). Testado no navegador local (servidor estático, sem login real,
+  `userRole='admin'` simulado via console): 4 casos, incluindo um payload de XSS no
+  `alteracao_obs` que revelou e levou à correção de um bug real — o `title` do badge precisa de
+  `esc(...).replace(/"/g, '&quot;')`, não só `esc()`, porque esse helper do site só escapa
+  `&`/`<`/`>` (seguro em texto de nó HTML, mas não dentro de um atributo); mesmo padrão já usado
+  em `_viagensEscAttr()`. Ver `docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md`
+  para o detalhamento completo.
+
+---
+
 ## Sessão 32 — 09/08/2026
 
 - **Bugfix real de duplicação de afastamentos**, encontrado pela usuária ao testar a Escala

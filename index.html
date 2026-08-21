@@ -3717,7 +3717,7 @@
 
         <!-- Formulário Plantão: novo período / edição -->
         <div id="plantao-form-overlay" class="form-af-overlay" onclick="fecharFormPlantao(event)">
-            <div class="form-af-content" style="max-width:560px" onclick="event.stopPropagation()">
+            <div class="form-af-content" style="max-width:620px" onclick="event.stopPropagation()">
                 <div class="form-af-header" style="background:linear-gradient(135deg,#7f1d1d,#ef4444)">
                     <h2 id="plantao-form-titulo">➕ Novo Período de Plantão</h2>
                     <button class="form-af-close" onclick="fecharFormPlantao()">×</button>
@@ -3743,6 +3743,43 @@
                                 <input type="text" id="plantao-form-assessoria" placeholder="ex: Larice Bruce Pereira" required style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
                             </div>
                         </div>
+
+                        <div style="margin:4px 0 12px;padding-top:12px;border-top:1px dashed var(--border-color)">
+                            <p style="margin:0 0 8px;font-size:0.82em;color:var(--text-secondary)">
+                                Portaria deste período <em>(opcional — se vazio, usa a portaria geral exibida no topo da página)</em>
+                            </p>
+                            <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;">
+                                <div class="form-group">
+                                    <label>Nº DA PORTARIA</label>
+                                    <input type="text" id="plantao-form-portaria-numero" placeholder="ex: Portaria nº 764/2026" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                                </div>
+                                <div class="form-group">
+                                    <label>LINK (PDF / DIÁRIO OFICIAL)</label>
+                                    <input type="url" id="plantao-form-portaria-url" placeholder="https://..." style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin:4px 0 12px;padding-top:12px;border-top:1px dashed var(--border-color)">
+                            <p style="margin:0 0 8px;font-size:0.82em;color:var(--text-secondary)">
+                                Este período foi alterado por outra portaria? <em>(opcional — preencha só se uma portaria pontual mudou esta escala depois de publicada)</em>
+                            </p>
+                            <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;">
+                                <div class="form-group">
+                                    <label>Nº DA ALTERAÇÃO</label>
+                                    <input type="text" id="plantao-form-alteracao-numero" placeholder="ex: 3ª Alteração — Portaria nº 812/2026" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                                </div>
+                                <div class="form-group">
+                                    <label>LINK DA ALTERAÇÃO</label>
+                                    <input type="url" id="plantao-form-alteracao-url" placeholder="https://..." style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                                </div>
+                                <div class="form-group" style="grid-column:1/-1">
+                                    <label>OBSERVAÇÃO (aparece ao passar o mouse no link)</label>
+                                    <input type="text" id="plantao-form-alteracao-obs" placeholder="ex: substitui Fábio Bastos por Luma Karolyne nesta semana" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                                </div>
+                            </div>
+                        </div>
+
                         <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border-color)">
                             <button type="button" class="btn-cancelar" onclick="fecharFormPlantao()">Cancelar</button>
                             <button type="submit" id="plantao-form-submit" class="btn-salvar-form">💾 Salvar</button>
@@ -8759,7 +8796,7 @@
         // semanas 01-13, 29/06 a 27/09/2026) — importado uma única vez pelo admin.
         const PLANTAO_SEED_2026 = [
             { data_inicio: '2026-06-29', data_fim: '2026-07-05', defensor: 'Eliaquim Antunes de Souza Santos',       assessoria: 'Larice Bruce Pereira' },
-            { data_inicio: '2026-07-06', data_fim: '2026-07-12', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Luma Karolayne Pantoja Bandeira' },
+            { data_inicio: '2026-07-06', data_fim: '2026-07-12', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Luma Karolyne Pantoja Bandeira' },
             { data_inicio: '2026-07-13', data_fim: '2026-07-19', defensor: 'Enio Jorge Lima Barbalho Júnior (F)',      assessoria: 'Larice Bruce Pereira' },
             { data_inicio: '2026-07-20', data_fim: '2026-07-26', defensor: 'Miguel Eduardo de Azevedo Martins Filho', assessoria: 'Larice Bruce Pereira' },
             { data_inicio: '2026-07-27', data_fim: '2026-08-02', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Natália Cristina de Moraes' },
@@ -8769,12 +8806,13 @@
             { data_inicio: '2026-08-24', data_fim: '2026-08-30', defensor: 'Enio Jorge Lima Barbalho Júnior',          assessoria: 'Fábio Bastos de Souza' },
             { data_inicio: '2026-08-31', data_fim: '2026-09-06', defensor: 'Eliaquim Antunes de Souza Santos',        assessoria: 'Renata Patrícia Torres dos Reis' },
             { data_inicio: '2026-09-07', data_fim: '2026-09-13', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Larice Bruce Pereira' },
-            { data_inicio: '2026-09-14', data_fim: '2026-09-20', defensor: 'Catarina Lopes Maia (F)',                  assessoria: 'Luma Karolayne Pantoja Bandeira' },
+            { data_inicio: '2026-09-14', data_fim: '2026-09-20', defensor: 'Catarina Lopes Maia (F)',                  assessoria: 'Luma Karolyne Pantoja Bandeira' },
             { data_inicio: '2026-09-21', data_fim: '2026-09-27', defensor: 'Emilly Bianca Ferreira dos Santos',        assessoria: 'Natália Cristina de Moraes' }
         ];
 
         let plantaoRegistros = []; // [{id, data_inicio, data_fim, defensor, assessoria}]
         let plantaoMap       = {}; // id -> registro
+        let plantaoInfoAtual = { nome: '', url: '' }; // cache síncrono do link geral (secoes/plantao_info)
 
         function _fmtPlantaoData(str) {
             if (!str) return '';
@@ -8787,6 +8825,35 @@
             const [yi, mi, di] = inicio.split('-');
             const [yf, mf, df] = fim.split('-');
             return yi === yf ? `${di}/${mi} a ${df}/${mf}` : `${di}/${mi}/${yi} a ${df}/${mf}/${yf}`;
+        }
+
+        // Link de portaria por linha: prioriza alteração pontual > portaria própria
+        // do período > portaria geral do topo (fallback).
+        function _plantaoLinkPortariaHtml(r) {
+            if (r.alteracao_url) {
+                const rotulo = esc(r.alteracao_numero || 'Ver alteração');
+                const titulo = r.alteracao_obs ? ` title="${esc(r.alteracao_obs).replace(/"/g, '&quot;')}"` : '';
+                return `<a href="${esc(r.alteracao_url)}" target="_blank" rel="noopener"${titulo}
+                    style="color:#b45309;font-weight:600;text-decoration:none;white-space:nowrap">🔄 ${rotulo}</a>`;
+            }
+            if (r.portaria_url) {
+                return `<a href="${esc(r.portaria_url)}" target="_blank" rel="noopener"
+                    style="color:#3b82f6;text-decoration:none;white-space:nowrap">📄 ${esc(r.portaria_numero || 'Ver portaria')}</a>`;
+            }
+            if (plantaoInfoAtual.url) {
+                return `<a href="${esc(plantaoInfoAtual.url)}" target="_blank" rel="noopener"
+                    style="color:#3b82f6;text-decoration:none;white-space:nowrap">📄 ${esc(plantaoInfoAtual.nome || 'Ver portaria')}</a>`;
+            }
+            return '—';
+        }
+
+        // Reflete plantaoInfoAtual (carregado async) nas linhas que dependem do
+        // fallback — evita refazer a tabela inteira / recursão com _plantaoCarregarInfo.
+        function _plantaoAtualizarColunaPortaria() {
+            plantaoRegistros.forEach(r => {
+                const td = document.querySelector(`[data-plantao-portaria-id="${r.id}"]`);
+                if (td) td.innerHTML = _plantaoLinkPortariaHtml(r);
+            });
         }
 
         function _plantaoAplicarRegistros(registros) {
@@ -8849,13 +8916,14 @@
                 html += `<p style="text-align:center;padding:20px;color:var(--text-secondary);">Nenhum período cadastrado ainda.</p>`;
             } else {
                 html += `<div class="plantao-block"><table class="plantao-table">
-                    <colgroup><col style="width:24%"><col style="width:${isAdmin ? '36%' : '40%'}"><col style="width:${isAdmin ? '28%' : '36%'}">${isAdmin ? '<col style="width:12%">' : ''}</colgroup>
-                    <thead><tr><th>Período</th><th>Defensor(a)</th><th>Assessoria</th>${isAdmin ? '<th>Ações</th>' : ''}</tr></thead><tbody>`;
+                    <colgroup><col style="width:20%"><col style="width:${isAdmin ? '30%' : '34%'}"><col style="width:${isAdmin ? '24%' : '26%'}"><col style="width:${isAdmin ? '16%' : '20%'}">${isAdmin ? '<col style="width:10%">' : ''}</colgroup>
+                    <thead><tr><th>Período</th><th>Defensor(a)</th><th>Assessoria</th><th>Portaria</th>${isAdmin ? '<th>Ações</th>' : ''}</tr></thead><tbody>`;
                 plantaoRegistros.forEach(r => {
                     html += `<tr>
                         <td>${_fmtPlantaoPeriodo(r.data_inicio, r.data_fim)}</td>
                         <td>${r.defensor || ''}</td>
                         <td>${r.assessoria || ''}</td>
+                        <td data-plantao-portaria-id="${r.id}">${_plantaoLinkPortariaHtml(r)}</td>
                         ${isAdmin ? `<td style="white-space:nowrap">
                             <button class="btn-acao-tabela btn-editar-af" title="Editar" onclick="abrirFormPlantao('${r.id}')">✏️</button>
                             <button class="btn-acao-tabela btn-deletar-af" title="Excluir" onclick="confirmarDeletarPlantao('${r.id}')">🗑️</button>
@@ -8888,6 +8956,9 @@
                 linkEl.innerHTML = url
                     ? `<a href="${url}" target="_blank" rel="noopener" style="color:#1d4ed8;font-weight:600">${nome}</a>`
                     : `<span style="color:#475569">${nome}</span>`;
+
+                plantaoInfoAtual = { nome, url };
+                _plantaoAtualizarColunaPortaria();
             } catch(e) {
                 linkEl.innerHTML = `<span style="color:#475569">${PLANTAO_INFO_PADRAO}</span>`;
             }
@@ -8942,6 +9013,11 @@
                 document.getElementById('plantao-form-fim').value        = reg.data_fim    || '';
                 document.getElementById('plantao-form-defensor').value   = reg.defensor    || '';
                 document.getElementById('plantao-form-assessoria').value = reg.assessoria  || '';
+                document.getElementById('plantao-form-portaria-numero').value  = reg.portaria_numero  || '';
+                document.getElementById('plantao-form-portaria-url').value     = reg.portaria_url     || '';
+                document.getElementById('plantao-form-alteracao-numero').value = reg.alteracao_numero || '';
+                document.getElementById('plantao-form-alteracao-url').value    = reg.alteracao_url    || '';
+                document.getElementById('plantao-form-alteracao-obs').value    = reg.alteracao_obs    || '';
             } else {
                 document.getElementById('plantao-form-titulo').textContent = '➕ Novo Período de Plantão';
             }
@@ -8962,6 +9038,11 @@
                 const fim        = document.getElementById('plantao-form-fim').value;
                 const defensor   = document.getElementById('plantao-form-defensor').value.trim();
                 const assessoria = document.getElementById('plantao-form-assessoria').value.trim();
+                const portariaNumero  = document.getElementById('plantao-form-portaria-numero').value.trim();
+                const portariaUrl     = document.getElementById('plantao-form-portaria-url').value.trim();
+                const alteracaoNumero = document.getElementById('plantao-form-alteracao-numero').value.trim();
+                const alteracaoUrl    = document.getElementById('plantao-form-alteracao-url').value.trim();
+                const alteracaoObs    = document.getElementById('plantao-form-alteracao-obs').value.trim();
 
                 if (!inicio)      throw new Error('Informe a data de início.');
                 if (!fim)         throw new Error('Informe a data de fim.');
@@ -8971,6 +9052,11 @@
 
                 const dados = {
                     data_inicio: inicio, data_fim: fim, defensor, assessoria,
+                    portaria_numero:  portariaNumero,
+                    portaria_url:     portariaUrl,
+                    alteracao_numero: alteracaoNumero,
+                    alteracao_url:    alteracaoUrl,
+                    alteracao_obs:    alteracaoObs,
                     atualizado_por: firebase.auth().currentUser?.email || '',
                     atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()
                 };

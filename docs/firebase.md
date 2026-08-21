@@ -169,10 +169,18 @@ data_inicio:  "YYYY-MM-DD"
 data_fim:     "YYYY-MM-DD"
 defensor:     "Eliaquim Antunes de Souza Santos"   ← texto livre, nem sempre um dos 6 titulares
 assessoria:   "Larice Bruce Pereira"                ← texto livre
+portaria_numero:   ""   ← opcional. Portaria própria do período (vazio = usa a geral de plantao_info)
+portaria_url:      ""   ← opcional. Link da portaria própria
+alteracao_numero:  ""   ← opcional. Só preenchido se este período foi alterado por portaria pontual
+alteracao_url:     ""   ← opcional. Link da portaria de alteração
+alteracao_obs:     ""   ← opcional. Texto curto livre — vira tooltip do badge de alteração
 criado_por:   "email@..."
 criado_em:    timestamp
 atualizado_por / atualizado_em   ← só em edições
 ```
+- Os 5 campos de portaria/alteração só são preenchidos pelo formulário de 1 período
+  (não pelo CSV/seed) — ver "Plantão" em `docs/site/estrutura-html.md` para a lógica
+  de prioridade de exibição (`_plantaoLinkPortariaHtml()`).
 - Cadastro 100% manual pelo admin — sem IA, sem automação (decisão da sessão
   26, depois que as automações com sino de notificação se mostraram pouco
   confiáveis). Duas vias no site: formulário de 1 período, ou colar texto CSV
