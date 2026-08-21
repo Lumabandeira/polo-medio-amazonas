@@ -176,6 +176,14 @@ populam/resetam corretamente, e a linha extra aparece certo no modal do dia. Ver
 `docs/site/estrutura-html.md` (seção "Viagens e Eventos") e `docs/firebase.md` para o
 detalhamento completo.
 
+**Ajuste (mesmo dia):** usuária pediu pra tirar o campo "Número da Portaria" do formulário de
+Viagens, deixando só o link — a tabela deve sempre mostrar o rótulo extraído automaticamente da
+URL. Removido `portaria_numero` de Viagens (HTML do form, `_viagensAbrirForm()`,
+`_viagensSalvarEvento()`); `_viagensPortariaHtml(ev)` simplificada pra sempre usar
+`_rotuloEdicaoDiario(ev.portaria_url)`, sem override manual — diferente de Plantão, que manteve
+o campo de override por decisão anterior da usuária. Testado: campo some do form, tabela mostra
+"📄 Edição NNNN" corretamente.
+
 ## Estado atual (sessão 34 — 19/08/2026)
 
 **Implementado nesta sessão:** reformulação de "🧳 Viagens e Eventos" (sessão 33) em duas

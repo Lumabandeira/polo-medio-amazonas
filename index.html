@@ -3706,12 +3706,8 @@
                                     <input type="text" id="viagens-form-processo-numero" placeholder="ex: 26.0.000000123-4" style="flex:1;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>NÚMERO DA PORTARIA <span style="font-weight:400;text-transform:none;color:var(--text-secondary)">(opcional)</span></label>
-                                <input type="text" id="viagens-form-portaria-numero" placeholder="ex: Portaria nº 123/2026-GSPG/DPE/AM" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
-                            </div>
-                            <div class="form-group">
-                                <label>LINK DO DIÁRIO OFICIAL (PDF) <span style="font-weight:400;text-transform:none;color:var(--text-secondary)">(opcional)</span></label>
+                            <div class="form-group" style="grid-column:1/-1">
+                                <label>LINK DO DIÁRIO OFICIAL (PDF) <span style="font-weight:400;text-transform:none;color:var(--text-secondary)">(opcional — a tabela mostra a edição extraída do link)</span></label>
                                 <input type="url" id="viagens-form-portaria-url" placeholder="https://diario.defensoria.am.def.br/..." style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
                             </div>
                         </div>
@@ -9531,11 +9527,9 @@
         }
 
         function _viagensPortariaHtml(ev) {
-            if (ev.portaria_url) {
-                const rotulo = _viagensEscHtml(ev.portaria_numero || _rotuloEdicaoDiario(ev.portaria_url));
-                return `<a href="${_viagensEscAttr(ev.portaria_url)}" target="_blank" rel="noopener" style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap">📄 ${rotulo}</a>`;
-            }
-            return ev.portaria_numero ? _viagensEscHtml(ev.portaria_numero) : '—';
+            if (!ev.portaria_url) return '—';
+            const rotulo = _viagensEscHtml(_rotuloEdicaoDiario(ev.portaria_url));
+            return `<a href="${_viagensEscAttr(ev.portaria_url)}" target="_blank" rel="noopener" style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap">📄 ${rotulo}</a>`;
         }
 
         let _viagensEventos      = { 1: [], 2: [] };
@@ -9854,7 +9848,6 @@
                     document.getElementById('viagens-form-motivo').value  = ev.motivo || '';
                     document.getElementById('viagens-form-processo-tipo').value   = ev.processo_tipo   || 'SEI';
                     document.getElementById('viagens-form-processo-numero').value = ev.processo_numero || '';
-                    document.getElementById('viagens-form-portaria-numero').value = ev.portaria_numero  || '';
                     document.getElementById('viagens-form-portaria-url').value    = ev.portaria_url     || '';
                     if (tabela === 2) {
                         const conhecido = municipios.includes(ev.local);
@@ -9894,7 +9887,6 @@
                 const motivo = document.getElementById('viagens-form-motivo').value.trim();
                 const processoTipo   = document.getElementById('viagens-form-processo-tipo').value;
                 const processoNumero = document.getElementById('viagens-form-processo-numero').value.trim();
-                const portariaNumero = document.getElementById('viagens-form-portaria-numero').value.trim();
                 const portariaUrl    = document.getElementById('viagens-form-portaria-url').value.trim();
 
                 if (!inicio) throw new Error('Informe a data de início.');
@@ -9907,7 +9899,6 @@
                     data_inicio: inicio, data_fim: fim, membro, motivo,
                     processo_tipo:   processoNumero ? processoTipo : '',
                     processo_numero: processoNumero,
-                    portaria_numero: portariaNumero,
                     portaria_url:    portariaUrl,
                     atualizado_por: currentUser.email,
                     atualizado_em:  firebase.firestore.FieldValue.serverTimestamp()

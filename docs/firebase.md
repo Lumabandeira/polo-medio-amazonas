@@ -57,8 +57,8 @@ membro:          "Eliaquim e Natália"
 motivo:          "Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba"
 processo_tipo:   "SEI"   ← opcional. "SEI" ou "SGI" — só gravado se processo_numero não for vazio
 processo_numero: ""      ← opcional. Texto livre
-portaria_numero: ""      ← opcional. Override manual do rótulo do link (padrão: "Edição NNNN")
-portaria_url:    ""      ← opcional. Link do Diário Oficial
+portaria_url:    ""      ← opcional. Link do Diário Oficial. Sem campo de número manual — o
+                            rótulo exibido é sempre "Edição NNNN", extraído da URL
 criado_por:     "email@..."
 criado_em:      timestamp
 atualizado_por: "email@..."
@@ -72,13 +72,14 @@ data_inicio:     "YYYY-MM-DD"
 data_fim:        "YYYY-MM-DD"
 motivo:          "..."
 membro:          "..."
-processo_tipo / processo_numero / portaria_numero / portaria_url: idem tabela1
+processo_tipo / processo_numero / portaria_url: idem tabela1
 criado_por / criado_em / atualizado_por / atualizado_em: idem acima
 ```
 
-`processo_tipo`/`processo_numero`/`portaria_numero`/`portaria_url` seguem a mesma
-convenção já usada em `plantao_admin`/`afastamentos_admin` — ver "Viagens e Eventos"
-em `docs/site/estrutura-html.md` para a lógica de renderização
+`processo_tipo`/`processo_numero`/`portaria_url` seguem a mesma convenção já usada em
+`plantao_admin`/`afastamentos_admin` (sem o campo `portaria_numero` de override — decisão
+explícita da usuária pra manter o formulário enxuto) — ver "Viagens e Eventos" em
+`docs/site/estrutura-html.md` para a lógica de renderização
 (`_viagensProcessoHtml()`/`_viagensPortariaHtml()`).
 
 Ambas coleções alimentam o Calendário e a Lista da seção "🧳 Viagens e Eventos" a partir da

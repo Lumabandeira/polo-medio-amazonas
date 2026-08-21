@@ -329,16 +329,17 @@ tipos de evento guardados em coleções separadas:
 
 **Processo e portaria (opcionais, ambas as tabelas):** `processo_tipo` (`"SEI"`/`"SGI"`, select) +
 `processo_numero` (texto livre) — mesmo padrão do campo "Processo" do formulário de Afastamentos
-([index.html:3958](polo-medio-amazonas/index.html:3958)); e `portaria_numero`/`portaria_url` —
-mesma convenção já usada em Plantão/Afastamentos/Remoções. Renderização:
-`_viagensProcessoHtml(ev)` (`"SEI: NNNN"` ou `"—"`) e `_viagensPortariaHtml(ev)` (reaproveita
-`_rotuloEdicaoDiario(url)` — a mesma função genérica do Plantão que extrai "Edição NNNN" da URL
-— com `portaria_numero` como *override* manual do rótulo, e `"—"`/texto simples quando só
-`portaria_numero` está preenchido sem link). Aparecem como 2 colunas extras na Lista ("Processo"
-e "Portaria") e como uma linha extra compacta no modal de detalhe do dia do Calendário. Todo
-texto livre desses campos passa por `_viagensEscHtml()`; os atributos `href` usam
-`_viagensEscAttr()` (aspas escapadas) — **nunca** só `_viagensEscHtml()`/`esc()` dentro de um
-atributo, ver nota de segurança abaixo.
+([index.html:3958](polo-medio-amazonas/index.html:3958)); e `portaria_url` — **só o link**, sem
+campo de número manual (diferente de Plantão: aqui o rótulo é sempre o extraído automaticamente
+da URL, decisão explícita da usuária pra manter o formulário mais enxuto). Renderização:
+`_viagensProcessoHtml(ev)` (`"SEI: NNNN"` ou `"—"`) e `_viagensPortariaHtml(ev)` — sem
+`portaria_url` mostra `"—"`; com `portaria_url`, sempre `_rotuloEdicaoDiario(url)` (a mesma
+função genérica do Plantão que extrai "Edição NNNN" da URL, `.../Edicao_NNNN...`, caindo em
+"Abrir PDF" sem padrão reconhecível). Aparecem como 2 colunas extras na Lista ("Processo" e
+"Portaria") e como uma linha extra compacta no modal de detalhe do dia do Calendário. Todo texto
+livre desses campos passa por `_viagensEscHtml()`; os atributos `href` usam `_viagensEscAttr()`
+(aspas escapadas) — **nunca** só `_viagensEscHtml()`/`esc()` dentro de um atributo, ver nota de
+segurança abaixo.
 
 **Por que coleção (um doc por evento) e não um doc único com array:** o Calendário precisa
 posicionar cada evento nos dias certos, o que exige datas reais (`data_inicio`/`data_fim` em

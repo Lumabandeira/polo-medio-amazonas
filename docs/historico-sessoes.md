@@ -140,6 +140,14 @@
   todos os elementos da linha (`_viagensEscHtml`/`_viagensEscAttr`, já existentes na seção,
   reaproveitados sem duplicar). Ver `docs/site/estrutura-html.md` (seção "Viagens e Eventos") e
   `docs/firebase.md` para o detalhamento completo.
+- **Ajuste (mesmo dia):** usuária pediu pra remover o campo "Número da Portaria" do formulário de
+  Viagens, deixando só o link do Diário Oficial — o rótulo na tabela deve sempre ser o extraído
+  automaticamente da URL, sem opção de digitar manualmente (diferente de Plantão, que manteve
+  esse override por decisão anterior). Removido `portaria_numero` de
+  `viagens_tabela1_admin`/`viagens_tabela2_admin` (campo do form, leitura/gravação em
+  `_viagensAbrirForm()`/`_viagensSalvarEvento()`); `_viagensPortariaHtml(ev)` simplificada para
+  sempre usar `_rotuloEdicaoDiario(ev.portaria_url)`. Testado no navegador: campo não existe mais
+  no HTML do formulário, e a tabela mostra "📄 Edição NNNN" corretamente a partir só do link.
 
 ---
 
