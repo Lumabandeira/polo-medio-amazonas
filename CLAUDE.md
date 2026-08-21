@@ -140,10 +140,9 @@ também decisão da usuária, pra não precisar corrigir um nome período a per�
 passou a gravar `lote_nome: '3º Trimestre 2026'` em cada item (constante `PLANTAO_SEED_2026_LOTE`).
 Testado no navegador com 2 lotes + 1 sem lote + 1 com payload de XSS/aspas no nome: ordem dos
 grupos, contagem, badge "atual", pré-preenchimento do formulário, reset do campo do CSV, e o
-`renomear` monta corretamente a lista de IDs a atualizar sem gravar de verdade. **Pendente:**
-rodar o script de backfill gravando `lote_nome: "3º Trimestre 2026"` nos 13 períodos já
-existentes (só com confirmação explícita da usuária, mesma cautela de escritas em produção
-desta sessão). Ver `docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md`.
+`renomear` monta corretamente a lista de IDs a atualizar sem gravar de verdade. Backfill dos 13
+períodos já existentes com `lote_nome: "3º Trimestre 2026"` já executado (script pontual). Ver
+`docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md`.
 
 ## Estado atual (sessão 34 — 19/08/2026)
 

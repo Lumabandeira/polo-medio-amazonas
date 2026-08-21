@@ -107,9 +107,9 @@
   `value` do input de renomear, que usa `esc(...).replace(/"/g,'&quot;')` como os outros campos
   desta sessão), pré-preenchimento do formulário e reset do campo do CSV corretos, e o
   `renomear` monta a lista certa de IDs a atualizar (não gravado contra o Firestore real). Ver
-  `docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md`. **Pendente:** backfill de
-  `lote_nome: "3º Trimestre 2026"` nos 13 períodos já existentes (script pronto, só falta rodar
-  com confirmação explícita da usuária).
+  `docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md`. Backfill de
+  `lote_nome: "3º Trimestre 2026"` nos 13 períodos já existentes executado logo em seguida
+  (script pontual com a service account).
 
 ---
 
