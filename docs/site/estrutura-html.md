@@ -188,17 +188,25 @@ era regravado por cima, duplicando registros. Corrigido em duas camadas:
    `renderPlantao()` ↔ `_plantaoCarregarInfo()`, já que ambos se chamam).
 
 **Rótulo do link — mesmo padrão das tabelas de Afastamentos** (ex.
-`index.html:4862`, coluna "Diário Oficial"): `_plantaoRotuloEdicao(url)` extrai o
-número da edição do link (`.../Edicao_NNNN...`) e mostra "Edição NNNN"; sem padrão
-reconhecível, cai em "Abrir PDF". O campo `..._numero` do formulário (opcional) só
-serve como *override* manual do rótulo — útil quando o link não segue esse padrão
-de nome de arquivo; a maioria dos casos não precisa preenchê-lo.
+`index.html:4862`, coluna "Diário Oficial"): `_rotuloEdicaoDiario(url)` (função
+genérica, sem prefixo de seção — também usada por Viagens e Eventos, ver abaixo)
+extrai o número da edição do link (`.../Edicao_NNNN...`) e mostra "Edição NNNN"; sem
+padrão reconhecível, cai em "Abrir PDF". O campo `..._numero` do formulário
+(opcional) só serve como *override* manual do rótulo — útil quando o link não segue
+esse padrão de nome de arquivo; a maioria dos casos não precisa preenchê-lo.
 `alteracao_obs` (texto livre) vira `title` (tooltip) do badge de alteração.
 
-Todos os campos de texto livre desses 5 campos passam por `esc()`; o `title`
-(tooltip) do badge de alteração usa `esc(...).replace(/"/g, '&quot;')`
-(mesmo padrão de `_viagensEscAttr()`, necessário porque `esc()` sozinho não escapa
-aspas — seguro em texto de nó HTML, mas não dentro de um atributo).
+**Nota de segurança:** todos os campos de texto livre desses 5 campos passam por
+`esc()` — mas `esc()` sozinho só escapa `&`/`<`/`>` (seguro em texto de nó HTML,
+**não** dentro de um atributo). Todo valor que entra num atributo (`href`, `title`)
+usa `_escAttr(s)` (= `esc(s).replace(/"/g, '&quot;')`, novo helper genérico — mesmo
+padrão de `_viagensEscAttr()`, já existente em Viagens e Eventos). Um bug real foi
+encontrado e corrigido nesta sessão: os 3 `href="${esc(url)}"` de
+`_plantaoLinkPortariaHtml()` usavam só `esc()`, permitindo quebrar o atributo com uma
+URL contendo aspas + `onmouseover=...` (testado e confirmado explorável antes da
+correção, sem disparar só por sorte de nenhum teste anterior ter colocado aspas no
+próprio `portaria_url`/`alteracao_url` — os testes anteriores só cobriam
+`alteracao_obs`). Trocados para `_escAttr(url)`.
 
 `lote_nome`/`portaria_numero`/`portaria_url` são editáveis também pelo "Importar CSV"
 (campos únicos "Nome do lote" e "Link do Diário Oficial" no topo do modal, aplicados a
@@ -316,8 +324,21 @@ tipos de evento guardados em coleções separadas:
 
 | # | Título | Campos | Coleção Firestore | Cache localStorage |
 |---|--------|--------|--------------------|---------------------|
-| 1 | 🧳 Eventos e Próximas Viagens Previstas | `data_inicio`, `data_fim`, `membro`, `motivo` | `viagens_tabela1_admin/{id}` | `pma-viagens-tabela1` |
-| 2 | 📅 Viagens Trimestrais | `local`, `data_inicio`, `data_fim`, `motivo`, `membro` | `viagens_tabela2_admin/{id}` | `pma-viagens-tabela2` |
+| 1 | 🧳 Eventos e Próximas Viagens Previstas | `data_inicio`, `data_fim`, `membro`, `motivo` + processo/portaria (ver abaixo) | `viagens_tabela1_admin/{id}` | `pma-viagens-tabela1` |
+| 2 | 📅 Viagens Trimestrais | `local`, `data_inicio`, `data_fim`, `motivo`, `membro` + processo/portaria (ver abaixo) | `viagens_tabela2_admin/{id}` | `pma-viagens-tabela2` |
+
+**Processo e portaria (opcionais, ambas as tabelas):** `processo_tipo` (`"SEI"`/`"SGI"`, select) +
+`processo_numero` (texto livre) — mesmo padrão do campo "Processo" do formulário de Afastamentos
+([index.html:3958](polo-medio-amazonas/index.html:3958)); e `portaria_numero`/`portaria_url` —
+mesma convenção já usada em Plantão/Afastamentos/Remoções. Renderização:
+`_viagensProcessoHtml(ev)` (`"SEI: NNNN"` ou `"—"`) e `_viagensPortariaHtml(ev)` (reaproveita
+`_rotuloEdicaoDiario(url)` — a mesma função genérica do Plantão que extrai "Edição NNNN" da URL
+— com `portaria_numero` como *override* manual do rótulo, e `"—"`/texto simples quando só
+`portaria_numero` está preenchido sem link). Aparecem como 2 colunas extras na Lista ("Processo"
+e "Portaria") e como uma linha extra compacta no modal de detalhe do dia do Calendário. Todo
+texto livre desses campos passa por `_viagensEscHtml()`; os atributos `href` usam
+`_viagensEscAttr()` (aspas escapadas) — **nunca** só `_viagensEscHtml()`/`esc()` dentro de um
+atributo, ver nota de segurança abaixo.
 
 **Por que coleção (um doc por evento) e não um doc único com array:** o Calendário precisa
 posicionar cada evento nos dias certos, o que exige datas reais (`data_inicio`/`data_fim` em

@@ -51,10 +51,14 @@ nome: "..."
 
 ### `viagens_tabela1_admin/{id}` — Eventos e Próximas Viagens Previstas
 ```
-data_inicio:    "YYYY-MM-DD"
-data_fim:       "YYYY-MM-DD"   ← igual a data_inicio quando é um evento de 1 dia só
-membro:         "Eliaquim e Natália"
-motivo:         "Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba"
+data_inicio:     "YYYY-MM-DD"
+data_fim:        "YYYY-MM-DD"   ← igual a data_inicio quando é um evento de 1 dia só
+membro:          "Eliaquim e Natália"
+motivo:          "Atendimentos presenciais e sessões do Tribunal do Júri em Urucurituba"
+processo_tipo:   "SEI"   ← opcional. "SEI" ou "SGI" — só gravado se processo_numero não for vazio
+processo_numero: ""      ← opcional. Texto livre
+portaria_numero: ""      ← opcional. Override manual do rótulo do link (padrão: "Edição NNNN")
+portaria_url:    ""      ← opcional. Link do Diário Oficial
 criado_por:     "email@..."
 criado_em:      timestamp
 atualizado_por: "email@..."
@@ -63,13 +67,19 @@ atualizado_em:  timestamp
 
 ### `viagens_tabela2_admin/{id}` — Viagens Trimestrais
 ```
-local:          "Urucurituba"   ← um dos 6 municípios do Polo, ou texto livre (opção "Outro" no form)
-data_inicio:    "YYYY-MM-DD"
-data_fim:       "YYYY-MM-DD"
-motivo:         "..."
-membro:         "..."
+local:           "Urucurituba"   ← um dos 6 municípios do Polo, ou texto livre (opção "Outro" no form)
+data_inicio:     "YYYY-MM-DD"
+data_fim:        "YYYY-MM-DD"
+motivo:          "..."
+membro:          "..."
+processo_tipo / processo_numero / portaria_numero / portaria_url: idem tabela1
 criado_por / criado_em / atualizado_por / atualizado_em: idem acima
 ```
+
+`processo_tipo`/`processo_numero`/`portaria_numero`/`portaria_url` seguem a mesma
+convenção já usada em `plantao_admin`/`afastamentos_admin` — ver "Viagens e Eventos"
+em `docs/site/estrutura-html.md` para a lógica de renderização
+(`_viagensProcessoHtml()`/`_viagensPortariaHtml()`).
 
 Ambas coleções alimentam o Calendário e a Lista da seção "🧳 Viagens e Eventos" a partir da
 mesma fonte — ver `docs/site/estrutura-html.md`. Regra do Firestore: `allow write: if

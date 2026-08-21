@@ -144,6 +144,38 @@ grupos, contagem, badge "atual", pré-preenchimento do formulário, reset do cam
 períodos já existentes com `lote_nome: "3º Trimestre 2026"` já executado (script pontual). Ver
 `docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md`.
 
+**Bug de segurança real encontrado e corrigido ainda nesta sessão:** ao explorar Viagens e
+Eventos pra estender o mesmo padrão de link (ver próximo item), percebi que os 3
+`href="${esc(url)}"` de `_plantaoLinkPortariaHtml()` (Plantão) usavam só `esc()` — que só escapa
+`&`/`<`/`>`, não aspas. Testado e confirmado explorável: uma URL com aspas + `onmouseover=...`
+quebrava o atributo `href` e o handler disparava ao passar o mouse. Os testes anteriores desta
+sessão só tinham coberto o `title` do badge de alteração (`alteracao_obs`), não os próprios
+`portaria_url`/`alteracao_url`. Corrigido com um novo helper genérico `_escAttr(s)` (=
+`esc(s).replace(/"/g,'&quot;')`) nos 3 pontos, e `_plantaoRotuloEdicao()` renomeada pra
+`_rotuloEdicaoDiario()` (sem prefixo de seção, já que passou a ser usada por Viagens e Eventos
+também). Testado de novo com o mesmo payload — não dispara mais.
+
+**Extensão pra Viagens e Eventos:** usuária mostrou a tela de "Importar Períodos via CSV" do
+Plantão (chip de referência) e o modal "Editar Afastamento" (mostrando os campos "Processo"
+SEI/SGI + número, e "Número da Portaria"/"Link do Diário Oficial" por substituto) como
+inspiração, e pediu os mesmos 3 campos em Viagens e Eventos: seletor SEI/SGI + número de
+processo, link do Diário Oficial, e número da portaria. Adicionados 4 campos opcionais nas duas
+coleções (`viagens_tabela1_admin`/`viagens_tabela2_admin`): `processo_tipo`/`processo_numero`
+(mesmo padrão do campo "Processo" de Afastamentos, `index.html:3958`) e
+`portaria_numero`/`portaria_url` (mesma convenção de Plantão/Afastamentos/Remoções — reaproveita
+`_rotuloEdicaoDiario()` recém-renomeada). Novo bloco no formulário
+(`#viagens-form-overlay`), populado/lido em `_viagensAbrirForm()`/`_viagensSalvarEvento()`.
+Renderização: `_viagensProcessoHtml(ev)`/`_viagensPortariaHtml(ev)`, novas colunas "Processo" e
+"Portaria" na Lista (`_viagensRenderLista()`, colspan do estado vazio ajustado) e uma linha extra
+compacta no modal de detalhe do dia do Calendário (`_viagensAbrirDiaModal()`) — não adicionado ao
+`title` do hover da barra do calendário (`_viagensDetalheEvento()`), julgado baixo valor pra um
+tooltip curto. Testado no navegador: 3 eventos simulados (sem processo/portaria, com dados
+normais, e com payloads de XSS/aspas em `processo_numero`/`portaria_numero`/`portaria_url`) —
+nenhum disparo mesmo simulando hover em todos os elementos da linha, campos do formulário
+populam/resetam corretamente, e a linha extra aparece certo no modal do dia. Ver
+`docs/site/estrutura-html.md` (seção "Viagens e Eventos") e `docs/firebase.md` para o
+detalhamento completo.
+
 ## Estado atual (sessão 34 — 19/08/2026)
 
 **Implementado nesta sessão:** reformulação de "🧳 Viagens e Eventos" (sessão 33) em duas
