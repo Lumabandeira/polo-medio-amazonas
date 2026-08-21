@@ -61,6 +61,12 @@
   (`.../Portaria-no-0764-2026-GSPG-26.0.000010208-2.pdf`), que agora aparece em toda linha sem
   portaria própria — rótulo "Abrir PDF" (essa URL não segue o padrão `Edicao_NNNN`). Ver
   `docs/site/estrutura-html.md` (seção "Plantão").
+- **Preenchimento de `portaria_url` em todos os 13 períodos** (dado, não código — script pontual
+  com a service account): usuária informou que a Edição 2696 do Diário Oficial
+  (`.../Edicao_2696-2026__publicada_em_24_julho_de_2026.pdf`) é quem publicou a maioria da
+  escala. Gravado como `portaria_url` em todos os períodos, com `portaria_numero` propositalmente
+  vazio — a URL segue o padrão `Edicao_NNNN`, então `_plantaoRotuloEdicao()` já extrai "Edição
+  2696" automaticamente, sem precisar de rótulo manual.
 
 ---
 
