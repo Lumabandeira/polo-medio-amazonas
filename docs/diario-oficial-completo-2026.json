@@ -5893,5 +5893,84 @@
         "resumo": "Publica resultado preliminar do processo seletivo de estágio de graduação para a Unidade Descentralizada de São Sebastião do Uatumã/AM do Polo Médio Amazonas"
       }
     ]
+  },
+  {
+    "edicao": 2714,
+    "data": "2026-08-20",
+    "data_formatada": "20/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2714-2026__publicada_em_20_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 231/2026-GDPG/DPE/AM",
+        "sei": "26.0.000010921-4",
+        "sgi": "2600401",
+        "categorias": [
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "CONSIDERANDO o constante na Portaria n.º 231/2026-GDPG/DPE/AM, Ano 12, Edição 2.601, pág. 10, datada de 27 de fevereiro de 2026, que delegou ao Subdefensor Público Geral, as funções de organização e designação de membros para substituição em casos de férias, folgas, licenças e demais casos de afastamentos previstos em lei"
+        ],
+        "resumo": "Portaria que delegou ao Subdefensor Público Geral as funções de organização e designação de membros para substituição em casos de férias, folgas e afastamentos"
+      },
+      {
+        "numero": "Portaria Nº 260/2026-GDPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "CONSIDERANDO o constante na Portaria n.º 260/2026-GDPG/DPE/AM, Ano 12, Edição 2601, pág. 11, datada de 27 de fevereiro de 2026, que delegou à Segunda Subdefensora Pública Geral, as funções de organização e designação de membros para substituição em casos de férias, folgas, licenças e demais casos de afastamentos previstos em lei"
+        ],
+        "resumo": "Portaria que delegou à Segunda Subdefensora Pública Geral as funções de organização e designação de membros para substituição em casos de férias, folgas e afastamentos"
+      },
+      {
+        "numero": "Portaria (sem número completo identificado) - Designação para Polo do Médio Solimões",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Francine Lucia Buffon Baldissarella para atuar na 2ª Defensoria Pública do Polo do Médio Solimões, no período de 17 a 21 de agosto de 2026",
+          "II - DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Érica Andrade de Oliveira para atuar na 4ª Defensoria Pública do Polo do Médio Solimões, no período de 17 a 21 de agosto de 2026",
+          "III - ATRIBUIR a contraprestação na forma do Ato Normativo nº 3/2025-GDPG/DPE/AM, de 22 de maio de 2025, em complemento com o art. 40, § 3º, da Lei Complementar Estadual nº 01, de 30 de março de 1990"
+        ],
+        "resumo": "Designação cumulativa de defensoras públicas para atuação no Polo do Médio Solimões no período de 17-21 de agosto de 2026"
+      },
+      {
+        "numero": "Portaria Nº 835/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "plantao",
+          "substituicao",
+          "coordenacao"
+        ],
+        "trechos": [
+          "VII - AUTORIZAR a substituição da servidora Natália Cristina de Moraes, designada para a semana 08 do Plantão do Polo do Médio Amazonas, pelo período de 17/08 a 23/08, pela servidora Luma Karolyne Pantoja Bandeira",
+          "VIII - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Escala de substituição Polo do Rio Negro-Solimões Polo do Médio Amazonas",
+          "IX - Os Anexos I, II e III da Portaria 674/2026-GSPG/DPE/AM, passam a viger conforme anexos, desta Portaria"
+        ],
+        "trechos_anexo": [
+          "Plantão Cível e de Família - Polo do Médio Amazonas: Miguel Eduardo de Azevedo Martins Filho; Eliaquim Antunes de Souza; Enio Jorge Lima Barbalho Júnior",
+          "Plantão Criminal e de Custódia - Polo do Médio Amazonas: Miguel Eduardo de Azevedo Martins Filho; Eliaquim Antunes de Souza; Enio Jorge Lima Barbalho Júnior",
+          "Assessoria - Polo do Médio Amazonas: Iasmim Cordeiro de Souza; Elivania Inhoque; Hatchwell Monteiro",
+          "Polo do Médio Solimões - Plantão Cível e de Família: Natália Feitosa de Almeida; Pedro Henrique Pereira Paiva; Érica Andrade de Oliveira",
+          "Polo do Médio Solimões - Plantão Criminal e de Custódia: Natália Feitosa de Almeida; Pedro Henrique Pereira Paiva; Érica Andrade de Oliveira",
+          "Polo do Médio Solimões - Assessoria: Larice Bruce Pereira; Deborah Loureiro Ohana Lavareda; Fábio Bastos de Souza; Luma Karolyne Pantoja Bandeira"
+        ],
+        "resumo": "Autoriza substituições em plantões do Polo do Médio Amazonas e Polo do Médio Solimões, estabelecendo escala de substituição recíproca entre polos"
+      }
+    ]
   }
 ]
