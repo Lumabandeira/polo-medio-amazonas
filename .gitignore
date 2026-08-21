@@ -32,3 +32,9 @@ desktop.ini
 __pycache__/
 *.pyc
 *.pyo
+
+# ── Backups locais do Firestore (dados pessoais/financeiros — nunca versionar) ─
+backups/
+
+# ── Cache local (bundle de certificados para contornar SSL do antivírus) ──────
+.cache/
