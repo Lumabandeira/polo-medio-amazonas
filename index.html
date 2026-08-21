@@ -3750,8 +3750,8 @@
                             </p>
                             <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;">
                                 <div class="form-group">
-                                    <label>Nº DA PORTARIA</label>
-                                    <input type="text" id="plantao-form-portaria-numero" placeholder="ex: Portaria nº 764/2026" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                                    <label>RÓTULO (opcional)</label>
+                                    <input type="text" id="plantao-form-portaria-numero" placeholder="auto: Edição NNNN, extraído do link" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
                                 </div>
                                 <div class="form-group">
                                     <label>LINK (PDF / DIÁRIO OFICIAL)</label>
@@ -3766,8 +3766,8 @@
                             </p>
                             <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;">
                                 <div class="form-group">
-                                    <label>Nº DA ALTERAÇÃO</label>
-                                    <input type="text" id="plantao-form-alteracao-numero" placeholder="ex: 3ª Alteração — Portaria nº 812/2026" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                                    <label>RÓTULO (opcional)</label>
+                                    <input type="text" id="plantao-form-alteracao-numero" placeholder="auto: Edição NNNN, extraído do link" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
                                 </div>
                                 <div class="form-group">
                                     <label>LINK DA ALTERAÇÃO</label>
@@ -8827,22 +8827,35 @@
             return yi === yf ? `${di}/${mi} a ${df}/${mf}` : `${di}/${mi}/${yi} a ${df}/${mf}/${yf}`;
         }
 
+        // Rótulo no mesmo padrão do link "Diário Oficial" das tabelas de Afastamentos
+        // (ex. index.html:4862): extrai o nº da edição do link (.../Edicao_NNNN...) e
+        // mostra "Edição NNNN"; sem padrão reconhecível, cai em "Abrir PDF".
+        function _plantaoRotuloEdicao(url) {
+            const m = (url || '').match(/Edicao_(\d+)/i);
+            return m ? `Edição ${m[1]}` : 'Abrir PDF';
+        }
+
         // Link de portaria por linha: prioriza alteração pontual > portaria própria
-        // do período > portaria geral do topo (fallback).
+        // do período > portaria geral do topo (fallback). Rótulo do link é o nº da
+        // edição do Diário Oficial extraído da URL (mesmo modelo usado em
+        // Afastamentos); um "número" digitado manualmente no formulário, se houver,
+        // tem prioridade (útil quando o link não segue o padrão Edicao_NNNN).
         function _plantaoLinkPortariaHtml(r) {
             if (r.alteracao_url) {
-                const rotulo = esc(r.alteracao_numero || 'Ver alteração');
+                const rotulo = esc(r.alteracao_numero || _plantaoRotuloEdicao(r.alteracao_url));
                 const titulo = r.alteracao_obs ? ` title="${esc(r.alteracao_obs).replace(/"/g, '&quot;')}"` : '';
                 return `<a href="${esc(r.alteracao_url)}" target="_blank" rel="noopener"${titulo}
                     style="color:#b45309;font-weight:600;text-decoration:none;white-space:nowrap">🔄 ${rotulo}</a>`;
             }
             if (r.portaria_url) {
+                const rotulo = esc(r.portaria_numero || _plantaoRotuloEdicao(r.portaria_url));
                 return `<a href="${esc(r.portaria_url)}" target="_blank" rel="noopener"
-                    style="color:#3b82f6;text-decoration:none;white-space:nowrap">📄 ${esc(r.portaria_numero || 'Ver portaria')}</a>`;
+                    style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap">📄 ${rotulo}</a>`;
             }
             if (plantaoInfoAtual.url) {
+                const rotulo = esc(_plantaoRotuloEdicao(plantaoInfoAtual.url));
                 return `<a href="${esc(plantaoInfoAtual.url)}" target="_blank" rel="noopener"
-                    style="color:#3b82f6;text-decoration:none;white-space:nowrap">📄 ${esc(plantaoInfoAtual.nome || 'Ver portaria')}</a>`;
+                    style="color:#3b82f6;font-weight:600;text-decoration:none;white-space:nowrap">📄 ${rotulo}</a>`;
             }
             return '—';
         }

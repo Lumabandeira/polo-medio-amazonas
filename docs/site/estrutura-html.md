@@ -139,16 +139,23 @@ Lista dinâmica (não mais tabela de tamanho fixo) na coleção `plantao_admin/{
 (`_plantaoLinkPortariaHtml()`), resolvida nesta ordem de prioridade:
 1. `alteracao_url`/`alteracao_numero` — preenchidos só quando esse período específico
    foi alterado por uma portaria pontual publicada depois da portaria geral (ex.:
-   substituição de um plantonista numa semana). Renderiza como badge laranja "🔄",
-   com `alteracao_obs` (texto livre) como `title` (tooltip). É o único caso em que a
-   linha mostra sua própria portaria em destaque — não mostra a original ao lado
-   (decisão explícita: só a que vale hoje).
+   substituição de um plantonista numa semana). Renderiza como badge laranja "🔄".
+   É o único caso em que a linha mostra sua própria portaria em destaque — não
+   mostra a original ao lado (decisão explícita: só a que vale hoje).
 2. `portaria_url`/`portaria_numero` — portaria própria do período, quando diferente
    da geral (raro).
-3. Fallback: link geral da seção (`plantaoInfoAtual`, ver abaixo) — cache síncrono
-   de `secoes/plantao_info`, atualizado por `_plantaoCarregarInfo()` e replicado nas
+3. Fallback: link geral da seção (`plantaoInfoAtual`), cache síncrono de
+   `secoes/plantao_info`, atualizado por `_plantaoCarregarInfo()` e replicado nas
    células via `_plantaoAtualizarColunaPortaria()` (evita recursão entre
    `renderPlantao()` ↔ `_plantaoCarregarInfo()`, já que ambos se chamam).
+
+**Rótulo do link — mesmo padrão das tabelas de Afastamentos** (ex.
+`index.html:4862`, coluna "Diário Oficial"): `_plantaoRotuloEdicao(url)` extrai o
+número da edição do link (`.../Edicao_NNNN...`) e mostra "Edição NNNN"; sem padrão
+reconhecível, cai em "Abrir PDF". O campo `..._numero` do formulário (opcional) só
+serve como *override* manual do rótulo — útil quando o link não segue esse padrão
+de nome de arquivo; a maioria dos casos não precisa preenchê-lo.
+`alteracao_obs` (texto livre) vira `title` (tooltip) do badge de alteração.
 
 Todos os campos de texto livre desses 5 campos passam por `esc()`; o `title`
 (tooltip) do badge de alteração usa `esc(...).replace(/"/g, '&quot;')`

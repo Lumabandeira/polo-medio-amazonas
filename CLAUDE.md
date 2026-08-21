@@ -83,8 +83,18 @@ real, `userRole='admin'` simulado via console) — 4 casos (sem portaria própri
 própria, com alteração, e um payload de XSS no `alteracao_obs`). O teste revelou e corrigiu um
 bug real: o `title` do badge usa `esc(...).replace(/"/g, '&quot;')` (não só `esc()`), porque o
 helper `esc()` do site só escapa `&`/`<`/`>` (seguro em texto de nó HTML, mas não dentro de um
-atributo) — mesmo padrão já usado em `_viagensEscAttr()`. Ver `docs/site/estrutura-html.md`
-(seção "Plantão") e `docs/firebase.md` para o detalhamento completo.
+atributo) — mesmo padrão já usado em `_viagensEscAttr()`.
+
+**Ajuste ainda nesta sessão:** a usuária pediu pra adotar, no rótulo do link de portaria do
+Plantão, o mesmo estilo já usado na coluna "Diário Oficial" das tabelas de Afastamentos —
+ícone 📄, azul, negrito, e texto "Edição NNNN" **extraído automaticamente da URL**
+(`Edicao_NNNN` no nome do arquivo), em vez de depender de o admin digitar um rótulo. Nova
+função `_plantaoRotuloEdicao(url)`; os campos `portaria_numero`/`alteracao_numero` do
+formulário viraram *override* opcional (só necessário se o link não seguir esse padrão de
+nome — cai em "Abrir PDF"). Testado no navegador com 5 casos (extração automática nos 3
+níveis de prioridade, override manual, e link sem padrão reconhecível). Ver
+`docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md` para o detalhamento
+completo.
 
 ## Estado atual (sessão 34 — 19/08/2026)
 

@@ -169,10 +169,10 @@ data_inicio:  "YYYY-MM-DD"
 data_fim:     "YYYY-MM-DD"
 defensor:     "Eliaquim Antunes de Souza Santos"   ← texto livre, nem sempre um dos 6 titulares
 assessoria:   "Larice Bruce Pereira"                ← texto livre
-portaria_numero:   ""   ← opcional. Portaria própria do período (vazio = usa a geral de plantao_info)
-portaria_url:      ""   ← opcional. Link da portaria própria
-alteracao_numero:  ""   ← opcional. Só preenchido se este período foi alterado por portaria pontual
-alteracao_url:     ""   ← opcional. Link da portaria de alteração
+portaria_numero:   ""   ← opcional. Override manual do rótulo do link (padrão: "Edição NNNN", extraído da URL)
+portaria_url:      ""   ← opcional. Link da portaria própria do período (vazio = usa a geral de plantao_info)
+alteracao_numero:  ""   ← opcional. Override manual do rótulo do link de alteração (idem)
+alteracao_url:     ""   ← opcional. Só preenchido se este período foi alterado por portaria pontual
 alteracao_obs:     ""   ← opcional. Texto curto livre — vira tooltip do badge de alteração
 criado_por:   "email@..."
 criado_em:    timestamp

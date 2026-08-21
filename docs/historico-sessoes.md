@@ -34,6 +34,12 @@
   `&`/`<`/`>` (seguro em texto de nó HTML, mas não dentro de um atributo); mesmo padrão já usado
   em `_viagensEscAttr()`. Ver `docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md`
   para o detalhamento completo.
+- **Ajuste de estilo do rótulo (mesmo dia):** usuária pediu pra usar, no link de portaria do
+  Plantão, o mesmo modelo já usado na coluna "Diário Oficial" das tabelas de Afastamentos —
+  ícone 📄 azul negrito com texto "Edição NNNN" extraído automaticamente da URL
+  (padrão `Edicao_NNNN` no nome do arquivo), em vez do admin precisar digitar um rótulo. Nova
+  função `_plantaoRotuloEdicao(url)`; `portaria_numero`/`alteracao_numero` do formulário viraram
+  override opcional (só necessário se o link não seguir esse padrão — cai em "Abrir PDF").
 
 ---
 
