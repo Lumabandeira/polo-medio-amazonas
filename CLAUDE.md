@@ -118,13 +118,32 @@ Também preenchido `portaria_url` nos 13 períodos com a Edição 2696/2026 (que
 maioria da escala, informado pela usuária) via script pontual — ação de dado, sem mudança
 de código.
 
-**Ajuste final da sessão:** usuária ficou preocupada que o "Importar CSV" (única via prevista
+**Ajuste:** usuária ficou preocupada que o "Importar CSV" (única via prevista
 pra adicionar escalas futuras) não tinha como registrar o link do Diário Oficial — ficaria
 sempre dependendo do link geral da seção, que fica desatualizado a cada nova edição. Adicionado
 campo opcional "Link do Diário Oficial" no topo do modal de CSV, aplicado a todos os períodos
 daquele lote (`_plantaoConfirmarImportacaoCsv()`) — cenário comum é uma edição publicar várias
 semanas de uma vez, então um campo por lote (não por linha do CSV) evita ter que editar o texto
 manualmente pra incluir a URL em cada linha. Ver `docs/site/estrutura-html.md` (seção "Plantão").
+
+**Agrupamento por lote:** usuária vai empilhar mais escalas na mesma coleção com o tempo (4º
+Trimestre 2026, depois 1º Semestre **ou** 1º Trimestre de 2027 — a administração decide o
+formato a cada vez) e queria poder nomear/separar cada leva na tabela, em vez de uma lista única
+achatada. Novo campo opcional `lote_nome` (texto livre) em cada período, preenchido pelo
+formulário de 1 período (pré-preenche com o lote do período mais recente já cadastrado) e pelo
+CSV (campo único por lote, mesmo padrão do link). `renderPlantao()` agrupa por `lote_nome`
+(`_plantaoAgruparPorLote()`): um bloco por lote, ordenados pelo maior `data_inicio` de cada
+grupo decrescente (lote mais recente no topo — decisão da usuária), badge "🔵 atual" no grupo
+que contém a data de hoje, botão "✏️ renomear" (admin) que atualiza `lote_nome` em todos os
+períodos daquele grupo de uma vez (mesmo padrão de edição inline de `_plantaoEditarInfo()`) —
+também decisão da usuária, pra não precisar corrigir um nome período a período. `PLANTAO_SEED_2026`
+passou a gravar `lote_nome: '3º Trimestre 2026'` em cada item (constante `PLANTAO_SEED_2026_LOTE`).
+Testado no navegador com 2 lotes + 1 sem lote + 1 com payload de XSS/aspas no nome: ordem dos
+grupos, contagem, badge "atual", pré-preenchimento do formulário, reset do campo do CSV, e o
+`renomear` monta corretamente a lista de IDs a atualizar sem gravar de verdade. **Pendente:**
+rodar o script de backfill gravando `lote_nome: "3º Trimestre 2026"` nos 13 períodos já
+existentes (só com confirmação explícita da usuária, mesma cautela de escritas em produção
+desta sessão). Ver `docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md`.
 
 ## Estado atual (sessão 34 — 19/08/2026)
 

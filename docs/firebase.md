@@ -169,6 +169,7 @@ data_inicio:  "YYYY-MM-DD"
 data_fim:     "YYYY-MM-DD"
 defensor:     "Eliaquim Antunes de Souza Santos"   ← texto livre, nem sempre um dos 6 titulares
 assessoria:   "Larice Bruce Pereira"                ← texto livre
+lote_nome:         ""   ← opcional. Nome da leva de períodos (ex: "3º Trimestre 2026") — agrupa a tabela
 portaria_numero:   ""   ← opcional. Override manual do rótulo do link (padrão: "Edição NNNN", extraído da URL)
 portaria_url:      ""   ← opcional. Link da portaria própria do período (vazio = usa a geral de plantao_info)
 alteracao_numero:  ""   ← opcional. Override manual do rótulo do link de alteração (idem)
@@ -178,9 +179,12 @@ criado_por:   "email@..."
 criado_em:    timestamp
 atualizado_por / atualizado_em   ← só em edições
 ```
-- Os 5 campos de portaria/alteração só são preenchidos pelo formulário de 1 período
-  (não pelo CSV/seed) — ver "Plantão" em `docs/site/estrutura-html.md` para a lógica
-  de prioridade de exibição (`_plantaoLinkPortariaHtml()`).
+- `lote_nome`/`portaria_numero`/`portaria_url` são preenchidos pelo formulário de 1
+  período **e** pelo "Importar CSV" (campos únicos aplicados a todo o lote colado).
+  `alteracao_*` só pelo formulário de 1 período (exceção pontual). Ver "Plantão" em
+  `docs/site/estrutura-html.md` para a lógica de agrupamento por lote
+  (`_plantaoAgruparPorLote()`) e de prioridade de exibição do link
+  (`_plantaoLinkPortariaHtml()`).
 - Cadastro 100% manual pelo admin — sem IA, sem automação (decisão da sessão
   26, depois que as automações com sino de notificação se mostraram pouco
   confiáveis). Duas vias no site: formulário de 1 período, ou colar texto CSV

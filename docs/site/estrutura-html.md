@@ -135,6 +135,29 @@ Lista dinâmica (não mais tabela de tamanho fixo) na coleção `plantao_admin/{
 (texto livre — plantonistas nem sempre são os 6 titulares do polo), `criado_por`,
 `criado_em`. Renderizada por `renderPlantao()`, ordenada por `data_inicio`.
 
+**Agrupamento por lote (`lote_nome`):** cada período tem um campo opcional
+`lote_nome` (texto livre, ex. "3º Trimestre 2026") identificando a leva de
+períodos publicada de uma vez — a administração decide o formato a cada vez
+(trimestre, semestre, etc.), então não há enum fixo. `renderPlantao()` agrupa
+`plantaoRegistros` por `lote_nome` via `_plantaoAgruparPorLote()`: um bloco
+(cabeçalho `<h3>` + tabela própria) por lote, ordenados pelo maior `data_inicio`
+de cada grupo, **decrescente** (lote mais recente no topo); períodos sem
+`lote_nome` caem no grupo "Sem lote definido", sempre por último independente de
+data. Cabeçalho mostra a contagem de períodos e um badge "🔵 atual"
+(`_plantaoLoteContemHoje()`) quando a data de hoje cai dentro do intervalo do
+grupo. Preenchido pelo formulário de 1 período (pré-preenchido com o lote do
+período mais recente já cadastrado, pra não redigitar o mesmo nome dentro da
+mesma leva) e pelo "Importar CSV" (campo único "Nome do lote", aplicado a todos
+os períodos do lote colado — mesmo padrão do campo de portaria, ver abaixo).
+
+**Renomear lote inteiro (admin):** botão "✏️ renomear" no cabeçalho de cada
+grupo — mesmo padrão de edição inline de `_plantaoEditarInfo()`/`_plantaoSalvarInfo()`.
+`_plantaoRenomearLoteIniciar(idx)` troca o `<h3>` por um `<input>` + Salvar/Cancelar;
+`_plantaoRenomearLoteSalvar(idx)` roda `Promise.all` atualizando `lote_nome` em
+todos os documentos daquele grupo (`_plantaoGruposAtuais[idx].registros`, cache do
+último `renderPlantao()` — evita embutir o nome do lote, texto livre com aspas/
+caracteres arbitrários, dentro de um atributo `onclick`).
+
 **Proteção contra seed duplicado (bug real de 21/08/2026):** `_plantaoImportarSeed()`
 antigamente só checava `plantaoRegistros.length` (estado em memória) antes de gravar
 os 13 períodos do seed — se o admin clicasse "Importar dados iniciais" antes do
@@ -177,11 +200,13 @@ Todos os campos de texto livre desses 5 campos passam por `esc()`; o `title`
 (mesmo padrão de `_viagensEscAttr()`, necessário porque `esc()` sozinho não escapa
 aspas — seguro em texto de nó HTML, mas não dentro de um atributo).
 
-`portaria_numero`/`portaria_url` são editáveis também pelo "Importar CSV" (campo único
-"Link do Diário Oficial" no topo do modal, aplicado a todos os períodos do lote — ver
-abaixo). Já `alteracao_*` só é editável pelo formulário de 1 período — é exceção
-pontual, não vale complicar o parser de CSV para isso. O seed inicial
-(`PLANTAO_SEED_2026`) continua com só os 4 campos base.
+`lote_nome`/`portaria_numero`/`portaria_url` são editáveis também pelo "Importar CSV"
+(campos únicos "Nome do lote" e "Link do Diário Oficial" no topo do modal, aplicados a
+todos os períodos do lote colado — ver abaixo). Já `alteracao_*` só é editável pelo
+formulário de 1 período — é exceção pontual, não vale complicar o parser de CSV para
+isso. O seed inicial (`PLANTAO_SEED_2026`) grava `data_inicio`/`data_fim`/`defensor`/
+`assessoria`/`lote_nome` (todos os 13 itens com `lote_nome: '3º Trimestre 2026'`, via
+`.map()` sobre a constante `PLANTAO_SEED_2026_LOTE`).
 
 **Decisão da sessão 26:** sem IA e sem automação de PDF. As automações
 existentes (sinos de notificação de afastamentos/remoções/designações
@@ -190,16 +215,18 @@ Plantão é 100% manual, com duas vias:
 
 - **Um período por vez** — botão "➕ Novo período" → modal (`abrirFormPlantao`,
   `salvarPlantaoFirestore`) idêntico em espírito ao modal de Férias Equipe.
-- **Vários de uma vez** — botão "📋 Importar CSV" → campo opcional "Link do Diário
+- **Vários de uma vez** — botão "📋 Importar CSV" → campos opcionais "Nome do lote"
+  (ex. "4º Trimestre 2026" — agrupa esses períodos na tabela) e "Link do Diário
   Oficial" (aplica a todos os períodos deste lote — cenário comum: uma edição
   publica várias semanas de uma vez, ex. Edição 2696/2026 publicou as 13 semanas da
   Portaria 764/2026) + cola texto (uma linha por período,
   `data_inicio;data_fim;defensor;assessoria`, aceita `;`, Tab ou `,` como separador)
   → `_plantaoParseCSV()` faz o parsing 100% local (sem rede, sem IA) →
   pré-visualização com linhas ok/erro → confirma e grava em lote, com o mesmo
-  `portaria_url` em todos os documentos criados (`_plantaoConfirmarImportacaoCsv()`).
-  Dá pra corrigir período a período depois pelo formulário, se algum tiver sido
-  publicado numa edição diferente do resto do lote. Decisão da sessão 35: sem isso,
+  `lote_nome`/`portaria_url` em todos os documentos criados
+  (`_plantaoConfirmarImportacaoCsv()`). Dá pra corrigir período a período depois pelo
+  formulário, se algum tiver sido publicado numa edição diferente do resto do lote.
+  Decisão da sessão 35: sem isso,
   toda importação em lote ficava sem portaria própria, dependendo só do link geral
   da seção — que pode estar desatualizado/incorreto para escalas futuras.
 - **Migração inicial**: `PLANTAO_SEED_2026` guarda os 13 períodos extraídos da

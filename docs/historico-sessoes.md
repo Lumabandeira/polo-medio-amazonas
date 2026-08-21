@@ -79,6 +79,37 @@
   reabrir o modal, valor chega correto até o ponto de montagem do objeto salvo (não testado contra
   o Firestore real, mesma cautela de sessões anteriores). Ver `docs/site/estrutura-html.md`
   (seção "Plantão").
+- **Agrupamento por lote na tabela de Plantão** (planejado via `EnterPlanMode`, com 2 perguntas
+  respondidas pela usuária: ordem dos grupos — mais recente primeiro — e se deveria dar pra
+  renomear o lote inteiro de uma vez — sim). Motivação: a usuária vai acumular mais escalas na
+  mesma coleção com o tempo (4º Trimestre 2026, depois 1º Semestre ou 1º Trimestre de 2027 — a
+  administração decide o formato, não tem como fixar um padrão), e uma lista única "achatada"
+  ordenada só por data ia ficar confusa sem separar visualmente cada leva. Novo campo opcional
+  `lote_nome` (texto livre) em cada período do `plantao_admin/{id}` — sem coleção separada de
+  "lotes", mantendo o padrão de campo string livre já usado na seção (`defensor`/`assessoria`).
+  Preenchido pelo formulário de 1 período (`abrirFormPlantao`/`salvarPlantaoFirestore`) — ao abrir
+  "Novo período" pré-preenche com o `lote_nome` do período mais recente já cadastrado, pra não
+  redigitar o mesmo nome dentro da mesma leva — e pelo "Importar CSV" (campo único "Nome do
+  lote", mesmo padrão em lote do campo de link adicionado antes nesta sessão). `renderPlantao()`
+  reestruturado: `_plantaoAgruparPorLote()` agrupa `plantaoRegistros` por `lote_nome` (chave `''`
+  vira grupo "Sem lote definido", sempre por último) e ordena os grupos pelo maior `data_inicio`
+  de cada um, decrescente; cada grupo vira seu próprio bloco (cabeçalho com contagem + badge
+  "🔵 atual" via `_plantaoLoteContemHoje()` quando a data de hoje cai no intervalo do grupo,
+  seguido da mesma tabela de sempre). Renomear lote inteiro (admin): botão "✏️ renomear" no
+  cabeçalho, mesmo padrão de edição inline de `_plantaoEditarInfo()`/`_plantaoSalvarInfo()` —
+  `_plantaoRenomearLoteIniciar(idx)`/`_plantaoRenomearLoteSalvar(idx)` usam um índice pro cache
+  `_plantaoGruposAtuais` (do último render) em vez de embutir o nome do lote — texto livre, pode
+  ter aspas/caracteres arbitrários — dentro de um atributo `onclick`. `PLANTAO_SEED_2026` ganhou
+  `lote_nome: '3º Trimestre 2026'` em cada item via `.map()` sobre a nova constante
+  `PLANTAO_SEED_2026_LOTE`. Testado no navegador local: 4 lotes simulados (incluindo um sem
+  `lote_nome` e um com payload `"><script>alert(1)</script>` no nome) — ordem dos grupos correta,
+  contagem, badge "atual" no grupo certo, XSS não disparou (nem no cabeçalho nem no atributo
+  `value` do input de renomear, que usa `esc(...).replace(/"/g,'&quot;')` como os outros campos
+  desta sessão), pré-preenchimento do formulário e reset do campo do CSV corretos, e o
+  `renomear` monta a lista certa de IDs a atualizar (não gravado contra o Firestore real). Ver
+  `docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md`. **Pendente:** backfill de
+  `lote_nome: "3º Trimestre 2026"` nos 13 períodos já existentes (script pronto, só falta rodar
+  com confirmação explícita da usuária).
 
 ---
 
