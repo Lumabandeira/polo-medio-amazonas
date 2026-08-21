@@ -316,6 +316,19 @@ Console. Tudo testado e validado com dados reais.
 - Dados privados da equipe (WhatsApp, contatos internos)
 - Remoção futura dos sinos de notificação/automação de PDF (afastamentos/remoções/designações
   cumulativas) — decisão da sessão 30, não têm se mostrado confiáveis na prática
+- **Bugfix pendente:** escape de HTML no campo "Editar link" do topo do Plantão
+  (`_plantaoCarregarInfo()`, `linkEl.innerHTML = ...` em `index.html`, perto de
+  `index.html:9057-9064`) — `nome` e `url` de `secoes/plantao_info` entram direto no HTML sem
+  `esc()`/`_escAttr()`, mais grave que o bug de aspas no `href` já corrigido na sessão 35 (aqui
+  dá pra injetar tag inteira, não só quebrar o atributo). Bug antigo, não introduzido na sessão
+  35 — só notado ao corrigir os outros links de portaria do Plantão.
+- **Bugfix pendente:** o mesmo bug de duplicação por clique-prematuro no seed do Plantão (corrigido
+  na sessão 35 — ver `plantaoCarregouUmaVez` / revalidação direta no Firestore em
+  `_plantaoImportarSeed()`) também existe em Viagens e Eventos: `_viagensImportarSeed(n)`
+  (`index.html:9911-9932`) e o botão de seed em `renderViagensEventos()` só checam
+  `_viagensEventos[n].length` (estado em memória), sem confirmar com uma leitura real do
+  Firestore antes de gravar — mesma janela de corrida que causou a duplicação real no Plantão.
+  Ainda não corrigido.
 
 Para o histórico completo do que foi implementado → `docs/historico-sessoes.md`
 
