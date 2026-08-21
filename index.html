@@ -8813,6 +8813,7 @@
         let plantaoRegistros = []; // [{id, data_inicio, data_fim, defensor, assessoria}]
         let plantaoMap       = {}; // id -> registro
         let plantaoInfoAtual = { nome: '', url: '' }; // cache síncrono do link geral (secoes/plantao_info)
+        let plantaoCarregouUmaVez = false; // só true após 1ª leitura real do Firestore (evita seed duplicado)
 
         function _fmtPlantaoData(str) {
             if (!str) return '';
@@ -8893,6 +8894,7 @@
                 snap.forEach(doc => registros.push({ id: doc.id, ...doc.data() }));
                 localStorage.setItem('pma-plantao-fs', JSON.stringify(registros));
                 _plantaoAplicarRegistros(registros);
+                plantaoCarregouUmaVez = true;
             } catch(e) { console.warn('Erro ao carregar plantão:', e); }
 
             if (document.getElementById('plantao')?.classList.contains('active')) renderPlantao();
@@ -8904,7 +8906,11 @@
             if (!el) return;
             const isAdmin = userRole === 'admin';
 
-            const migrarBtn = (isAdmin && plantaoRegistros.length === 0)
+            // Só oferece o botão de seed depois de confirmar com uma leitura real do
+            // Firestore que a coleção está vazia — evita duplicar dados se o usuário
+            // clicar antes do primeiro carregamento terminar (plantaoRegistros ainda
+            // no estado inicial [], sem isso ainda ser garantidamente verdade no servidor).
+            const migrarBtn = (isAdmin && plantaoRegistros.length === 0 && plantaoCarregouUmaVez)
                 ? `<button class="btn-salvar" style="display:inline-flex" onclick="_plantaoImportarSeed()">⬇️ Importar dados iniciais (${PLANTAO_SEED_2026.length} períodos — Portaria 764/2026)</button>`
                 : '';
             const acoesBar = isAdmin ? `
@@ -8926,7 +8932,9 @@
             ${acoesBar}`;
 
             if (plantaoRegistros.length === 0) {
-                html += `<p style="text-align:center;padding:20px;color:var(--text-secondary);">Nenhum período cadastrado ainda.</p>`;
+                html += plantaoCarregouUmaVez
+                    ? `<p style="text-align:center;padding:20px;color:var(--text-secondary);">Nenhum período cadastrado ainda.</p>`
+                    : `<p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando períodos...</p>`;
             } else {
                 html += `<div class="plantao-block"><table class="plantao-table">
                     <colgroup><col style="width:20%"><col style="width:${isAdmin ? '30%' : '34%'}"><col style="width:${isAdmin ? '24%' : '26%'}"><col style="width:${isAdmin ? '16%' : '20%'}">${isAdmin ? '<col style="width:10%">' : ''}</colgroup>
@@ -9217,10 +9225,24 @@
         }
 
         // ── Migração única dos períodos extraídos da Portaria 764/2026 ───────
+        let _plantaoImportandoSeed = false; // trava contra duplo-clique
+
         async function _plantaoImportarSeed() {
-            if (plantaoRegistros.length > 0) return;
+            if (plantaoRegistros.length > 0 || _plantaoImportandoSeed) return;
             if (!confirm(`Importar os ${PLANTAO_SEED_2026.length} períodos iniciais (Portaria 764/2026)?`)) return;
+            _plantaoImportandoSeed = true;
             try {
+                // Revalida direto no Firestore (não só no estado local em memória)
+                // imediatamente antes de gravar — fecha a janela de corrida que causou
+                // duplicação em 21/08/2026: plantaoRegistros pode estar vazio por ainda
+                // não ter terminado o 1º carregamento, mesmo com dados já existindo no
+                // servidor (ver renderPlantao(), guarda plantaoCarregouUmaVez).
+                const snapAtual = await db.collection('plantao_admin').limit(1).get();
+                if (!snapAtual.empty) {
+                    mostrarToast('⚠️ Já existem períodos cadastrados — recarregando a lista.', true);
+                    await loadPlantaoFirestore();
+                    return;
+                }
                 await Promise.all(PLANTAO_SEED_2026.map(r => db.collection('plantao_admin').add({
                     ...r,
                     criado_por: firebase.auth().currentUser?.email || '',
@@ -9230,6 +9252,8 @@
                 await loadPlantaoFirestore();
             } catch(e) {
                 mostrarToast('❌ Erro ao importar: ' + e.message, true);
+            } finally {
+                _plantaoImportandoSeed = false;
             }
         }
 

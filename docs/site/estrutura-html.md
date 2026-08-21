@@ -135,6 +135,21 @@ Lista dinâmica (não mais tabela de tamanho fixo) na coleção `plantao_admin/{
 (texto livre — plantonistas nem sempre são os 6 titulares do polo), `criado_por`,
 `criado_em`. Renderizada por `renderPlantao()`, ordenada por `data_inicio`.
 
+**Proteção contra seed duplicado (bug real de 21/08/2026):** `_plantaoImportarSeed()`
+antigamente só checava `plantaoRegistros.length` (estado em memória) antes de gravar
+os 13 períodos do seed — se o admin clicasse "Importar dados iniciais" antes do
+1º `loadPlantaoFirestore()` terminar (aba aberta rápido demais), o array local
+ainda estava `[]` mesmo com períodos já existindo no Firestore, e o seed inteiro
+era regravado por cima, duplicando registros. Corrigido em duas camadas:
+1. `renderPlantao()` só oferece o botão de importar quando `plantaoCarregouUmaVez`
+   é `true` (setado ao final da 1ª leitura real do Firestore em
+   `loadPlantaoFirestore()`) — antes disso mostra "⏳ Carregando períodos..." em
+   vez do estado vazio.
+2. `_plantaoImportarSeed()` revalida direto no Firestore (`.limit(1).get()`)
+   imediatamente antes de gravar, além de uma trava `_plantaoImportandoSeed`
+   contra duplo-clique — defesa em profundidade, independe da UI ter mostrado o
+   botão certo ou não.
+
 **Link de portaria por período:** cada linha da tabela tem uma coluna "Portaria"
 (`_plantaoLinkPortariaHtml()`), resolvida nesta ordem de prioridade:
 1. `alteracao_url`/`alteracao_numero` — preenchidos só quando esse período específico

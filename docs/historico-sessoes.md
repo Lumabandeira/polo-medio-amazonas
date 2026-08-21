@@ -40,6 +40,27 @@
   (padrão `Edicao_NNNN` no nome do arquivo), em vez do admin precisar digitar um rótulo. Nova
   função `_plantaoRotuloEdicao(url)`; `portaria_numero`/`alteracao_numero` do formulário viraram
   override opcional (só necessário se o link não seguir esse padrão — cai em "Abrir PDF").
+- **Bugfix real: semanas duplicadas no Plantão.** Usuária notou várias semanas repetidas na
+  tabela. Diagnóstico: `_plantaoImportarSeed()` só checava `plantaoRegistros.length` (estado em
+  memória do navegador) antes de gravar os 13 períodos do seed — na reimportação feita mais
+  cedo nesta sessão (ver item acima sobre a coleção vazia), o admin clicou "Importar dados
+  iniciais" antes do 1º `loadPlantaoFirestore()` terminar de carregar, então o array local ainda
+  lia `[]` mesmo com 10 dos 13 períodos originais (de 05/08) ainda existindo no Firestore — o
+  seed inteiro foi regravado por cima, criando 8 pares duplicados (16 docs; os outros 2 dos 10
+  originais a usuária já tinha limpado manualmente antes de pedir ajuda). Corrigido em duas
+  camadas: `renderPlantao()` só oferece o botão de seed depois que `plantaoCarregouUmaVez`
+  confirma uma leitura real do Firestore (antes mostra "carregando" em vez do estado vazio), e
+  `_plantaoImportarSeed()` revalida direto no Firestore (`.limit(1).get()`) imediatamente antes
+  de gravar, com trava contra duplo-clique. **Dados corrigidos em produção** (script pontual com
+  a service account, só depois de confirmação explícita da usuária via `AskUserQuestion`, já que
+  a exclusão foi bloqueada uma vez pelo classificador de auto-mode por ser destrutiva): 8
+  documentos duplicados deletados (mantido sempre o original de 05/08 — dados idênticos em cada
+  par, conferido campo a campo via script antes de apagar, evitando mojibake no console do
+  Windows gravando em arquivo UTF-8), voltando a 13 períodos únicos. Também gravado o link
+  definitivo da Portaria 764/2026 em `secoes/plantao_info.url`
+  (`.../Portaria-no-0764-2026-GSPG-26.0.000010208-2.pdf`), que agora aparece em toda linha sem
+  portaria própria — rótulo "Abrir PDF" (essa URL não segue o padrão `Edicao_NNNN`). Ver
+  `docs/site/estrutura-html.md` (seção "Plantão").
 
 ---
 

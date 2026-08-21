@@ -96,6 +96,25 @@ níveis de prioridade, override manual, e link sem padrão reconhecível). Ver
 `docs/site/estrutura-html.md` (seção "Plantão") e `docs/firebase.md` para o detalhamento
 completo.
 
+**Bug real encontrado e corrigido ainda nesta sessão:** a usuária notou várias semanas
+duplicadas na tabela de Plantão. Causa: `_plantaoImportarSeed()` só checava
+`plantaoRegistros.length` (memória do navegador) antes de gravar — se o admin clicasse
+"Importar dados iniciais" antes do 1º `loadPlantaoFirestore()` terminar, o array local
+ainda estava vazio mesmo com períodos já existindo no Firestore, e o seed inteiro era
+regravado por cima (foi exatamente o que aconteceu na reimportação desta sessão, criando
+8 pares duplicados sobre os 10 períodos que já existiam). Corrigido em duas camadas: (1)
+`renderPlantao()` só oferece o botão de seed depois que `plantaoCarregouUmaVez` confirma
+uma leitura real do Firestore — antes mostra "carregando" em vez do estado vazio; (2)
+`_plantaoImportarSeed()` revalida direto no Firestore (`.limit(1).get()`) imediatamente
+antes de gravar, com trava contra duplo-clique. Dados corrigidos em produção (script
+pontual com a service account, após confirmação explícita da usuária): 8 documentos
+duplicados deletados (mantido sempre o original de 05/08 — dados idênticos em cada par,
+conferido campo a campo antes de apagar), voltando a 13 períodos únicos. Também gravado
+o link definitivo da Portaria 764/2026 em `secoes/plantao_info.url`
+(https://defensoria.am.def.br/wp-content/uploads/2026/08/Portaria-no-0764-2026-GSPG-26.0.000010208-2.pdf),
+que agora aparece em toda linha sem portaria própria (rótulo "Abrir PDF", já que essa URL
+não segue o padrão `Edicao_NNNN`). Ver `docs/site/estrutura-html.md` (seção "Plantão").
+
 ## Estado atual (sessão 34 — 19/08/2026)
 
 **Implementado nesta sessão:** reformulação de "🧳 Viagens e Eventos" (sessão 33) em duas
