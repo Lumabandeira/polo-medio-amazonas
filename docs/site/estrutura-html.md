@@ -157,8 +157,8 @@ era regravado por cima, duplicando registros. Corrigido em duas camadas:
    substituição de um plantonista numa semana). Renderiza como badge laranja "🔄".
    É o único caso em que a linha mostra sua própria portaria em destaque — não
    mostra a original ao lado (decisão explícita: só a que vale hoje).
-2. `portaria_url`/`portaria_numero` — portaria própria do período, quando diferente
-   da geral (raro).
+2. `portaria_url`/`portaria_numero` — portaria própria do período (comum: é o que o
+   formulário de 1 período e o "Importar CSV" gravam por padrão — ver abaixo).
 3. Fallback: link geral da seção (`plantaoInfoAtual`), cache síncrono de
    `secoes/plantao_info`, atualizado por `_plantaoCarregarInfo()` e replicado nas
    células via `_plantaoAtualizarColunaPortaria()` (evita recursão entre
@@ -177,9 +177,11 @@ Todos os campos de texto livre desses 5 campos passam por `esc()`; o `title`
 (mesmo padrão de `_viagensEscAttr()`, necessário porque `esc()` sozinho não escapa
 aspas — seguro em texto de nó HTML, mas não dentro de um atributo).
 
-Editável só pelo formulário de 1 período (`abrirFormPlantao`/`salvarPlantaoFirestore`)
-— **não** pelo CSV em lote nem pelo seed inicial, que continuam com só os 4 campos
-base (alteração de portaria é exceção pontual, não vale complicar o parser de CSV).
+`portaria_numero`/`portaria_url` são editáveis também pelo "Importar CSV" (campo único
+"Link do Diário Oficial" no topo do modal, aplicado a todos os períodos do lote — ver
+abaixo). Já `alteracao_*` só é editável pelo formulário de 1 período — é exceção
+pontual, não vale complicar o parser de CSV para isso. O seed inicial
+(`PLANTAO_SEED_2026`) continua com só os 4 campos base.
 
 **Decisão da sessão 26:** sem IA e sem automação de PDF. As automações
 existentes (sinos de notificação de afastamentos/remoções/designações
@@ -188,10 +190,18 @@ Plantão é 100% manual, com duas vias:
 
 - **Um período por vez** — botão "➕ Novo período" → modal (`abrirFormPlantao`,
   `salvarPlantaoFirestore`) idêntico em espírito ao modal de Férias Equipe.
-- **Vários de uma vez** — botão "📋 Importar CSV" → cola texto (uma linha por
-  período, `data_inicio;data_fim;defensor;assessoria`, aceita `;`, Tab ou `,`
-  como separador) → `_plantaoParseCSV()` faz o parsing 100% local (sem rede,
-  sem IA) → pré-visualização com linhas ok/erro → confirma e grava em lote.
+- **Vários de uma vez** — botão "📋 Importar CSV" → campo opcional "Link do Diário
+  Oficial" (aplica a todos os períodos deste lote — cenário comum: uma edição
+  publica várias semanas de uma vez, ex. Edição 2696/2026 publicou as 13 semanas da
+  Portaria 764/2026) + cola texto (uma linha por período,
+  `data_inicio;data_fim;defensor;assessoria`, aceita `;`, Tab ou `,` como separador)
+  → `_plantaoParseCSV()` faz o parsing 100% local (sem rede, sem IA) →
+  pré-visualização com linhas ok/erro → confirma e grava em lote, com o mesmo
+  `portaria_url` em todos os documentos criados (`_plantaoConfirmarImportacaoCsv()`).
+  Dá pra corrigir período a período depois pelo formulário, se algum tiver sido
+  publicado numa edição diferente do resto do lote. Decisão da sessão 35: sem isso,
+  toda importação em lote ficava sem portaria própria, dependendo só do link geral
+  da seção — que pode estar desatualizado/incorreto para escalas futuras.
 - **Migração inicial**: `PLANTAO_SEED_2026` guarda os 13 períodos extraídos da
   Portaria nº 764/2026-GSPG/DPE/AM; um botão "⬇️ Importar dados iniciais"
   aparece só enquanto `plantao_admin` está vazia e grava esse seed uma única vez.

@@ -114,6 +114,17 @@ o link definitivo da Portaria 764/2026 em `secoes/plantao_info.url`
 (https://defensoria.am.def.br/wp-content/uploads/2026/08/Portaria-no-0764-2026-GSPG-26.0.000010208-2.pdf),
 que agora aparece em toda linha sem portaria própria (rótulo "Abrir PDF", já que essa URL
 não segue o padrão `Edicao_NNNN`). Ver `docs/site/estrutura-html.md` (seção "Plantão").
+Também preenchido `portaria_url` nos 13 períodos com a Edição 2696/2026 (quem publicou a
+maioria da escala, informado pela usuária) via script pontual — ação de dado, sem mudança
+de código.
+
+**Ajuste final da sessão:** usuária ficou preocupada que o "Importar CSV" (única via prevista
+pra adicionar escalas futuras) não tinha como registrar o link do Diário Oficial — ficaria
+sempre dependendo do link geral da seção, que fica desatualizado a cada nova edição. Adicionado
+campo opcional "Link do Diário Oficial" no topo do modal de CSV, aplicado a todos os períodos
+daquele lote (`_plantaoConfirmarImportacaoCsv()`) — cenário comum é uma edição publicar várias
+semanas de uma vez, então um campo por lote (não por linha do CSV) evita ter que editar o texto
+manualmente pra incluir a URL em cada linha. Ver `docs/site/estrutura-html.md` (seção "Plantão").
 
 ## Estado atual (sessão 34 — 19/08/2026)
 

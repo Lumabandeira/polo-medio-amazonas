@@ -3807,6 +3807,10 @@
                         com as colunas separadas por Tab.) Exemplo:<br>
                         <code>29/06/2026;05/07/2026;Eliaquim Antunes de Souza Santos;Larice Bruce Pereira</code>
                     </div>
+                    <div class="form-group" style="margin-bottom:12px">
+                        <label>LINK DO DIÁRIO OFICIAL <span style="font-weight:400;text-transform:none;color:var(--text-secondary)">(opcional — aplica a todos os períodos deste lote; dá pra editar período a período depois)</span></label>
+                        <input type="url" id="plantao-csv-portaria-url" placeholder="https://... (edição do Diário Oficial que publicou esta escala)" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
+                    </div>
                     <textarea id="plantao-csv-textarea" rows="8" style="width:100%;padding:10px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.88em;font-family:monospace;" placeholder="29/06/2026;05/07/2026;Eliaquim Antunes de Souza Santos;Larice Bruce Pereira"></textarea>
                     <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px;">
                         <button type="button" class="btn-cancelar" onclick="fecharCsvPlantao()">Cancelar</button>
@@ -9115,6 +9119,7 @@
         // ── Importação em lote via CSV (100% local, sem IA) ──────────────────
         function abrirCsvPlantao() {
             document.getElementById('plantao-csv-textarea').value = '';
+            document.getElementById('plantao-csv-portaria-url').value = '';
             document.getElementById('plantao-csv-preview').innerHTML = '';
             document.getElementById('plantao-csv-overlay').classList.add('active');
         }
@@ -9206,12 +9211,15 @@
             const indices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.csvIdx));
             if (indices.length === 0) { mostrarToast('❌ Nenhuma linha selecionada.', true); return; }
 
+            const portariaUrl = document.getElementById('plantao-csv-portaria-url').value.trim();
+
             try {
                 await Promise.all(indices.map(i => {
                     const r = _plantaoCsvParsed[i];
                     return db.collection('plantao_admin').add({
                         data_inicio: r.data_inicio, data_fim: r.data_fim,
                         defensor: r.defensor, assessoria: r.assessoria,
+                        portaria_url: portariaUrl,
                         criado_por: firebase.auth().currentUser?.email || '',
                         criado_em:  firebase.firestore.FieldValue.serverTimestamp()
                     });

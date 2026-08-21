@@ -67,6 +67,18 @@
   escala. Gravado como `portaria_url` em todos os períodos, com `portaria_numero` propositalmente
   vazio — a URL segue o padrão `Edicao_NNNN`, então `_plantaoRotuloEdicao()` já extrai "Edição
   2696" automaticamente, sem precisar de rótulo manual.
+- **CSV de Plantão ganha link do Diário Oficial.** Usuária notou que o "Importar CSV" — única via
+  prevista pra adicionar escalas futuras em lote — não tinha como registrar a portaria, ficando
+  sempre dependente do link geral da seção (que fica desatualizado a cada nova edição publicada).
+  Perguntado se o campo deveria ser por linha do CSV ou único por lote; escolhida a opção por
+  lote, já que o uso real é uma edição publicar várias semanas de uma vez (como a Edição 2696
+  publicou as 13 de hoje) e o ChatGPT não teria como gerar a URL sozinho de qualquer forma.
+  Adicionado campo opcional "Link do Diário Oficial" no topo do modal `#plantao-csv-overlay`,
+  resetado em `abrirCsvPlantao()` e aplicado como `portaria_url` em todos os documentos criados
+  por `_plantaoConfirmarImportacaoCsv()`. Testado no navegador local: campo existe, reseta ao
+  reabrir o modal, valor chega correto até o ponto de montagem do objeto salvo (não testado contra
+  o Firestore real, mesma cautela de sessões anteriores). Ver `docs/site/estrutura-html.md`
+  (seção "Plantão").
 
 ---
 
