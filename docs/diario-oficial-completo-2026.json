@@ -5972,5 +5972,85 @@
         "resumo": "Autoriza substituições em plantões do Polo do Médio Amazonas e Polo do Médio Solimões, estabelecendo escala de substituição recíproca entre polos"
       }
     ]
+  },
+  {
+    "edicao": 2715,
+    "data": "2026-08-21",
+    "data_formatada": "21/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2715-2026__publicada_em_21_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1491/2026-GDPG/DPE/AM",
+        "sei": "26.0.000011683-0",
+        "sgi": "2601636",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de José Marques Gonçalves Júnior, Auxiliar I de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no dia 31 de agosto de 2026, a fim de transportar o Defensor Público Oswaldo Machado Neto ao município de Itacoatiara-AM;",
+          "II- AUTORIZAR o deslocamento de José Marques Gonçalves Júnior, Auxiliar I de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no dia 04 de setembro de 2026, a fim de transportar o Defensor Público Oswaldo Machado Neto no trecho Itacoatiara/Manaus;",
+          "III - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor para transportar defensor público a Itacoatiara-AM nos dias 31/08 e 04/09/2026"
+      },
+      {
+        "numero": "Portaria Nº 1495/2026-GDPG/DPE/AM",
+        "sei": "26.0.000006720-1",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "II - AUTORIZAR o deslocamento de Eliaquim Antunes de Souza Santos, Defensor Público de 3ª Classe, no trecho Itacoatiara/Florianópolis/Itacoatiara, no período de 27 a 29 de agosto de 2026, a fim de participar no Congresso Brasileiro de Direito Processual Civil - IBDP, em Florianópolis-SC;"
+        ],
+        "resumo": "Autoriza deslocamento de defensor público de Itacoatiara para participar de congresso em Florianópolis de 27 a 29/08/2026"
+      },
+      {
+        "numero": "Portaria Nº 1508/2026-GDPG/DPE/AM",
+        "sei": "26.0.000011594-0",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "servidor",
+          "projeto"
+        ],
+        "trechos": [
+          "I - DESIGNAR a Defensora Pública Francine Lucia Buffon Baldissarella e os servidores Victor Gabriel Monteiro e Iasmin Cordeiro de Souza para atuar, na ação de atendimento junto à comunidade Muanense, localizada à margem esquerda do Rio Madeira, no município de Humaitá/AM, na data de 29 de agosto de 2026;"
+        ],
+        "resumo": "Designa defensora e servidores para ação de atendimento à comunidade Muanense em Humaitá-AM em 29/08/2026"
+      },
+      {
+        "numero": "Portaria Nº 1515/2026-GDPG/DPE/AM",
+        "sei": "26.0.000011774-8",
+        "sgi": "2601529",
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Oswaldo Machado Neto, Defensor Público de 3ª Classe, nos trechos Manaus/Urucurituba/Manaus, no período de 31 de agosto a 04 de setembro de 2026, a fim de realizar sessões do Tribunal do Júri da Vara Única da Comarca de Urucurituba-AM;",
+          "II - DETERMINAR o pagamento de diárias ao defensor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de defensor público para Urucurituba-AM para realizar sessões do Tribunal do Júri de 31/08 a 04/09/2026"
+      },
+      {
+        "numero": "Portaria Nº 1520/2026-GDPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "servidor",
+          "projeto"
+        ],
+        "trechos": [
+          "I - DESIGNAR a Defensora Pública Francine Lucia Buffon Baldissarella e os servidores Victor Gabriel Monteiro e Iasmin Cordeiro de Souza para atuar, no \"Projeto Ação Social Agosto Lilás\", na praça da Saúde em Humaitá/AM, entre 8h e 15h do dia 22 de agosto de 2026;"
+        ],
+        "resumo": "Designa defensora e servidores para o Projeto Ação Social Agosto Lilás em Humaitá-AM em 22/08/2026"
+      }
+    ]
   }
 ]
