@@ -18,8 +18,15 @@
   esses campos caem no valor padrão da DPE/AM ao abrir para edição. Testado no navegador local
   (servidor estático, sem login real, `userRole='admin'` simulado via console): pré-preenchimento
   ao abrir "Novo", fallback para o padrão ao editar um registro sem os campos, e preservação de
-  valores customizados ao editar um registro que já os tinha. Ver `docs/site/estrutura-html.md`
-  (seção "Prestação de Contas") e `docs/firebase.md` para o detalhamento completo.
+  valores customizados ao editar um registro que já os tinha.
+- **Ajuste (mesma sessão):** usuária pediu para esses mesmos dados também aparecerem no bloco de
+  informações gerais do Detalhe do pronto pagamento (antes só existiam no formulário de
+  cadastro). Adicionados como 4 itens somente-leitura em `_renderDetalhePrestacao()`
+  (`pc-info-grid`), mostrando "—" quando o campo não foi preenchido (registros antigos). Ainda não
+  entram no PDF do Mapa Demonstrativo (fora do escopo pedido). Testado no navegador: registro com
+  dados customizados exibe corretamente, registro sem os campos cai em "—" nos 4 itens. Ver
+  `docs/site/estrutura-html.md` (seção "Prestação de Contas") e `docs/firebase.md` para o
+  detalhamento completo.
 
 ## Sessão 35 — 21/08/2026
 

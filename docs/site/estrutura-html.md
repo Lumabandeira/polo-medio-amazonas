@@ -301,7 +301,7 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   a URL de download fica salva no array `despesas[]` do documento Firestore.
 - **Unidade Gestora Concedente**: bloco de 4 campos no formulário (Órgão/CNPJ, Banco, Agência,
   Conta), pré-preenchidos com os dados fixos da DPE/AM (`PC_UG_CONCEDENTE_PADRAO`) mas editáveis.
-  Só no formulário — não aparece no Detalhe nem no PDF exportado.
+  Também exibidos somente leitura nas informações gerais do Detalhe. Não entram no PDF exportado.
 - Ver `docs/firebase.md` para o schema completo de `prestacoes_contas/{id}` e as regras de
   segurança (mais restritas que o padrão do site: leitura **e** escrita admin-only, por causa de
   CPF/dados bancários nos comprovantes de devolução).

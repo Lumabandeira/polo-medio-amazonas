@@ -62,9 +62,10 @@ docs/
 **Implementado nesta sessão:** 4 campos opcionais de "Unidade Gestora Concedente" (Órgão/CNPJ,
 Banco, Agência, Conta) no modal "Novo/Editar Pronto Pagamento" (`prestacoes_contas/{id}`),
 pré-preenchidos com os dados fixos da DPE/AM (constante `PC_UG_CONCEDENTE_PADRAO`) mas editáveis.
-Escopo só no formulário — não aparece no Detalhe nem no PDF (decisão da usuária). Ver
-`docs/historico-sessoes.md` (sessão 36) e `docs/site/estrutura-html.md`/`docs/firebase.md` para
-o detalhamento completo.
+Também exibidos (somente leitura) no bloco de informações gerais do Detalhe — ajuste pedido
+ainda na mesma sessão, depois de inicialmente restringir ao formulário. Ainda não entram no PDF.
+Ver `docs/historico-sessoes.md` (sessão 36) e `docs/site/estrutura-html.md`/`docs/firebase.md`
+para o detalhamento completo.
 
 ## Estado atual (sessão 35 — 21/08/2026)
 
