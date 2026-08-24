@@ -299,6 +299,9 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   *ou* justificativa de ausência, Justificativa da despesa, Atesto, Fotos) + lista livre de
   "Outros documentos". Upload vai para Firebase Storage em `prestacoes-contas/{prestacaoId}/...`;
   a URL de download fica salva no array `despesas[]` do documento Firestore.
+- **Unidade Gestora Concedente**: bloco de 4 campos no formulário (Órgão/CNPJ, Banco, Agência,
+  Conta), pré-preenchidos com os dados fixos da DPE/AM (`PC_UG_CONCEDENTE_PADRAO`) mas editáveis.
+  Só no formulário — não aparece no Detalhe nem no PDF exportado.
 - Ver `docs/firebase.md` para o schema completo de `prestacoes_contas/{id}` e as regras de
   segurança (mais restritas que o padrão do site: leitura **e** escrita admin-only, por causa de
   CPF/dados bancários nos comprovantes de devolução).

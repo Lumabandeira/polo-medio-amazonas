@@ -4,6 +4,23 @@
 
 ---
 
+## Sessão 36 — 24/08/2026
+
+- **Unidade Gestora Concedente no cadastro de Pronto Pagamento**: usuária mostrou uma segunda
+  figura com os dados bancários/CNPJ da DPE/AM (unidade que concede o pronto pagamento) e pediu
+  para incluí-los no modal "Editar/Novo Pronto Pagamento". Adicionados 4 campos opcionais no
+  formulário — Órgão/CNPJ, Banco, Agência, Conta (`unidade_gestora_cnpj/banco/agencia/conta` em
+  `prestacoes_contas/{id}`) — pré-preenchidos com os dados fixos da DPE/AM (constante
+  `PC_UG_CONCEDENTE_PADRAO`) mas editáveis campo a campo, caso a unidade gestora mude no futuro
+  (decisão da usuária, via pergunta explícita: editável+pré-preenchido em vez de fixo/somente
+  leitura). Escopo restrito ao formulário de cadastro — não aparece no Detalhe (Mapa
+  Demonstrativo) nem no PDF exportado (2ª decisão explícita da usuária). Registros antigos sem
+  esses campos caem no valor padrão da DPE/AM ao abrir para edição. Testado no navegador local
+  (servidor estático, sem login real, `userRole='admin'` simulado via console): pré-preenchimento
+  ao abrir "Novo", fallback para o padrão ao editar um registro sem os campos, e preservação de
+  valores customizados ao editar um registro que já os tinha. Ver `docs/site/estrutura-html.md`
+  (seção "Prestação de Contas") e `docs/firebase.md` para o detalhamento completo.
+
 ## Sessão 35 — 21/08/2026
 
 - **Diagnóstico de esvaziamento de `plantao_admin`**: usuária relatou que a Escala de Plantão

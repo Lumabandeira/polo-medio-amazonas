@@ -247,6 +247,10 @@ data_recebimento:         "YYYY-MM-DD"
 data_inicio_aplicacao:    "YYYY-MM-DD"
 data_fim_aplicacao:       "YYYY-MM-DD"
 prazo_prestacao_contas:   "YYYY-MM-DD"
+unidade_gestora_cnpj:     "19.421.427/0001-91 - Defensoria Pública do Estado do Amazonas - DPE/AM" | null
+unidade_gestora_banco:    "BANCO BRADESCO" | null
+unidade_gestora_agencia:  "3739-7" | null
+unidade_gestora_conta:    "56.735-3" | null
 memorando_url:            "https://firebasestorage..." | null
 termo_devolucao_url:      "https://firebasestorage..." | null
 comprovante_devolucao_url:"https://firebasestorage..." | null
@@ -264,6 +268,11 @@ despesas: [
 criado_por / atualizado_por: "email@..."
 criado_em / atualizado_em:   timestamp
 ```
+- **Unidade Gestora Concedente:** 4 campos opcionais (`unidade_gestora_cnpj/banco/agencia/conta`)
+  no formulário de cadastro, pré-preenchidos com os dados fixos da DPE/AM (constante
+  `PC_UG_CONCEDENTE_PADRAO` em `index.html`) mas editáveis campo a campo, caso a unidade gestora
+  mude no futuro. Só aparecem no formulário (Novo/Editar) — não entram no Detalhe nem no PDF do
+  Mapa Demonstrativo (decisão explícita da usuária, escopo restrito ao cadastro por enquanto).
 - **Regra de negócio (client-side, em `_validarCategoriaDisponivel()`):** um mesmo `tomador` pode
   ter no máximo 2 documentos com `status: "aberto"` ao mesmo tempo, e as categorias desses 2
   precisam ser diferentes entre si. Marcar como `"concluido"` libera a vaga.
