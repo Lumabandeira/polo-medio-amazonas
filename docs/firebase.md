@@ -241,7 +241,6 @@ tomador:                  "Fábio Bastos de Souza"
 categoria:                "consumo" | "pessoa_juridica" | "pessoa_fisica"
 status:                   "aberto" | "concluido"   ← controla o limite de 2 simultâneos por tomador
 processo_sei:             "26.0.000000661-0"
-valor_recebido:           4000
 valor_concedido:          4000
 data_recebimento:         "YYYY-MM-DD"
 data_inicio_aplicacao:    "YYYY-MM-DD"
@@ -268,6 +267,14 @@ despesas: [
 criado_por / atualizado_por: "email@..."
 criado_em / atualizado_em:   timestamp
 ```
+- **`valor_recebido` removido do formulário (sessão 36):** havia dois campos redundantes
+  (Valor Recebido/Valor Concedido) no cadastro — a usuária pediu para tirar "Valor Recebido" e
+  padronizar tudo em `valor_concedido` (campo, exibição em cards/Detalhe/PDF, e cálculo de
+  saldo). Registros antigos que só têm `valor_recebido` gravado continuam funcionando: helper
+  `_pcValorConcedido(p)` em `index.html` faz `p.valor_concedido ?? p.valor_recebido` em todo
+  lugar que usa o valor (cards, Detalhe, PDF), e `abrirEditarPrestacao()` aplica o mesmo fallback
+  ao popular o formulário — `valor_recebido` nunca é regravado a partir daí (campo removido do
+  HTML), só permanece como dado legado nos documentos antigos até serem editados/salvos de novo.
 - **Unidade Gestora Concedente:** 4 campos opcionais (`unidade_gestora_cnpj/banco/agencia/conta`)
   no formulário de cadastro, pré-preenchidos com os dados fixos da DPE/AM (constante
   `PC_UG_CONCEDENTE_PADRAO` em `index.html`) mas editáveis campo a campo, caso a unidade gestora

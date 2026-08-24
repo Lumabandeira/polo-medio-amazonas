@@ -299,6 +299,12 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   *ou* justificativa de ausência, Justificativa da despesa, Atesto, Fotos) + lista livre de
   "Outros documentos". Upload vai para Firebase Storage em `prestacoes-contas/{prestacaoId}/...`;
   a URL de download fica salva no array `despesas[]` do documento Firestore.
+- **Valor Concedido (campo único)**: o formulário tinha "Valor Recebido" e "Valor Concedido"
+  redundantes — removido "Valor Recebido", único campo `valor_concedido` (obrigatório) usado em
+  cards, Detalhe, tabela de despesas e PDF, e no cálculo de saldo. Registros antigos gravados só
+  com `valor_recebido` continuam exibindo o valor certo via `_pcValorConcedido(p)` (fallback
+  `valor_concedido ?? valor_recebido`), inclusive ao abrir para edição — `valor_recebido` nunca é
+  regravado depois disso.
 - **Unidade Gestora Concedente**: bloco de 4 campos no formulário (Órgão/CNPJ, Banco, Agência,
   Conta), pré-preenchidos com os dados fixos da DPE/AM (`PC_UG_CONCEDENTE_PADRAO`) mas editáveis.
   Também exibidos somente leitura nas informações gerais do Detalhe. Não entram no PDF exportado.

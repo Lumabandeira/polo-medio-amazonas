@@ -4056,12 +4056,8 @@
                             <input type="text" id="fp-sei" placeholder="ex: 26.0.000000661-0">
                         </div>
                         <div class="form-group">
-                            <label>Valor Recebido (R$)</label>
-                            <input type="number" step="0.01" min="0" id="fp-valor-recebido" required>
-                        </div>
-                        <div class="form-group">
                             <label>Valor Concedido (R$)</label>
-                            <input type="number" step="0.01" min="0" id="fp-valor-concedido">
+                            <input type="number" step="0.01" min="0" id="fp-valor-concedido" required>
                         </div>
                         <div class="form-group">
                             <label>Data do Recebimento</label>
@@ -11320,6 +11316,10 @@
             pessoa_fisica: 'Pessoa Física'
         };
         const PC_TOTAL_SLOTS = 5; // recibo, comprovação de mercado, justificativa, atesto, fotos
+        // Fallback para registros antigos que só tinham valor_recebido (campo removido do formulário)
+        function _pcValorConcedido(p) {
+            return Number(p.valor_concedido ?? p.valor_recebido) || 0;
+        }
         const PC_UG_CONCEDENTE_PADRAO = {
             cnpj: '19.421.427/0001-91 - Defensoria Pública do Estado do Amazonas - DPE/AM',
             banco: 'BANCO BRADESCO',
@@ -11377,7 +11377,7 @@
                 porTomador[tomador].forEach(p => {
                     const despesas = p.despesas || [];
                     const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
-                    const saldo = (Number(p.valor_recebido) || 0) - totalDespesas;
+                    const saldo = _pcValorConcedido(p) - totalDespesas;
                     const statusLabel = p.status === 'concluido' ? '🟢 Concluído' : '🟡 Aberto';
                     const statusClass = p.status === 'concluido' ? 'pc-status-concluido' : 'pc-status-aberto';
                     html += `<div class="pc-card" onclick="abrirDetalhePrestacao('${p.id}')">
@@ -11387,7 +11387,7 @@
                         </div>
                         <div class="pc-card-sei">${p.processo_sei ? 'SEI ' + esc(p.processo_sei) : 'Sem processo SEI'}</div>
                         <div class="pc-card-valores">
-                            <div><span>Recebido</span><strong>${formatarMoeda(p.valor_recebido)}</strong></div>
+                            <div><span>Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
                             <div><span>Despesas</span><strong>${formatarMoeda(totalDespesas)}</strong></div>
                             <div><span>Saldo</span><strong>${formatarMoeda(saldo)}</strong></div>
                         </div>
@@ -11451,8 +11451,7 @@
             document.getElementById('fp-tomador').value = p.tomador || '';
             document.getElementById('fp-categoria').value = p.categoria || '';
             document.getElementById('fp-sei').value = p.processo_sei || '';
-            document.getElementById('fp-valor-recebido').value = p.valor_recebido || '';
-            document.getElementById('fp-valor-concedido').value = p.valor_concedido || '';
+            document.getElementById('fp-valor-concedido').value = p.valor_concedido ?? p.valor_recebido ?? '';
             document.getElementById('fp-data-recebimento').value = p.data_recebimento || '';
             document.getElementById('fp-data-inicio').value = p.data_inicio_aplicacao || '';
             document.getElementById('fp-data-fim').value = p.data_fim_aplicacao || '';
@@ -11482,7 +11481,6 @@
                 tomador,
                 categoria,
                 processo_sei: document.getElementById('fp-sei').value.trim() || null,
-                valor_recebido: Number(document.getElementById('fp-valor-recebido').value) || 0,
                 valor_concedido: Number(document.getElementById('fp-valor-concedido').value) || 0,
                 data_recebimento: document.getElementById('fp-data-recebimento').value || null,
                 data_inicio_aplicacao: document.getElementById('fp-data-inicio').value || null,
@@ -11601,7 +11599,7 @@
 
             const despesas = p.despesas || [];
             const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
-            const saldo = (Number(p.valor_recebido) || 0) - totalDespesas;
+            const saldo = _pcValorConcedido(p) - totalDespesas;
             const statusLabel = p.status === 'concluido' ? '🟢 Concluído' : '🟡 Aberto';
 
             document.getElementById('pc-detalhe-info').innerHTML = `
@@ -11611,8 +11609,7 @@
                     <div><span>Data do Recebimento</span><strong>${formatarData(p.data_recebimento)}</strong></div>
                     <div><span>Aplicação</span><strong>${formatarData(p.data_inicio_aplicacao)} a ${formatarData(p.data_fim_aplicacao)}</strong></div>
                     <div><span>Prazo Prestação de Contas</span><strong>${formatarData(p.prazo_prestacao_contas)}</strong></div>
-                    <div><span>Valor Recebido</span><strong>${formatarMoeda(p.valor_recebido)}</strong></div>
-                    <div><span>Valor Concedido</span><strong>${formatarMoeda(p.valor_concedido)}</strong></div>
+                    <div><span>Valor Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
                     <div style="grid-column:1/-1"><span>Órgão / CNPJ (Unidade Gestora Concedente)</span><strong>${p.unidade_gestora_cnpj ? esc(p.unidade_gestora_cnpj) : '—'}</strong></div>
                     <div><span>Banco</span><strong>${p.unidade_gestora_banco ? esc(p.unidade_gestora_banco) : '—'}</strong></div>
                     <div><span>Agência</span><strong>${p.unidade_gestora_agencia ? esc(p.unidade_gestora_agencia) : '—'}</strong></div>
@@ -11667,7 +11664,7 @@
             tabelaHtml += `</tbody>
                     <tfoot>
                         <tr><td colspan="7" style="text-align:right"><strong>Valor das Despesas</strong></td><td colspan="3"><strong>${formatarMoeda(totalDespesas)}</strong></td></tr>
-                        <tr><td colspan="7" style="text-align:right">Valor Recebido</td><td colspan="3">${formatarMoeda(p.valor_recebido)}</td></tr>
+                        <tr><td colspan="7" style="text-align:right">Valor Concedido</td><td colspan="3">${formatarMoeda(_pcValorConcedido(p))}</td></tr>
                         <tr><td colspan="7" style="text-align:right"><strong>Saldo Remanescente</strong></td><td colspan="3"><strong>${formatarMoeda(saldo)}</strong></td></tr>
                     </tfoot>
                 </table>
@@ -11726,16 +11723,16 @@
 
             const despesas = p.despesas || [];
             const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
-            const saldo = (Number(p.valor_recebido) || 0) - totalDespesas;
+            const saldo = _pcValorConcedido(p) - totalDespesas;
 
-            // Bloco de cabeçalho (Tomador, datas, valor recebido)
+            // Bloco de cabeçalho (Tomador, datas, valor concedido)
             const infoRows = [
                 ['TOMADOR:', p.tomador || ''],
                 ['DATA DO RECEBIMENTO:', formatarData(p.data_recebimento)],
                 ['DATA INICIAL DE APLICAÇÃO:', formatarData(p.data_inicio_aplicacao)],
                 ['DATA FINAL PARA APLICAÇÃO:', formatarData(p.data_fim_aplicacao)],
                 ['PRAZO DE PREST. DE CONTAS:', formatarData(p.prazo_prestacao_contas)],
-                ['VALOR RECEBIDO:', formatarMoeda(p.valor_recebido)]
+                ['VALOR CONCEDIDO:', formatarMoeda(_pcValorConcedido(p))]
             ];
             doc.setFontSize(9);
             doc.setFont(undefined, 'bold');
@@ -11772,7 +11769,7 @@
             const normalStyle = { halign: 'right', fillColor: [245, 245, 245] };
             const saldoStyle = { halign: 'right', fontStyle: 'bold', fillColor: [220, 230, 241] };
             body.push([{ content: 'VALOR DAS DESPESAS:', colSpan: 7, styles: totalStyle }, { content: formatarMoeda(totalDespesas), styles: totalStyle }]);
-            body.push([{ content: 'VALOR CONCEDIDO:', colSpan: 7, styles: normalStyle }, { content: formatarMoeda(p.valor_concedido), styles: normalStyle }]);
+            body.push([{ content: 'VALOR CONCEDIDO:', colSpan: 7, styles: normalStyle }, { content: formatarMoeda(_pcValorConcedido(p)), styles: normalStyle }]);
             body.push([{ content: 'SALDO REMANESCENTE:', colSpan: 7, styles: saldoStyle }, { content: formatarMoeda(saldo), styles: saldoStyle }]);
 
             // Barra "COMPROVANTE DE DESPESA" desenhada à mão sobre Tipo/Nº/Data —

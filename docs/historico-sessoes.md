@@ -24,9 +24,22 @@
   cadastro). Adicionados como 4 itens somente-leitura em `_renderDetalhePrestacao()`
   (`pc-info-grid`), mostrando "—" quando o campo não foi preenchido (registros antigos). Ainda não
   entram no PDF do Mapa Demonstrativo (fora do escopo pedido). Testado no navegador: registro com
-  dados customizados exibe corretamente, registro sem os campos cai em "—" nos 4 itens. Ver
-  `docs/site/estrutura-html.md` (seção "Prestação de Contas") e `docs/firebase.md` para o
-  detalhamento completo.
+  dados customizados exibe corretamente, registro sem os campos cai em "—" nos 4 itens.
+- **Ajuste (mesma sessão):** usuária notou que o formulário tinha dois campos redundantes —
+  "Valor Recebido" e "Valor Concedido" — e pediu para tirar "Valor Recebido" e padronizar tudo em
+  "Valor Concedido". Removido o campo `fp-valor-recebido` do HTML (só resta `fp-valor-concedido`,
+  agora obrigatório); `salvarPrestacao()` não grava mais `valor_recebido`. Padronizado em todo
+  lugar que exibia/calculava com o valor — cards da Lista (label "Recebido" → "Concedido"),
+  informações gerais e tabela de despesas do Detalhe, e o cabeçalho + rodapé do PDF exportado
+  (antes o cabeçalho do PDF já usava "VALOR RECEBIDO" enquanto o rodapé da tabela usava "VALOR
+  CONCEDIDO" — inconsistência resolvida). Registros já gravados só com `valor_recebido` (todos os
+  existentes até aqui) continuam funcionando sem migração de dados: novo helper
+  `_pcValorConcedido(p)` (`valor_concedido ?? valor_recebido`) usado em todo lugar que lê o valor,
+  inclusive ao abrir um registro antigo para edição (o valor aparece certo no campo único, e ao
+  salvar passa a gravar em `valor_concedido`). Testado no navegador: registro só com
+  `valor_recebido` mostra o valor certo em cards/Detalhe/PDF e no formulário de edição; registro
+  já com `valor_concedido` seguiu funcionando normalmente. Ver `docs/site/estrutura-html.md`
+  (seção "Prestação de Contas") e `docs/firebase.md` para o detalhamento completo.
 
 ## Sessão 35 — 21/08/2026
 

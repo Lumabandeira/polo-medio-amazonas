@@ -64,8 +64,12 @@ Banco, Agência, Conta) no modal "Novo/Editar Pronto Pagamento" (`prestacoes_con
 pré-preenchidos com os dados fixos da DPE/AM (constante `PC_UG_CONCEDENTE_PADRAO`) mas editáveis.
 Também exibidos (somente leitura) no bloco de informações gerais do Detalhe — ajuste pedido
 ainda na mesma sessão, depois de inicialmente restringir ao formulário. Ainda não entram no PDF.
-Ver `docs/historico-sessoes.md` (sessão 36) e `docs/site/estrutura-html.md`/`docs/firebase.md`
-para o detalhamento completo.
+
+Também removido o campo redundante "Valor Recebido" do formulário — tudo padronizado para
+`valor_concedido` único (form, cards, Detalhe, PDF, cálculo de saldo), com fallback
+`_pcValorConcedido(p)` para os registros antigos que só têm `valor_recebido` gravado. Ver
+`docs/historico-sessoes.md` (sessão 36) e `docs/site/estrutura-html.md`/`docs/firebase.md` para
+o detalhamento completo.
 
 ## Estado atual (sessão 35 — 21/08/2026)
 
