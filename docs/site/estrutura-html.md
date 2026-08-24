@@ -306,8 +306,11 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   `valor_concedido ?? valor_recebido`), inclusive ao abrir para edição — `valor_recebido` nunca é
   regravado depois disso.
 - **Unidade Gestora Concedente**: bloco de 4 campos no formulário (Órgão/CNPJ, Banco, Agência,
-  Conta), pré-preenchidos com os dados fixos da DPE/AM (`PC_UG_CONCEDENTE_PADRAO`) mas editáveis.
-  Também exibidos somente leitura nas informações gerais do Detalhe. Não entram no PDF exportado.
+  Conta), pré-preenchidos com os dados fixos da DPE/AM (`PC_UG_CONCEDENTE_PADRAO`) mas editáveis —
+  os 4 continuam gravados em `prestacoes_contas/{id}`. No Detalhe (`_renderDetalhePrestacao()`),
+  só o "Órgão / CNPJ" aparece nas informações gerais; Banco/Agência/Conta ficam só no cadastro
+  (usuária considerou redundante mostrar os dados bancários na tela de exibição). Nenhum dos 4
+  entra no PDF exportado.
 - Ver `docs/firebase.md` para o schema completo de `prestacoes_contas/{id}` e as regras de
   segurança (mais restritas que o padrão do site: leitura **e** escrita admin-only, por causa de
   CPF/dados bancários nos comprovantes de devolução).

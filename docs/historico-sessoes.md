@@ -39,6 +39,12 @@
   salvar passa a gravar em `valor_concedido`). Testado no navegador: registro só com
   `valor_recebido` mostra o valor certo em cards/Detalhe/PDF e no formulário de edição; registro
   já com `valor_concedido` seguiu funcionando normalmente.
+- **Ajuste (mesma sessão):** usuária achou redundante mostrar os dados bancários da Unidade
+  Gestora Concedente (Banco/Agência/Conta) na tela de Detalhe, já que servem só para conferência
+  no cadastro. Removidos os 3 itens de `_renderDetalhePrestacao()` — só "Órgão / CNPJ" continua
+  visível ali. Os 3 campos continuam existindo no formulário e gravados em
+  `unidade_gestora_banco/agencia/conta`, só não aparecem mais na exibição. Testado no navegador:
+  Detalhe mostra só CNPJ, formulário de edição segue trazendo os 4 valores salvos normalmente.
 - **Ajuste (mesma sessão):** usuária pediu para tirar a linha "DATA DO RECEBIMENTO" do cabeçalho
   do PDF do Mapa Demonstrativo (`baixarMapaPDF()`, array `infoRows`) — o campo continua existindo
   no formulário de cadastro e no bloco de informações do Detalhe, só não aparece mais repetido no

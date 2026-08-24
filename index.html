@@ -11611,9 +11611,6 @@
                     <div><span>Prazo Prestação de Contas</span><strong>${formatarData(p.prazo_prestacao_contas)}</strong></div>
                     <div><span>Valor Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
                     <div style="grid-column:1/-1"><span>Órgão / CNPJ (Unidade Gestora Concedente)</span><strong>${p.unidade_gestora_cnpj ? esc(p.unidade_gestora_cnpj) : '—'}</strong></div>
-                    <div><span>Banco</span><strong>${p.unidade_gestora_banco ? esc(p.unidade_gestora_banco) : '—'}</strong></div>
-                    <div><span>Agência</span><strong>${p.unidade_gestora_agencia ? esc(p.unidade_gestora_agencia) : '—'}</strong></div>
-                    <div><span>Conta</span><strong>${p.unidade_gestora_conta ? esc(p.unidade_gestora_conta) : '—'}</strong></div>
                 </div>
                 <div class="form-actions" style="margin:16px 0">
                     <button class="btn-editar" onclick="abrirEditarPrestacao('${p.id}')">✏️ Editar dados</button>

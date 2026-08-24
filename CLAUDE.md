@@ -67,8 +67,9 @@ ainda na mesma sessão, depois de inicialmente restringir ao formulário. Ainda 
 
 Também removido o campo redundante "Valor Recebido" do formulário — tudo padronizado para
 `valor_concedido` único (form, cards, Detalhe, PDF, cálculo de saldo), com fallback
-`_pcValorConcedido(p)` para os registros antigos que só têm `valor_recebido` gravado. E tirada a
-linha "Data do Recebimento" do cabeçalho do PDF exportado (segue no formulário e no Detalhe). Ver
+`_pcValorConcedido(p)` para os registros antigos que só têm `valor_recebido` gravado. Os dados bancários (Banco/Agência/Conta) da Unidade Gestora Concedente saíram da exibição do
+Detalhe (só "Órgão/CNPJ" continua ali) mas seguem no cadastro. E tirada a linha "Data do
+Recebimento" do cabeçalho do PDF exportado (segue no formulário e no Detalhe). Ver
 `docs/historico-sessoes.md` (sessão 36) e `docs/site/estrutura-html.md`/`docs/firebase.md` para
 o detalhamento completo.
 

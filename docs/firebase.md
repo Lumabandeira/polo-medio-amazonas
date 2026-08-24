@@ -278,9 +278,10 @@ criado_em / atualizado_em:   timestamp
 - **Unidade Gestora Concedente:** 4 campos opcionais (`unidade_gestora_cnpj/banco/agencia/conta`)
   no formulário de cadastro, pré-preenchidos com os dados fixos da DPE/AM (constante
   `PC_UG_CONCEDENTE_PADRAO` em `index.html`) mas editáveis campo a campo, caso a unidade gestora
-  mude no futuro. Também exibidos (somente leitura, "—" quando ausente) no bloco de informações
-  gerais do Detalhe (`_renderDetalhePrestacao()`) — decisão revista ainda na sessão 36 (inicialmente só
-  apareciam no formulário). Ainda não entram no PDF do Mapa Demonstrativo.
+  mude no futuro. Só o "Órgão / CNPJ" é exibido (somente leitura, "—" quando ausente) no bloco de
+  informações gerais do Detalhe (`_renderDetalhePrestacao()`) — Banco/Agência/Conta continuam
+  gravados normalmente mas ficam ocultos na exibição, só editáveis pelo cadastro (usuária achou
+  redundante mostrar os dados bancários na tela). Nenhum dos 4 entra no PDF do Mapa Demonstrativo.
 - **Regra de negócio (client-side, em `_validarCategoriaDisponivel()`):** um mesmo `tomador` pode
   ter no máximo 2 documentos com `status: "aberto"` ao mesmo tempo, e as categorias desses 2
   precisam ser diferentes entre si. Marcar como `"concluido"` libera a vaga.
