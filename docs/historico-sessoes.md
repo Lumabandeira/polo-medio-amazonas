@@ -38,8 +38,14 @@
   inclusive ao abrir um registro antigo para edição (o valor aparece certo no campo único, e ao
   salvar passa a gravar em `valor_concedido`). Testado no navegador: registro só com
   `valor_recebido` mostra o valor certo em cards/Detalhe/PDF e no formulário de edição; registro
-  já com `valor_concedido` seguiu funcionando normalmente. Ver `docs/site/estrutura-html.md`
-  (seção "Prestação de Contas") e `docs/firebase.md` para o detalhamento completo.
+  já com `valor_concedido` seguiu funcionando normalmente.
+- **Ajuste (mesma sessão):** usuária pediu para tirar a linha "DATA DO RECEBIMENTO" do cabeçalho
+  do PDF do Mapa Demonstrativo (`baixarMapaPDF()`, array `infoRows`) — o campo continua existindo
+  no formulário de cadastro e no bloco de informações do Detalhe, só não aparece mais repetido no
+  PDF exportado. Testado: `infoRows` não contém mais a linha, PDF gerado só com Tomador, Datas de
+  Aplicação, Prazo de Prest. de Contas e Valor Concedido no cabeçalho. Ver
+  `docs/site/estrutura-html.md` (seção "Prestação de Contas") e `docs/firebase.md` para o
+  detalhamento completo.
 
 ## Sessão 35 — 21/08/2026
 

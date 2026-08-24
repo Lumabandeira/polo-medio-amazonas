@@ -317,6 +317,9 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   DESPESA" desenhada manualmente acima da tabela (em vez de `colSpan`/`rowSpan` no `head` do
   AutoTable), tabela de despesas e rodapé de totais. Validado com PDF real baixado e aberto no
   Chrome (fornecedor com nome longo quebrando em 3 linhas, valores corretos, sem sobreposição).
+  Bloco de cabeçalho (`infoRows`) só tem Tomador, Data Inicial/Final de Aplicação, Prazo de Prest.
+  de Contas e Valor Concedido — "Data do Recebimento" tirada a pedido da usuária (segue existindo
+  no formulário de cadastro e no Detalhe, só não repete no PDF).
   Nota: durante o desenvolvimento, a ferramenta de inspeção de PDF usada para conferir o layout
   mostrou um artefato de renderização que não existe no arquivo real — se for depurar isso de novo,
   confie no PDF baixado de verdade, não na pré-visualização.
