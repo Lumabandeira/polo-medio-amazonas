@@ -6183,5 +6183,46 @@
         "resumo": "Designa Defensor Público Eliaquim Antunes de Souza Santos cumulativamente na 3ª Defensoria Pública do Polo Médio Amazonas de 01 a 30 de setembro de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2718,
+    "data": "2026-08-26",
+    "data_formatada": "26/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2718-2026__publicada_em_26_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1534/2026-GDPG/DPE/AM",
+        "sei": "26.0.000011311-4",
+        "sgi": null,
+        "categorias": [
+          "projeto",
+          "defensor",
+          "servidor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR o Defensor Público e os servidores abaixo relacionados para atuarem na realização do Projeto \"Meu Pedaço de Chão – da Ocupação à Titulação\", no Município de Urucurituba/AM, nos dias 16 e 17 de setembro de 2026:",
+          "Thiago Nobre Rosas Defensor Público",
+          "II – ATRIBUIR ao membro e aos servidores acima relacionados a gratificação prevista no art. 31, inciso XI, § 10, Anexo XII, da Lei nº 4.077/2014, com redação dada pela Lei nº 4.831/2019, fixada no nível 1, por dia trabalhado."
+        ],
+        "resumo": "Designa Defensor Público e servidores para atuar no Projeto \"Meu Pedaço de Chão\" em Urucurituba/AM nos dias 16-17 de setembro de 2026"
+      },
+      {
+        "numero": "Portaria Nº 851/2026-GSPG/DPE/AM",
+        "sei": "26.0.000007661-8",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "substituicao",
+          "comarca"
+        ],
+        "trechos": [
+          "I – DESIGNAR a Defensora Pública de 3ª Classe Yáskara Xavier Luciano Lucena para atuar nas audiências designadas para os dias 24, 25, 26, 27 e 28 de agosto de 2026, na 1ª Vara da Comarca de Itacoatiara, conforme Anexo Único;",
+          "II – ATRIBUIR à Defensora Pública mencionada, o adicional previsto no art. 31, XI, da Lei n.º 4.077/2014, com redação dada pela Lei n.º 4.831/2019, no valor correspondente ao nível 1, do Anexo XII da mesma lei, a cada 04 (quatro) audiências realizadas."
+        ],
+        "resumo": "Designa Defensora Pública para atuar em audiências na 1ª Vara de Itacoatiara de 24 a 28 de agosto de 2026"
+      }
+    ]
   }
 ]
