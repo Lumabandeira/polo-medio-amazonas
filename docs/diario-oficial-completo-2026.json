@@ -6224,5 +6224,29 @@
         "resumo": "Designa Defensora Pública para atuar em audiências na 1ª Vara de Itacoatiara de 24 a 28 de agosto de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2719,
+    "data": "2026-08-27",
+    "data_formatada": "27/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2719-2026__publicada_em_27_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1548/2026-GDPG/DPE/AM",
+        "sei": "26.0.000011987-2",
+        "sgi": "2601705",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Paulo Roberto de Carvalho, Auxiliar I de Defensoria, nos trechos Manaus/Itacoatiara/Manaus, no dia 15 de setembro de 2026, a fim de realizar o transporte de servidores públicos até o município de Itacoatiara-AM",
+          "II - AUTORIZAR o deslocamento de Paulo Roberto de Carvalho, Auxiliar I de Defensoria, nos trechos Manaus/Itacoatiara/Manaus, no período de 17 a 18 de setembro de 2026, a fim de realizar o transporte de servidores públicos no trecho Itacoatiara/Manaus",
+          "III - DETERMINAR o pagamento de diárias ao servidor público acima relacionado"
+        ],
+        "resumo": "Autoriza deslocamento de servidor para Itacoatiara-AM em setembro de 2026 para transporte de pessoal, com pagamento de diárias"
+      }
+    ]
   }
 ]
