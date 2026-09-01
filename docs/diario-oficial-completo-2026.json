@@ -6248,5 +6248,74 @@
         "resumo": "Autoriza deslocamento de servidor para Itacoatiara-AM em setembro de 2026 para transporte de pessoal, com pagamento de diárias"
       }
     ]
+  },
+  {
+    "edicao": 2721,
+    "data": "2026-08-31",
+    "data_formatada": "31/08/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2721-2026__publicada_em_31_agosto_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 772/2026-GSPG/DPE/AM",
+        "sei": "26.0.000009772-0",
+        "sgi": null,
+        "categorias": [
+          "substituicao",
+          "defensor"
+        ],
+        "trechos": [
+          "DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Stefany Coimbra Schmidt para atuar na 6ª Defensoria do Polo Baixo Amazonas, nos dias 17 e 18 de setembro de 2026",
+          "DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Stefany Coimbra Schmidt para atuar na 11ª Defensoria do Polo Baixo Amazonas, nos dias 16, 17 e 18 de setembro de 2026"
+        ],
+        "resumo": "Designa defensora para atuar cumulativamente em defensorias do Polo Baixo Amazonas nos dias 16-18 de setembro de 2026"
+      },
+      {
+        "numero": "Portaria Nº 889/2026-GSPG/DPE/AM",
+        "sei": "26.0.000011340-8",
+        "sgi": "2600466",
+        "categorias": [
+          "polo_medio",
+          "substituicao",
+          "defensor",
+          "servidor",
+          "plantao"
+        ],
+        "trechos": [
+          "DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Stefany Coimbra Schmidt para atuar na 6ª Defensoria do Polo Baixo Amazonas, nos dias 17 e 18 de setembro de 2026",
+          "DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Stefany Coimbra Schmidt para atuar na 11ª Defensoria do Polo Baixo Amazonas, nos dias 16, 17 e 18 de setembro de 2026",
+          "AUTORIZAR a substituição do Defensor Público Murilo Rodrigues Breda, designado para a semana 11 do Plantão do Polo do Juruá, pelo período de 07/09 a 13/09, por Catarina Lopes Maia",
+          "AUTORIZAR a substituição do Servidor Celi Divino, designado para a semana 11 do Plantão do Polo do Purus, pelo período de 07/09 a 13/09, pelo Servidor Breno Burili",
+          "DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Polo do Rio Negro-Solimões / Polo do Médio Amazonas"
+        ],
+        "resumo": "Altera portaria anterior, autoriza substituições de defensores e servidores em plantões, e estabelece escala de substituição entre polos incluindo o Médio Amazonas (07-13 de setembro de 2026)"
+      },
+      {
+        "numero": "Portaria Nº 911/2026-GSPG/DPE/AM",
+        "sei": "26.0.000010921-4",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "DESIGNAR a Defensora Pública de 4ª Classe Karina Maria da Silva para atuar na audiência designada para o dia 18 de agosto de 2026, na 1ª Vara da Comarca de Tefé"
+        ],
+        "resumo": "Designa defensora para atuar em audiência na Comarca de Tefé (cidade do Polo Médio Amazonas) em 18 de agosto de 2026"
+      },
+      {
+        "numero": "Edital Nº 16/2026-GDPG/DPE/AM",
+        "sei": "26.0.000012202-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca"
+        ],
+        "trechos": [
+          "salvo a 1ª Defensoria Pública do Polo Médio Amazonas, a 2ª Defensoria Pública do Polo Médio Amazonas, a 3ª Defensoria Pública do Polo Médio Amazonas, a 4ª Defensoria Pública do Polo Médio Amazonas"
+        ],
+        "resumo": "Edital de remoção que exclui das restrições as defensorias do Polo Médio Amazonas, permitindo remoção para este polo"
+      }
+    ]
   }
 ]
