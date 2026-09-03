@@ -6317,5 +6317,57 @@
         "resumo": "Edital de remoção que exclui das restrições as defensorias do Polo Médio Amazonas, permitindo remoção para este polo"
       }
     ]
+  },
+  {
+    "edicao": 2722,
+    "data": "2026-09-01",
+    "data_formatada": "01/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2722-2026__publicada_em_01_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1576/2026-GDPG/DPE/AM",
+        "sei": "26.0.000012231-8",
+        "sgi": "2601746",
+        "categorias": [
+          "comarca",
+          "servidor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Aldener Maciel da Silva, Auxiliar I de Defensoria, nos trechos Manaus/Itapiranga/Manaus, no período de 21 a 23 de setembro de 2026, a fim de realizar o transporte da Defensora Pública Carine Teresa Lopes de Sousa Possidônio ao município de Itapiranga-AM, bem como prestar apoio logístico durante as atividades institucionais",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor para Itapiranga-AM, de 21 a 23 de setembro de 2026, para apoio logístico a defensora pública"
+      },
+      {
+        "numero": "Portaria Nº 1585/2026-GDPG/DPE/AM",
+        "sei": "26.0.000012232-6",
+        "sgi": "2601706",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Carine Teresa Lopes de Sousa Possidônio, Defensora Pública de 3ª Classe, nos trechos Manaus/Itapiranga/Manaus, no período de 21 a 23 de setembro de 2026, a fim de atuar em sessões do Tribunal do Júri da Vara Única da Comarca de Itapiranga-AM",
+          "II - DETERMINAR o pagamento de diárias à defensora pública acima relacionada."
+        ],
+        "resumo": "Autoriza deslocamento de defensora pública para Itapiranga-AM, de 21 a 23 de setembro de 2026, para atuar em sessões do Tribunal do Júri"
+      },
+      {
+        "numero": "EDITAL Nº 17/2026-GDPG/DPE/AM",
+        "sei": "26.0.000012202-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor"
+        ],
+        "trechos": [
+          "VIII - Qualquer órgão com atribuição cível ou de família localizados no interior do Estado, salvo a 1ª Defensoria Pública do Polo Médio Amazonas, a 2ª Defensoria Pública do Polo Médio Amazonas, a 4ª Defensoria Pública do Polo Médio Amazonas, a 5ª Defensoria Pública do Polo Médio Amazonas, a 6ª Defensoria Pública do Polo Médio Amazonas, a 1ª Defensoria Pública do Polo do Rio Negro - Solimões, a 2ª Defensoria Pública do Polo do Rio Negro - Solimões, a 3ª Defensoria Pública do Polo do Rio Negro - Solimões e a 6ª Defensoria Pública do Polo do Rio Negro - Solimões."
+        ],
+        "resumo": "Abre 7º Concurso de Remoção de Defensores Públicos de 2026, excluindo Defensorias do Polo Médio Amazonas de órgãos com atribuição cível ou de família"
+      }
+    ]
   }
 ]
