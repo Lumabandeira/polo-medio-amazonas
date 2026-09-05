@@ -6369,5 +6369,30 @@
         "resumo": "Abre 7º Concurso de Remoção de Defensores Públicos de 2026, excluindo Defensorias do Polo Médio Amazonas de órgãos com atribuição cível ou de família"
       }
     ]
+  },
+  {
+    "edicao": 2725,
+    "data": "2026-09-04",
+    "data_formatada": "04/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2725-2026__publicada_em_04_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 928/2026-GSPG/DPE/AM",
+        "sei": "26.0.000011671-7",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "comarca",
+          "designacoes",
+          "projeto"
+        ],
+        "trechos": [
+          "XI - DESIGNAR a Defensora Pública de 4ª Classe Geovanna Pinheiro da Silva para atuar nas audiências designadas para a 2ª Vara da Comarca de Itacoatiara, no âmbito da Semana Justiça Pela Paz em Casa, no dia 17 de agosto de 2026, conforme Anexo I",
+          "XII - DESIGNAR a Defensora Pública de 3ª Classe Bruna Costa de Farias para atuar nas audiências designadas para a 2ª Vara da Comarca de Itacoatiara, no âmbito da Semana Justiça Pela Paz em Casa, no dia 21 de agosto de 2026, conforme Anexo III"
+        ],
+        "resumo": "Designa defensoras públicas para atuar em audiências da Comarca de Itacoatiara na Semana Justiça Pela Paz em Casa (17 e 21 de agosto de 2026)"
+      }
+    ]
   }
 ]
