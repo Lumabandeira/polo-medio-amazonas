@@ -11381,12 +11381,12 @@
                         </div>
                         <div class="pc-card-sei">${p.processo_sei ? 'SEI ' + esc(p.processo_sei) : 'Sem processo SEI'}</div>
                         <div class="pc-card-linha"><span>Aplicação:</span> <strong>${(p.data_inicio_aplicacao || p.data_fim_aplicacao) ? formatarData(p.data_inicio_aplicacao) + ' a ' + formatarData(p.data_fim_aplicacao) : '—'}</strong></div>
-                        <div class="pc-card-linha"><span>Órgão / CNPJ (Unidade Gestora Concedente):</span> <strong>${p.unidade_gestora_cnpj ? esc(p.unidade_gestora_cnpj) : '—'}</strong></div>
                         <div class="pc-card-valores">
                             <div><span>Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
                             <div><span>Despesas</span><strong>${formatarMoeda(totalDespesas)}</strong></div>
                             <div><span>Saldo</span><strong>${formatarMoeda(saldo)}</strong></div>
                         </div>
+                        <div class="pc-card-linha" style="margin-top:10px;margin-bottom:0"><span>Órgão / CNPJ (Unidade Gestora Concedente):</span> <strong>${p.unidade_gestora_cnpj ? esc(p.unidade_gestora_cnpj) : '—'}</strong></div>
                     </div>`;
                 });
                 html += `</div></div>`;
