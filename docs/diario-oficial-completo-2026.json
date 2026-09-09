@@ -6394,5 +6394,28 @@
         "resumo": "Designa defensoras públicas para atuar em audiências da Comarca de Itacoatiara na Semana Justiça Pela Paz em Casa (17 e 21 de agosto de 2026)"
       }
     ]
+  },
+  {
+    "edicao": 2726,
+    "data": "2026-09-08",
+    "data_formatada": "08/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2726-2026__publicada_em_08_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1637/2026-GDPG/DPE/AM",
+        "sei": "26.0.000012627-5",
+        "sgi": "2601784",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de José Marques Gonçaalves Júnior, Auxiliar I de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no dia 16 de setembro de 2026, a fim de realizar a condução do Dr. Thiago Nobre Rosas ao município Itacoatiara-AM.",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor para Itacoatiara-AM no dia 16 de setembro de 2026 para conduzir defensor, com pagamento de diárias"
+      }
+    ]
   }
 ]
