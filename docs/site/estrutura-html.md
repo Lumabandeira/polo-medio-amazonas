@@ -311,6 +311,16 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   só o "Órgão / CNPJ" aparece nas informações gerais; Banco/Agência/Conta ficam só no cadastro
   (usuária considerou redundante mostrar os dados bancários na tela de exibição). Nenhum dos 4
   entra no PDF exportado.
+- **Prazo de aplicação vencido (destaque em vermelho)**: `_pcAplicacaoVencida(p)` retorna `true`
+  quando `p.data_fim_aplicacao` (string `YYYY-MM-DD`) é anterior a hoje **e** `p.status !== 'concluido'`
+  (num pronto pagamento já concluído o vencimento do prazo é esperado, não é alerta). Quando `true`,
+  a linha "Aplicação" ganha a classe `.pc-aplic-vencida` (label + valor em `#ef4444`) mais o sufixo
+  `<span class="pc-aplic-tag">⚠ prazo encerrado</span>`, tanto no card da Lista
+  (`_renderListaPrestacoesCards()`) quanto no bloco de informações do Detalhe
+  (`_renderDetalhePrestacao()`, `<div class="pc-aplic-vencida">` dentro do `.pc-info-grid`). CSS
+  junto das regras `.pc-card-linha` (perto de `index.html:1141`). Só afeta a exibição — não entra
+  no PDF nem no Firestore. A comparação usa `new Date().toISOString().split('T')[0]` (UTC), mesmo
+  padrão dos outros "hoje" do arquivo.
 - Ver `docs/firebase.md` para o schema completo de `prestacoes_contas/{id}` e as regras de
   segurança (mais restritas que o padrão do site: leitura **e** escrita admin-only, por causa de
   CPF/dados bancários nos comprovantes de devolução).

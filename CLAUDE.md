@@ -57,6 +57,20 @@ docs/
 
 ---
 
+## Estado atual (sessão 37 — 09/09/2026)
+
+**Implementado nesta sessão:** destaque em vermelho da linha "Aplicação" nos cards e no Detalhe
+de Prestação de Contas quando o prazo final de aplicação já venceu. Novo helper
+`_pcAplicacaoVencida(p)` — `true` quando `p.data_fim_aplicacao` (`YYYY-MM-DD`) < hoje **e**
+`p.status !== 'concluido'` (num pronto pagamento concluído o vencimento é esperado, não é alerta).
+Quando `true`, a linha ganha a classe `.pc-aplic-vencida` (label + valor em `#ef4444`) e o sufixo
+`⚠ prazo encerrado`, tanto em `_renderListaPrestacoesCards()` quanto no `.pc-info-grid` de
+`_renderDetalhePrestacao()`. CSS novo junto de `.pc-card-linha` (perto de `index.html:1141`). Só
+exibição — não entra no PDF nem no Firestore. Testado no navegador (servidor estático) montando o
+markup exato dos dois pontos: classe aplicada, as 3 cores viram vermelho e a tag aparece só no
+caso vencido-e-aberto; helper confere `true` só para vencido+aberto (não concluído, não futuro,
+não sem data). Ver `docs/site/estrutura-html.md` (seção "Prestação de Contas").
+
 ## Estado atual (sessão 36 — 24/08/2026)
 
 **Implementado nesta sessão:** 4 campos opcionais de "Unidade Gestora Concedente" (Órgão/CNPJ,

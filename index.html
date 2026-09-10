@@ -1139,6 +1139,11 @@
         .pc-card-linha { font-size: 0.82em; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.45; }
         .pc-card-linha span { font-weight: 600; }
         .pc-card-linha strong { color: var(--text-primary); font-weight: 600; }
+        .pc-card-linha.pc-aplic-vencida span,
+        .pc-card-linha.pc-aplic-vencida strong,
+        .pc-info-grid div.pc-aplic-vencida span,
+        .pc-info-grid div.pc-aplic-vencida strong { color: #ef4444; }
+        .pc-aplic-vencida .pc-aplic-tag { font-weight: 600; font-size: 0.92em; margin-left: 4px; white-space: nowrap; }
         .pc-card-valores { display: flex; justify-content: space-between; gap: 8px; }
         .pc-card-valores div { display: flex; flex-direction: column; font-size: 0.82em; color: var(--text-secondary); }
         .pc-card-valores strong { color: var(--text-primary); font-size: 1.05em; }
@@ -11314,6 +11319,12 @@
         function _pcValorConcedido(p) {
             return Number(p.valor_concedido ?? p.valor_recebido) || 0;
         }
+        // Prazo final de aplicação já encerrado (só sinaliza enquanto o pronto pagamento
+        // ainda está aberto — depois de concluído, o vencimento do prazo é esperado).
+        function _pcAplicacaoVencida(p) {
+            if (!p || !p.data_fim_aplicacao || p.status === 'concluido') return false;
+            return p.data_fim_aplicacao < new Date().toISOString().split('T')[0];
+        }
         const PC_UG_CONCEDENTE_PADRAO = {
             cnpj: '19.421.427/0001-91 - Defensoria Pública do Estado do Amazonas - DPE/AM',
             banco: 'BANCO BRADESCO',
@@ -11380,7 +11391,7 @@
                             <span class="pc-badge-status ${statusClass}">${statusLabel}</span>
                         </div>
                         <div class="pc-card-sei">${p.processo_sei ? 'SEI ' + esc(p.processo_sei) : 'Sem processo SEI'}</div>
-                        <div class="pc-card-linha"><span>Aplicação:</span> <strong>${(p.data_inicio_aplicacao || p.data_fim_aplicacao) ? formatarData(p.data_inicio_aplicacao) + ' a ' + formatarData(p.data_fim_aplicacao) : '—'}</strong></div>
+                        <div class="pc-card-linha${_pcAplicacaoVencida(p) ? ' pc-aplic-vencida' : ''}"><span>Aplicação:</span> <strong>${(p.data_inicio_aplicacao || p.data_fim_aplicacao) ? formatarData(p.data_inicio_aplicacao) + ' a ' + formatarData(p.data_fim_aplicacao) : '—'}</strong>${_pcAplicacaoVencida(p) ? ' <span class="pc-aplic-tag">⚠ prazo encerrado</span>' : ''}</div>
                         <div class="pc-card-valores">
                             <div><span>Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
                             <div><span>Despesas</span><strong>${formatarMoeda(totalDespesas)}</strong></div>
@@ -11603,7 +11614,7 @@
                     <div><span>Processo SEI</span><strong>${p.processo_sei ? esc(p.processo_sei) : '—'}</strong></div>
                     <div><span>Status</span><strong>${statusLabel}</strong></div>
                     <div><span>Data do Recebimento</span><strong>${formatarData(p.data_recebimento)}</strong></div>
-                    <div><span>Aplicação</span><strong>${formatarData(p.data_inicio_aplicacao)} a ${formatarData(p.data_fim_aplicacao)}</strong></div>
+                    <div${_pcAplicacaoVencida(p) ? ' class="pc-aplic-vencida"' : ''}><span>Aplicação</span><strong>${formatarData(p.data_inicio_aplicacao)} a ${formatarData(p.data_fim_aplicacao)}</strong>${_pcAplicacaoVencida(p) ? '<span class="pc-aplic-tag">⚠ prazo encerrado</span>' : ''}</div>
                     <div><span>Prazo Prestação de Contas</span><strong>${formatarData(p.prazo_prestacao_contas)}</strong></div>
                     <div><span>Valor Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
                     <div style="grid-column:1/-1"><span>Órgão / CNPJ (Unidade Gestora Concedente)</span><strong>${p.unidade_gestora_cnpj ? esc(p.unidade_gestora_cnpj) : '—'}</strong></div>
