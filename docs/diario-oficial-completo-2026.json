@@ -6417,5 +6417,75 @@
         "resumo": "Autoriza deslocamento de servidor para Itacoatiara-AM no dia 16 de setembro de 2026 para conduzir defensor, com pagamento de diárias"
       }
     ]
+  },
+  {
+    "edicao": 2727,
+    "data": "2026-09-09",
+    "data_formatada": "09/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2727-2026__publicada_em_09_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1634/2026-GDPG/DPE/AM",
+        "sei": "26.0.000012044-7",
+        "sgi": "2517",
+        "categorias": [
+          "comarca",
+          "servidor",
+          "projeto"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Luana Cristina de Souza Cabrini, Assessora Jurídica DPE-3, Pedro Lucas Cunha da Silva, Assistente Técnico de Defensoria, Luana Gabrielle Moraes Gadelha, Assessora Técnica I DPE-2, Elem Poliana Carvalho de Brito, Assessora Técnica II DPE-1, Cristiane Andrade Leite, Assistente Técnica de Defensoria, no trecho Manaus/Urucurituba/Manaus, no período de 15 a 18 de setembro de 2026, a fim de atuarem em Ação do Projeto \"Meu Pedaço de Chão – da Ocupação à Titulação\", e realizar atendimentos presenciais a assistidos do município de Urucurituba-AM;",
+          "II - AUTORIZAR o deslocamento de Tiago de Paula Costa, Assistente Técnico em Tecnologia da Informação de Defensoria, no trecho Manaus/Urucurituba/Manaus, no período de 15 a 18 de setembro de 2026, a fim de dar suporte técnico a equipe que fará os atendimentos presenciais à população no município de Urucurituba-AM;",
+          "III - DETERMINAR o pagamento de diárias aos servidores públicos acima relacionados."
+        ],
+        "resumo": "Autoriza deslocamento de servidores para Urucurituba nos dias 15-18 de setembro de 2026 para atuação no Projeto 'Meu Pedaço de Chão' e atendimentos presenciais à população."
+      },
+      {
+        "numero": "Portaria Nº 1645/2026-GDPG/DPE/AM",
+        "sei": "26.0.000008846-2",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "projeto"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Thiago Nobre Rosas, Defensor Público de 2ª Classe, no trecho Manaus/Urucurituba/Manaus, no período de 16 a 17 de setembro de 2026, a fim de participar de Ação do Projeto \"Meu Pedaço de Chão – da Ocupação à Titulação\", a ser realizado no município de Urucurituba-AM.",
+          "II - DETERMINAR o pagamento de diárias ao defensor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento do Defensor Público Thiago Nobre Rosas para Urucurituba nos dias 16-17 de setembro de 2026 para participar do Projeto 'Meu Pedaço de Chão'."
+      },
+      {
+        "numero": "Portaria Nº 1654/2026-GDPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "XI - DESIGNAR a Defensora Pública de 4ª Classe Geovanna Pinheiro da Silva para atuar nas audiências designadas para a 2ª Vara da Comarca de Itacoatiara, no âmbito da Semana Justiça Pela Paz em Casa, no dia 17 de agosto de 2026, conforme Anexo I;",
+          "XII - DESIGNAR a Defensora Pública de 3ª Classe Bruna Costa de Farias para atuar nas audiências designadas para a 2ª Vara da Comarca de Itacoatiara, no âmbito da Semana Justiça Pela Paz em Casa, no dia 21 de agosto de 2026, conforme Anexo III;"
+        ],
+        "resumo": "Designa defensoras públicas para atuação em audiências da Semana Justiça Pela Paz em Casa na 2ª Vara da Comarca de Itacoatiara nos dias 17 e 21 de agosto de 2026."
+      },
+      {
+        "numero": "Portaria Nº 928/2026-GSPG/DPE/AM",
+        "sei": "26.0.000011671-7",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "XI - DESIGNAR a Defensora Pública de 4ª Classe Geovanna Pinheiro da Silva para atuar nas audiências designadas para a 2ª Vara da Comarca de Itacoatiara, no âmbito da Semana Justiça Pela Paz em Casa, no dia 17 de agosto de 2026, conforme Anexo I;",
+          "XII - DESIGNAR a Defensora Pública de 3ª Classe Bruna Costa de Farias para atuar nas audiências designadas para a 2ª Vara da Comarca de Itacoatiara, no âmbito da Semana Justiça Pela Paz em Casa, no dia 21 de agosto de 2026, conforme Anexo III;"
+        ],
+        "resumo": "Designa defensoras públicas para audiências da Semana Justiça Pela Paz em Casa na Comarca de Itacoatiara em agosto de 2026, com critérios de elegibilidade para meritocracia."
+      }
+    ]
   }
 ]
