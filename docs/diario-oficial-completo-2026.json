@@ -6487,5 +6487,74 @@
         "resumo": "Designa defensoras públicas para audiências da Semana Justiça Pela Paz em Casa na Comarca de Itacoatiara em agosto de 2026, com critérios de elegibilidade para meritocracia."
       }
     ]
+  },
+  {
+    "edicao": 2728,
+    "data": "2026-09-10",
+    "data_formatada": "10/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2728-2026__publicada_em_10_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1652/2026-GDPG/DPE/AM",
+        "sei": "26.0.000012154-0",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "nomeacao_diretoria"
+        ],
+        "trechos": [
+          "CONSIDERANDO o Memorando nº 35/2026/Polo de Itacoatiara/DPE/AM, datado de 29/04/2026",
+          "CONSIDERANDO o Memorando nº 148/2026/Polo de Itacoatiara/DPE/AM, datado de 13/08/2026",
+          "I - NOMEAR Laerte Henrique de Alencar Barreto, a contar da data de publicação deste ato, para exercer o cargo de provimento em comissão de Assistente Defensorial AD - DPE 1, previsto na Lei nº 4.077 de 11 de setembro de 2014 e suas alterações"
+        ],
+        "resumo": "Nomeia Laerte Henrique de Alencar Barreto para cargo de Assistente Defensorial AD-DPE 1, com base em memorandos do Polo de Itacoatiara"
+      },
+      {
+        "numero": "Portaria Nº 1664/2026-GDPG/DPE/AM",
+        "sei": "26.0.000011808-6",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "projeto",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "I - DESIGNAR o Defensor Público e os servidores abaixo relacionados para atuarem na realização do Projeto \"Gente da 319\", no Distrito de Realidade, Município de Humaitá/AM, no período de 21 a 25 de setembro de 2026"
+        ],
+        "resumo": "Designa defensor público e servidores para atuarem no Projeto 'Gente da 319' em Humaitá, de 21 a 25 de setembro de 2026"
+      },
+      {
+        "numero": "Portaria Nº 1665/2026-GDPG/DPE/AM",
+        "sei": "26.0.000012820-0",
+        "sgi": "2601825",
+        "categorias": [
+          "comarca",
+          "projeto",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Renata Patricia Torres dos Reis, Assessora Técnica I DPE-2, nos trechos Manaus/Urucurituba/Manaus, no período de 14 a 18 de setembro de 2026, a fim de atuar na Ação \"Justiça Pra Elas\", no município de Urucurituba-AM"
+        ],
+        "resumo": "Autoriza deslocamento de Assessora Técnica para Urucurituba de 14 a 18 de setembro para atuar na Ação 'Justiça Pra Elas'"
+      },
+      {
+        "numero": "Portaria Nº [não identificado]-GDPG/DPE/AM",
+        "sei": "26.0.000012595-3",
+        "sgi": null,
+        "categorias": [
+          "substituicao",
+          "nomeacao_diretoria"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, no período de 08 a 16 de setembro de 2026, da FGS-1 (Subgerência de Núcleo ou Unidade), nos termos do disposto na Lei nº 4.077, de 11 de setembro de 2014 e suas alterações, concedida ao Servidor Público Marlon Leite Rios",
+          "II - DESIGNAR, no período de 08 a 16 de setembro de 2026, o Servidor Público Breno Burili como Subgerente do Polo do Purus"
+        ],
+        "resumo": "Cessa FGS-1 de Marlon Leite Rios e designa Breno Burili como Subgerente do Polo do Purus de 08 a 16 de setembro"
+      }
+    ]
   }
 ]
