@@ -6596,5 +6596,49 @@
         "resumo": "Designa Defensor Público para atuar em sessão de júri na Comarca de Urucurituba em 29 de setembro de 2026, com concessão de folga e enquadramento como designação especial"
       }
     ]
+  },
+  {
+    "edicao": 2731,
+    "data": "2026-09-15",
+    "data_formatada": "15/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2731-2026__publicada_em_15_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 967/2026-GSPG/DPE/AM",
+        "sei": "26.0.000013028-0",
+        "sgi": "2716",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Emilly Bianca Ferreira dos Santos, Defensora Pública de 3ª Classe, nos trechos Itacoatiara/Urucará/Itacoatiara, no período de 28 de setembro a 03 de outubro de 2026, a fim de atuar em 03 (três) sessões do Tribunal do Júri, inspeção carcerária e atendimentos prisionais na Comarca de Urucará-AM",
+          "II - AUTORIZAR o deslocamento de Larice Bruce Pereira, Assistente de Defensorial DPE-1,nos trechos Itacoatiara/Urucará/Itacoatiara, no período de 28 de setembro a 03 de outubro de 2026, a fim de auxiliar a defensora pública acima relacionada na atuação em sessões do Tribunal do Júri, inspeção carcerária e atendimentos prisionais na Comarca de Urucará-AM",
+          "III - DETERMINAR o pagamento de diárias à defensora pública e à servidora pública acima relacionadas"
+        ],
+        "resumo": "Autoriza deslocamento de defensora e servidora do Polo Médio Amazonas para atuar em Urucará de 28/09 a 03/10/2026"
+      },
+      {
+        "numero": "Portaria Nº 926/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "substituicao",
+          "plantao"
+        ],
+        "trechos": [
+          "III - AUTORIZAR a substituição da Servidora Luma Karolyne Pantoja Bandeira, designada para a semana 12 do Plantão do Polo do Médio Amazonas pelo período de 14/09 a 20/09, por Fábio Bastos de Souza",
+          "IV - AUTORIZAR a substituição da Servidora Natália Cristina de Moraes, designada para a semana 13 do Plantão do Polo do Médio Amazonas, pelo período de 21/09 a 27/09, por Luma Karolyne Pantoja Bandeira",
+          "VI - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Escala de substituição Polo do Rio Negro-Solimões Polo do Médio Amazonas"
+        ],
+        "resumo": "Autoriza substituições de servidoras do Polo Médio Amazonas nas semanas 12 e 13 do plantão (14-27/09/2026) e estabelece escala de substituição entre polos"
+      }
+    ]
   }
 ]
