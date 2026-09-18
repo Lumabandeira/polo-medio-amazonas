@@ -300,14 +300,14 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   Recibo/NF, Atesto, Fotos — + lista livre de "Outros documentos" (`_renderCorpoModalAnexos()`).
   A ordem dos 4 primeiros é só de exibição (template fixo, sem campo de ordem) — os campos
   continuam `recibo_url`/`comprovacao_mercado`/`justificativa_url`/`atesto_url`.
-  Os slots de Justificativa, Pesquisa de mercado e Recibo/NF têm um texto explicativo menor abaixo
-  do título — Justificativa e Recibo/NF via parâmetro opcional `descricao` de
+  Todos os slots exceto Fotos têm um texto explicativo menor abaixo do título — Justificativa,
+  Recibo/NF e Atesto via parâmetro opcional `descricao` de
   `_slotAnexoSimples(campo, label, url, descricao)` (`.pc-anexo-slot-desc`); Pesquisa de mercado
   escrito manualmente (não usa `_slotAnexoSimples` porque tem upload próprio,
   `_uploadComprovacaoMercado()`, gravando `comprovacao_mercado: { url }` em vez de `{campo: url}`).
   Não existe mais seletor de "tipo" (pesquisa de mercado *vs* justificativa de ausência) nesse
   slot — removido a pedido da usuária; o texto pequeno já cobre a alternativa ("ou, na
-  impossibilidade, justificativa da ausência de pesquisa;"). Upload vai para Firebase Storage em
+  impossibilidade, justificativa da ausência de pesquisa."). Upload vai para Firebase Storage em
   `prestacoes-contas/{prestacaoId}/...`; a URL de download fica salva no array `despesas[]` do
   documento Firestore.
 - **Valor Concedido (campo único)**: o formulário tinha "Valor Recebido" e "Valor Concedido"

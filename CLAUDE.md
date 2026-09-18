@@ -93,7 +93,7 @@ layout do slot continua alinhado com os demais.
 **Ajuste ainda nesta sessão:** removido o `<select id="pc-mercado-tipo">` (Pesquisa de mercado /
 Justificativa de ausência) do slot "Comprovação de mercado" — a usuária considerou desnecessário
 ter uma seleção pra isso. Virou o mesmo padrão de título + texto pequeno do slot de Justificativa
-("ou, na impossibilidade, justificativa da ausência de pesquisa;"), usando a mesma estrutura
+("ou, na impossibilidade, justificativa da ausência de pesquisa."), usando a mesma estrutura
 `pc-anexo-slot-titulo`/`pc-anexo-slot-desc` (só que escrita manualmente aqui, não via
 `_slotAnexoSimples()`, porque esse slot tem upload próprio — `_uploadComprovacaoMercado()`, campo
 `comprovacao_mercado: {tipo, url}` em vez de `{campo: url}`). O campo `tipo` nunca era lido em
@@ -108,9 +108,11 @@ de mercado" (só o texto exibido — campo `comprovacao_mercado`, nomes de funç
 `_uploadComprovacaoMercado()`/`comprovacao-mercado-` do caminho no Storage continuam iguais).
 
 **Ajuste ainda nesta sessão:** texto explicativo menor adicionado no slot "Recibo / Nota Fiscal"
-("Sem rasuras, devidamente atestados por servidor que não o tomador, e em nome da Unidade Gestora
-que fora concedido."), mesmo padrão do slot de Justificativa (4º argumento `descricao` de
-`_slotAnexoSimples()`).
+("Sem rasuras e em nome da Unidade Gestora que fora concedido." — texto ajustado pela usuária
+depois de uma 1ª versão mais longa, removendo a parte sobre atesto por servidor), mesmo padrão do
+slot de Justificativa (4º argumento `descricao` de `_slotAnexoSimples()`). A parte removida
+("por servidor que não o tomador") virou o texto explicativo do slot "Atesto" em vez de ficar no
+Recibo/NF — mesmo mecanismo.
 
 ## Estado atual (sessão 37 — 09/09/2026)
 
