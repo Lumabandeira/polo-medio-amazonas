@@ -11646,6 +11646,10 @@
 
             despesas.forEach((d, idx) => {
                 const slotsPreenchidos = _contarAnexosPreenchidos(d);
+                const estiloBtn = 'padding:4px 8px;font-size:0.8em';
+                const estiloBtnDesabilitado = estiloBtn + ';opacity:0.35;cursor:default';
+                const subirDesabilitado = idx === 0;
+                const descerDesabilitado = idx === despesas.length - 1;
                 tabelaHtml += `<tr>
                     <td>${esc(d.tipo || '')}</td>
                     <td>${esc(d.numero || '')}</td>
@@ -11659,6 +11663,8 @@
                         <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="abrirModalAnexos('${p.id}', ${idx})">📎 ${slotsPreenchidos}/${PC_TOTAL_SLOTS}</button>
                     </td>
                     <td style="white-space:nowrap">
+                        <button class="btn-editar" style="${subirDesabilitado ? estiloBtnDesabilitado : estiloBtn}" ${subirDesabilitado ? 'disabled' : ''} onclick="moverDespesa('${p.id}', ${idx}, -1)" title="Mover para cima">⬆️</button>
+                        <button class="btn-editar" style="${descerDesabilitado ? estiloBtnDesabilitado : estiloBtn}" ${descerDesabilitado ? 'disabled' : ''} onclick="moverDespesa('${p.id}', ${idx}, 1)" title="Mover para baixo">⬇️</button>
                         <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="abrirEditarDespesa('${p.id}', ${idx})">✏️</button>
                         <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="excluirDespesa('${p.id}', ${idx})">🗑️</button>
                     </td>
@@ -11917,6 +11923,27 @@
                 _renderDetalhePrestacao();
             } catch (e) {
                 console.error('Erro ao remover despesa:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function moverDespesa(prestacaoId, idx, direcao) {
+            const p = prestacoesContas.find(x => x.id === prestacaoId);
+            if (!p) return;
+            const despesas = (p.despesas || []).slice();
+            const novoIdx = idx + direcao;
+            if (novoIdx < 0 || novoIdx >= despesas.length) return;
+            [despesas[idx], despesas[novoIdx]] = [despesas[novoIdx], despesas[idx]];
+            try {
+                await db.collection('prestacoes_contas').doc(prestacaoId).update({
+                    despesas,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                p.despesas = despesas;
+                _renderDetalhePrestacao();
+            } catch (e) {
+                console.error('Erro ao reordenar despesa:', e);
                 mostrarToast('❌ ' + e.message, true);
             }
         }

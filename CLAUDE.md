@@ -57,6 +57,21 @@ docs/
 
 ---
 
+## Estado atual (sessão 38 — 18/09/2026)
+
+**Implementado nesta sessão:** reordenar despesas no "Mapa Demonstrativo de Despesa" (Detalhe de
+Prestação de Contas) sem precisar excluir e recadastrar. Botões ⬆️/⬇️ em cada linha
+(`moverDespesa(prestacaoId, idx, direcao)`, perto de `excluirDespesa()`) trocam a posição de duas
+despesas no array `despesas[]` e regravam o array inteiro no Firestore, mesmo padrão já usado por
+`salvarDespesa()`/`excluirDespesa()`. Não precisou de campo de ordem novo nem migração — a posição
+no array já era (e continua sendo) a ordem exibida na tabela e no PDF exportado. ⬆️ desabilitado na
+primeira linha, ⬇️ na última; sem `confirm()` por ser ação reversível de baixo risco. Testado no
+navegador (servidor estático, `userRole='admin'` simulado + `db.collection` stubado pra não gravar
+de verdade): swap de linhas reflete na tabela e no payload enviado ao Firestore, clique fora dos
+limites (subir na 1ª linha / descer na última) não dispara gravação, e os botões desabilitados
+recalculam certo depois de cada swap. Ver `docs/site/estrutura-html.md` (seção "Prestação de
+Contas").
+
 ## Estado atual (sessão 37 — 09/09/2026)
 
 **Implementado nesta sessão:** destaque em vermelho da linha "Aplicação" nos cards e no Detalhe

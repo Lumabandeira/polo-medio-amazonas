@@ -311,6 +311,14 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   só o "Órgão / CNPJ" aparece nas informações gerais; Banco/Agência/Conta ficam só no cadastro
   (usuária considerou redundante mostrar os dados bancários na tela de exibição). Nenhum dos 4
   entra no PDF exportado.
+- **Reordenar despesas**: cada linha da tabela ganhou botões ⬆️/⬇️ (`moverDespesa(prestacaoId, idx, direcao)`,
+  perto de `excluirDespesa()`) que trocam de posição duas despesas dentro do array `despesas[]` e
+  regravam o array inteiro no Firestore — mesmo padrão de `salvarDespesa()`/`excluirDespesa()`. Sem
+  campo de ordem separado: a posição no array já é a ordem exibida (e a usada no PDF exportado).
+  ⬆️ desabilitado na primeira linha, ⬇️ desabilitado na última. Sem `confirm()` (ação reversível de
+  baixo risco, diferente da exclusão). Objetivo: deixar de exigir excluir e recadastrar uma despesa
+  só para mudar a ordem (os anexos ficam presos ao índice da despesa, então iam junto na troca de
+  posição de qualquer forma).
 - **Prazo de aplicação vencido (destaque em vermelho)**: `_pcAplicacaoVencida(p)` retorna `true`
   quando `p.data_fim_aplicacao` (string `YYYY-MM-DD`) é anterior a hoje **e** `p.status !== 'concluido'`
   (num pronto pagamento já concluído o vencimento do prazo é esperado, não é alerta). Quando `true`,
