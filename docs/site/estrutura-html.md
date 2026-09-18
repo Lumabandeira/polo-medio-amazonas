@@ -291,6 +291,21 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   Cada tomador pode ter no máximo **2 prontos pagamentos com `status: "aberto"` simultâneos**,
   em categorias diferentes entre si (`consumo` | `pessoa_juridica` | `pessoa_fisica`) — regra
   aplicada em `_validarCategoriaDisponivel()` antes de salvar ou reabrir.
+- **Modelos de Documentos (Justificativa/Atesto)**: card abaixo da lista de Prontos Pagamentos, em
+  `#pc-lista-view`, com uma biblioteca de modelos .docx de referência por categoria
+  (`PC_CATEGORIA_LABELS`) e serviço livre (ex: PJ → lavagem de carro; Consumo → água mineral; PF →
+  roçagem) — cada serviço tem 2 slots independentes (Modelo de Justificativa, Modelo de Atesto).
+  Doc único `secoes/prestacao_contas_modelos` com 3 arrays (uma por categoria), cada item
+  `{servico, justificativa_url, justificativa_nome, atesto_url, atesto_nome}` — mesmo padrão de
+  config de seção única de `secoes/plantao_info`. Carregado em `_pcCarregarModelos()` (chamado
+  dentro de `renderPrestacoesContas()`), renderizado em `_renderModelosPrestacaoContas()`.
+  `pcAdicionarServicoModelo(categoria)` adiciona serviço (prompt pro nome, mesmo padrão de
+  `adicionarOutroDocumento()`); `pcRemoverServicoModelo(categoria, idx)` remove com confirmação
+  (não apaga arquivo do Storage); `pcUploadModeloArquivo(categoria, idx, tipo, file)` sobe o
+  arquivo (`tipo` é `'justificativa'` ou `'atesto'`) via `_uploadParaStorage()`, path
+  `prestacoes-contas/_modelos/{categoria}/{idx}-{tipo}-{timestamp}.ext` (cai dentro do path
+  admin-only já existente em `storage.rules`, sem precisar de redeploy). Não interfere nos slots
+  de Anexos por despesa — é só uma biblioteca de referência/download.
 - **Detalhe** (`#pc-detalhe-view`): réplica do "Mapa Demonstrativo de Despesa" (planilha em papel
   usada pela Defensoria) — tabela de despesas com totais calculados automaticamente (valor das
   despesas, saldo remanescente), mais os 3 documentos do processo como um todo (Memorando,

@@ -1171,6 +1171,19 @@
         .pc-anexo-slot-desc { font-size: 0.78em; font-weight: 400; color: var(--text-secondary); line-height: 1.35; }
         .pc-anexo-slot-status { font-size: 0.85em; color: var(--text-secondary); }
         .pc-anexo-slot-acoes { display: flex; gap: 8px; align-items: center; }
+
+        .pc-modelo-categoria { margin-bottom: 24px; }
+        .pc-modelo-lista { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; }
+        .pc-modelo-linha { border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 16px; }
+        .pc-modelo-servico { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+        .pc-modelo-slots { display: flex; flex-wrap: wrap; gap: 10px; }
+        .pc-modelo-slot {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+            border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 10px; flex: 1; min-width: 220px;
+        }
+        .pc-modelo-slot.ok { border-color: #86efac; background: #f0fdf4; }
+        .pc-modelo-slot.pendente { border-color: #fde68a; background: #fffbeb; }
+        .pc-modelo-slot-label { font-weight: 600; font-size: 0.9em; margin-right: auto; }
         .pc-fotos-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
         .pc-foto-item { position: relative; width: 110px; height: 110px; }
         .pc-foto-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); }
@@ -3900,6 +3913,16 @@
                         diferentes entre si (Consumo, Pessoa Jurídica, Pessoa Física). Página visível apenas para administradores.
                     </p>
                     <div id="pc-lista-cards">
+                        <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2>📚 Modelos de Documentos (Justificativa/Atesto)</h2>
+                    <p style="color:var(--text-secondary);margin-bottom:20px;line-height:1.6;">
+                        Modelos de referência por categoria e serviço — baixe, preencha e depois anexe o arquivo
+                        preenchido no slot correspondente da despesa.
+                    </p>
+                    <div id="pc-modelos-cards">
                         <p style="text-align:center;padding:20px;color:var(--text-secondary);">⏳ Carregando...</p>
                     </div>
                 </div>
@@ -11338,6 +11361,7 @@
         let _pcAtualId = null;
         let _anexoPrestacaoId = null;
         let _anexoDespesaIdx = null;
+        let _pcModelos = { pessoa_juridica: [], consumo: [], pessoa_fisica: [] };
 
         function formatarMoeda(v) {
             const n = Number(v) || 0;
@@ -11357,6 +11381,7 @@
                 return;
             }
             _renderListaPrestacoesCards();
+            _pcCarregarModelos();
         }
 
         function _renderListaPrestacoesCards() {
@@ -11405,6 +11430,126 @@
                 html += `</div></div>`;
             });
             cont.innerHTML = html;
+        }
+
+        // ── Modelos de Documentos (Justificativa/Atesto) por categoria/serviço ──
+        async function _pcCarregarModelos() {
+            const cont = document.getElementById('pc-modelos-cards');
+            try {
+                const doc = await db.collection('secoes').doc('prestacao_contas_modelos').get();
+                const data = doc.exists ? doc.data() : {};
+                _pcModelos = {
+                    pessoa_juridica: data.pessoa_juridica || [],
+                    consumo: data.consumo || [],
+                    pessoa_fisica: data.pessoa_fisica || []
+                };
+            } catch (e) {
+                console.error('Erro ao carregar modelos de documentos:', e);
+                cont.innerHTML = '<p style="text-align:center;padding:20px;color:#ef4444;">❌ Erro ao carregar modelos.</p>';
+                return;
+            }
+            _renderModelosPrestacaoContas();
+        }
+
+        function _pcModeloSlotHtml(categoria, idx, tipo, label, item) {
+            const url = item[`${tipo}_url`];
+            return `<div class="pc-modelo-slot ${url ? 'ok' : 'pendente'}">
+                <span class="pc-modelo-slot-label">${label}</span>
+                <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
+                ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                <input type="file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none" id="pc-modelo-input-${categoria}-${idx}-${tipo}" onchange="pcUploadModeloArquivo('${categoria}', ${idx}, '${tipo}', this.files[0])">
+                <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-modelo-input-${categoria}-${idx}-${tipo}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
+            </div>`;
+        }
+
+        function _renderModelosPrestacaoContas() {
+            const cont = document.getElementById('pc-modelos-cards');
+            let html = '';
+            Object.keys(PC_CATEGORIA_LABELS).forEach(categoria => {
+                const itens = _pcModelos[categoria] || [];
+                html += `<div class="pc-modelo-categoria">
+                    <h3 class="pc-tomador-nome">${PC_CATEGORIA_LABELS[categoria]}</h3>`;
+                if (itens.length === 0) {
+                    html += `<p style="color:var(--text-secondary);font-size:0.9em">Nenhum serviço cadastrado.</p>`;
+                } else {
+                    html += `<div class="pc-modelo-lista">`;
+                    itens.forEach((item, idx) => {
+                        html += `<div class="pc-modelo-linha">
+                            <div class="pc-modelo-servico">
+                                <strong>${esc(item.servico || '')}</strong>
+                                <button class="btn-editar" style="padding:2px 6px;font-size:0.75em" onclick="pcRemoverServicoModelo('${categoria}', ${idx})">🗑️</button>
+                            </div>
+                            <div class="pc-modelo-slots">
+                                ${_pcModeloSlotHtml(categoria, idx, 'justificativa', '📄 Justificativa', item)}
+                                ${_pcModeloSlotHtml(categoria, idx, 'atesto', '✅ Atesto', item)}
+                            </div>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                }
+                html += `<button class="btn-editar" style="margin-top:8px" onclick="pcAdicionarServicoModelo('${categoria}')">+ Novo serviço</button>
+                </div>`;
+            });
+            cont.innerHTML = html;
+        }
+
+        async function pcAdicionarServicoModelo(categoria) {
+            const servico = prompt('Nome do serviço (ex: Lavagem de carro, Roçagem...)');
+            if (servico === null || !servico.trim()) return;
+            const itens = (_pcModelos[categoria] || []).slice();
+            itens.push({ servico: servico.trim(), justificativa_url: null, atesto_url: null });
+            try {
+                await db.collection('secoes').doc('prestacao_contas_modelos').set({
+                    [categoria]: itens,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                _pcModelos[categoria] = itens;
+                _renderModelosPrestacaoContas();
+            } catch (e) {
+                console.error('Erro ao adicionar serviço:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function pcRemoverServicoModelo(categoria, idx) {
+            if (!confirm('Remover este serviço da lista de modelos? Os arquivos já enviados permanecerão no Storage.')) return;
+            const itens = (_pcModelos[categoria] || []).slice();
+            itens.splice(idx, 1);
+            try {
+                await db.collection('secoes').doc('prestacao_contas_modelos').set({
+                    [categoria]: itens,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                _pcModelos[categoria] = itens;
+                _renderModelosPrestacaoContas();
+            } catch (e) {
+                console.error('Erro ao remover serviço:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function pcUploadModeloArquivo(categoria, idx, tipo, file) {
+            if (!file) return;
+            try {
+                mostrarToast('⏳ Enviando arquivo...');
+                const caminho = `prestacoes-contas/_modelos/${categoria}/${idx}-${tipo}-${Date.now()}${_extensaoArquivo(file)}`;
+                const url = await _uploadParaStorage(caminho, file);
+                const itens = (_pcModelos[categoria] || []).slice();
+                itens[idx] = { ...itens[idx], [`${tipo}_url`]: url, [`${tipo}_nome`]: file.name };
+                await db.collection('secoes').doc('prestacao_contas_modelos').set({
+                    [categoria]: itens,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                _pcModelos[categoria] = itens;
+                _renderModelosPrestacaoContas();
+                mostrarToast('✅ Modelo enviado com sucesso.');
+            } catch (e) {
+                console.error('Erro ao enviar modelo:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
         }
 
         // ── Regra de negócio: 2 abertos por tomador, categorias distintas ──

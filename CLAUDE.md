@@ -114,6 +114,32 @@ slot de Justificativa (4º argumento `descricao` de `_slotAnexoSimples()`). A pa
 ("por servidor que não o tomador") virou o texto explicativo do slot "Atesto" em vez de ficar no
 Recibo/NF — mesmo mecanismo.
 
+**Ajuste ainda nesta sessão:** nova biblioteca de "📚 Modelos de Documentos (Justificativa/Atesto)"
+na página inicial de Prestação de Contas (`#pc-lista-view`, card logo abaixo da lista de Prontos
+Pagamentos) — a usuária queria manter modelos .docx de referência por categoria/serviço (ex: PJ →
+lavagem de carro, passagem de lancha; Consumo → água mineral; PF → roçagem), com um modelo de
+Justificativa **e** um de Atesto por serviço, sem precisar excluir/recriar pra mudar a lista. Doc
+único `secoes/prestacao_contas_modelos` com 3 arrays (uma por categoria, mesmas chaves de
+`PC_CATEGORIA_LABELS`) — mesmo padrão de config de seção única já usado em `secoes/plantao_info`
+(`_plantaoCarregarInfo()`/`_plantaoSalvarInfo()`), carregado em `_pcCarregarModelos()` (chamado
+dentro de `renderPrestacoesContas()`) e renderizado em `_renderModelosPrestacaoContas()`. Cada
+serviço é `{servico, justificativa_url, justificativa_nome, atesto_url, atesto_nome}` — os dois
+slots de arquivo são independentes (subir um não afeta o outro). Funções novas:
+`pcAdicionarServicoModelo(categoria)` (prompt pro nome, mesmo padrão de `adicionarOutroDocumento()`),
+`pcRemoverServicoModelo(categoria, idx)` (confirm + splice, mesmo padrão de `excluirDespesa()` —
+não apaga arquivo já enviado do Storage) e `pcUploadModeloArquivo(categoria, idx, tipo, file)`
+(reusa `_uploadParaStorage()`). Arquivos vão para
+`prestacoes-contas/_modelos/{categoria}/{idx}-{tipo}-{timestamp}.ext` — cai dentro do path
+`prestacoes-contas/{allPaths=**}` já admin-only em `storage.rules`, e o doc fica em `secoes/{id}`
+(escrita admin-only, leitura de qualquer autenticado — mesmo nível de `plantao_info`/`adote_info`,
+que também não são dados sensíveis) — nenhuma regra do Firestore/Storage precisou de redeploy.
+Não mexe nos slots de Anexos por despesa já existentes (Justificativa/Atesto de cada despesa
+continuam independentes da biblioteca de modelos — é só consulta/download de referência). Testado
+no navegador com `db`/Storage stubados: card renderiza as 3 categorias vazias, "+ Novo serviço"
+adiciona, upload marca só o slot certo como "✅ Anexado" (o outro continua "⚠️ Pendente"), e
+remover serviço funciona com confirmação. Ver `docs/site/estrutura-html.md` (seção "Prestação de
+Contas").
+
 ## Estado atual (sessão 37 — 09/09/2026)
 
 **Implementado nesta sessão:** destaque em vermelho da linha "Aplicação" nos cards e no Detalhe
