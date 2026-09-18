@@ -11987,7 +11987,7 @@
 
             let html = `
                 <div class="pc-anexo-slots">
-                    ${_slotAnexoSimples('recibo_url', '🧾 Recibo / Nota Fiscal', d.recibo_url)}
+                    ${_slotAnexoSimples('justificativa_url', '📄 Justificativa da despesa', d.justificativa_url)}
 
                     <div class="pc-anexo-slot ${cm.url ? 'ok' : 'pendente'}">
                         <span class="pc-anexo-slot-label">
@@ -12005,7 +12005,7 @@
                         </div>
                     </div>
 
-                    ${_slotAnexoSimples('justificativa_url', '📄 Justificativa da despesa', d.justificativa_url)}
+                    ${_slotAnexoSimples('recibo_url', '🧾 Recibo / Nota Fiscal', d.recibo_url)}
                     ${_slotAnexoSimples('atesto_url', '✅ Atesto', d.atesto_url)}
                 </div>
 

@@ -72,6 +72,14 @@ limites (subir na 1ª linha / descer na última) não dispara gravação, e os b
 recalculam certo depois de cada swap. Ver `docs/site/estrutura-html.md` (seção "Prestação de
 Contas").
 
+**Ajuste ainda nesta sessão:** reordenada a ordem fixa de exibição dos 4 slots do modal "Anexos"
+por despesa (`_renderCorpoModalAnexos()`) a pedido da usuária — de Recibo/Comprovação de
+mercado/Justificativa/Atesto para **Justificativa/Comprovação de mercado/Recibo/Atesto**. Só
+reordenação dos blocos no template (Fotos e Outros documentos continuam depois, inalterados) —
+os 4 continuam os mesmos campos (`recibo_url`, `comprovacao_mercado`, `justificativa_url`,
+`atesto_url`), sem mudança de schema. Testado no navegador confirmando a nova ordem dos rótulos
+no DOM do modal.
+
 ## Estado atual (sessão 37 — 09/09/2026)
 
 **Implementado nesta sessão:** destaque em vermelho da linha "Aplicação" nos cards e no Detalhe
