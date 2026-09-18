@@ -90,6 +90,19 @@ afetar os outros 3 slots (chamados sem o 4º argumento). CSS novo junto de `.pc-
 (`index.html:1169`). Testado no navegador — texto aparece menor e acinzentado abaixo do título,
 layout do slot continua alinhado com os demais.
 
+**Ajuste ainda nesta sessão:** removido o `<select id="pc-mercado-tipo">` (Pesquisa de mercado /
+Justificativa de ausência) do slot "Comprovação de mercado" — a usuária considerou desnecessário
+ter uma seleção pra isso. Virou o mesmo padrão de título + texto pequeno do slot de Justificativa
+("ou, na impossibilidade, justificativa da ausência de pesquisa;"), usando a mesma estrutura
+`pc-anexo-slot-titulo`/`pc-anexo-slot-desc` (só que escrita manualmente aqui, não via
+`_slotAnexoSimples()`, porque esse slot tem upload próprio — `_uploadComprovacaoMercado()`, campo
+`comprovacao_mercado: {tipo, url}` em vez de `{campo: url}`). O campo `tipo` nunca era lido em
+nenhum outro lugar (nem no PDF, nem em `_contarAnexosPreenchidos()`) — removido de
+`_uploadComprovacaoMercado()`, que agora grava só `comprovacao_mercado: { url }`. Registros antigos
+que já tinham `tipo` gravado continuam com o campo no Firestore (não foi feita limpeza), só deixa
+de ser gravado em novos uploads. Testado no navegador: slot renderiza sem o select, e um upload
+simulado (Storage stubado) grava `comprovacao_mercado: { url }` sem erro.
+
 ## Estado atual (sessão 37 — 09/09/2026)
 
 **Implementado nesta sessão:** destaque em vermelho da linha "Aplicação" nos cards e no Detalhe

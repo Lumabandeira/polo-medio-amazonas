@@ -11988,20 +11988,16 @@
 
         function _renderCorpoModalAnexos(d) {
             const cm = d.comprovacao_mercado || {};
-            const tipoMercado = cm.tipo || 'pesquisa';
 
             let html = `
                 <div class="pc-anexo-slots">
                     ${_slotAnexoSimples('justificativa_url', '📄 Justificativa', d.justificativa_url, 'Para cada aquisição/contratação de serviços por adiantamento, contendo o registro da verificação da existência do bem em estoque ou de contrato vigente.')}
 
                     <div class="pc-anexo-slot ${cm.url ? 'ok' : 'pendente'}">
-                        <span class="pc-anexo-slot-label">
-                            📑 Comprovação de mercado
-                            <select id="pc-mercado-tipo" style="margin-left:8px;font-size:0.85em">
-                                <option value="pesquisa" ${tipoMercado === 'pesquisa' ? 'selected' : ''}>Pesquisa de mercado</option>
-                                <option value="justificativa_ausencia" ${tipoMercado === 'justificativa_ausencia' ? 'selected' : ''}>Justificativa de ausência</option>
-                            </select>
-                        </span>
+                        <div class="pc-anexo-slot-titulo">
+                            <span class="pc-anexo-slot-label">📑 Comprovação de mercado</span>
+                            <span class="pc-anexo-slot-desc">ou, na impossibilidade, justificativa da ausência de pesquisa;</span>
+                        </div>
                         <span class="pc-anexo-slot-status">${cm.url ? '✅ Anexado' : '⚠️ Pendente'}</span>
                         <div class="pc-anexo-slot-acoes">
                             ${cm.url ? `<a href="${esc(cm.url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
@@ -12088,11 +12084,10 @@
             if (!file) return;
             try {
                 mostrarToast('⏳ Enviando arquivo...');
-                const tipo = document.getElementById('pc-mercado-tipo').value;
                 const caminho = `prestacoes-contas/${_anexoPrestacaoId}/despesas/${_anexoDespesaIdx}/comprovacao-mercado-${Date.now()}${_extensaoArquivo(file)}`;
                 const url = await _uploadParaStorage(caminho, file);
                 const d = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, {
-                    comprovacao_mercado: { tipo, url }
+                    comprovacao_mercado: { url }
                 });
                 _renderCorpoModalAnexos(d);
                 _renderDetalhePrestacao();
