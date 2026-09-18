@@ -296,12 +296,13 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   despesas, saldo remanescente), mais os 3 documentos do processo como um todo (Memorando,
   Termo de Devolução, Comprovante de Devolução).
 - **Anexos por despesa**: modal com 5 slots fixos, nesta ordem de exibição — Justificativa,
-  Comprovação de mercado, Recibo/NF, Atesto, Fotos — + lista livre de "Outros documentos"
-  (`_renderCorpoModalAnexos()`). A ordem dos 4 primeiros é só de exibição (template fixo, sem
-  campo de ordem) — os campos continuam `recibo_url`/`comprovacao_mercado`/`justificativa_url`/`atesto_url`.
-  Os slots de Justificativa e Comprovação de mercado têm um texto explicativo menor abaixo do
-  título — Justificativa via parâmetro opcional `descricao` de
-  `_slotAnexoSimples(campo, label, url, descricao)` (`.pc-anexo-slot-desc`); Comprovação de mercado
+  Pesquisa de mercado (rótulo exibido; campo/nomes internos continuam `comprovacao_mercado`),
+  Recibo/NF, Atesto, Fotos — + lista livre de "Outros documentos" (`_renderCorpoModalAnexos()`).
+  A ordem dos 4 primeiros é só de exibição (template fixo, sem campo de ordem) — os campos
+  continuam `recibo_url`/`comprovacao_mercado`/`justificativa_url`/`atesto_url`.
+  Os slots de Justificativa, Pesquisa de mercado e Recibo/NF têm um texto explicativo menor abaixo
+  do título — Justificativa e Recibo/NF via parâmetro opcional `descricao` de
+  `_slotAnexoSimples(campo, label, url, descricao)` (`.pc-anexo-slot-desc`); Pesquisa de mercado
   escrito manualmente (não usa `_slotAnexoSimples` porque tem upload próprio,
   `_uploadComprovacaoMercado()`, gravando `comprovacao_mercado: { url }` em vez de `{campo: url}`).
   Não existe mais seletor de "tipo" (pesquisa de mercado *vs* justificativa de ausência) nesse

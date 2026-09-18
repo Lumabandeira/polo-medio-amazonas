@@ -103,6 +103,15 @@ que já tinham `tipo` gravado continuam com o campo no Firestore (não foi feita
 de ser gravado em novos uploads. Testado no navegador: slot renderiza sem o select, e um upload
 simulado (Storage stubado) grava `comprovacao_mercado: { url }` sem erro.
 
+**Ajuste ainda nesta sessão:** rótulo do slot renomeado de "Comprovação de mercado" para "Pesquisa
+de mercado" (só o texto exibido — campo `comprovacao_mercado`, nomes de função
+`_uploadComprovacaoMercado()`/`comprovacao-mercado-` do caminho no Storage continuam iguais).
+
+**Ajuste ainda nesta sessão:** texto explicativo menor adicionado no slot "Recibo / Nota Fiscal"
+("Sem rasuras, devidamente atestados por servidor que não o tomador, e em nome da Unidade Gestora
+que fora concedido."), mesmo padrão do slot de Justificativa (4º argumento `descricao` de
+`_slotAnexoSimples()`).
+
 ## Estado atual (sessão 37 — 09/09/2026)
 
 **Implementado nesta sessão:** destaque em vermelho da linha "Aplicação" nos cards e no Detalhe
