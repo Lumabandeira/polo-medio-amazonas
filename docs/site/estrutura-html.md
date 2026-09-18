@@ -295,13 +295,15 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   usada pela Defensoria) — tabela de despesas com totais calculados automaticamente (valor das
   despesas, saldo remanescente), mais os 3 documentos do processo como um todo (Memorando,
   Termo de Devolução, Comprovante de Devolução).
-- **Anexos por despesa**: modal com 5 slots fixos, nesta ordem de exibição — Justificativa da
-  despesa, Comprovação de mercado (pesquisa *ou* justificativa de ausência), Recibo/NF, Atesto,
-  Fotos — + lista livre de "Outros documentos" (`_renderCorpoModalAnexos()`). A ordem dos 4
-  primeiros é só de exibição (template fixo, sem campo de ordem) — os campos continuam
-  `recibo_url`/`comprovacao_mercado`/`justificativa_url`/`atesto_url`. Upload vai para Firebase
-  Storage em `prestacoes-contas/{prestacaoId}/...`; a URL de download fica salva no array
-  `despesas[]` do documento Firestore.
+- **Anexos por despesa**: modal com 5 slots fixos, nesta ordem de exibição — Justificativa,
+  Comprovação de mercado (pesquisa *ou* justificativa de ausência), Recibo/NF, Atesto, Fotos — +
+  lista livre de "Outros documentos" (`_renderCorpoModalAnexos()`). A ordem dos 4 primeiros é só
+  de exibição (template fixo, sem campo de ordem) — os campos continuam
+  `recibo_url`/`comprovacao_mercado`/`justificativa_url`/`atesto_url`. O slot de Justificativa tem
+  um texto explicativo menor abaixo do título (parâmetro opcional `descricao` de
+  `_slotAnexoSimples(campo, label, url, descricao)`, `.pc-anexo-slot-desc`) — só esse slot usa o
+  parâmetro. Upload vai para Firebase Storage em `prestacoes-contas/{prestacaoId}/...`; a URL de
+  download fica salva no array `despesas[]` do documento Firestore.
 - **Valor Concedido (campo único)**: o formulário tinha "Valor Recebido" e "Valor Concedido"
   redundantes — removido "Valor Recebido", único campo `valor_concedido` (obrigatório) usado em
   cards, Detalhe, tabela de despesas e PDF, e no cálculo de saldo. Registros antigos gravados só

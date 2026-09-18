@@ -80,6 +80,16 @@ os 4 continuam os mesmos campos (`recibo_url`, `comprovacao_mercado`, `justifica
 `atesto_url`), sem mudança de schema. Testado no navegador confirmando a nova ordem dos rótulos
 no DOM do modal.
 
+**Ajuste ainda nesta sessão:** rótulo do slot de justificativa encurtado de "Justificativa da
+despesa" para só "Justificativa", com um texto explicativo menor logo abaixo do título ("Para
+cada aquisição/contratação de serviços por adiantamento, contendo o registro da verificação da
+existência do bem em estoque ou de contrato vigente."). Novo parâmetro opcional `descricao` em
+`_slotAnexoSimples(campo, label, url, descricao)` — renderiza um `<span class="pc-anexo-slot-desc">`
+dentro de um novo wrapper `<div class="pc-anexo-slot-titulo">` (flex-column) junto do rótulo, sem
+afetar os outros 3 slots (chamados sem o 4º argumento). CSS novo junto de `.pc-anexo-slot-label`
+(`index.html:1169`). Testado no navegador — texto aparece menor e acinzentado abaixo do título,
+layout do slot continua alinhado com os demais.
+
 ## Estado atual (sessão 37 — 09/09/2026)
 
 **Implementado nesta sessão:** destaque em vermelho da linha "Aplicação" nos cards e no Detalhe

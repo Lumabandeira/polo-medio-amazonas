@@ -1166,7 +1166,9 @@
         }
         .pc-anexo-slot.ok { border-color: #86efac; background: #f0fdf4; }
         .pc-anexo-slot.pendente { border-color: #fde68a; background: #fffbeb; }
+        .pc-anexo-slot-titulo { display: flex; flex-direction: column; gap: 3px; max-width: 480px; }
         .pc-anexo-slot-label { font-weight: 600; }
+        .pc-anexo-slot-desc { font-size: 0.78em; font-weight: 400; color: var(--text-secondary); line-height: 1.35; }
         .pc-anexo-slot-status { font-size: 0.85em; color: var(--text-secondary); }
         .pc-anexo-slot-acoes { display: flex; gap: 8px; align-items: center; }
         .pc-fotos-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
@@ -11969,9 +11971,12 @@
             _anexoDespesaIdx = null;
         }
 
-        function _slotAnexoSimples(campo, label, url) {
+        function _slotAnexoSimples(campo, label, url, descricao) {
             return `<div class="pc-anexo-slot ${url ? 'ok' : 'pendente'}">
-                <span class="pc-anexo-slot-label">${label}</span>
+                <div class="pc-anexo-slot-titulo">
+                    <span class="pc-anexo-slot-label">${label}</span>
+                    ${descricao ? `<span class="pc-anexo-slot-desc">${descricao}</span>` : ''}
+                </div>
                 <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
                 <div class="pc-anexo-slot-acoes">
                     ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
@@ -11987,7 +11992,7 @@
 
             let html = `
                 <div class="pc-anexo-slots">
-                    ${_slotAnexoSimples('justificativa_url', '📄 Justificativa da despesa', d.justificativa_url)}
+                    ${_slotAnexoSimples('justificativa_url', '📄 Justificativa', d.justificativa_url, 'Para cada aquisição/contratação de serviços por adiantamento, contendo o registro da verificação da existência do bem em estoque ou de contrato vigente.')}
 
                     <div class="pc-anexo-slot ${cm.url ? 'ok' : 'pendente'}">
                         <span class="pc-anexo-slot-label">
