@@ -114,8 +114,9 @@ slot de Justificativa (4º argumento `descricao` de `_slotAnexoSimples()`). A pa
 ("por servidor que não o tomador") virou o texto explicativo do slot "Atesto" em vez de ficar no
 Recibo/NF — mesmo mecanismo.
 
-**Ajuste ainda nesta sessão:** nova biblioteca de "📚 Modelos de Documentos (Justificativa/Atesto)"
-na página inicial de Prestação de Contas (`#pc-lista-view`, card logo abaixo da lista de Prontos
+**Ajuste ainda nesta sessão:** nova biblioteca de "📚 Modelos de Documentos" (título encurtado
+depois, sem o sufixo "(Justificativa/Atesto)") na página inicial de Prestação de Contas
+(`#pc-lista-view`, card logo abaixo da lista de Prontos
 Pagamentos) — a usuária queria manter modelos .docx de referência por categoria/serviço (ex: PJ →
 lavagem de carro, passagem de lancha; Consumo → água mineral; PF → roçagem), com um modelo de
 Justificativa **e** um de Atesto por serviço, sem precisar excluir/recriar pra mudar a lista. Doc
@@ -139,6 +140,22 @@ no navegador com `db`/Storage stubados: card renderiza as 3 categorias vazias, "
 adiciona, upload marca só o slot certo como "✅ Anexado" (o outro continua "⚠️ Pendente"), e
 remover serviço funciona com confirmação. Ver `docs/site/estrutura-html.md` (seção "Prestação de
 Contas").
+
+**Ajuste ainda nesta sessão:** dois modelos gerais adicionados no topo do card "Modelos de
+Documentos", **fora** das categorias/serviços — "📝 Modelo de Memorando" e "📑 Modelo de Pesquisa
+de Mercado" (aceita `.docx` **ou** `.xlsx`, diferente dos demais slots que só aceitam Word).
+Decisão tomada via pergunta direta à usuária: Memorando não varia por serviço (é documento do
+processo como um todo, igual ao "Memorando de encaminhamento" de `_renderDocumentosProcesso()`),
+e Pesquisa de mercado também foi pedida como modelo único geral, não por serviço. Campos novos no
+mesmo doc `secoes/prestacao_contas_modelos`: `memorando_url`/`memorando_nome`/
+`pesquisa_mercado_url`/`pesquisa_mercado_nome` (irmãos dos 3 arrays de categoria, não dentro
+deles). Nova função `pcUploadModeloGeral(campo, file)` (`campo` é `'memorando'` ou
+`'pesquisa_mercado'`) e `_pcModeloGeralSlotHtml()` (reaproveita o CSS `.pc-anexo-slot` do modal de
+Anexos por despesa, em vez do `.pc-modelo-slot` novo dos slots por serviço). Arquivos em
+`prestacoes-contas/_modelos/_gerais/{campo}-{timestamp}.ext` — mesmo path-prefix admin-only, sem
+redeploy. Testado no navegador: upload de Memorando marca só aquele slot como "✅ Anexado",
+Pesquisa de Mercado continua "⚠️ Pendente" independente, e o `accept` do input inclui os 4 tipos
+MIME de Excel além dos 2 de Word.
 
 ## Estado atual (sessão 37 — 09/09/2026)
 

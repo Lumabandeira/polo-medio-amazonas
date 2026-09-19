@@ -3917,7 +3917,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <h2>📚 Modelos de Documentos (Justificativa/Atesto)</h2>
+                    <h2>📚 Modelos de Documentos</h2>
                     <p style="color:var(--text-secondary);margin-bottom:20px;line-height:1.6;">
                         Modelos de referência por categoria e serviço — baixe, preencha e depois anexe o arquivo
                         preenchido no slot correspondente da despesa.
@@ -11361,7 +11361,11 @@
         let _pcAtualId = null;
         let _anexoPrestacaoId = null;
         let _anexoDespesaIdx = null;
-        let _pcModelos = { pessoa_juridica: [], consumo: [], pessoa_fisica: [] };
+        let _pcModelos = {
+            pessoa_juridica: [], consumo: [], pessoa_fisica: [],
+            memorando_url: null, memorando_nome: null,
+            pesquisa_mercado_url: null, pesquisa_mercado_nome: null
+        };
 
         function formatarMoeda(v) {
             const n = Number(v) || 0;
@@ -11441,7 +11445,11 @@
                 _pcModelos = {
                     pessoa_juridica: data.pessoa_juridica || [],
                     consumo: data.consumo || [],
-                    pessoa_fisica: data.pessoa_fisica || []
+                    pessoa_fisica: data.pessoa_fisica || [],
+                    memorando_url: data.memorando_url || null,
+                    memorando_nome: data.memorando_nome || null,
+                    pesquisa_mercado_url: data.pesquisa_mercado_url || null,
+                    pesquisa_mercado_nome: data.pesquisa_mercado_nome || null
                 };
             } catch (e) {
                 console.error('Erro ao carregar modelos de documentos:', e);
@@ -11451,20 +11459,39 @@
             _renderModelosPrestacaoContas();
         }
 
+        function _pcModeloGeralSlotHtml(campo, label, accept) {
+            const url = _pcModelos[`${campo}_url`];
+            return `<div class="pc-anexo-slot ${url ? 'ok' : 'pendente'}">
+                <span class="pc-anexo-slot-label">${label}</span>
+                <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
+                <div class="pc-anexo-slot-acoes">
+                    ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                    <input type="file" accept="${accept}" style="display:none" id="pc-modelo-geral-input-${campo}" onchange="pcUploadModeloGeral('${campo}', this.files[0])">
+                    <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-modelo-geral-input-${campo}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
+                </div>
+            </div>`;
+        }
+
         function _pcModeloSlotHtml(categoria, idx, tipo, label, item) {
             const url = item[`${tipo}_url`];
             return `<div class="pc-modelo-slot ${url ? 'ok' : 'pendente'}">
                 <span class="pc-modelo-slot-label">${label}</span>
                 <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
                 ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
-                <input type="file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none" id="pc-modelo-input-${categoria}-${idx}-${tipo}" onchange="pcUploadModeloArquivo('${categoria}', ${idx}, '${tipo}', this.files[0])">
+                <input type="file" accept="${PC_ACCEPT_DOCX}" style="display:none" id="pc-modelo-input-${categoria}-${idx}-${tipo}" onchange="pcUploadModeloArquivo('${categoria}', ${idx}, '${tipo}', this.files[0])">
                 <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-modelo-input-${categoria}-${idx}-${tipo}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
             </div>`;
         }
 
+        const PC_ACCEPT_DOCX = '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        const PC_ACCEPT_DOCX_XLSX = PC_ACCEPT_DOCX + ',.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
         function _renderModelosPrestacaoContas() {
             const cont = document.getElementById('pc-modelos-cards');
-            let html = '';
+            let html = `<div class="pc-anexo-slots" style="margin-bottom:20px">
+                ${_pcModeloGeralSlotHtml('memorando', '📝 Modelo de Memorando', PC_ACCEPT_DOCX)}
+                ${_pcModeloGeralSlotHtml('pesquisa_mercado', '📑 Modelo de Pesquisa de Mercado', PC_ACCEPT_DOCX_XLSX)}
+            </div>`;
             Object.keys(PC_CATEGORIA_LABELS).forEach(categoria => {
                 const itens = _pcModelos[categoria] || [];
                 html += `<div class="pc-modelo-categoria">
@@ -11544,6 +11571,28 @@
                     atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
                 _pcModelos[categoria] = itens;
+                _renderModelosPrestacaoContas();
+                mostrarToast('✅ Modelo enviado com sucesso.');
+            } catch (e) {
+                console.error('Erro ao enviar modelo:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function pcUploadModeloGeral(campo, file) {
+            if (!file) return;
+            try {
+                mostrarToast('⏳ Enviando arquivo...');
+                const caminho = `prestacoes-contas/_modelos/_gerais/${campo}-${Date.now()}${_extensaoArquivo(file)}`;
+                const url = await _uploadParaStorage(caminho, file);
+                await db.collection('secoes').doc('prestacao_contas_modelos').set({
+                    [`${campo}_url`]: url,
+                    [`${campo}_nome`]: file.name,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                _pcModelos[`${campo}_url`] = url;
+                _pcModelos[`${campo}_nome`] = file.name;
                 _renderModelosPrestacaoContas();
                 mostrarToast('✅ Modelo enviado com sucesso.');
             } catch (e) {
