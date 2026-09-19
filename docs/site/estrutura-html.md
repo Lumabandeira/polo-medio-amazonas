@@ -297,11 +297,14 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   serviço — "📝 Modelo de Memorando" (só `.docx`) e "📑 Modelo de Pesquisa de Mercado" (`.docx`
   *ou* `.xlsx`) — e, abaixo, uma lista por categoria (`PC_CATEGORIA_LABELS`) e serviço livre (ex:
   PJ → lavagem de carro; Consumo → água mineral; PF → roçagem), cada serviço com 2 slots
-  independentes (Modelo de Justificativa, Modelo de Atesto, só `.docx`).
+  independentes (Modelo de Justificativa, Modelo de Atesto, só `.docx`). Cada categoria também tem
+  um "🧾 Modelo de Recibo" próprio (um por categoria, não por serviço individual) no topo do seu
+  bloco, antes da lista de serviços.
   Doc único `secoes/prestacao_contas_modelos`: 3 arrays (uma por categoria, cada item
   `{servico, justificativa_url, justificativa_nome, atesto_url, atesto_nome}`) + 4 campos soltos
   para os modelos gerais (`memorando_url`/`memorando_nome`/`pesquisa_mercado_url`/`pesquisa_mercado_nome`)
-  — mesmo padrão de config de seção única de `secoes/plantao_info`. Carregado em
+  + `recibo` (objeto `{pessoa_juridica: {url, nome}, consumo: {...}, pessoa_fisica: {...}}`) —
+  mesmo padrão de config de seção única de `secoes/plantao_info`. Carregado em
   `_pcCarregarModelos()` (chamado dentro de `renderPrestacoesContas()`), renderizado em
   `_renderModelosPrestacaoContas()`. Por serviço: `pcAdicionarServicoModelo(categoria)` adiciona
   (prompt pro nome, mesmo padrão de `adicionarOutroDocumento()`), `pcRemoverServicoModelo(categoria, idx)`
@@ -309,7 +312,9 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   sobe o arquivo (`tipo` é `'justificativa'` ou `'atesto'`) via `_uploadParaStorage()`, path
   `prestacoes-contas/_modelos/{categoria}/{idx}-{tipo}-{timestamp}.ext`. Geral:
   `pcUploadModeloGeral(campo, file)` (`campo` é `'memorando'` ou `'pesquisa_mercado'`), path
-  `prestacoes-contas/_modelos/_gerais/{campo}-{timestamp}.ext`. Ambos caem dentro do path
+  `prestacoes-contas/_modelos/_gerais/{campo}-{timestamp}.ext`. Por categoria:
+  `pcUploadModeloRecibo(categoria, file)` (`_pcModeloReciboSlotHtml(categoria)`), path
+  `prestacoes-contas/_modelos/{categoria}/recibo-{timestamp}.ext`. Todos caem dentro do path
   admin-only já existente em `storage.rules`, sem precisar de redeploy. Não interfere nos slots
   de Anexos por despesa — é só uma biblioteca de referência/download.
 - **Detalhe** (`#pc-detalhe-view`): réplica do "Mapa Demonstrativo de Despesa" (planilha em papel

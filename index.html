@@ -11364,7 +11364,8 @@
         let _pcModelos = {
             pessoa_juridica: [], consumo: [], pessoa_fisica: [],
             memorando_url: null, memorando_nome: null,
-            pesquisa_mercado_url: null, pesquisa_mercado_nome: null
+            pesquisa_mercado_url: null, pesquisa_mercado_nome: null,
+            recibo: { pessoa_juridica: {}, consumo: {}, pessoa_fisica: {} }
         };
 
         function formatarMoeda(v) {
@@ -11449,7 +11450,8 @@
                     memorando_url: data.memorando_url || null,
                     memorando_nome: data.memorando_nome || null,
                     pesquisa_mercado_url: data.pesquisa_mercado_url || null,
-                    pesquisa_mercado_nome: data.pesquisa_mercado_nome || null
+                    pesquisa_mercado_nome: data.pesquisa_mercado_nome || null,
+                    recibo: data.recibo || { pessoa_juridica: {}, consumo: {}, pessoa_fisica: {} }
                 };
             } catch (e) {
                 console.error('Erro ao carregar modelos de documentos:', e);
@@ -11486,6 +11488,20 @@
         const PC_ACCEPT_DOCX = '.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
         const PC_ACCEPT_DOCX_XLSX = PC_ACCEPT_DOCX + ',.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
+        function _pcModeloReciboSlotHtml(categoria) {
+            const r = (_pcModelos.recibo && _pcModelos.recibo[categoria]) || {};
+            const url = r.url;
+            return `<div class="pc-anexo-slot ${url ? 'ok' : 'pendente'}" style="margin-bottom:12px">
+                <span class="pc-anexo-slot-label">🧾 Modelo de Recibo</span>
+                <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
+                <div class="pc-anexo-slot-acoes">
+                    ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                    <input type="file" accept="${PC_ACCEPT_DOCX}" style="display:none" id="pc-modelo-recibo-input-${categoria}" onchange="pcUploadModeloRecibo('${categoria}', this.files[0])">
+                    <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-modelo-recibo-input-${categoria}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
+                </div>
+            </div>`;
+        }
+
         function _renderModelosPrestacaoContas() {
             const cont = document.getElementById('pc-modelos-cards');
             let html = `<div class="pc-anexo-slots" style="margin-bottom:20px">
@@ -11495,7 +11511,8 @@
             Object.keys(PC_CATEGORIA_LABELS).forEach(categoria => {
                 const itens = _pcModelos[categoria] || [];
                 html += `<div class="pc-modelo-categoria">
-                    <h3 class="pc-tomador-nome">${PC_CATEGORIA_LABELS[categoria]}</h3>`;
+                    <h3 class="pc-tomador-nome">${PC_CATEGORIA_LABELS[categoria]}</h3>
+                    ${_pcModeloReciboSlotHtml(categoria)}`;
                 if (itens.length === 0) {
                     html += `<p style="color:var(--text-secondary);font-size:0.9em">Nenhum serviço cadastrado.</p>`;
                 } else {
@@ -11593,6 +11610,27 @@
                 }, { merge: true });
                 _pcModelos[`${campo}_url`] = url;
                 _pcModelos[`${campo}_nome`] = file.name;
+                _renderModelosPrestacaoContas();
+                mostrarToast('✅ Modelo enviado com sucesso.');
+            } catch (e) {
+                console.error('Erro ao enviar modelo:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function pcUploadModeloRecibo(categoria, file) {
+            if (!file) return;
+            try {
+                mostrarToast('⏳ Enviando arquivo...');
+                const caminho = `prestacoes-contas/_modelos/${categoria}/recibo-${Date.now()}${_extensaoArquivo(file)}`;
+                const url = await _uploadParaStorage(caminho, file);
+                const recibo = { ..._pcModelos.recibo, [categoria]: { url, nome: file.name } };
+                await db.collection('secoes').doc('prestacao_contas_modelos').set({
+                    recibo,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                _pcModelos.recibo = recibo;
                 _renderModelosPrestacaoContas();
                 mostrarToast('✅ Modelo enviado com sucesso.');
             } catch (e) {

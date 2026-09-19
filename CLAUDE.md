@@ -157,6 +157,20 @@ redeploy. Testado no navegador: upload de Memorando marca só aquele slot como "
 Pesquisa de Mercado continua "⚠️ Pendente" independente, e o `accept` do input inclui os 4 tipos
 MIME de Excel além dos 2 de Word.
 
+**Ajuste ainda nesta sessão:** modelo de Recibo adicionado, um por categoria (Consumo, Pessoa
+Jurídica, Pessoa Física) — diferente de Memorando/Pesquisa de Mercado (gerais, um só no total) e
+diferente de Justificativa/Atesto (por serviço individual dentro da categoria): o Recibo é
+**por categoria**, aparece uma vez no topo de cada bloco (`_pcModeloReciboSlotHtml(categoria)`,
+antes da lista de serviços daquela categoria). Dados em `_pcModelos.recibo` — objeto
+`{pessoa_juridica: {url, nome}, consumo: {...}, pessoa_fisica: {...}}`, campo `recibo` no mesmo
+doc `secoes/prestacao_contas_modelos`. Nova função `pcUploadModeloRecibo(categoria, file)` — sobe
+o arquivo (só `.docx`, mesmo `PC_ACCEPT_DOCX`), clona `_pcModelos.recibo` inteiro (as 3
+categorias) antes de mutar a chave da categoria alvo e salva o objeto `recibo` inteiro de volta
+(mesmo cuidado de clonar-antes-de-mutar já usado em `despesas`/arrays de serviço). Path no Storage:
+`prestacoes-contas/_modelos/{categoria}/recibo-{timestamp}.ext`. Testado no navegador: upload do
+recibo de "Consumo" marca só aquela categoria como "✅ Anexado", "Pessoa Jurídica" continua
+"⚠️ Pendente" — confirma que as 3 categorias são independentes.
+
 ## Estado atual (sessão 37 — 09/09/2026)
 
 **Implementado nesta sessão:** destaque em vermelho da linha "Aplicação" nos cards e no Detalhe

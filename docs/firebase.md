@@ -48,7 +48,7 @@ nome: "..."
 | `adote_celulas` | `celulas` (mapa `"ROW_COL": { html, cellStyle }`), `atualizado_por`, `atualizado_em` |
 | `adote_expandir` | `html`, `atualizado_por`, `atualizado_em` |
 | `plantao_info` | `nome`, `url` (link da portaria, opcional), `atualizado_por`, `atualizado_em` — se vazio, cai no texto padrão `PLANTAO_INFO_PADRAO` no `index.html` |
-| `prestacao_contas_modelos` | `pessoa_juridica`/`consumo`/`pessoa_fisica` (arrays de `{servico, justificativa_url, justificativa_nome, atesto_url, atesto_nome}`), `memorando_url`/`memorando_nome`/`pesquisa_mercado_url`/`pesquisa_mercado_nome` (modelos gerais, fora das categorias), `atualizado_por`, `atualizado_em` — biblioteca de modelos por categoria/serviço + modelos gerais, ver seção "Modelos de Documentos" em `docs/site/estrutura-html.md` |
+| `prestacao_contas_modelos` | `pessoa_juridica`/`consumo`/`pessoa_fisica` (arrays de `{servico, justificativa_url, justificativa_nome, atesto_url, atesto_nome}`), `recibo` (objeto `{pessoa_juridica: {url,nome}, consumo: {...}, pessoa_fisica: {...}}` — um por categoria), `memorando_url`/`memorando_nome`/`pesquisa_mercado_url`/`pesquisa_mercado_nome` (modelos gerais, um só no total), `atualizado_por`, `atualizado_em` — biblioteca de modelos por serviço + por categoria + gerais, ver seção "Modelos de Documentos" em `docs/site/estrutura-html.md` |
 
 ### `viagens_tabela1_admin/{id}` — Eventos e Próximas Viagens Previstas
 ```
