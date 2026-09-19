@@ -6664,5 +6664,29 @@
         "resumo": "Autoriza deslocamento do Defensor Público Miguel Eduardo de Azevedo Martins Filho para atuar em sessões do Tribunal do Júri nas Comarcas de Urucurituba e Urucará de 28/09 a 03/10/2026, com direito a diárias"
       }
     ]
+  },
+  {
+    "edicao": 2734,
+    "data": "2026-09-18",
+    "data_formatada": "18/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2734-2026__publicada_em_18_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1708/2026-GDPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "1 (uma) vaga para a 3ª Defensoria Pública do Polo Médio Amazonas",
+          "3º Miguel Eduardo de Azevedo Martins Filho - 3ª Defensoria Pública do Polo Médio Amazonas - 6ª Defensoria Pública do Polo do Médio Amazonas"
+        ],
+        "resumo": "Publica resultado do 7º Concurso de Remoção 2026 com uma vaga para a 3ª Defensoria Pública do Polo Médio Amazonas, preenchida por Miguel Eduardo de Azevedo Martins Filho"
+      }
+    ]
   }
 ]
