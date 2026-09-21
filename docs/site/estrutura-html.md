@@ -297,9 +297,11 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   serviço — "📝 Modelo de Memorando" (só `.docx`) e "📑 Modelo de Pesquisa de Mercado" (`.docx`
   *ou* `.xlsx`) — e, abaixo, uma lista por categoria (`PC_CATEGORIA_LABELS`) e serviço livre (ex:
   PJ → lavagem de carro; Consumo → água mineral; PF → roçagem), cada serviço com 2 slots
-  independentes (Modelo de Justificativa, Modelo de Atesto, só `.docx`). Cada categoria também tem
-  um "🧾 Modelo de Recibo" próprio (um por categoria, não por serviço individual) no topo do seu
-  bloco, antes da lista de serviços.
+  independentes (Modelo de Justificativa, Modelo de Atesto, só `.docx`). A categoria **Pessoa
+  Física** também tem um "🧾 Modelo de Recibo" próprio no topo do seu bloco, antes da lista de
+  serviços — só nessa categoria (renderização condicional em `_renderModelosPrestacaoContas()`,
+  `categoria === 'pessoa_fisica'`; o campo `recibo` no Firestore continua com as 3 chaves de
+  categoria, mas só `pessoa_fisica` é exibido/editável pela UI).
   Doc único `secoes/prestacao_contas_modelos`: 3 arrays (uma por categoria, cada item
   `{servico, justificativa_url, justificativa_nome, atesto_url, atesto_nome}`) + 4 campos soltos
   para os modelos gerais (`memorando_url`/`memorando_nome`/`pesquisa_mercado_url`/`pesquisa_mercado_nome`)

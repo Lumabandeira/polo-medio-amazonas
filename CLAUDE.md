@@ -171,6 +171,20 @@ categorias) antes de mutar a chave da categoria alvo e salva o objeto `recibo` i
 recibo de "Consumo" marca só aquela categoria como "✅ Anexado", "Pessoa Jurídica" continua
 "⚠️ Pendente" — confirma que as 3 categorias são independentes.
 
+## Estado atual (sessão 39 — 21/09/2026)
+
+**Implementado nesta sessão:** ajuste na biblioteca de "📚 Modelos de Documentos" (sessão 38) — o
+slot "🧾 Modelo de Recibo" por categoria (adicionado na sessão anterior em Consumo, Pessoa
+Jurídica **e** Pessoa Física) passou a aparecer **só em Pessoa Física**, a pedido da usuária.
+Mudança de uma linha em `_renderModelosPrestacaoContas()`: a chamada de
+`_pcModeloReciboSlotHtml(categoria)` agora é condicional a `categoria === 'pessoa_fisica'`. Os
+campos `recibo.consumo`/`recibo.pessoa_juridica` continuam existindo no doc
+`secoes/prestacao_contas_modelos` caso já tivessem sido preenchidos (nenhuma limpeza de dados foi
+necessária — nenhum arquivo real havia sido enviado ainda nessas duas categorias), só deixaram de
+ser exibidos/editáveis pela UI. Testado no navegador: card renderiza só 1 "Modelo de Recibo" na
+página inteira, dentro do bloco de Pessoa Física. Ver `docs/site/estrutura-html.md` (seção
+"Prestação de Contas").
+
 ## Estado atual (sessão 37 — 09/09/2026)
 
 **Implementado nesta sessão:** destaque em vermelho da linha "Aplicação" nos cards e no Detalhe

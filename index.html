@@ -11512,7 +11512,7 @@
                 const itens = _pcModelos[categoria] || [];
                 html += `<div class="pc-modelo-categoria">
                     <h3 class="pc-tomador-nome">${PC_CATEGORIA_LABELS[categoria]}</h3>
-                    ${_pcModeloReciboSlotHtml(categoria)}`;
+                    ${categoria === 'pessoa_fisica' ? _pcModeloReciboSlotHtml(categoria) : ''}`;
                 if (itens.length === 0) {
                     html += `<p style="color:var(--text-secondary);font-size:0.9em">Nenhum serviço cadastrado.</p>`;
                 } else {
