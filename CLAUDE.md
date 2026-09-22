@@ -212,6 +212,21 @@ mercado, replicando o caso mostrado pela usuária) gerando PDF de 4 páginas na 
 sem nenhum anexo (toast, sem gerar arquivo) e caso de 1 URL inválida (PDF sai só com os outros 2,
 toast nomeia o que faltou). Ver `docs/site/estrutura-html.md` (seção "Prestação de Contas").
 
+**Bug real encontrado e corrigido ainda nesta sessão:** a usuária testou o botão "Baixar anexos em
+1 PDF" em produção e deu erro pros 3 anexos de uma vez ("Não foi possível juntar nenhum dos
+anexos"), mesmo com a pré-visualização funcionando normalmente. Causa: o bucket do Storage
+(`polo-medio-as.firebasestorage.app`) não tinha **CORS** configurado — `<img>`/`<iframe>`
+carregam a URL de download normalmente (navegação de recurso, sem checagem de CORS), mas
+`fetch()` em JS (usado tanto no "Baixar" individual quanto no merge) precisa que o bucket libere
+explicitamente a origem do site pra JS conseguir ler a resposta. Confirmado lendo a config do
+bucket (`bucket.cors` vinha `[]`) via `google-cloud-storage` com o
+`firebase-service-account.json` já usado nos scripts de automação do repo. Corrigido aplicando
+CORS pro bucket autorizando `https://lumabandeira.github.io` (produção) + `localhost:8123`/
+`localhost:8765` (testes locais), método `GET`. Não é uma mudança de código — é config do bucket
+no Google Cloud, não fica em nenhum arquivo do repositório (ao contrário de `storage.rules`).
+Validado com um `fetch()` real no navegador contra um PDF de produção já existente (retornou
+200 com o PDF de ~144KB, sem erro de CORS). Ver `docs/firebase.md` (seção "CORS do bucket").
+
 ## Estado atual (sessão 39 — 21/09/2026)
 
 **Implementado nesta sessão:** ajuste na biblioteca de "📚 Modelos de Documentos" (sessão 38) — o

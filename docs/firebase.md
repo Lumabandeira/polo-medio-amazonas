@@ -314,6 +314,43 @@ atualizado_em:       timestamp
 - Bucket `polo-medio-as.firebasestorage.app`, regras em `storage.rules`.
 - `prestacoes-contas/**`: leitura e escrita restritas a `isAdmin()` (checa `usuarios/{uid}.role` via `firestore.get()`).
 - Qualquer outro caminho: bloqueado por padrão (`allow read, write: if false`).
+- **Importante:** a URL de download (`getDownloadURL()`, com `?alt=media&token=...`) funciona pra
+  qualquer um que tenha o link, **independente** de `storage.rules` — o token na URL não passa
+  pela checagem `isAdmin()`. É assim que `<img src>`/`<iframe src>` (Anexos, Modelos de
+  Documentos etc.) sempre exibiram os arquivos mesmo com a regra restrita a admin.
+
+### CORS do bucket (necessário pra `fetch()` funcionar no site)
+
+`<img>`/`<iframe>` carregam a URL de download normalmente porque são navegação de recurso do
+navegador (não passam pela checagem de CORS). Mas qualquer `fetch()` feito em JS pra **ler** o
+conteúdo do arquivo (baixar como blob, juntar em PDF etc.) só funciona se o bucket tiver CORS
+configurado autorizando a origem do site — por padrão o bucket vem **sem** CORS (`[]`), e
+`fetch()` cross-origin falha silenciosamente com erro de CORS (a requisição de rede até funciona,
+mas o navegador bloqueia o JS de ler a resposta).
+
+Configurado na sessão 40 (22/09/2026) — descoberto ao debugar o botão "Baixar anexos em 1 PDF"
+falhando pra todos os anexos de uma vez, mesmo com a pré-visualização funcionando normalmente.
+Aplicado via `google-cloud-storage` (Python) com o `firebase-service-account.json` já usado nos
+scripts de automação do repo (não precisa de `gsutil`/`gcloud` instalado):
+
+```python
+from google.cloud import storage
+client = storage.Client.from_service_account_json('firebase-service-account.json')
+bucket = client.bucket('polo-medio-as.firebasestorage.app')
+bucket.cors = [{
+    'origin': ['https://lumabandeira.github.io', 'http://localhost:8123', 'http://localhost:8765'],
+    'method': ['GET'],
+    'responseHeader': ['Content-Type'],
+    'maxAgeSeconds': 3600
+}]
+bucket.patch()
+```
+
+Não muda controle de acesso (quem pode ler o arquivo continua igual — governado pelo token da URL,
+não pelo CORS) — só libera o **JavaScript da própria página** a ler a resposta de um `fetch()`
+cross-origin. Se no futuro o site for servido por outro domínio (domínio próprio, por exemplo),
+essa lista de `origin` precisa ser atualizada do mesmo jeito (não é algo commitado no repo —
+config fica só no bucket do Google Cloud, não em nenhum arquivo `.rules`).
 
 ---
 
