@@ -3983,7 +3983,6 @@
                     </div>
                     <div id="pc-detalhe-info" class="pc-detalhe-info"></div>
                     <div id="pc-detalhe-tabela"></div>
-                    <div id="pc-detalhe-processo"></div>
                 </div>
             </div>
         </div>
@@ -11963,30 +11962,6 @@
                 <button class="btn-salvar-form" style="margin-top:12px" onclick="abrirNovaDespesa('${p.id}')">+ Nova Despesa</button>
             `;
             document.getElementById('pc-detalhe-tabela').innerHTML = tabelaHtml;
-            document.getElementById('pc-detalhe-processo').innerHTML = _renderDocumentosProcesso(p);
-        }
-
-        function _renderDocumentosProcesso(p) {
-            const slots = [
-                { campo: 'memorando_url', label: '📝 Memorando de encaminhamento' },
-                { campo: 'termo_devolucao_url', label: '📄 Termo de Devolução' },
-                { campo: 'comprovante_devolucao_url', label: '💳 Comprovante de Devolução' }
-            ];
-            let html = `<h3 style="margin-top:24px">📁 Documentos do Processo</h3><div class="pc-anexo-slots">`;
-            slots.forEach(s => {
-                const preenchido = !!p[s.campo];
-                html += `<div class="pc-anexo-slot ${preenchido ? 'ok' : 'pendente'}">
-                    <span class="pc-anexo-slot-label">${s.label}</span>
-                    <span class="pc-anexo-slot-status">${preenchido ? '✅ Anexado' : '⚠️ Pendente'}</span>
-                    <div class="pc-anexo-slot-acoes">
-                        ${preenchido ? `<a href="${esc(p[s.campo])}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
-                        <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-proc-input-${s.campo}" onchange="uploadDocumentoProcesso('${p.id}', '${s.campo}', this.files[0])">
-                        <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-proc-input-${s.campo}').click()">${preenchido ? '🔄 Substituir' : '⬆️ Enviar'}</button>
-                    </div>
-                </div>`;
-            });
-            html += `</div>`;
-            return html;
         }
 
         // ── Exportar Mapa Demonstrativo em PDF (A4 paisagem) ────────────────
@@ -12666,27 +12641,6 @@
             }
         }
 
-        // ── Documentos do processo (Memorando, Termo/Comprovante de Devolução) ──
-        async function uploadDocumentoProcesso(prestacaoId, campo, file) {
-            if (!file) return;
-            try {
-                mostrarToast('⏳ Enviando arquivo...');
-                const caminho = `prestacoes-contas/${prestacaoId}/${campo}-${Date.now()}${_extensaoArquivo(file)}`;
-                const url = await _uploadParaStorage(caminho, file);
-                await db.collection('prestacoes_contas').doc(prestacaoId).update({
-                    [campo]: url,
-                    atualizado_por: currentUser.email,
-                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                const p = prestacoesContas.find(x => x.id === prestacaoId);
-                if (p) p[campo] = url;
-                _renderDetalhePrestacao();
-                mostrarToast('✅ Documento enviado com sucesso.');
-            } catch (e) {
-                console.error('Erro ao enviar documento do processo:', e);
-                mostrarToast('❌ ' + e.message, true);
-            }
-        }
     </script>
 
     <!-- ── Rich Text Editor Toolbar ─────────────────────────────────── -->

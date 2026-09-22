@@ -255,6 +255,20 @@ sempre juntos por causa do `justify-content: space-between` já existente no `.p
 com 2 botões (Visualizar + Substituir) em telas bem estreitas. Testado visualmente em duas larguras
 diferentes de coluna — layout consistente nos 4 slots em ambas.
 
+**Removido ainda nesta sessão:** bloco "📁 Documentos do Processo" (Memorando de encaminhamento,
+Termo de Devolução, Comprovante de Devolução) do Detalhe de Prestação de Contas — a usuária disse
+que nunca vai usar. Removidos `_renderDocumentosProcesso()`, `uploadDocumentoProcesso()` e o
+container estático `#pc-detalhe-processo`; `_renderDetalhePrestacao()` não chama mais nada disso.
+Só a UI saiu — os campos `memorando_url`/`termo_devolucao_url`/`comprovante_devolucao_url` de
+`prestacoes_contas/{id}` continuam existindo no schema (zerados ao criar prestação nova em
+`salvarPrestacao()`) e registros antigos que já tinham algum preenchido não foram limpos, só
+deixaram de ser exibidos/editáveis — mesmo padrão de "só oculta, não migra" já usado antes (sessão
+39, Recibo por categoria). Cuidado pra não confundir com `_pcModelos.memorando_url`/
+`pesquisa_mercado_url` (campos de mesmo nome só na parte, mas de outra seção — biblioteca "Modelos
+de Documentos" — que não foi tocada). Testado no navegador: Detalhe renderiza sem erro e sem
+nenhum rastro de "Documentos do Processo" (confirmado via busca por texto na página, não só no
+código). Ver `docs/site/estrutura-html.md` (seção "Prestação de Contas").
+
 ## Estado atual (sessão 39 — 21/09/2026)
 
 **Implementado nesta sessão:** ajuste na biblioteca de "📚 Modelos de Documentos" (sessão 38) — o

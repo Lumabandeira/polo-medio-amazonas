@@ -321,8 +321,21 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   de Anexos por despesa — é só uma biblioteca de referência/download.
 - **Detalhe** (`#pc-detalhe-view`): réplica do "Mapa Demonstrativo de Despesa" (planilha em papel
   usada pela Defensoria) — tabela de despesas com totais calculados automaticamente (valor das
-  despesas, saldo remanescente), mais os 3 documentos do processo como um todo (Memorando,
-  Termo de Devolução, Comprovante de Devolução).
+  despesas, saldo remanescente).
+- **Documentos do Processo removido (sessão 40):** bloco "📁 Documentos do Processo" (Memorando de
+  encaminhamento, Termo de Devolução, Comprovante de Devolução), que ficava logo abaixo do Mapa
+  Demonstrativo no Detalhe, foi removido a pedido da usuária ("nunca vou usar"). Removidos:
+  `_renderDocumentosProcesso()`, `uploadDocumentoProcesso()` e o container estático
+  `#pc-detalhe-processo` — sem esses 3, nada mais lê/exibe os campos `memorando_url`/
+  `termo_devolucao_url`/`comprovante_devolucao_url` do documento `prestacoes_contas/{id}`. Só a UI
+  foi removida — os 3 campos continuam sendo zerados (`null`) ao criar uma prestação nova em
+  `salvarPrestacao()` ([index.html:11794](polo-medio-amazonas/index.html:11794), inofensivo, só
+  não é mais lido em nenhum lugar) e registros antigos que já tinham algum desses campos
+  preenchido não foram limpos no Firestore, só deixaram de ser exibidos/editáveis (mesmo padrão já
+  usado quando um slot de outra seção foi só ocultado, não migrado — ver sessão 39, remoção do
+  slot de Recibo por categoria). Não confundir com `_pcModelos.memorando_url`/
+  `pesquisa_mercado_url` — campos homônimos, mas de outra seção (biblioteca "Modelos de
+  Documentos", modelo geral de referência), que não foram tocados.
 - **Anexos por despesa**: modal com 5 slots fixos, nesta ordem de exibição — Justificativa,
   Pesquisa de mercado (rótulo exibido; campo/nomes internos continuam `comprovacao_mercado`),
   Recibo/NF, Atesto, Fotos — + lista livre de "Outros documentos" (`_renderCorpoModalAnexos()`).
