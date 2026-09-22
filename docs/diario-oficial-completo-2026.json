@@ -6688,5 +6688,29 @@
         "resumo": "Publica resultado do 7º Concurso de Remoção 2026 com uma vaga para a 3ª Defensoria Pública do Polo Médio Amazonas, preenchida por Miguel Eduardo de Azevedo Martins Filho"
       }
     ]
+  },
+  {
+    "edicao": 2735,
+    "data": "2026-09-21",
+    "data_formatada": "21/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2735-2026__publicada_em_21_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 980/2026-GSPG/DPE/AM",
+        "sei": "26.0.000013236-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "plantao",
+          "substituicao"
+        ],
+        "trechos": [
+          "Escala de substituição\nPolo do Rio Negro-\nPolo do Médio Amazonas\nSolimões\nPolo do Médio Solimões Polo do Baixo Amazonas",
+          "CONSIDERANDO a Resolução nº 31/2017-CSDPE/AM, que cria e regula Polos de Atendimento da Defensoria Pública do Estado do Amazonas no interior do Estado do Amazonas"
+        ],
+        "resumo": "Define escala de substituição automática para plantão do Polo do Médio Amazonas em 21/09/2026"
+      }
+    ]
   }
 ]
