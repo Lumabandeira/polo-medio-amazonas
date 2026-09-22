@@ -1196,6 +1196,41 @@
             border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px;
         }
         .pc-outro-item .pc-foto-remover { position: static; }
+        .pc-outro-item-nome {
+            background: none; border: none; padding: 0; text-align: left; cursor: pointer;
+            color: var(--primary-color); text-decoration: underline; font: inherit;
+        }
+        .pc-foto-item img { cursor: pointer; }
+
+        .pc-anexos-layout { display: flex; gap: 20px; align-items: flex-start; }
+        .pc-anexos-lista { flex: 1 1 380px; min-width: 280px; }
+        .pc-anexos-preview {
+            flex: 1 1 380px; min-width: 280px; position: sticky; top: 0;
+            border: 1px solid var(--border-color); border-radius: 12px; padding: 16px;
+            background: var(--bg-color, #f9fafb); min-height: 420px;
+            display: flex; flex-direction: column;
+        }
+        .pc-anexo-preview-placeholder {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            color: var(--text-secondary); font-size: 0.9em; text-align: center; padding: 20px;
+        }
+        .pc-anexo-preview-header {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            flex-wrap: wrap; margin-bottom: 12px;
+        }
+        .pc-anexo-preview-nome { font-weight: 600; word-break: break-word; }
+        .pc-anexo-preview-acoes { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        .pc-anexo-preview-area {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            overflow: auto; background: white; border-radius: 8px;
+        }
+        .pc-anexo-preview-area iframe { width: 100%; height: 60vh; border: 0; border-radius: 8px; }
+        .pc-anexo-preview-area img { max-width: 100%; max-height: 60vh; object-fit: contain; border-radius: 8px; }
+
+        @media (max-width: 720px) {
+            .pc-anexos-layout { flex-direction: column; }
+            .pc-anexos-preview { position: static; min-height: 320px; }
+        }
 
         /* ─── Seção Equipe ───────────────────────────────────────── */
         #equipe-year-selector { display:flex; gap:8px; margin-bottom:12px; }
@@ -2586,6 +2621,7 @@
         .form-titulares-header h2 { margin: 0; font-size: 1.4em; }
 
         #form-titulares-overlay .form-af-content { max-width: 720px; }
+        #modal-anexos-overlay .form-af-content { max-width: 1200px; }
 
         .tit-entry-card {
             background: var(--bg-color, #f9fafb);
@@ -11361,6 +11397,7 @@
         let _pcAtualId = null;
         let _anexoPrestacaoId = null;
         let _anexoDespesaIdx = null;
+        let _anexoPreviewCampo = null;
         let _pcModelos = {
             pessoa_juridica: [], consumo: [], pessoa_fisica: [],
             memorando_url: null, memorando_nome: null,
@@ -12186,6 +12223,7 @@
         function abrirModalAnexos(prestacaoId, idx) {
             _anexoPrestacaoId = prestacaoId;
             _anexoDespesaIdx = idx;
+            _anexoPreviewCampo = null;
             const p = prestacoesContas.find(x => x.id === prestacaoId);
             const d = p && (p.despesas || [])[idx];
             if (!p || !d) return;
@@ -12201,6 +12239,92 @@
             document.getElementById('modal-anexos-overlay').classList.remove('active');
             _anexoPrestacaoId = null;
             _anexoDespesaIdx = null;
+            _anexoPreviewCampo = null;
+        }
+
+        function _despesaAtualAnexos() {
+            const p = prestacoesContas.find(x => x.id === _anexoPrestacaoId);
+            return p && (p.despesas || [])[_anexoDespesaIdx];
+        }
+
+        function _resolverPreviewAnexo(d, campo) {
+            if (!d || !campo) return null;
+            if (campo === 'comprovacao_mercado') {
+                const cm = d.comprovacao_mercado || {};
+                return cm.url ? { url: cm.url, nome: 'Pesquisa de mercado' } : null;
+            }
+            if (campo.startsWith('foto:')) {
+                const i = Number(campo.split(':')[1]);
+                const url = (d.fotos_urls || [])[i];
+                return url ? { url, nome: `Foto ${i + 1}` } : null;
+            }
+            if (campo.startsWith('outro:')) {
+                const i = Number(campo.split(':')[1]);
+                const doc = (d.outros_documentos || [])[i];
+                return doc && doc.url ? { url: doc.url, nome: doc.nome || 'Documento' } : null;
+            }
+            const labels = {
+                justificativa_url: 'Justificativa',
+                recibo_url: 'Recibo / Nota Fiscal',
+                atesto_url: 'Atesto'
+            };
+            const url = d[campo];
+            return url ? { url, nome: labels[campo] || campo } : null;
+        }
+
+        function _painelPreviewHtml(d) {
+            const item = _resolverPreviewAnexo(d, _anexoPreviewCampo);
+            if (!item) {
+                return `<div class="pc-anexo-preview-placeholder">Selecione um anexo ao lado para visualizar aqui.</div>`;
+            }
+            const isPdf = /\.pdf(\?|$)/i.test(item.url);
+            const conteudo = isPdf
+                ? `<iframe src="${esc(item.url)}" title="${esc(item.nome)}"></iframe>`
+                : `<img src="${esc(item.url)}" alt="${esc(item.nome)}">`;
+            return `
+                <div class="pc-anexo-preview-header">
+                    <span class="pc-anexo-preview-nome">${esc(item.nome)}</span>
+                    <div class="pc-anexo-preview-acoes">
+                        <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="_baixarAnexo()">⬇️ Baixar</button>
+                        <a href="${esc(item.url)}" target="_blank" rel="noopener" style="font-size:0.8em">Abrir em nova guia</a>
+                    </div>
+                </div>
+                <div class="pc-anexo-preview-area">${conteudo}</div>
+            `;
+        }
+
+        function _visualizarAnexoCampo(campo) {
+            _anexoPreviewCampo = campo;
+            const d = _despesaAtualAnexos();
+            if (!d) return;
+            document.getElementById('pc-anexo-preview-painel').innerHTML = _painelPreviewHtml(d);
+        }
+
+        async function _baixarAnexo() {
+            const d = _despesaAtualAnexos();
+            const item = d && _resolverPreviewAnexo(d, _anexoPreviewCampo);
+            if (!item) return;
+            const { url, nome } = item;
+            try {
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error('Falha ao baixar arquivo.');
+                const blob = await resp.blob();
+                const extMatch = url.match(/\.[a-zA-Z0-9]+(?=\?|$)/);
+                const ext = extMatch ? extMatch[0] : '';
+                const nomeArquivo = (nome || 'anexo').replace(/[\\/:*?"<>|]+/g, '_') + ext;
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = nomeArquivo;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(blobUrl);
+            } catch (e) {
+                console.error('Erro ao baixar anexo:', e);
+                mostrarToast('⚠️ Não foi possível baixar direto — abrindo em nova guia.', true);
+                window.open(url, '_blank');
+            }
         }
 
         function _slotAnexoSimples(campo, label, url, descricao) {
@@ -12211,7 +12335,7 @@
                 </div>
                 <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
                 <div class="pc-anexo-slot-acoes">
-                    ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                    ${url ? `<button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="_visualizarAnexoCampo('${campo}')">👁️ Visualizar</button>` : ''}
                     <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-${campo}" onchange="_uploadSlotSimples('${campo}', this.files[0])">
                     <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-input-${campo}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
                 </div>
@@ -12222,6 +12346,8 @@
             const cm = d.comprovacao_mercado || {};
 
             let html = `
+                <div class="pc-anexos-layout">
+                <div class="pc-anexos-lista">
                 <div class="pc-anexo-slots">
                     ${_slotAnexoSimples('justificativa_url', '📄 Justificativa', d.justificativa_url, 'Para cada aquisição/contratação de serviços por adiantamento, contendo o registro da verificação da existência do bem em estoque ou de contrato vigente.')}
 
@@ -12232,7 +12358,7 @@
                         </div>
                         <span class="pc-anexo-slot-status">${cm.url ? '✅ Anexado' : '⚠️ Pendente'}</span>
                         <div class="pc-anexo-slot-acoes">
-                            ${cm.url ? `<a href="${esc(cm.url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                            ${cm.url ? `<button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="_visualizarAnexoCampo('comprovacao_mercado')">👁️ Visualizar</button>` : ''}
                             <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-mercado" onchange="_uploadComprovacaoMercado(this.files[0])">
                             <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-input-mercado').click()">${cm.url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
                         </div>
@@ -12246,7 +12372,7 @@
                 <div class="pc-fotos-grid" id="pc-fotos-grid">
                     ${(d.fotos_urls || []).map((url, i) => `
                         <div class="pc-foto-item">
-                            <a href="${esc(url)}" target="_blank" rel="noopener"><img src="${esc(url)}" alt="Foto ${i+1}"></a>
+                            <img src="${esc(url)}" alt="Foto ${i+1}" onclick="_visualizarAnexoCampo('foto:${i}')">
                             <button type="button" class="pc-foto-remover" onclick="removerFoto(${i})">✕</button>
                         </div>`).join('')}
                 </div>
@@ -12257,12 +12383,16 @@
                 <div id="pc-outros-lista">
                     ${(d.outros_documentos || []).map((doc, i) => `
                         <div class="pc-outro-item">
-                            <a href="${esc(doc.url)}" target="_blank" rel="noopener">${esc(doc.nome)}</a>
+                            <button type="button" class="pc-outro-item-nome" onclick="_visualizarAnexoCampo('outro:${i}')">${esc(doc.nome)}</button>
                             <button type="button" class="pc-foto-remover" onclick="removerOutroDocumento(${i})">✕</button>
                         </div>`).join('') || '<p style="color:var(--text-secondary);font-size:0.9em">Nenhum documento avulso.</p>'}
                 </div>
                 <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-outro" onchange="adicionarOutroDocumento(this.files[0])">
                 <button class="btn-editar" style="margin-top:8px" onclick="document.getElementById('pc-input-outro').click()">+ Anexar outro documento</button>
+                </div>
+
+                <div class="pc-anexos-preview" id="pc-anexo-preview-painel">${_painelPreviewHtml(d)}</div>
+                </div>
             `;
             document.getElementById('modal-anexos-body').innerHTML = html;
         }
@@ -12360,6 +12490,7 @@
             urls.splice(i, 1);
             try {
                 const dAtualizada = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, { fotos_urls: urls });
+                _anexoPreviewCampo = null;
                 _renderCorpoModalAnexos(dAtualizada);
                 _renderDetalhePrestacao();
             } catch (e) {
@@ -12398,6 +12529,7 @@
             outros.splice(i, 1);
             try {
                 const dAtualizada = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, { outros_documentos: outros });
+                _anexoPreviewCampo = null;
                 _renderCorpoModalAnexos(dAtualizada);
                 _renderDetalhePrestacao();
             } catch (e) {

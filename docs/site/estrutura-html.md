@@ -338,6 +338,27 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   impossibilidade, justificativa da ausência de pesquisa."). Upload vai para Firebase Storage em
   `prestacoes-contas/{prestacaoId}/...`; a URL de download fica salva no array `despesas[]` do
   documento Firestore.
+- **Visualização inline dos anexos (painel dividido):** o modal de Anexos por despesa
+  (`#modal-anexos-overlay`, alargado para `max-width: 1200px` só nesse modal) mostra a lista de
+  anexos à esquerda (`.pc-anexos-lista`) e um painel de visualização fixo à direita
+  (`.pc-anexos-preview`, `#pc-anexo-preview-painel`) — em telas ≤720px empilha em coluna única.
+  Cada slot (Justificativa/Pesquisa de mercado/Recibo/Atesto), cada foto da grade e cada "outro
+  documento" tem um botão/clique "👁️ Visualizar" que chama `_visualizarAnexoCampo(campo)` — o
+  `campo` é só uma **chave** (`'justificativa_url'`, `'comprovacao_mercado'`, `'recibo_url'`,
+  `'atesto_url'`, `'foto:<i>'`, `'outro:<i>'`), guardada em `_anexoPreviewCampo`, nunca a URL/nome
+  em si — o painel resolve o valor atual em `_resolverPreviewAnexo(d, campo)` toda vez que
+  renderiza, então continua correto depois de um upload/substituição re-renderizar o modal (evita
+  reproduzir o tipo de bug de escaping em atributo já visto no projeto, ver sessão 35 no
+  `CLAUDE.md`). `_painelPreviewHtml(d)` decide PDF (`<iframe>`) vs imagem (`<img>`) pela extensão
+  no fim da URL (todo upload já passa por `_extensaoArquivo()`, então a URL sempre tem extensão).
+  Cabeçalho do painel tem "⬇️ Baixar" (`_baixarAnexo()` — `fetch` + `blob` + `<a download>`
+  temporário, força download de verdade mesmo sendo URL de outra origem do Storage; se o `fetch`
+  falhar cai para `window.open` + toast) e um link pequeno "Abrir em nova guia" como *fallback*.
+  `_anexoPreviewCampo` reseta pra `null` ao abrir/fechar o modal e ao remover uma foto/outro
+  documento (índices podem deslocar) — não reseta em upload/substituição de slot simples, pra
+  manter o mesmo anexo selecionado e já mostrar o arquivo novo. Escopo desta sessão: só o modal de
+  Anexos por despesa — "Documentos do Processo" e a biblioteca "Modelos de Documentos" continuam
+  com o link "Abrir" (nova guia) de antes.
 - **Valor Concedido (campo único)**: o formulário tinha "Valor Recebido" e "Valor Concedido"
   redundantes — removido "Valor Recebido", único campo `valor_concedido` (obrigatório) usado em
   cards, Detalhe, tabela de despesas e PDF, e no cálculo de saldo. Registros antigos gravados só

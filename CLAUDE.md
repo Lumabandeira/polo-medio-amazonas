@@ -171,6 +171,27 @@ categorias) antes de mutar a chave da categoria alvo e salva o objeto `recibo` i
 recibo de "Consumo" marca só aquela categoria como "✅ Anexado", "Pessoa Jurídica" continua
 "⚠️ Pendente" — confirma que as 3 categorias são independentes.
 
+## Estado atual (sessão 40 — 22/09/2026)
+
+**Implementado nesta sessão:** visualização inline dos anexos no modal "Anexos" por despesa da
+Prestação de Contas — a usuária queria ver o conteúdo do arquivo sem abrir nova guia, parecido com
+anexo de e-mail. Modal alargado (`#modal-anexos-overlay` até 1200px) em duas colunas: lista de
+anexos à esquerda, painel de visualização fixo à direita (`.pc-anexos-preview`). Clicar em "👁️
+Visualizar" num slot (Justificativa/Pesquisa de mercado/Recibo/Atesto), numa foto da grade ou num
+"outro documento" mostra o arquivo no painel (PDF em `<iframe>`, imagem em `<img>`, detectado pela
+extensão da URL) com botão "⬇️ Baixar" (`fetch`+`blob`+`<a download>`, força download de verdade
+mesmo em URL de outra origem) e "Abrir em nova guia" como *fallback*. O que fica selecionado é uma
+chave (`_anexoPreviewCampo`, ex. `'recibo_url'`/`'foto:2'`), nunca a URL/nome literal — o painel
+resolve o valor atual do Firestore a cada render, então continua certo depois de um upload
+re-renderizar o modal (`_visualizarAnexoCampo()`/`_resolverPreviewAnexo()`/`_painelPreviewHtml()`
+em `index.html`). Escopo combinado com a usuária: só esse modal — "Documentos do Processo" e
+"Modelos de Documentos" continuam com "Abrir" (nova guia). Testado no navegador (servidor
+estático, `userRole='admin'` + `db`/`storage` stubados): preview de PDF e imagem, download
+disparando com nome sanitizado, painel atualizando sozinho após substituir um anexo que estava
+sendo visualizado, reset do preview ao remover foto/documento com índice deslocado, e layout
+empilhado em coluna única no celular (375px). Ver `docs/site/estrutura-html.md` (seção "Prestação
+de Contas").
+
 ## Estado atual (sessão 39 — 21/09/2026)
 
 **Implementado nesta sessão:** ajuste na biblioteca de "📚 Modelos de Documentos" (sessão 38) — o
