@@ -192,6 +192,26 @@ sendo visualizado, reset do preview ao remover foto/documento com índice desloc
 empilhado em coluna única no celular (375px). Ver `docs/site/estrutura-html.md` (seção "Prestação
 de Contas").
 
+**Ajuste ainda nesta sessão:** proporção das duas colunas do modal de Anexos alterada a pedido da
+usuária — lista de anexos reduzida para ~75% da largura original (`.pc-anexos-lista { flex: 3 }`),
+dando mais espaço ao painel de visualização (`.pc-anexos-preview { flex: 5 }`), que era 50/50.
+
+**Implementado ainda nesta sessão:** botão "🧷 Baixar anexos em 1 PDF" no modal de Anexos —
+junta Justificativa + Pesquisa de mercado + Recibo/NF + Atesto num único PDF, nessa ordem fixa,
+pulando qualquer um que não tenha anexo (`_baixarAnexosMerge()`, `_ANEXOS_ORDEM_MERGE` em
+`index.html`). Precisou de uma biblioteca nova, **pdf-lib** (CDN, junto dos scripts de jsPDF) —
+diferente do jsPDF já usado no site (só cria PDF novo a partir de texto/tabela), o pdf-lib copia
+as páginas de um PDF já existente mantendo o conteúdo original e embute imagem como página nova,
+o que permite juntar de verdade os arquivos que a usuária já anexou (não gera um PDF novo com o
+conteúdo reescrito). Reaproveita `_resolverPreviewAnexo()` (já existente do preview inline) pra
+resolver cada um dos 4 campos na ordem certa. Falha em 1 anexo (rede, arquivo corrompido) não
+aborta o merge inteiro — só avisa em toast qual ficou de fora; só cancela de vez se nenhum dos 4
+entrar no PDF final. Testado no navegador com PDFs/imagem reais gerados na hora (jsPDF + canvas
+pra simular arquivo real, sem depender de rede): merge de 3 dos 4 anexos (sem Pesquisa de
+mercado, replicando o caso mostrado pela usuária) gerando PDF de 4 páginas na ordem certa, caso
+sem nenhum anexo (toast, sem gerar arquivo) e caso de 1 URL inválida (PDF sai só com os outros 2,
+toast nomeia o que faltou). Ver `docs/site/estrutura-html.md` (seção "Prestação de Contas").
+
 ## Estado atual (sessão 39 — 21/09/2026)
 
 **Implementado nesta sessão:** ajuste na biblioteca de "📚 Modelos de Documentos" (sessão 38) — o

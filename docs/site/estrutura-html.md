@@ -358,7 +358,28 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   documento (índices podem deslocar) — não reseta em upload/substituição de slot simples, pra
   manter o mesmo anexo selecionado e já mostrar o arquivo novo. Escopo desta sessão: só o modal de
   Anexos por despesa — "Documentos do Processo" e a biblioteca "Modelos de Documentos" continuam
-  com o link "Abrir" (nova guia) de antes.
+  com o link "Abrir" (nova guia) de antes. Proporção das colunas ajustada depois a pedido da
+  usuária: `.pc-anexos-lista { flex: 3 ... }` / `.pc-anexos-preview { flex: 5 ... }` (lista a
+  ~37,5% da largura, preview a ~62,5% — a lista ficou em 75% da largura original, que era 50/50).
+- **Baixar os 4 anexos mesclados em 1 PDF:** botão "🧷 Baixar anexos em 1 PDF" no topo de
+  `.pc-anexos-lista`, `_baixarAnexosMerge()` (ao lado de `_baixarAnexo()`). Ordem fixa e sempre a
+  mesma, `_ANEXOS_ORDEM_MERGE = ['justificativa_url', 'comprovacao_mercado', 'recibo_url',
+  'atesto_url']` — resolve cada chave com `_resolverPreviewAnexo(d, campo)` (mesma função do
+  painel de preview) e pula silenciosamente qualquer uma que volte `null` (sem lógica condicional
+  por slot: "sem Pesquisa de mercado" e "sem Atesto" tratados igual). Usa **pdf-lib**
+  (`https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js`, carregado junto dos scripts
+  de jsPDF) — diferente do jsPDF já usado em `baixarMapaPDF()` (que só gera PDF novo a partir de
+  texto/tabela), o pdf-lib consegue copiar as páginas de um PDF já existente
+  (`PDFDocument.load()` + `copyPages()`) mantendo o conteúdo original, e embutir imagem como
+  página nova (`embedPng`/`embedJpg` pela extensão da URL, mesma checagem já usada no preview).
+  Cada anexo é baixado com `fetch()` isoladamente; se um falhar (rede, arquivo corrompido), o erro
+  é capturado por item — o merge continua com os demais e avisa em toast quais falharam, só aborta
+  de vez se **nenhum** dos 4 entrar no PDF final. Nome do arquivo:
+  `Anexos-{tipo}-{numero}-{fornecedor}.pdf` (mesmo sanitizador de `_baixarAnexo()`). Testado no
+  navegador com PDFs/imagem reais gerados na hora (jsPDF + canvas): merge de 3 dos 4 anexos (sem
+  Pesquisa de mercado) gerando PDF de 4 páginas na ordem certa, caso sem nenhum anexo (toast, sem
+  gerar arquivo) e caso de 1 anexo com URL inválida (PDF final sai só com os outros 2, toast avisa
+  qual anexo faltou).
 - **Valor Concedido (campo único)**: o formulário tinha "Valor Recebido" e "Valor Concedido"
   redundantes — removido "Valor Recebido", único campo `valor_concedido` (obrigatório) usado em
   cards, Detalhe, tabela de despesas e PDF, e no cálculo de saldo. Registros antigos gravados só

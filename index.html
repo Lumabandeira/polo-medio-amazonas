@@ -3255,6 +3255,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 </head>
 <!-- Loading Overlay (exibido enquanto Firebase restaura a sessão) -->
 <div id="loading-overlay">
@@ -12327,6 +12328,84 @@
             }
         }
 
+        const _ANEXOS_ORDEM_MERGE = ['justificativa_url', 'comprovacao_mercado', 'recibo_url', 'atesto_url'];
+
+        async function _baixarAnexosMerge() {
+            const d = _despesaAtualAnexos();
+            if (!d) return;
+            const itens = _ANEXOS_ORDEM_MERGE
+                .map(campo => _resolverPreviewAnexo(d, campo))
+                .filter(Boolean);
+            if (itens.length === 0) {
+                mostrarToast('⚠️ Nenhum anexo para juntar.', true);
+                return;
+            }
+            if (!window.PDFLib) {
+                mostrarToast('❌ Biblioteca de PDF ainda não carregou. Tente novamente em instantes.', true);
+                return;
+            }
+
+            const { PDFDocument } = window.PDFLib;
+            mostrarToast('⏳ Gerando PDF...');
+            try {
+                const mergedPdf = await PDFDocument.create();
+                const falhas = [];
+
+                for (const item of itens) {
+                    try {
+                        const resp = await fetch(item.url);
+                        if (!resp.ok) throw new Error('Falha ao baixar arquivo.');
+                        const bytes = await resp.arrayBuffer();
+                        const isPdf = /\.pdf(\?|$)/i.test(item.url);
+                        if (isPdf) {
+                            const srcPdf = await PDFDocument.load(bytes);
+                            const paginas = await mergedPdf.copyPages(srcPdf, srcPdf.getPageIndices());
+                            paginas.forEach(pagina => mergedPdf.addPage(pagina));
+                        } else {
+                            const isPng = /\.png(\?|$)/i.test(item.url);
+                            const imagem = isPng ? await mergedPdf.embedPng(bytes) : await mergedPdf.embedJpg(bytes);
+                            const A4 = { largura: 595.28, altura: 841.89 };
+                            const escala = Math.min(1, A4.largura / imagem.width, A4.altura / imagem.height);
+                            const largura = imagem.width * escala;
+                            const altura = imagem.height * escala;
+                            const pagina = mergedPdf.addPage([largura, altura]);
+                            pagina.drawImage(imagem, { x: 0, y: 0, width: largura, height: altura });
+                        }
+                    } catch (e) {
+                        console.error(`Erro ao juntar anexo "${item.nome}":`, e);
+                        falhas.push(item.nome);
+                    }
+                }
+
+                if (mergedPdf.getPageCount() === 0) {
+                    mostrarToast('❌ Não foi possível juntar nenhum dos anexos.', true);
+                    return;
+                }
+
+                const bytes = await mergedPdf.save();
+                const blob = new Blob([bytes], { type: 'application/pdf' });
+                const nomeArquivo = `Anexos-${d.tipo || ''}-${d.numero || ''}-${d.fornecedor || ''}`
+                    .replace(/[\\/:*?"<>|]+/g, '_').replace(/\s+/g, ' ').trim() + '.pdf';
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = nomeArquivo;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(blobUrl);
+
+                if (falhas.length > 0) {
+                    mostrarToast(`⚠️ PDF gerado, mas falhou ao incluir: ${falhas.join(', ')}.`, true);
+                } else {
+                    mostrarToast('✅ PDF com os anexos gerado com sucesso.');
+                }
+            } catch (e) {
+                console.error('Erro ao gerar PDF mesclado:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
         function _slotAnexoSimples(campo, label, url, descricao) {
             return `<div class="pc-anexo-slot ${url ? 'ok' : 'pendente'}">
                 <div class="pc-anexo-slot-titulo">
@@ -12348,6 +12427,7 @@
             let html = `
                 <div class="pc-anexos-layout">
                 <div class="pc-anexos-lista">
+                <button class="btn-editar" style="margin-bottom:12px" onclick="_baixarAnexosMerge()">🧷 Baixar anexos em 1 PDF (Justificativa → Pesquisa de mercado → Recibo/NF → Atesto)</button>
                 <div class="pc-anexo-slots">
                     ${_slotAnexoSimples('justificativa_url', '📄 Justificativa', d.justificativa_url, 'Para cada aquisição/contratação de serviços por adiantamento, contendo o registro da verificação da existência do bem em estoque ou de contrato vigente.')}
 
