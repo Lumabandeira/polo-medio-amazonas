@@ -243,6 +243,18 @@ dropzones específicas (que usam `stopPropagation()`). Testado no navegador com 
 `drop`/`dragover`/`dragleave` sintéticos (`DataTransfer`/`File`, já que automação de navegador não
 arrasta arquivo real do SO). Ver `docs/site/estrutura-html.md` (seção "Prestação de Contas").
 
+**Ajuste estético ainda nesta sessão:** o bloco "Pendente"/"Enviar" (ou "Anexado"/"Visualizar"/
+"Substituir") de cada slot de Anexos aparecia ora ao lado do título, ora embaixo dele, dependendo
+do tamanho do texto do título — inconsistente entre os 4 slots. Causa: `.pc-anexo-slot-titulo`
+([index.html:1169](polo-medio-amazonas/index.html:1169)) não tinha `flex-basis` definido dentro do
+`.pc-anexo-slot` (flex com `wrap`), então o navegador só quebrava linha quando o título "sobrava"
+espaço suficiente — dependia da largura real do texto. Corrigido com `flex: 1 0 100%` no título
+(força ele a sempre ocupar a linha inteira sozinho, empurrando status+botões pra linha de baixo,
+sempre juntos por causa do `justify-content: space-between` já existente no `.pc-anexo-slot`).
+`.pc-anexo-slot-acoes` ganhou `flex-wrap: wrap; justify-content: flex-end` de segurança pros casos
+com 2 botões (Visualizar + Substituir) em telas bem estreitas. Testado visualmente em duas larguras
+diferentes de coluna — layout consistente nos 4 slots em ambas.
+
 ## Estado atual (sessão 39 — 21/09/2026)
 
 **Implementado nesta sessão:** ajuste na biblioteca de "📚 Modelos de Documentos" (sessão 38) — o
