@@ -1171,6 +1171,15 @@
         .pc-anexo-slot-desc { font-size: 0.78em; font-weight: 400; color: var(--text-secondary); line-height: 1.35; }
         .pc-anexo-slot-status { font-size: 0.85em; color: var(--text-secondary); }
         .pc-anexo-slot-acoes { display: flex; gap: 8px; align-items: center; }
+        .pc-anexo-drop-hint { font-size: 0.72em; color: var(--text-secondary); }
+        .pc-anexo-dragover {
+            border-style: dashed !important; border-color: var(--primary-color, #1e40af) !important;
+            background: #eff6ff !important;
+        }
+        .pc-anexo-dropzone {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            border: 2px dashed var(--border-color); border-radius: 10px; padding: 12px 16px; margin-top: 8px;
+        }
 
         .pc-modelo-categoria { margin-bottom: 24px; }
         .pc-modelo-lista { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; }
@@ -4224,7 +4233,7 @@
 
     <!-- Modal Anexos da Despesa -->
     <div id="modal-anexos-overlay" class="form-af-overlay" onclick="fecharModalAnexos(event)">
-        <div class="form-af-content" onclick="event.stopPropagation()">
+        <div class="form-af-content" onclick="event.stopPropagation()" ondragover="event.preventDefault()" ondrop="event.preventDefault()">
             <div class="form-af-header">
                 <h2 id="modal-anexos-titulo">📎 Anexos da Despesa</h2>
                 <button class="modal-close" onclick="fecharModalAnexos()">×</button>
@@ -12407,10 +12416,11 @@
         }
 
         function _slotAnexoSimples(campo, label, url, descricao) {
-            return `<div class="pc-anexo-slot ${url ? 'ok' : 'pendente'}">
+            return `<div class="pc-anexo-slot ${url ? 'ok' : 'pendente'}" ondragover="_anexoDragOver(event)" ondragleave="_anexoDragLeave(event)" ondrop="_anexoDrop(event, 'slot', '${campo}')">
                 <div class="pc-anexo-slot-titulo">
                     <span class="pc-anexo-slot-label">${label}</span>
                     ${descricao ? `<span class="pc-anexo-slot-desc">${descricao}</span>` : ''}
+                    <span class="pc-anexo-drop-hint">📥 ou arraste o arquivo aqui</span>
                 </div>
                 <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
                 <div class="pc-anexo-slot-acoes">
@@ -12431,10 +12441,11 @@
                 <div class="pc-anexo-slots">
                     ${_slotAnexoSimples('justificativa_url', '📄 Justificativa', d.justificativa_url, 'Para cada aquisição/contratação de serviços por adiantamento, contendo o registro da verificação da existência do bem em estoque ou de contrato vigente.')}
 
-                    <div class="pc-anexo-slot ${cm.url ? 'ok' : 'pendente'}">
+                    <div class="pc-anexo-slot ${cm.url ? 'ok' : 'pendente'}" ondragover="_anexoDragOver(event)" ondragleave="_anexoDragLeave(event)" ondrop="_anexoDrop(event, 'mercado')">
                         <div class="pc-anexo-slot-titulo">
                             <span class="pc-anexo-slot-label">📑 Pesquisa de mercado</span>
                             <span class="pc-anexo-slot-desc">ou, na impossibilidade, justificativa da ausência de pesquisa.</span>
+                            <span class="pc-anexo-drop-hint">📥 ou arraste o arquivo aqui</span>
                         </div>
                         <span class="pc-anexo-slot-status">${cm.url ? '✅ Anexado' : '⚠️ Pendente'}</span>
                         <div class="pc-anexo-slot-acoes">
@@ -12456,8 +12467,11 @@
                             <button type="button" class="pc-foto-remover" onclick="removerFoto(${i})">✕</button>
                         </div>`).join('')}
                 </div>
-                <input type="file" accept="image/*" multiple style="display:none" id="pc-input-fotos" onchange="uploadFotos(this.files)">
-                <button class="btn-editar" onclick="document.getElementById('pc-input-fotos').click()">📷 Adicionar fotos</button>
+                <div class="pc-anexo-dropzone" ondragover="_anexoDragOver(event)" ondragleave="_anexoDragLeave(event)" ondrop="_anexoDrop(event, 'fotos')">
+                    <input type="file" accept="image/*" multiple style="display:none" id="pc-input-fotos" onchange="uploadFotos(this.files)">
+                    <button class="btn-editar" onclick="document.getElementById('pc-input-fotos').click()">📷 Adicionar fotos</button>
+                    <span class="pc-anexo-drop-hint">📥 ou arraste as fotos aqui</span>
+                </div>
 
                 <h4 style="margin-top:20px">📎 Outros documentos</h4>
                 <div id="pc-outros-lista">
@@ -12467,8 +12481,11 @@
                             <button type="button" class="pc-foto-remover" onclick="removerOutroDocumento(${i})">✕</button>
                         </div>`).join('') || '<p style="color:var(--text-secondary);font-size:0.9em">Nenhum documento avulso.</p>'}
                 </div>
-                <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-outro" onchange="adicionarOutroDocumento(this.files[0])">
-                <button class="btn-editar" style="margin-top:8px" onclick="document.getElementById('pc-input-outro').click()">+ Anexar outro documento</button>
+                <div class="pc-anexo-dropzone" style="margin-top:8px" ondragover="_anexoDragOver(event)" ondragleave="_anexoDragLeave(event)" ondrop="_anexoDrop(event, 'outro')">
+                    <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-outro" onchange="adicionarOutroDocumento(this.files[0])">
+                    <button class="btn-editar" onclick="document.getElementById('pc-input-outro').click()">+ Anexar outro documento</button>
+                    <span class="pc-anexo-drop-hint">📥 ou arraste o arquivo aqui</span>
+                </div>
                 </div>
 
                 <div class="pc-anexos-preview" id="pc-anexo-preview-painel">${_painelPreviewHtml(d)}</div>
@@ -12504,6 +12521,37 @@
             });
             p.despesas = despesas;
             return despesas[idx];
+        }
+
+        // ── Arrastar e soltar arquivo (drag & drop) ───────────────────────
+        function _anexoDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('pc-anexo-dragover');
+        }
+
+        function _anexoDragLeave(event) {
+            event.currentTarget.classList.remove('pc-anexo-dragover');
+        }
+
+        function _anexoDrop(event, tipo, ref) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.currentTarget.classList.remove('pc-anexo-dragover');
+            const files = event.dataTransfer.files;
+            if (!files || files.length === 0) return;
+            const avisarExtras = tipo !== 'fotos' && files.length > 1;
+
+            let promessa;
+            if (tipo === 'slot') promessa = _uploadSlotSimples(ref, files[0]);
+            else if (tipo === 'mercado') promessa = _uploadComprovacaoMercado(files[0]);
+            else if (tipo === 'fotos') promessa = uploadFotos(files);
+            else if (tipo === 'outro') promessa = adicionarOutroDocumento(files[0]);
+
+            // Aviso vem só depois do toast do próprio upload, senão é sobrescrito na hora
+            // (ambos rodam no mesmo tick síncrono antes do 1º "await" da função de upload).
+            if (avisarExtras && promessa && promessa.then) {
+                promessa.then(() => mostrarToast('⚠️ Apenas o 1º arquivo foi usado; os demais foram ignorados.', true));
+            }
         }
 
         async function _uploadSlotSimples(campo, file) {

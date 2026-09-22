@@ -380,6 +380,30 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   Pesquisa de mercado) gerando PDF de 4 páginas na ordem certa, caso sem nenhum anexo (toast, sem
   gerar arquivo) e caso de 1 anexo com URL inválida (PDF final sai só com os outros 2, toast avisa
   qual anexo faltou).
+- **Arrastar e soltar arquivo (drag & drop):** todos os pontos de upload do modal de Anexos
+  (Justificativa/Pesquisa de mercado/Recibo/Atesto, Fotos e Outros documentos) aceitam soltar o
+  arquivo direto, além do botão de sempre. 3 funções genéricas perto das funções de upload
+  (`_anexoDragOver`/`_anexoDragLeave`/`_anexoDrop(event, tipo, ref)`) — `_anexoDrop` só decide qual
+  função de upload **já existente** chamar de acordo com `tipo` (`'slot'`/`'mercado'`/`'fotos'`/
+  `'outro'`), nenhuma delas foi alterada. Os 4 slots simples e o de Pesquisa de mercado viraram
+  dropzone no próprio `<div class="pc-anexo-slot">`; Fotos e Outros documentos (que eram só um
+  botão solto) ganharam um wrapper `.pc-anexo-dropzone` (borda tracejada) em volta do botão. Texto
+  pequeno "📥 ou arraste o arquivo aqui" em cada um pra avisar que dá pra soltar ali — nada nisso é
+  descobrível só pelo botão. Se mais de 1 arquivo for solto num slot de arquivo único, só o
+  primeiro é usado; o aviso ("Apenas o 1º arquivo foi usado...") só é disparado **depois** que a
+  promise do upload resolve (`promessa.then(...)`), porque um `mostrarToast()` chamado antes, no
+  mesmo trecho síncrono, seria imediatamente sobrescrito pelo "⏳ Enviando arquivo..." da própria
+  função de upload (roda antes do 1º `await` dela, no mesmo tick). Rede de segurança:
+  `ondragover`/`ondrop` com `event.preventDefault()` no `.form-af-content` do próprio
+  `#modal-anexos-overlay` (markup estático do modal), pra um drop fora de qualquer dropzone
+  específica não fazer o navegador abrir o arquivo numa aba nova por cima do modal — as dropzones
+  específicas chamam `stopPropagation()`, então continuam funcionando normalmente por cima dessa
+  rede. Testado no navegador disparando eventos `drop`/`dragover`/`dragleave` sintéticos
+  (`DataTransfer`/`File` construídos em JS, já que automação de navegador não simula um drag real
+  do SO): upload por drop em slot vazio, 2 arquivos soltos num slot único (só o 1º é usado, aviso
+  aparece na ordem certa), 2 fotos soltas de uma vez na dropzone de Fotos, destaque visual
+  aparecendo/sumindo em `dragover`/`dragleave`, e um `drop` fora de qualquer dropzone confirmando
+  `event.defaultPrevented === true`.
 - **Valor Concedido (campo único)**: o formulário tinha "Valor Recebido" e "Valor Concedido"
   redundantes — removido "Valor Recebido", único campo `valor_concedido` (obrigatório) usado em
   cards, Detalhe, tabela de despesas e PDF, e no cálculo de saldo. Registros antigos gravados só

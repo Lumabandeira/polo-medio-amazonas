@@ -227,6 +227,22 @@ no Google Cloud, não fica em nenhum arquivo do repositório (ao contrário de `
 Validado com um `fetch()` real no navegador contra um PDF de produção já existente (retornou
 200 com o PDF de ~144KB, sem erro de CORS). Ver `docs/firebase.md` (seção "CORS do bucket").
 
+**Implementado ainda nesta sessão:** arrastar e soltar arquivo (drag & drop) em todos os pontos de
+upload do modal de Anexos (Justificativa/Pesquisa de mercado/Recibo/Atesto/Fotos/Outros
+documentos), além do botão "Enviar" de sempre. 3 funções genéricas
+(`_anexoDragOver`/`_anexoDragLeave`/`_anexoDrop(event, tipo, ref)` em `index.html`) que só
+disparam a função de upload já existente certa conforme `tipo` — nenhuma função de upload mudou.
+Texto "📥 ou arraste o arquivo aqui" em cada ponto pra avisar que dá pra soltar ali. Bug pego e
+corrigido ainda durante o teste: o aviso de "só o 1º arquivo foi usado" (quando se solta mais de 1
+arquivo num slot de arquivo único) inicialmente era sobrescrito na hora pelo toast "Enviando
+arquivo..." da própria função de upload, porque os dois `mostrarToast()` rodavam no mesmo trecho
+síncrono antes do 1º `await` — corrigido adiando esse aviso pra depois que a promise do upload
+resolve. Rede de segurança contra `drop` fora de qualquer dropzone (que faria o navegador abrir o
+arquivo numa aba, perdendo o modal): `preventDefault()` no container do modal, sem afetar as
+dropzones específicas (que usam `stopPropagation()`). Testado no navegador com eventos
+`drop`/`dragover`/`dragleave` sintéticos (`DataTransfer`/`File`, já que automação de navegador não
+arrasta arquivo real do SO). Ver `docs/site/estrutura-html.md` (seção "Prestação de Contas").
+
 ## Estado atual (sessão 39 — 21/09/2026)
 
 **Implementado nesta sessão:** ajuste na biblioteca de "📚 Modelos de Documentos" (sessão 38) — o
