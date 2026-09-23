@@ -57,6 +57,16 @@ docs/
 
 ---
 
+## Estado atual (sessão 41 — 23/09/2026)
+
+**Implementado nesta sessão:** filtro de cidade na Lista de "Viagens Trimestrais" (tabela 2 de
+Viagens e Eventos) — linha de botões "📍 Todas as cidades" + Itapiranga, São Sebastião do Uatumã,
+Silves, Urucará e Urucurituba (`VIAGENS_CIDADES`), abaixo do filtro de ano/mês e cumulativo com
+ele. Estado em `_viagensListaCidade`, trocado por `_viagensFiltrarCidade(idx)`. Não afeta o
+Calendário nem a tabela 1. Testado no navegador com eventos simulados (contagem por cidade, botão
+ativo, mensagem de lista vazia com o nome da cidade). Ver `docs/site/estrutura-html.md` (seção
+"Viagens e Eventos").
+
 ## Estado atual (sessão 38 — 18/09/2026)
 
 **Implementado nesta sessão:** reordenar despesas no "Mapa Demonstrativo de Despesa" (Detalhe de

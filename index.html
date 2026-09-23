@@ -9619,6 +9619,8 @@
         let _viagensEventos      = { 1: [], 2: [] };
         let _viagensCarregadoFlg = { 1: false, 2: false };
         let _viagensListaFiltro  = { 1: _viagensAnoMesAtual(), 2: _viagensAnoMesAtual() };
+        let _viagensListaCidade  = 'todas'; // filtro de cidade, só na tabela 2 (Viagens Trimestrais)
+        const VIAGENS_CIDADES    = ['Itapiranga', 'São Sebastião do Uatumã', 'Silves', 'Urucará', 'Urucurituba'];
         let _viagensSubTab       = 'calendario';
         let _viagensCalAno       = new Date().getFullYear();
         let _viagensCalMes       = new Date().getMonth();
@@ -9639,6 +9641,7 @@
                     <div class="viagens-block">
                         <h3>${cfg.titulo}</h3>
                         <div id="viagens-lista-filtro-${n}" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;"></div>
+                        ${n === 2 ? '<div id="viagens-lista-cidade" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;"></div>' : ''}
                         ${isAdmin ? `<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                             <button type="button" class="btn-editar" onclick="_viagensAbrirForm(${n},null)">➕ Novo Evento</button>
                             <span id="viagens-seed-${n}"></span>
@@ -10076,6 +10079,21 @@
                 html += `<button type="button" class="viagens-filtro-btn${atual.mes === val ? ' active' : ''}" onclick="_viagensFiltrarMes(${n},'${val}')">${m}</button>`;
             });
             el.innerHTML = html;
+
+            const elCid = n === 2 && document.getElementById('viagens-lista-cidade');
+            if (elCid) {
+                const cid = _viagensListaCidade;
+                elCid.innerHTML = `<button type="button" class="viagens-filtro-btn${cid === 'todas' ? ' active' : ''}" onclick="_viagensFiltrarCidade('todas')">📍 Todas as cidades</button>` +
+                    VIAGENS_CIDADES.map((c, i) =>
+                        `<button type="button" class="viagens-filtro-btn${cid === c ? ' active' : ''}" onclick="_viagensFiltrarCidade(${i})">${c}</button>`
+                    ).join('');
+            }
+        }
+
+        function _viagensFiltrarCidade(idx) {
+            _viagensListaCidade = idx === 'todas' ? 'todas' : VIAGENS_CIDADES[idx];
+            _viagensRenderListaFiltro(2);
+            _viagensRenderLista(2);
         }
 
         function _viagensFiltrarAno(n, ano) {
@@ -10097,10 +10115,13 @@
             const filtro  = _viagensListaFiltro[n];
             let eventos = (_viagensEventos[n] || []).filter(ev => ev.data_inicio.substring(0, 4) === String(filtro.ano));
             if (filtro.mes !== 'todos') eventos = eventos.filter(ev => ev.data_inicio.substring(5, 7) === filtro.mes);
+            const cidade = n === 2 ? _viagensListaCidade : 'todas';
+            if (cidade !== 'todas') eventos = eventos.filter(ev => (ev.local || '').trim().toLowerCase() === cidade.toLowerCase());
 
             if (!eventos.length) {
                 const cols = (n === 2 ? 6 : 5) + (isAdmin ? 1 : 0);
-                tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;color:#94a3b8;font-style:italic;padding:18px">Nenhum evento cadastrado ${filtro.mes !== 'todos' ? 'neste mês' : 'neste ano'}.</td></tr>`;
+                const onde = (filtro.mes !== 'todos' ? 'neste mês' : 'neste ano') + (cidade !== 'todas' ? ` para ${cidade}` : '');
+                tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;color:#94a3b8;font-style:italic;padding:18px">Nenhum evento cadastrado ${onde}.</td></tr>`;
                 return;
             }
 

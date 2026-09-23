@@ -574,6 +574,14 @@ dois botões de ano fixo (2026/2027, `_viagensFiltrarAno`) à esquerda, depois "
 vigente (`new Date().getFullYear()`) e `mes: 'todos'`. Texto das células (`motivo`/`membro`/`local`)
 sempre escapado via `_viagensEscHtml()` — nunca interpretado como HTML, mesmo em modo leitura.
 
+**Filtro de cidade (só Viagens Trimestrais, tabela 2 — sessão 41):** linha extra de botões
+(`#viagens-lista-cidade`) abaixo do filtro de ano/mês: "📍 Todas as cidades" + as 5 cidades de
+`VIAGENS_CIDADES` (Itapiranga, São Sebastião do Uatumã, Silves, Urucará, Urucurituba). Estado em
+`_viagensListaCidade` (`'todas'` ou o nome), trocado por `_viagensFiltrarCidade(idx)` (recebe o
+índice, não o nome, pra não precisar escapar acento/espaço no `onclick`). Combina com ano/mês
+(filtros cumulativos) e compara `ev.local` sem diferenciar maiúscula/minúscula. Não afeta o
+Calendário nem a tabela 1.
+
 **Seed inicial:** `VIAGENS_TABELAS[n].seed` — os mesmos registros do PDF "Nova Funcionalidade
 no site" (sessão 33), agora com `data_inicio`/`data_fim` reais em vez do texto livre original.
 Só aparece um botão "⬇️ Importar dados iniciais" (admin, na Lista) quando a coleção
