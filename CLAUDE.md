@@ -69,16 +69,18 @@ final. (2) Os 2 números da coluna "PRAZO" do Mapa são calculados (`_pcDiasIncl
 `_pcPrazos(p)`, contando o dia inicial **e** o final, a pedido da usuária): dias de aplicação
 (recebimento → data final) e dias de prestação de contas (data final → prazo de prest. de
 contas). Aparecem ao vivo abaixo das datas no formulário (`_pcAtualizarPrazosForm()`), no Detalhe
-e no PDF. ⚠️ A planilha da administração calcula o 2º prazo como `D6 = D5 + C6` (sem contar o dia
-final) — pela regra inclusiva pedida, 14/11 → 24/11 dá 11, onde a planilha mostraria 10. Usuária
-avisada; se precisar mudar, é só no cálculo de `prestacao` em `_pcPrazos()`. (3) Nova coluna
+e no PDF. **Ajuste na mesma sessão:** o 2º prazo passou a ser só a subtração das datas
+(`_pcDiasEntre()`, sem +1), igual à planilha (`D6 = D5 + C6`) — decisão da usuária depois de ser
+avisada da diferença (14/11 → 24/11 = 10 dias). O 1º prazo continua inclusivo (65 dias no exemplo,
+igual à planilha `D5 = D4 + (C5 − 1)`). Também na mesma sessão: "Tipo de Comprovante" da despesa
+ganhou as 4 opções da planilha (Recibo, Cupom Fiscal, Nota Fiscal, Cupom de máquina registradora). (3) Nova coluna
 "Desconto (se houver)" (`despesas[].desconto`, opcional, 0 em registros antigos): formulário de
 despesa, tabela do Detalhe e PDF. Valor total = (valor unit. × quant.) − desconto, igual à
 fórmula da planilha. (4) PDF: cabeçalho volta a ter "DATA DO RECEBIMENTO" e ganha a coluna
 "PRAZO" no layout da planilha; título passa a "MAPA DEMONSTRATIVO DE DESPESAS" (plural, como na
 planilha); coluna "DESCONTO (SE HOUVER)" entre Valor Unit. e Valor Total. Coluna de instruções da
 planilha não foi replicada (pedido da usuária). Testado no navegador com `db.collection` stubado:
-prazos 65/11 no exemplo 11/09→14/11→24/11, validação de datas, desconto recalculando o total e
+prazos 65/10 no exemplo 11/09→14/11→24/11, validação de datas, desconto recalculando o total e
 gravando no payload, e PDF real gerado e conferido. Ver `docs/site/estrutura-html.md` (seção
 "Prestação de Contas") e `docs/firebase.md`.
 

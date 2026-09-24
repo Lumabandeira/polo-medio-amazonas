@@ -255,7 +255,7 @@ memorando_url:            "https://firebasestorage..." | null
 termo_devolucao_url:      "https://firebasestorage..." | null
 comprovante_devolucao_url:"https://firebasestorage..." | null
 despesas: [
-  { tipo: "Recibo" | "Nota Fiscal", numero: "1", data_emissao: "YYYY-MM-DD",
+  { tipo: "Recibo" | "Cupom Fiscal" | "Nota Fiscal" | "Cupom de máquina registradora", numero: "1", data_emissao: "YYYY-MM-DD",
     fornecedor: "...", descricao: "...", quantidade: 1, valor_unitario: 80,
     desconto: 0,              ← opcional (sessão 42); ausente = 0
     valor_total: 80,          ← (valor_unitario × quantidade) − desconto

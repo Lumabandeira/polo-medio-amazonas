@@ -4194,7 +4194,9 @@
                             <label>Tipo de Comprovante</label>
                             <select id="fd-tipo">
                                 <option value="Recibo">Recibo</option>
+                                <option value="Cupom Fiscal">Cupom Fiscal</option>
                                 <option value="Nota Fiscal">Nota Fiscal</option>
+                                <option value="Cupom de máquina registradora">Cupom de máquina registradora</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -11424,19 +11426,25 @@
         function _pcDataRecebimento(p) {
             return p.data_recebimento || p.data_inicio_aplicacao || null;
         }
-        // Nº de dias entre duas datas 'YYYY-MM-DD' contando o dia inicial E o final.
+        // Nº de dias entre duas datas 'YYYY-MM-DD' (subtração simples: fim − início).
         // null se faltar alguma das datas.
-        function _pcDiasInclusivos(inicio, fim) {
+        function _pcDiasEntre(inicio, fim) {
             if (!inicio || !fim) return null;
             const ms = Date.parse(fim + 'T00:00:00Z') - Date.parse(inicio + 'T00:00:00Z');
-            return Math.round(ms / 86400000) + 1;
+            return Math.round(ms / 86400000);
         }
-        // Os 2 números da coluna "PRAZO" do Mapa: dias de aplicação (recebimento → data final)
-        // e dias de prestação de contas (data final → prazo de prest. de contas).
+        // Mesmo cálculo, contando o dia inicial E o final.
+        function _pcDiasInclusivos(inicio, fim) {
+            const d = _pcDiasEntre(inicio, fim);
+            return d == null ? null : d + 1;
+        }
+        // Os 2 números da coluna "PRAZO" do Mapa, iguais à planilha da administração:
+        // aplicação conta os 2 extremos (D5 = D4 + (C5 − 1)); prestação de contas é só a
+        // subtração das datas (D6 = D5 + C6).
         function _pcPrazos(p) {
             return {
                 aplicacao: _pcDiasInclusivos(_pcDataRecebimento(p), p.data_fim_aplicacao),
-                prestacao: _pcDiasInclusivos(p.data_fim_aplicacao, p.prazo_prestacao_contas)
+                prestacao: _pcDiasEntre(p.data_fim_aplicacao, p.prazo_prestacao_contas)
             };
         }
         function _pcFmtDias(n) {
@@ -11790,7 +11798,7 @@
             const fim = document.getElementById('fp-data-fim').value;
             const prazoPc = document.getElementById('fp-prazo-pc').value;
             const aplic = _pcDiasInclusivos(receb, fim);
-            const prest = _pcDiasInclusivos(fim, prazoPc);
+            const prest = _pcDiasEntre(fim, prazoPc);
             document.getElementById('fp-prazo-aplic-dias').textContent = aplic == null ? '' : `Prazo de aplicação: ${aplic} ${aplic === 1 ? 'dia' : 'dias'}`;
             document.getElementById('fp-prazo-pc-dias').textContent = prest == null ? '' : `Prazo de prest. de contas: ${prest} ${prest === 1 ? 'dia' : 'dias'}`;
         }

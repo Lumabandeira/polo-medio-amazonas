@@ -464,10 +464,13 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
 - **Datas e prazos (sessão 42)**: o formulário só tem Data do Recebimento (obrigatória), Data Final
   para Aplicação e Prazo de Prestação de Contas — a Data Inicial de Aplicação é sempre igual ao
   recebimento e é gravada automaticamente (`data_inicio_aplicacao = data_recebimento`); leitura
-  via `_pcDataRecebimento(p)` (fallback para registros antigos). Prazos em dias contando os dois
-  extremos (`_pcDiasInclusivos(inicio, fim)`): aplicação = recebimento → data final; prestação de
-  contas = data final → prazo de prest. de contas. Mostrados ao vivo abaixo das datas no
+  via `_pcDataRecebimento(p)` (fallback para registros antigos). Prazos em dias, iguais à planilha
+  da administração: aplicação = recebimento → data final contando os dois extremos
+  (`_pcDiasInclusivos()`); prestação de contas = data final → prazo de prest. de contas, só a
+  subtração das datas (`_pcDiasEntre()`, sem +1). Mostrados ao vivo abaixo das datas no
   formulário (`_pcAtualizarPrazosForm()`), no Detalhe (entre parênteses) e no PDF.
+- **Tipo de Comprovante (sessão 42)**: Recibo, Cupom Fiscal, Nota Fiscal, Cupom de máquina
+  registradora — mesma lista da aba de apoio da planilha da administração.
 - **Desconto (sessão 42)**: campo opcional `desconto` em cada despesa; valor total =
   (valor unit. × quant.) − desconto (`_atualizarValorTotalDespesa()`), mesma fórmula da planilha
   da administração. Coluna "Desconto" no Detalhe ("—" quando zero) e no PDF.
