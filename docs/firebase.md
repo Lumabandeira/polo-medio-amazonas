@@ -244,7 +244,7 @@ status:                   "aberto" | "concluido"   ← controla o limite de 2 si
 processo_sei:             "26.0.000000661-0"
 valor_concedido:          4000
 data_recebimento:         "YYYY-MM-DD"
-data_inicio_aplicacao:    "YYYY-MM-DD"
+data_inicio_aplicacao:    "YYYY-MM-DD"   ← sempre = data_recebimento (sessão 42; campo saiu do formulário)
 data_fim_aplicacao:       "YYYY-MM-DD"
 prazo_prestacao_contas:   "YYYY-MM-DD"
 unidade_gestora_cnpj:     "19.421.427/0001-91 - Defensoria Pública do Estado do Amazonas - DPE/AM" | null
@@ -256,7 +256,9 @@ termo_devolucao_url:      "https://firebasestorage..." | null
 comprovante_devolucao_url:"https://firebasestorage..." | null
 despesas: [
   { tipo: "Recibo" | "Nota Fiscal", numero: "1", data_emissao: "YYYY-MM-DD",
-    fornecedor: "...", descricao: "...", quantidade: 1, valor_unitario: 80, valor_total: 80,
+    fornecedor: "...", descricao: "...", quantidade: 1, valor_unitario: 80,
+    desconto: 0,              ← opcional (sessão 42); ausente = 0
+    valor_total: 80,          ← (valor_unitario × quantidade) − desconto
     recibo_url: "https://..." | null,
     comprovacao_mercado: { tipo: "pesquisa" | "justificativa_ausencia", url: "https://..." } | null,
     justificativa_url: "https://..." | null,

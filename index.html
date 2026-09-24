@@ -1114,6 +1114,12 @@
             flex-wrap: wrap; gap: 12px; margin-bottom: 10px;
         }
         .pc-lista-header h2 { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        .fp-prazo-hint {
+            display: block;
+            margin-top: 4px;
+            font-size: 0.78em;
+            color: var(--text-secondary);
+        }
         .fp-erro {
             background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5;
             border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 0.9em;
@@ -4130,19 +4136,18 @@
                         </div>
                         <div class="form-group">
                             <label>Data do Recebimento</label>
-                            <input type="date" id="fp-data-recebimento">
-                        </div>
-                        <div class="form-group">
-                            <label>Data Inicial de Aplicação</label>
-                            <input type="date" id="fp-data-inicio">
+                            <input type="date" id="fp-data-recebimento" required oninput="_pcAtualizarPrazosForm()">
+                            <small class="fp-prazo-hint">= Data Inicial de Aplicação</small>
                         </div>
                         <div class="form-group">
                             <label>Data Final para Aplicação</label>
-                            <input type="date" id="fp-data-fim">
+                            <input type="date" id="fp-data-fim" oninput="_pcAtualizarPrazosForm()">
+                            <small class="fp-prazo-hint" id="fp-prazo-aplic-dias"></small>
                         </div>
                         <div class="form-group">
                             <label>Prazo de Prestação de Contas</label>
-                            <input type="date" id="fp-prazo-pc">
+                            <input type="date" id="fp-prazo-pc" oninput="_pcAtualizarPrazosForm()">
+                            <small class="fp-prazo-hint" id="fp-prazo-pc-dias"></small>
                         </div>
                         <div class="form-group form-full" style="margin-top:8px; margin-bottom:-8px">
                             <strong>🏦 Unidade Gestora Concedente</strong>
@@ -4215,6 +4220,10 @@
                         <div class="form-group">
                             <label>Valor Unitário (R$)</label>
                             <input type="number" step="0.01" min="0" id="fd-valor-unitario" required oninput="_atualizarValorTotalDespesa()">
+                        </div>
+                        <div class="form-group">
+                            <label>Desconto (se houver) (R$)</label>
+                            <input type="number" step="0.01" min="0" id="fd-desconto" placeholder="0,00" oninput="_atualizarValorTotalDespesa()">
                         </div>
                         <div class="form-group">
                             <label>Valor Total (R$)</label>
@@ -11410,6 +11419,29 @@
         function _pcValorConcedido(p) {
             return Number(p.valor_concedido ?? p.valor_recebido) || 0;
         }
+        // Data inicial de aplicação é sempre igual à data do recebimento (planilha da
+        // administração). Registros antigos sem data_recebimento caem na data inicial gravada.
+        function _pcDataRecebimento(p) {
+            return p.data_recebimento || p.data_inicio_aplicacao || null;
+        }
+        // Nº de dias entre duas datas 'YYYY-MM-DD' contando o dia inicial E o final.
+        // null se faltar alguma das datas.
+        function _pcDiasInclusivos(inicio, fim) {
+            if (!inicio || !fim) return null;
+            const ms = Date.parse(fim + 'T00:00:00Z') - Date.parse(inicio + 'T00:00:00Z');
+            return Math.round(ms / 86400000) + 1;
+        }
+        // Os 2 números da coluna "PRAZO" do Mapa: dias de aplicação (recebimento → data final)
+        // e dias de prestação de contas (data final → prazo de prest. de contas).
+        function _pcPrazos(p) {
+            return {
+                aplicacao: _pcDiasInclusivos(_pcDataRecebimento(p), p.data_fim_aplicacao),
+                prestacao: _pcDiasInclusivos(p.data_fim_aplicacao, p.prazo_prestacao_contas)
+            };
+        }
+        function _pcFmtDias(n) {
+            return n == null ? '' : ` (${n} ${n === 1 ? 'dia' : 'dias'})`;
+        }
         // Prazo final de aplicação já encerrado (só sinaliza enquanto o pronto pagamento
         // ainda está aberto — depois de concluído, o vencimento do prazo é esperado).
         function _pcAplicacaoVencida(p) {
@@ -11490,7 +11522,7 @@
                             <span class="pc-badge-status ${statusClass}">${statusLabel}</span>
                         </div>
                         <div class="pc-card-sei">${p.processo_sei ? 'SEI ' + esc(p.processo_sei) : 'Sem processo SEI'}</div>
-                        <div class="pc-card-linha${_pcAplicacaoVencida(p) ? ' pc-aplic-vencida' : ''}"><span>Aplicação:</span> <strong>${(p.data_inicio_aplicacao || p.data_fim_aplicacao) ? formatarData(p.data_inicio_aplicacao) + ' a ' + formatarData(p.data_fim_aplicacao) : '—'}</strong>${_pcAplicacaoVencida(p) ? ' <span class="pc-aplic-tag">⚠ prazo encerrado</span>' : ''}</div>
+                        <div class="pc-card-linha${_pcAplicacaoVencida(p) ? ' pc-aplic-vencida' : ''}"><span>Aplicação:</span> <strong>${(_pcDataRecebimento(p) || p.data_fim_aplicacao) ? formatarData(_pcDataRecebimento(p)) + ' a ' + formatarData(p.data_fim_aplicacao) : '—'}</strong>${_pcAplicacaoVencida(p) ? ' <span class="pc-aplic-tag">⚠ prazo encerrado</span>' : ''}</div>
                         <div class="pc-card-valores">
                             <div><span>Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
                             <div><span>Despesas</span><strong>${formatarMoeda(totalDespesas)}</strong></div>
@@ -11748,7 +11780,19 @@
             document.getElementById('fp-ug-agencia').value = PC_UG_CONCEDENTE_PADRAO.agencia;
             document.getElementById('fp-ug-conta').value = PC_UG_CONCEDENTE_PADRAO.conta;
             document.getElementById('fp-erro').style.display = 'none';
+            _pcAtualizarPrazosForm();
             document.getElementById('form-prestacao-overlay').classList.add('active');
+        }
+
+        // Mostra, abaixo das datas do formulário, os 2 números de "PRAZO" do Mapa.
+        function _pcAtualizarPrazosForm() {
+            const receb = document.getElementById('fp-data-recebimento').value;
+            const fim = document.getElementById('fp-data-fim').value;
+            const prazoPc = document.getElementById('fp-prazo-pc').value;
+            const aplic = _pcDiasInclusivos(receb, fim);
+            const prest = _pcDiasInclusivos(fim, prazoPc);
+            document.getElementById('fp-prazo-aplic-dias').textContent = aplic == null ? '' : `Prazo de aplicação: ${aplic} ${aplic === 1 ? 'dia' : 'dias'}`;
+            document.getElementById('fp-prazo-pc-dias').textContent = prest == null ? '' : `Prazo de prest. de contas: ${prest} ${prest === 1 ? 'dia' : 'dias'}`;
         }
 
         function abrirEditarPrestacao(id) {
@@ -11760,8 +11804,7 @@
             document.getElementById('fp-categoria').value = p.categoria || '';
             document.getElementById('fp-sei').value = p.processo_sei || '';
             document.getElementById('fp-valor-concedido').value = p.valor_concedido ?? p.valor_recebido ?? '';
-            document.getElementById('fp-data-recebimento').value = p.data_recebimento || '';
-            document.getElementById('fp-data-inicio').value = p.data_inicio_aplicacao || '';
+            document.getElementById('fp-data-recebimento').value = _pcDataRecebimento(p) || '';
             document.getElementById('fp-data-fim').value = p.data_fim_aplicacao || '';
             document.getElementById('fp-prazo-pc').value = p.prazo_prestacao_contas || '';
             document.getElementById('fp-ug-cnpj').value = p.unidade_gestora_cnpj || PC_UG_CONCEDENTE_PADRAO.cnpj;
@@ -11769,6 +11812,7 @@
             document.getElementById('fp-ug-agencia').value = p.unidade_gestora_agencia || PC_UG_CONCEDENTE_PADRAO.agencia;
             document.getElementById('fp-ug-conta').value = p.unidade_gestora_conta || PC_UG_CONCEDENTE_PADRAO.conta;
             document.getElementById('fp-erro').style.display = 'none';
+            _pcAtualizarPrazosForm();
             document.getElementById('form-prestacao-overlay').classList.add('active');
         }
 
@@ -11785,15 +11829,30 @@
 
             if (!_validarCategoriaDisponivel()) return;
 
+            const dataRecebimento = document.getElementById('fp-data-recebimento').value || null;
+            const dataFim = document.getElementById('fp-data-fim').value || null;
+            const prazoPc = document.getElementById('fp-prazo-pc').value || null;
+            const erroEl = document.getElementById('fp-erro');
+            if (dataRecebimento && dataFim && dataFim < dataRecebimento) {
+                erroEl.textContent = '❌ A Data Final para Aplicação não pode ser anterior à Data do Recebimento.';
+                erroEl.style.display = 'block';
+                return;
+            }
+            if (dataFim && prazoPc && prazoPc < dataFim) {
+                erroEl.textContent = '❌ O Prazo de Prestação de Contas não pode ser anterior à Data Final para Aplicação.';
+                erroEl.style.display = 'block';
+                return;
+            }
+
             const dados = {
                 tomador,
                 categoria,
                 processo_sei: document.getElementById('fp-sei').value.trim() || null,
                 valor_concedido: Number(document.getElementById('fp-valor-concedido').value) || 0,
-                data_recebimento: document.getElementById('fp-data-recebimento').value || null,
-                data_inicio_aplicacao: document.getElementById('fp-data-inicio').value || null,
-                data_fim_aplicacao: document.getElementById('fp-data-fim').value || null,
-                prazo_prestacao_contas: document.getElementById('fp-prazo-pc').value || null,
+                data_recebimento: dataRecebimento,
+                data_inicio_aplicacao: dataRecebimento,
+                data_fim_aplicacao: dataFim,
+                prazo_prestacao_contas: prazoPc,
                 unidade_gestora_cnpj: document.getElementById('fp-ug-cnpj').value.trim() || null,
                 unidade_gestora_banco: document.getElementById('fp-ug-banco').value.trim() || null,
                 unidade_gestora_agencia: document.getElementById('fp-ug-agencia').value.trim() || null,
@@ -11909,14 +11968,15 @@
             const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
             const saldo = _pcValorConcedido(p) - totalDespesas;
             const statusLabel = p.status === 'concluido' ? '🟢 Concluído' : '🟡 Aberto';
+            const prazos = _pcPrazos(p);
 
             document.getElementById('pc-detalhe-info').innerHTML = `
                 <div class="pc-info-grid">
                     <div><span>Processo SEI</span><strong>${p.processo_sei ? esc(p.processo_sei) : '—'}</strong></div>
                     <div><span>Status</span><strong>${statusLabel}</strong></div>
-                    <div><span>Data do Recebimento</span><strong>${formatarData(p.data_recebimento)}</strong></div>
-                    <div${_pcAplicacaoVencida(p) ? ' class="pc-aplic-vencida"' : ''}><span>Aplicação</span><strong>${formatarData(p.data_inicio_aplicacao)} a ${formatarData(p.data_fim_aplicacao)}</strong>${_pcAplicacaoVencida(p) ? '<span class="pc-aplic-tag">⚠ prazo encerrado</span>' : ''}</div>
-                    <div><span>Prazo Prestação de Contas</span><strong>${formatarData(p.prazo_prestacao_contas)}</strong></div>
+                    <div><span>Data do Recebimento</span><strong>${formatarData(_pcDataRecebimento(p))}</strong></div>
+                    <div${_pcAplicacaoVencida(p) ? ' class="pc-aplic-vencida"' : ''}><span>Aplicação</span><strong>${formatarData(_pcDataRecebimento(p))} a ${formatarData(p.data_fim_aplicacao)}${_pcFmtDias(prazos.aplicacao)}</strong>${_pcAplicacaoVencida(p) ? '<span class="pc-aplic-tag">⚠ prazo encerrado</span>' : ''}</div>
+                    <div><span>Prazo Prestação de Contas</span><strong>${formatarData(p.prazo_prestacao_contas)}${_pcFmtDias(prazos.prestacao)}</strong></div>
                     <div><span>Valor Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
                     <div style="grid-column:1/-1"><span>Órgão / CNPJ (Unidade Gestora Concedente)</span><strong>${p.unidade_gestora_cnpj ? esc(p.unidade_gestora_cnpj) : '—'}</strong></div>
                 </div>
@@ -11935,14 +11995,14 @@
                     <thead>
                         <tr>
                             <th>Tipo</th><th>Nº</th><th>Data</th><th>Fornecedor</th>
-                            <th>Descrição</th><th>Qtd.</th><th>Valor Unit.</th><th>Valor Total</th>
+                            <th>Descrição</th><th>Qtd.</th><th>Valor Unit.</th><th>Desconto</th><th>Valor Total</th>
                             <th>Anexos</th><th></th>
                         </tr>
                     </thead>
                     <tbody>`;
 
             if (despesas.length === 0) {
-                tabelaHtml += `<tr><td colspan="10" style="text-align:center;padding:16px;color:var(--text-secondary)">Nenhuma despesa cadastrada.</td></tr>`;
+                tabelaHtml += `<tr><td colspan="11" style="text-align:center;padding:16px;color:var(--text-secondary)">Nenhuma despesa cadastrada.</td></tr>`;
             }
 
             despesas.forEach((d, idx) => {
@@ -11959,6 +12019,7 @@
                     <td>${esc(d.descricao || '')}</td>
                     <td>${esc(d.quantidade || '')}</td>
                     <td>${formatarMoeda(d.valor_unitario)}</td>
+                    <td>${Number(d.desconto) ? formatarMoeda(d.desconto) : '—'}</td>
                     <td>${formatarMoeda(d.valor_total)}</td>
                     <td style="text-align:center">
                         <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="abrirModalAnexos('${p.id}', ${idx})">📎 ${slotsPreenchidos}/${PC_TOTAL_SLOTS}</button>
@@ -11974,9 +12035,9 @@
 
             tabelaHtml += `</tbody>
                     <tfoot>
-                        <tr><td colspan="7" style="text-align:right"><strong>Valor das Despesas</strong></td><td colspan="3"><strong>${formatarMoeda(totalDespesas)}</strong></td></tr>
-                        <tr><td colspan="7" style="text-align:right">Valor Concedido</td><td colspan="3">${formatarMoeda(_pcValorConcedido(p))}</td></tr>
-                        <tr><td colspan="7" style="text-align:right"><strong>Saldo Remanescente</strong></td><td colspan="3"><strong>${formatarMoeda(saldo)}</strong></td></tr>
+                        <tr><td colspan="8" style="text-align:right"><strong>Valor das Despesas</strong></td><td colspan="3"><strong>${formatarMoeda(totalDespesas)}</strong></td></tr>
+                        <tr><td colspan="8" style="text-align:right">Valor Concedido</td><td colspan="3">${formatarMoeda(_pcValorConcedido(p))}</td></tr>
+                        <tr><td colspan="8" style="text-align:right"><strong>Saldo Remanescente</strong></td><td colspan="3"><strong>${formatarMoeda(saldo)}</strong></td></tr>
                     </tfoot>
                 </table>
                 </div>
@@ -12012,23 +12073,38 @@
             const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
             const saldo = _pcValorConcedido(p) - totalDespesas;
 
-            // Bloco de cabeçalho (Tomador, datas, valor concedido)
+            const fmtNum = v => (Number(v) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            // Bloco de cabeçalho no layout da planilha da administração: rótulo | coluna
+            // "PRAZO" (dias) | valor. Tomador ocupa as 2 colunas da direita.
+            const dataReceb = formatarData(_pcDataRecebimento(p));
+            const prazos = _pcPrazos(p);
             const infoRows = [
-                ['TOMADOR:', p.tomador || ''],
-                ['DATA INICIAL DE APLICAÇÃO:', formatarData(p.data_inicio_aplicacao)],
-                ['DATA FINAL PARA APLICAÇÃO:', formatarData(p.data_fim_aplicacao)],
-                ['PRAZO DE PREST. DE CONTAS:', formatarData(p.prazo_prestacao_contas)],
-                ['VALOR CONCEDIDO:', formatarMoeda(_pcValorConcedido(p))]
+                ['TOMADOR:', null, p.tomador || ''],
+                ['DATA DO RECEBIMENTO:', '', dataReceb],
+                ['DATA INICIAL DE APLICAÇÃO:', 'PRAZO', dataReceb],
+                ['DATA FINAL PARA APLICAÇÃO:', prazos.aplicacao ?? '', formatarData(p.data_fim_aplicacao)],
+                ['PRAZO DE PREST. DE CONTAS:', prazos.prestacao ?? '', formatarData(p.prazo_prestacao_contas)],
+                ['VALOR CONCEDIDO:', 'R$', fmtNum(_pcValorConcedido(p))]
             ];
             doc.setFontSize(9);
             doc.setFont(undefined, 'bold');
             const maiorLabelWidth = Math.max(...infoRows.map(([label]) => doc.getTextWidth(label)));
-            const valorOffsetX = maiorLabelWidth + 5;
-            infoRows.forEach(([label, value]) => {
+            const prazoColX = marginLeft + maiorLabelWidth + 4;
+            const prazoColWidth = 14;
+            const valorX = prazoColX + prazoColWidth + 3;
+            infoRows.forEach(([label, prazo, value]) => {
                 doc.setFont(undefined, 'bold');
                 doc.text(label, marginLeft, y);
-                doc.setFont(undefined, 'normal');
-                doc.text(String(value), marginLeft + valorOffsetX, y);
+                if (prazo === null) {
+                    doc.setFont(undefined, 'normal');
+                    doc.text(String(value), prazoColX, y);
+                } else {
+                    doc.setFont(undefined, prazo === 'PRAZO' ? 'bold' : 'normal');
+                    doc.text(String(prazo), prazoColX + prazoColWidth / 2, y, { align: 'center' });
+                    doc.setFont(undefined, 'normal');
+                    doc.text(String(value), valorX, y);
+                }
                 y += 5;
             });
             y += 3;
@@ -12038,25 +12114,24 @@
             doc.rect(marginLeft, y, pageWidth - marginLeft * 2, 7, 'F');
             doc.setFont(undefined, 'bold');
             doc.setFontSize(11);
-            doc.text('MAPA DEMONSTRATIVO DE DESPESA', pageWidth / 2, y + 5, { align: 'center' });
+            doc.text('MAPA DEMONSTRATIVO DE DESPESAS', pageWidth / 2, y + 5, { align: 'center' });
             y += 7;
-
-            const fmtNum = v => (Number(v) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             const body = despesas.map(d => [
                 d.tipo || '', d.numero || '', formatarData(d.data_emissao),
                 d.fornecedor || '', d.descricao || '',
                 String(d.quantidade ?? ''),
                 fmtNum(d.valor_unitario),
+                fmtNum(d.desconto),
                 fmtNum(d.valor_total)
             ]);
 
             const totalStyle = { halign: 'right', fontStyle: 'bold', fillColor: [245, 245, 245] };
             const normalStyle = { halign: 'right', fillColor: [245, 245, 245] };
             const saldoStyle = { halign: 'right', fontStyle: 'bold', fillColor: [220, 230, 241] };
-            body.push([{ content: 'VALOR DAS DESPESAS:', colSpan: 7, styles: totalStyle }, { content: formatarMoeda(totalDespesas), styles: totalStyle }]);
-            body.push([{ content: 'VALOR CONCEDIDO:', colSpan: 7, styles: normalStyle }, { content: formatarMoeda(_pcValorConcedido(p)), styles: normalStyle }]);
-            body.push([{ content: 'SALDO REMANESCENTE:', colSpan: 7, styles: saldoStyle }, { content: formatarMoeda(saldo), styles: saldoStyle }]);
+            body.push([{ content: 'VALOR DAS DESPESAS:', colSpan: 8, styles: totalStyle }, { content: formatarMoeda(totalDespesas), styles: totalStyle }]);
+            body.push([{ content: 'VALOR CONCEDIDO:', colSpan: 8, styles: normalStyle }, { content: formatarMoeda(_pcValorConcedido(p)), styles: normalStyle }]);
+            body.push([{ content: 'SALDO REMANESCENTE:', colSpan: 8, styles: saldoStyle }, { content: formatarMoeda(saldo), styles: saldoStyle }]);
 
             // Barra "COMPROVANTE DE DESPESA" desenhada à mão sobre Tipo/Nº/Data —
             // evita usar colSpan/rowSpan no head do AutoTable, que causa perda de
@@ -12074,7 +12149,7 @@
             doc.autoTable({
                 startY: y,
                 margin: { left: marginLeft, right: marginLeft },
-                head: [['TIPO', 'Nº', 'DATA DA EMISSÃO', 'FORNECEDOR', 'DESCRIÇÃO DO MATERIAL /SERVIÇO', 'QUANT.', 'VALOR UNIT.', 'VALOR TOTAL']],
+                head: [['TIPO', 'Nº', 'DATA DA EMISSÃO', 'FORNECEDOR', 'DESCRIÇÃO DO MATERIAL /SERVIÇO', 'QUANT.', 'VALOR UNIT.', 'DESCONTO\n(SE HOUVER)', 'VALOR TOTAL']],
                 body,
                 theme: 'grid',
                 styles: { fontSize: 8, cellPadding: 1.5, lineColor: [0, 0, 0], lineWidth: 0.1, textColor: 0, valign: 'middle' },
@@ -12087,7 +12162,8 @@
                     4: { cellWidth: 'auto' },
                     5: { cellWidth: 15, halign: 'center' },
                     6: { cellWidth: 22, halign: 'right' },
-                    7: { cellWidth: 25, halign: 'right' }
+                    7: { cellWidth: 24, halign: 'right' },
+                    8: { cellWidth: 25, halign: 'right' }
                 }
             });
 
@@ -12120,6 +12196,7 @@
             document.getElementById('fd-descricao').value = d.descricao || '';
             document.getElementById('fd-quantidade').value = d.quantidade || 1;
             document.getElementById('fd-valor-unitario').value = d.valor_unitario || '';
+            document.getElementById('fd-desconto').value = Number(d.desconto) ? d.desconto : '';
             document.getElementById('fd-valor-total').value = d.valor_total || '';
             document.getElementById('form-despesa-overlay').classList.add('active');
         }
@@ -12133,7 +12210,9 @@
         function _atualizarValorTotalDespesa() {
             const qtd = Number(document.getElementById('fd-quantidade').value) || 0;
             const valorUnit = Number(document.getElementById('fd-valor-unitario').value) || 0;
-            document.getElementById('fd-valor-total').value = (qtd * valorUnit).toFixed(2);
+            const desconto = Number(document.getElementById('fd-desconto').value) || 0;
+            // Mesma fórmula da planilha da administração: (valor unit. × quant.) − desconto
+            document.getElementById('fd-valor-total').value = (qtd * valorUnit - desconto).toFixed(2);
         }
 
         async function salvarDespesa() {
@@ -12151,6 +12230,7 @@
                 descricao: document.getElementById('fd-descricao').value.trim(),
                 quantidade: Number(document.getElementById('fd-quantidade').value) || 0,
                 valor_unitario: Number(document.getElementById('fd-valor-unitario').value) || 0,
+                desconto: Number(document.getElementById('fd-desconto').value) || 0,
                 valor_total: Number(document.getElementById('fd-valor-total').value) || 0
             };
 

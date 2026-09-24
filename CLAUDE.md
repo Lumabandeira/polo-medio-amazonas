@@ -57,6 +57,31 @@ docs/
 
 ---
 
+## Estado atual (sessão 42 — 24/09/2026)
+
+**Implementado nesta sessão:** Mapa Demonstrativo de Despesa (Prestação de Contas) atualizado para
+o novo modelo de planilha da administração (`MAPA_DEMONSTRATIVO (7) (5).xlsx`). (1) Formulário do
+pronto pagamento: removido o campo "Data Inicial de Aplicação" — ela é sempre igual à Data do
+Recebimento (agora obrigatória); `salvarPrestacao()` grava `data_inicio_aplicacao =
+data_recebimento`. Registros antigos sem `data_recebimento` caem em `data_inicio_aplicacao` via
+`_pcDataRecebimento(p)`. Validação: data final ≥ recebimento e prazo de prest. de contas ≥ data
+final. (2) Os 2 números da coluna "PRAZO" do Mapa são calculados (`_pcDiasInclusivos()`/
+`_pcPrazos(p)`, contando o dia inicial **e** o final, a pedido da usuária): dias de aplicação
+(recebimento → data final) e dias de prestação de contas (data final → prazo de prest. de
+contas). Aparecem ao vivo abaixo das datas no formulário (`_pcAtualizarPrazosForm()`), no Detalhe
+e no PDF. ⚠️ A planilha da administração calcula o 2º prazo como `D6 = D5 + C6` (sem contar o dia
+final) — pela regra inclusiva pedida, 14/11 → 24/11 dá 11, onde a planilha mostraria 10. Usuária
+avisada; se precisar mudar, é só no cálculo de `prestacao` em `_pcPrazos()`. (3) Nova coluna
+"Desconto (se houver)" (`despesas[].desconto`, opcional, 0 em registros antigos): formulário de
+despesa, tabela do Detalhe e PDF. Valor total = (valor unit. × quant.) − desconto, igual à
+fórmula da planilha. (4) PDF: cabeçalho volta a ter "DATA DO RECEBIMENTO" e ganha a coluna
+"PRAZO" no layout da planilha; título passa a "MAPA DEMONSTRATIVO DE DESPESAS" (plural, como na
+planilha); coluna "DESCONTO (SE HOUVER)" entre Valor Unit. e Valor Total. Coluna de instruções da
+planilha não foi replicada (pedido da usuária). Testado no navegador com `db.collection` stubado:
+prazos 65/11 no exemplo 11/09→14/11→24/11, validação de datas, desconto recalculando o total e
+gravando no payload, e PDF real gerado e conferido. Ver `docs/site/estrutura-html.md` (seção
+"Prestação de Contas") e `docs/firebase.md`.
+
 ## Estado atual (sessão 41 — 23/09/2026)
 
 **Implementado nesta sessão:** filtro de cidade na Lista de "Viagens Trimestrais" (tabela 2 de

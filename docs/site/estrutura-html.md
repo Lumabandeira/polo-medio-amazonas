@@ -456,9 +456,21 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   DESPESA" desenhada manualmente acima da tabela (em vez de `colSpan`/`rowSpan` no `head` do
   AutoTable), tabela de despesas e rodapé de totais. Validado com PDF real baixado e aberto no
   Chrome (fornecedor com nome longo quebrando em 3 linhas, valores corretos, sem sobreposição).
-  Bloco de cabeçalho (`infoRows`) só tem Tomador, Data Inicial/Final de Aplicação, Prazo de Prest.
-  de Contas e Valor Concedido — "Data do Recebimento" tirada a pedido da usuária (segue existindo
-  no formulário de cadastro e no Detalhe, só não repete no PDF).
+  Bloco de cabeçalho (`infoRows`) segue o layout da planilha da administração (sessão 42): Tomador,
+  Data do Recebimento, Data Inicial de Aplicação (= recebimento), Data Final para Aplicação, Prazo
+  de Prest. de Contas e Valor Concedido, com uma coluna "PRAZO" no meio mostrando os dias de
+  aplicação e de prestação de contas (`_pcPrazos(p)`). Tabela com coluna "DESCONTO (SE HOUVER)"
+  entre Valor Unit. e Valor Total; título "MAPA DEMONSTRATIVO DE DESPESAS".
+- **Datas e prazos (sessão 42)**: o formulário só tem Data do Recebimento (obrigatória), Data Final
+  para Aplicação e Prazo de Prestação de Contas — a Data Inicial de Aplicação é sempre igual ao
+  recebimento e é gravada automaticamente (`data_inicio_aplicacao = data_recebimento`); leitura
+  via `_pcDataRecebimento(p)` (fallback para registros antigos). Prazos em dias contando os dois
+  extremos (`_pcDiasInclusivos(inicio, fim)`): aplicação = recebimento → data final; prestação de
+  contas = data final → prazo de prest. de contas. Mostrados ao vivo abaixo das datas no
+  formulário (`_pcAtualizarPrazosForm()`), no Detalhe (entre parênteses) e no PDF.
+- **Desconto (sessão 42)**: campo opcional `desconto` em cada despesa; valor total =
+  (valor unit. × quant.) − desconto (`_atualizarValorTotalDespesa()`), mesma fórmula da planilha
+  da administração. Coluna "Desconto" no Detalhe ("—" quando zero) e no PDF.
   Nota: durante o desenvolvimento, a ferramenta de inspeção de PDF usada para conferir o layout
   mostrou um artefato de renderização que não existe no arquivo real — se for depurar isso de novo,
   confie no PDF baixado de verdade, não na pré-visualização.
