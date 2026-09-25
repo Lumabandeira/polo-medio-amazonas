@@ -59,7 +59,7 @@ docs/
 
 ## Estado atual (sessão 43 — 25/09/2026)
 
-**Implementado nesta sessão:** 4 ajustes pontuais em Prestação de Contas, todos testados no
+**Implementado nesta sessão:** 8 ajustes pontuais em Prestação de Contas, todos testados no
 navegador (servidor estático, sem login real, `userRole='admin'` simulado + `db` stubado/dados
 simulados, PDFs reais abertos no visualizador nativo do Chrome via `doc.output('bloburl')`).
 (1) **Alinhamento dos 3 campos de data** no formulário "Novo/Editar Pronto Pagamento" — "Data Final
@@ -79,13 +79,32 @@ do PDF do Mapa Demonstrativo no modelo da planilha**: a usuária enviou a planil
 tabela de despesas do `baixarMapaPDF()` ganharam a paleta aproximada da planilha (amarelo/Tomador,
 verde/Data do Recebimento, pêssego/datas de aplicação, lilás/números de PRAZO, azul
 claro/Valor Concedido do cadastro e Saldo Remanescente, verde claro/Valor Concedido do rodapé) e
-`alternateRowStyles` para linhas brancas/cinzas alternadas na tabela de despesas. (4) **Bugfix:
-espaço em branco no cabeçalho da tabela do PDF** — a barra "COMPROVANTE DE DESPESA" era desenhada
-só sobre Tipo/Nº/Data, deixando espaço em branco ao lado e repetindo todos os 9 títulos de coluna
-na linha de baixo; reescrito como cabeçalho manual de 2 linhas (Fornecedor…Valor Total na mesma
-linha de "COMPROVANTE DE DESPESA", sem repetir embaixo — como na planilha), ainda sem
-`colSpan`/`rowSpan` do AutoTable (bug conhecido, ver sessão 42). Ver `docs/site/estrutura-html.md`
-(seção "Prestação de Contas") e `docs/site/padroes-codigo.md`.
+`alternateRowStyles` para linhas brancas/cinzas alternadas na tabela de despesas (ajustado no item 7
+abaixo, depois de um bug real). (4) **Bugfix: espaço em branco no cabeçalho da tabela do PDF** — a
+barra "COMPROVANTE DE DESPESA" era desenhada só sobre Tipo/Nº/Data, deixando espaço em branco ao
+lado e repetindo todos os 9 títulos de coluna na linha de baixo; reescrito como cabeçalho manual de
+2 linhas (Fornecedor…Valor Total na mesma linha de "COMPROVANTE DE DESPESA", sem repetir embaixo —
+como na planilha), ainda sem `colSpan`/`rowSpan` do AutoTable (bug conhecido, ver sessão 42).
+(5) **Ajuste, a pedido da usuária:** as células mescladas de Fornecedor…Valor Total (item 4) ainda
+tinham fundo branco e uma linha divisória visível entre a linha de cima (com o título) e a célula
+em branco de baixo, parecendo 2 células separadas — a usuária pediu fundo cinza (igual a
+"COMPROVANTE DE DESPESA") e a mesclagem visual de verdade. Ajustado desenhando só 3 bordas na célula
+manual de cima (sem a de baixo) e usando `didParseCell` para zerar a borda do topo das mesmas 6
+colunas na linha de baixo do AutoTable (`lineWidth: { top: 0, right: 0.1, bottom: 0.1, left: 0.1 }`)
+— não dá pra usar `columnStyles[i].fillColor`/`lineWidth` pra isso porque afeta o corpo da coluna
+também. (6) **Ajuste:** o texto desses 6 títulos (Fornecedor…Valor Total) ficava colado no topo da
+célula mesclada, em vez de centralizado no espaço todo (linha de cima + linha de baixo em branco).
+Corrigido escrevendo o texto só depois, no hook `didDrawCell` do AutoTable, quando já se sabe a
+altura real da linha de baixo — só assim dá pra calcular o centro vertical certo.
+(7) **Bugfix real:** a usuária comparou com a planilha de referência e notou que a 1ª despesa do
+PDF vinha com fundo cinza, não branco (a planilha começa em branco). Causa: o `alternateRowStyles`
+do jsPDF-AutoTable 3.8.4 pinta as linhas de índice **par** (0, 2, 4…), o oposto do que se esperaria
+do nome. Trocado por zebrado manual num `didParseCell` (`data.row.index % 2 === 1`, só pintando as
+linhas ímpares — 2ª, 4ª, 6ª despesa —, e ignorando as 3 linhas de totais no fim do `body` via
+`data.row.index < despesas.length`). (8) **Ajuste:** a pedido da usuária, o cinza do zebrado ficou
+mais claro (`COR_CINZA_LINHA` de `[232,232,232]` para `[242,242,242]`), mais leve que o cinza do
+cabeçalho das colunas (`[217,217,217]`). Ver `docs/site/estrutura-html.md` (seção "Prestação de
+Contas") e `docs/site/padroes-codigo.md`.
 
 ## Estado atual (sessão 42 — 24/09/2026)
 

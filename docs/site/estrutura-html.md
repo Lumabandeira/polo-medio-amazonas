@@ -471,31 +471,44 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   (constantes `COR_*` logo antes de `infoRows`): amarelo (Tomador), verde + texto branco em negrito
   (Data do Recebimento), pêssego (as 3 linhas de datas/prazo), lilás + texto azul (os 2 números de
   PRAZO), azul claro (Valor Concedido do cadastro **e** Saldo Remanescente do rodapé), verde claro
-  (Valor Concedido do rodapé). Tabela de despesas ganhou `alternateRowStyles: { fillColor:
-  COR_CINZA_LINHA }` (linhas brancas/cinzas alternadas, como a planilha) — como é uma opção nativa
-  do AutoTable, não conflita com os `styles` explícitos das 3 linhas de totais no fim do `body`
-  (que continuam com suas próprias cores, sobrepondo o zebrado). Testado gerando um PDF real com
-  dados simulados (sem Firestore) e abrindo no visualizador nativo do Chrome via
-  `doc.output('bloburl')` num `<iframe>` — não dá para inspecionar cor de PDF pela pré-visualização
-  do jsPDF sem abrir o arquivo de verdade (ver nota da sessão 42 duas entradas acima).
-- **Cabeçalho da tabela sem espaço em branco (sessão 43)**: antes, a barra cinza "COMPROVANTE DE
-  DESPESA" era desenhada só sobre as 3 primeiras colunas (Tipo/Nº/Data), deixando um espaço em
-  branco à direita na mesma linha, e a linha de baixo (`head` do AutoTable) repetia **todos** os 9
-  títulos de coluna — diferente da planilha de referência, onde Fornecedor…Valor Total ficam
-  mesclados verticalmente numa única célula (sem repetir embaixo). Reescrito para um cabeçalho de
-  2 linhas manual: linha de cima desenha "COMPROVANTE DE DESPESA" (cinza, só sobre Tipo/Nº/Data)
-  **e** os outros 6 títulos (fundo branco, um `doc.rect()`/`doc.text()` por coluna, usando as
-  mesmas larguras de `columnStyles`); linha de baixo (`head` do AutoTable) só tem texto em
-  Tipo/Nº/Data — as outras 6 células do `head` ficam com string vazia. O cinza de Tipo/Nº/Data na
-  linha de baixo (para parecer uma continuação do bloco cinza de cima) vem de um hook
-  `didParseCell(data)` que só sobrescreve `data.cell.styles.fillColor` quando `data.section ===
-  'head'` — não dá para usar `columnStyles[i].fillColor` para isso porque essa opção também pinta
-  as células do **corpo** da coluna (tingiria a coluna "Tipo" inteira de cinza). As larguras de
-  coluna (`colWidths`, incluindo o cálculo da largura "auto" de Descrição a partir da largura da
-  página) viraram uma constante única, reaproveitada tanto no desenho manual da linha de cima
-  quanto no `columnStyles` do AutoTable, para as duas linhas do cabeçalho ficarem exatamente
-  alinhadas. Testado com um PDF real (4 despesas), conferindo em várias posições de zoom/scroll do
-  visualizador do Chrome que os 6 títulos aparecem uma única vez, sem espaço em branco.
+  (Valor Concedido do rodapé). Testado gerando um PDF real com dados simulados (sem Firestore) e
+  abrindo no visualizador nativo do Chrome via `doc.output('bloburl')` num `<iframe>` — não dá para
+  inspecionar cor de PDF pela pré-visualização do jsPDF sem abrir o arquivo de verdade (ver nota da
+  sessão 42 duas entradas acima).
+- **Zebrado da tabela de despesas, cinza mais claro que o cabeçalho (sessão 43)**: linhas
+  brancas/cinzas alternadas, como a planilha — mas **não** via `alternateRowStyles` do AutoTable:
+  na versão 3.8.4 (a usada aqui), essa opção pinta as linhas de índice **par** (0, 2, 4…), deixando
+  a 1ª despesa cinza em vez de branca (bug real, pego só depois de a usuária comparar com a
+  planilha de referência — lá a 1ª despesa é branca). Zebrado feito manualmente no `didParseCell`:
+  `data.section === 'body' && data.row.index < despesas.length && data.row.index % 2 === 1` pinta
+  só as linhas de índice ímpar com `COR_CINZA_LINHA`; o `data.row.index < despesas.length` exclui
+  as 3 linhas de totais no fim do `body` (que têm cor própria via `styles`, sobrepondo qualquer
+  zebrado). `COR_CINZA_LINHA` = `[242,242,242]` — mais claro que `COR_CINZA_HEADER` (`[217,217,217]`,
+  usado no cabeçalho das colunas) a pedido da usuária.
+- **Cabeçalho da tabela mesclado e cinza, sem espaço em branco (sessão 43)**: antes, a barra cinza
+  "COMPROVANTE DE DESPESA" era desenhada só sobre as 3 primeiras colunas (Tipo/Nº/Data), deixando um
+  espaço em branco à direita na mesma linha, e a linha de baixo (`head` do AutoTable) repetia
+  **todos** os 9 títulos de coluna — diferente da planilha de referência, onde Fornecedor…Valor
+  Total ficam mesclados verticalmente numa única célula cinza (sem repetir embaixo, sem linha
+  divisória, texto centralizado no meio das 2 linhas). Reescrito como um cabeçalho de 2 linhas
+  manual: (1) linha de cima desenha "COMPROVANTE DE DESPESA" (cinza, só sobre Tipo/Nº/Data, borda
+  nos 4 lados) **e** o preenchimento cinza dos outros 6 títulos, mas só com borda em cima/esquerda/
+  direita (`doc.line()`, sem a de baixo — evita linha dupla com a célula de baixo); (2) linha de
+  baixo (`head` do AutoTable) só tem texto em Tipo/Nº/Data — as outras 6 células ficam com string
+  vazia, `headStyles.fillColor` cinza por padrão e, via `didParseCell`, sem borda no topo
+  (`lineWidth: { top: 0, right: 0.1, bottom: 0.1, left: 0.1 }`) só nessas 6 colunas — o resultado
+  visual é uma única célula cinza sem linha no meio. O texto de Fornecedor…Valor Total só é escrito
+  depois, no hook `didDrawCell` do AutoTable (quando já se sabe a altura real da linha de baixo),
+  centralizado no meio das 2 linhas somadas (`headRowATop` até `data.cell.y + data.cell.height`) —
+  não dava pra centralizar direito escrevendo antes, porque a altura da linha de baixo só é definida
+  pelo AutoTable depois de montar a tabela. Não dá pra usar `columnStyles[i].fillColor`/`lineWidth`
+  para pintar só a linha de baixo do cabeçalho, porque essas opções também valem para as células do
+  **corpo** da coluna. As larguras de coluna (`colWidths`, incluindo o cálculo da largura "auto" de
+  Descrição a partir da largura da página) viraram uma constante única, reaproveitada tanto no
+  desenho manual da linha de cima quanto no `columnStyles` do AutoTable, para as duas linhas do
+  cabeçalho ficarem exatamente alinhadas. Testado com PDFs reais (2, 4 e 6 despesas), conferindo em
+  várias posições de zoom/scroll do visualizador do Chrome que os 6 títulos aparecem uma única vez,
+  sem espaço em branco, sem linha divisória e centralizados verticalmente.
 - **Datas e prazos (sessão 42)**: o formulário só tem Data do Recebimento (obrigatória), Data Final
   para Aplicação e Prazo de Prestação de Contas — a Data Inicial de Aplicação é sempre igual ao
   recebimento e é gravada automaticamente (`data_inicio_aplicacao = data_recebimento`); leitura
