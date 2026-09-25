@@ -12171,38 +12171,68 @@
             body.push([{ content: 'VALOR CONCEDIDO:', colSpan: 8, styles: concedidoStyle }, { content: formatarMoeda(_pcValorConcedido(p)), styles: concedidoStyle }]);
             body.push([{ content: 'SALDO REMANESCENTE:', colSpan: 8, styles: saldoStyle }, { content: formatarMoeda(saldo), styles: saldoStyle }]);
 
-            // Barra "COMPROVANTE DE DESPESA" desenhada à mão sobre Tipo/Nº/Data —
-            // evita usar colSpan/rowSpan no head do AutoTable, que causa perda de
-            // conteúdo na 1ª linha do corpo quando alguma célula quebra em 2 linhas
-            // (bug observado no jsPDF-AutoTable 3.8.4 com header mesclado).
-            const comprovanteWidth = 22 + 10 + 24;
-            doc.setFillColor(...COR_CINZA_HEADER);
+            // Cabeçalho de 2 linhas no layout da planilha: "COMPROVANTE DE DESPESA"
+            // (mesclado com Tipo/Nº/Data) desenhado à mão na linha de cima, junto com
+            // os demais títulos de coluna (Fornecedor…Valor Total, que na planilha
+            // ficam mesclados verticalmente, sem repetir na linha de baixo). Evita
+            // usar colSpan/rowSpan no head do AutoTable, que causa perda de conteúdo
+            // na 1ª linha do corpo quando alguma célula quebra em 2 linhas (bug
+            // observado no jsPDF-AutoTable 3.8.4 com header mesclado).
+            const colWidths = [22, 10, 24, 45, null, 15, 22, 24, 25];
+            const fixedWidthSum = colWidths.reduce((s, w) => s + (w || 0), 0);
+            colWidths[4] = (pageWidth - marginLeft * 2) - fixedWidthSum;
+            const colX = [marginLeft];
+            colWidths.forEach((w, i) => { if (i > 0) colX.push(colX[i - 1] + colWidths[i - 1]); });
+            const headLabels = ['TIPO', 'Nº', 'DATA DA EMISSÃO', 'FORNECEDOR', 'DESCRIÇÃO DO MATERIAL /SERVIÇO', 'QUANT.', 'VALOR UNIT.', 'DESCONTO\n(SE HOUVER)', 'VALOR TOTAL'];
+
+            const comprovanteWidth = colWidths[0] + colWidths[1] + colWidths[2];
+            const headRowH = 7.5;
             doc.setDrawColor(0, 0, 0);
-            doc.rect(marginLeft, y, comprovanteWidth, 6, 'FD');
             doc.setFont(undefined, 'bold');
             doc.setFontSize(8);
-            doc.text('COMPROVANTE DE DESPESA', marginLeft + comprovanteWidth / 2, y + 4, { align: 'center' });
-            y += 6;
+            doc.setFillColor(...COR_CINZA_HEADER);
+            doc.rect(marginLeft, y, comprovanteWidth, headRowH, 'FD');
+            doc.text('COMPROVANTE DE DESPESA', marginLeft + comprovanteWidth / 2, y + headRowH / 2 + 1, { align: 'center' });
+            for (let i = 3; i < headLabels.length; i++) {
+                doc.setFillColor(255, 255, 255);
+                doc.rect(colX[i], y, colWidths[i], headRowH, 'FD');
+                const cx = colX[i] + colWidths[i] / 2;
+                const linhas = headLabels[i].split('\n');
+                if (linhas.length > 1) {
+                    doc.text(linhas[0], cx, y + headRowH / 2 - 0.3, { align: 'center' });
+                    doc.setFontSize(6.5);
+                    doc.text(linhas[1], cx, y + headRowH / 2 + 3, { align: 'center' });
+                    doc.setFontSize(8);
+                } else {
+                    doc.text(linhas[0], cx, y + headRowH / 2 + 1, { align: 'center' });
+                }
+            }
+            y += headRowH;
 
             doc.autoTable({
                 startY: y,
                 margin: { left: marginLeft, right: marginLeft },
-                head: [['TIPO', 'Nº', 'DATA DA EMISSÃO', 'FORNECEDOR', 'DESCRIÇÃO DO MATERIAL /SERVIÇO', 'QUANT.', 'VALOR UNIT.', 'DESCONTO\n(SE HOUVER)', 'VALOR TOTAL']],
+                head: [[headLabels[0], headLabels[1], headLabels[2], '', '', '', '', '', '']],
                 body,
                 theme: 'grid',
                 styles: { fontSize: 8, cellPadding: 1.5, lineColor: [0, 0, 0], lineWidth: 0.1, textColor: 0, valign: 'middle' },
-                headStyles: { fillColor: COR_CINZA_HEADER, textColor: 0, fontStyle: 'bold', halign: 'center' },
+                headStyles: { fillColor: [255, 255, 255], textColor: 0, fontStyle: 'bold', halign: 'center' },
                 alternateRowStyles: { fillColor: COR_CINZA_LINHA },
+                didParseCell(data) {
+                    if (data.section === 'head' && data.column.index <= 2) {
+                        data.cell.styles.fillColor = COR_CINZA_HEADER;
+                    }
+                },
                 columnStyles: {
-                    0: { cellWidth: 22 },
-                    1: { cellWidth: 10, halign: 'center' },
-                    2: { cellWidth: 24, halign: 'center' },
-                    3: { cellWidth: 45 },
-                    4: { cellWidth: 'auto' },
-                    5: { cellWidth: 15, halign: 'center' },
-                    6: { cellWidth: 22, halign: 'right' },
-                    7: { cellWidth: 24, halign: 'right' },
-                    8: { cellWidth: 25, halign: 'right' }
+                    0: { cellWidth: colWidths[0] },
+                    1: { cellWidth: colWidths[1], halign: 'center' },
+                    2: { cellWidth: colWidths[2], halign: 'center' },
+                    3: { cellWidth: colWidths[3] },
+                    4: { cellWidth: colWidths[4] },
+                    5: { cellWidth: colWidths[5], halign: 'center' },
+                    6: { cellWidth: colWidths[6], halign: 'right' },
+                    7: { cellWidth: colWidths[7], halign: 'right' },
+                    8: { cellWidth: colWidths[8], halign: 'right' }
                 }
             });
 
