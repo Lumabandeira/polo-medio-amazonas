@@ -12093,6 +12093,7 @@
             const COR_AMARELO = [255, 242, 204];
             const COR_VERDE = [169, 209, 142];
             const COR_VERDE_CLARO = [198, 224, 180];
+            const COR_VERDE_ESCURO = [84, 130, 53];
             const COR_PESSEGO = [252, 228, 214];
             const COR_LILAS = [217, 210, 233];
             const COR_AZUL_CLARO = [221, 235, 247];
@@ -12165,7 +12166,7 @@
             ]);
 
             const totalStyle = { halign: 'right', fontStyle: 'bold', fillColor: [255, 255, 255] };
-            const concedidoStyle = { halign: 'right', fontStyle: 'bold', fillColor: [255, 255, 255], textColor: COR_VERDE };
+            const concedidoStyle = { halign: 'right', fontStyle: 'bold', fillColor: [255, 255, 255], textColor: COR_VERDE_ESCURO };
             const concedidoValorStyle = { halign: 'right', fontStyle: 'bold', fillColor: COR_VERDE, textColor: [255, 255, 255] };
             const saldoStyle = { halign: 'right', fontStyle: 'bold', fillColor: [255, 255, 255] };
             body.push([{ content: 'VALOR DAS DESPESAS:', colSpan: 8, styles: totalStyle }, { content: formatarMoeda(totalDespesas), styles: totalStyle }]);
