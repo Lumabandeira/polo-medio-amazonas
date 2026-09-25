@@ -12414,7 +12414,7 @@
             const d = p && (p.despesas || [])[idx];
             if (!p || !d) return;
             document.getElementById('modal-anexos-titulo').textContent =
-                `📎 Anexos — ${d.tipo || ''} ${d.numero || ''} (${d.fornecedor || ''})`;
+                `📎 Anexos — ${d.tipo || ''} ${d.numero || ''} (${[d.descricao, d.data_emissao ? formatarData(d.data_emissao) : ''].filter(Boolean).join(' - ')})`;
             _renderCorpoModalAnexos(d);
             document.getElementById('modal-anexos-overlay').classList.add('active');
         }

@@ -105,7 +105,9 @@ linhas ímpares — 2ª, 4ª, 6ª despesa —, e ignorando as 3 linhas de totais
 mais claro (`COR_CINZA_LINHA` de `[232,232,232]` para `[242,242,242]`), mais leve que o cinza do
 cabeçalho das colunas (`[217,217,217]`). (9) **Ajuste:** rodapé da tabela do PDF — Saldo
 Remanescente com fundo branco; Valor Concedido com rótulo em texto verde escuro (`COR_VERDE_ESCURO`) e célula do valor com fundo
-verde (`COR_VERDE`, mesmo tom da Data do Recebimento) e texto branco. Ver `docs/site/estrutura-html.md` (seção "Prestação de
+verde (`COR_VERDE`, mesmo tom da Data do Recebimento) e texto branco. (10) **Ajuste:** título do modal de Anexos por despesa (`abrirModalAnexos()`)
+mostra "Descrição do Material/Serviço - Data de Emissão" entre parênteses em vez do fornecedor
+(sem data, só a descrição). Ver `docs/site/estrutura-html.md` (seção "Prestação de
 Contas") e `docs/site/padroes-codigo.md`.
 
 ## Estado atual (sessão 42 — 24/09/2026)
