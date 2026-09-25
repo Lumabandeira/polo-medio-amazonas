@@ -3035,6 +3035,11 @@
             letter-spacing: 0.05em;
         }
 
+        .form-group.fp-label-nowrap label {
+            white-space: nowrap;
+            font-size: 0.74em;
+        }
+
         .form-group input,
         .form-group select {
             padding: 10px 12px;
@@ -4134,17 +4139,17 @@
                             <label>Valor Concedido (R$)</label>
                             <input type="number" step="0.01" min="0" id="fp-valor-concedido" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group fp-label-nowrap">
                             <label>Data do Recebimento</label>
                             <input type="date" id="fp-data-recebimento" required oninput="_pcAtualizarPrazosForm()">
                             <small class="fp-prazo-hint">= Data Inicial de Aplicação</small>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group fp-label-nowrap">
                             <label>Data Final para Aplicação</label>
                             <input type="date" id="fp-data-fim" oninput="_pcAtualizarPrazosForm()">
                             <small class="fp-prazo-hint" id="fp-prazo-aplic-dias"></small>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group fp-label-nowrap">
                             <label>Prazo de Prestação de Contas</label>
                             <input type="date" id="fp-prazo-pc" oninput="_pcAtualizarPrazosForm()">
                             <small class="fp-prazo-hint" id="fp-prazo-pc-dias"></small>
