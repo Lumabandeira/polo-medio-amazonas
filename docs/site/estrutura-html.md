@@ -470,8 +470,10 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   pinta só a coluna estreita do número de dias (65/10 no exemplo), sobre o `bg` da linha. Paleta
   (constantes `COR_*` logo antes de `infoRows`): amarelo (Tomador), verde + texto branco em negrito
   (Data do Recebimento), pêssego (as 3 linhas de datas/prazo), lilás + texto azul (os 2 números de
-  PRAZO), azul claro (Valor Concedido do cadastro **e** Saldo Remanescente do rodapé), verde claro
-  (Valor Concedido do rodapé). Testado gerando um PDF real com dados simulados (sem Firestore) e
+  PRAZO), azul claro (Valor Concedido do cadastro). **Rodapé da tabela (ajuste sessão 43, a pedido
+  da usuária):** Saldo Remanescente com fundo branco; Valor Concedido com o rótulo em texto verde
+  (`COR_VERDE`, o mesmo da Data do Recebimento) sobre branco e a célula do valor com fundo
+  `COR_VERDE` + texto branco (`concedidoStyle`/`concedidoValorStyle`). Testado gerando um PDF real com dados simulados (sem Firestore) e
   abrindo no visualizador nativo do Chrome via `doc.output('bloburl')` num `<iframe>` — não dá para
   inspecionar cor de PDF pela pré-visualização do jsPDF sem abrir o arquivo de verdade (ver nota da
   sessão 42 duas entradas acima).

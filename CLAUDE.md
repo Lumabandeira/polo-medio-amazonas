@@ -103,7 +103,9 @@ do nome. Trocado por zebrado manual num `didParseCell` (`data.row.index % 2 === 
 linhas ímpares — 2ª, 4ª, 6ª despesa —, e ignorando as 3 linhas de totais no fim do `body` via
 `data.row.index < despesas.length`). (8) **Ajuste:** a pedido da usuária, o cinza do zebrado ficou
 mais claro (`COR_CINZA_LINHA` de `[232,232,232]` para `[242,242,242]`), mais leve que o cinza do
-cabeçalho das colunas (`[217,217,217]`). Ver `docs/site/estrutura-html.md` (seção "Prestação de
+cabeçalho das colunas (`[217,217,217]`). (9) **Ajuste:** rodapé da tabela do PDF — Saldo
+Remanescente com fundo branco; Valor Concedido com rótulo em texto verde e célula do valor com fundo
+verde (`COR_VERDE`, mesmo tom da Data do Recebimento) e texto branco. Ver `docs/site/estrutura-html.md` (seção "Prestação de
 Contas") e `docs/site/padroes-codigo.md`.
 
 ## Estado atual (sessão 42 — 24/09/2026)

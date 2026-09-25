@@ -12165,10 +12165,11 @@
             ]);
 
             const totalStyle = { halign: 'right', fontStyle: 'bold', fillColor: [255, 255, 255] };
-            const concedidoStyle = { halign: 'right', fontStyle: 'bold', fillColor: COR_VERDE_CLARO };
-            const saldoStyle = { halign: 'right', fontStyle: 'bold', fillColor: COR_AZUL_CLARO };
+            const concedidoStyle = { halign: 'right', fontStyle: 'bold', fillColor: [255, 255, 255], textColor: COR_VERDE };
+            const concedidoValorStyle = { halign: 'right', fontStyle: 'bold', fillColor: COR_VERDE, textColor: [255, 255, 255] };
+            const saldoStyle = { halign: 'right', fontStyle: 'bold', fillColor: [255, 255, 255] };
             body.push([{ content: 'VALOR DAS DESPESAS:', colSpan: 8, styles: totalStyle }, { content: formatarMoeda(totalDespesas), styles: totalStyle }]);
-            body.push([{ content: 'VALOR CONCEDIDO:', colSpan: 8, styles: concedidoStyle }, { content: formatarMoeda(_pcValorConcedido(p)), styles: concedidoStyle }]);
+            body.push([{ content: 'VALOR CONCEDIDO:', colSpan: 8, styles: concedidoStyle }, { content: formatarMoeda(_pcValorConcedido(p)), styles: concedidoValorStyle }]);
             body.push([{ content: 'SALDO REMANESCENTE:', colSpan: 8, styles: saldoStyle }, { content: formatarMoeda(saldo), styles: saldoStyle }]);
 
             // Cabeçalho de 2 linhas no layout da planilha: "COMPROVANTE DE DESPESA"
