@@ -12197,23 +12197,17 @@
                 // Preenche e desenha só as bordas de cima/esquerda/direita — a de
                 // baixo fica por conta da linha do AutoTable (com lineWidth do topo
                 // zerado nela), pra parecer uma única célula mesclada com a linha
-                // de baixo (em branco), igual à planilha de referência.
+                // de baixo (em branco), igual à planilha de referência. O texto só é
+                // escrito depois, no didDrawCell, quando já se sabe a altura real da
+                // linha de baixo — só assim dá pra centralizar na célula mesclada
+                // inteira (e não só na metade de cima).
                 doc.setFillColor(...COR_CINZA_HEADER);
                 doc.rect(colX[i], y, colWidths[i], headRowH, 'F');
                 doc.line(colX[i], y, colX[i] + colWidths[i], y);
                 doc.line(colX[i], y, colX[i], y + headRowH);
                 doc.line(colX[i] + colWidths[i], y, colX[i] + colWidths[i], y + headRowH);
-                const cx = colX[i] + colWidths[i] / 2;
-                const linhas = headLabels[i].split('\n');
-                if (linhas.length > 1) {
-                    doc.text(linhas[0], cx, y + headRowH / 2 - 0.3, { align: 'center' });
-                    doc.setFontSize(6.5);
-                    doc.text(linhas[1], cx, y + headRowH / 2 + 3, { align: 'center' });
-                    doc.setFontSize(8);
-                } else {
-                    doc.text(linhas[0], cx, y + headRowH / 2 + 1, { align: 'center' });
-                }
             }
+            const headRowATop = y;
             y += headRowH;
 
             doc.autoTable({
@@ -12231,6 +12225,24 @@
                         // desenhada à mão) já tem essa borda — evita a linha dupla que
                         // faria as 2 linhas parecerem 2 células separadas.
                         data.cell.styles.lineWidth = { top: 0, right: 0.1, bottom: 0.1, left: 0.1 };
+                    }
+                },
+                didDrawCell(data) {
+                    if (data.section !== 'head' || data.column.index < 3) return;
+                    const i = data.column.index;
+                    const cx = data.cell.x + data.cell.width / 2;
+                    const mergedMiddle = (headRowATop + data.cell.y + data.cell.height) / 2;
+                    const linhas = headLabels[i].split('\n');
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(0, 0, 0);
+                    if (linhas.length > 1) {
+                        doc.setFontSize(8);
+                        doc.text(linhas[0], cx, mergedMiddle - 1.5, { align: 'center' });
+                        doc.setFontSize(6.5);
+                        doc.text(linhas[1], cx, mergedMiddle + 2.2, { align: 'center' });
+                    } else {
+                        doc.setFontSize(8);
+                        doc.text(linhas[0], cx, mergedMiddle + 1, { align: 'center' });
                     }
                 },
                 columnStyles: {
