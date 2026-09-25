@@ -452,15 +452,50 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   CPF/dados bancários nos comprovantes de devolução).
 - **Exportar em PDF**: botão "📄 Baixar Mapa (PDF)" no cabeçalho do detalhe, função `baixarMapaPDF()`.
   Usa jsPDF + jsPDF-AutoTable (CDN, `jspdf.umd.min.js` + `jspdf.plugin.autotable.min.js`) para gerar
-  uma página A4 paisagem replicando o layout em papel: bloco de cabeçalho, barra "COMPROVANTE DE
-  DESPESA" desenhada manualmente acima da tabela (em vez de `colSpan`/`rowSpan` no `head` do
-  AutoTable), tabela de despesas e rodapé de totais. Validado com PDF real baixado e aberto no
-  Chrome (fornecedor com nome longo quebrando em 3 linhas, valores corretos, sem sobreposição).
+  uma página A4 paisagem replicando o layout em papel: bloco de cabeçalho, cabeçalho de tabela de 2
+  linhas desenhado manualmente (em vez de `colSpan`/`rowSpan` no `head` do AutoTable — ver adiante),
+  tabela de despesas e rodapé de totais. Validado com PDF real baixado e aberto no Chrome
+  (fornecedor com nome longo quebrando em 3 linhas, valores corretos, sem sobreposição).
   Bloco de cabeçalho (`infoRows`) segue o layout da planilha da administração (sessão 42): Tomador,
   Data do Recebimento, Data Inicial de Aplicação (= recebimento), Data Final para Aplicação, Prazo
   de Prest. de Contas e Valor Concedido, com uma coluna "PRAZO" no meio mostrando os dias de
   aplicação e de prestação de contas (`_pcPrazos(p)`). Tabela com coluna "DESCONTO (SE HOUVER)"
   entre Valor Unit. e Valor Total; título "MAPA DEMONSTRATIVO DE DESPESAS".
+- **Cores do PDF no modelo da planilha (sessão 43)**: a pedido da usuária, o bloco de cabeçalho
+  (`infoRows`) e a tabela de despesas passaram a usar as cores aproximadas da planilha
+  `MAPA_DEMONSTRATIVO` da administração, em vez de preto/branco/cinza neutro. Cada linha de
+  `infoRows` ganhou um objeto `{ label, prazo, value, bg, valueColor?, valueBold?, prazoBg?,
+  prazoColor? }` (antes era um array posicional `[label, prazo, value]`) — `bg` é pintado com
+  `doc.rect(...,'F')` atrás do texto da linha inteira antes de escrever (`infoRowH = 5.3`); `prazoBg`
+  pinta só a coluna estreita do número de dias (65/10 no exemplo), sobre o `bg` da linha. Paleta
+  (constantes `COR_*` logo antes de `infoRows`): amarelo (Tomador), verde + texto branco em negrito
+  (Data do Recebimento), pêssego (as 3 linhas de datas/prazo), lilás + texto azul (os 2 números de
+  PRAZO), azul claro (Valor Concedido do cadastro **e** Saldo Remanescente do rodapé), verde claro
+  (Valor Concedido do rodapé). Tabela de despesas ganhou `alternateRowStyles: { fillColor:
+  COR_CINZA_LINHA }` (linhas brancas/cinzas alternadas, como a planilha) — como é uma opção nativa
+  do AutoTable, não conflita com os `styles` explícitos das 3 linhas de totais no fim do `body`
+  (que continuam com suas próprias cores, sobrepondo o zebrado). Testado gerando um PDF real com
+  dados simulados (sem Firestore) e abrindo no visualizador nativo do Chrome via
+  `doc.output('bloburl')` num `<iframe>` — não dá para inspecionar cor de PDF pela pré-visualização
+  do jsPDF sem abrir o arquivo de verdade (ver nota da sessão 42 duas entradas acima).
+- **Cabeçalho da tabela sem espaço em branco (sessão 43)**: antes, a barra cinza "COMPROVANTE DE
+  DESPESA" era desenhada só sobre as 3 primeiras colunas (Tipo/Nº/Data), deixando um espaço em
+  branco à direita na mesma linha, e a linha de baixo (`head` do AutoTable) repetia **todos** os 9
+  títulos de coluna — diferente da planilha de referência, onde Fornecedor…Valor Total ficam
+  mesclados verticalmente numa única célula (sem repetir embaixo). Reescrito para um cabeçalho de
+  2 linhas manual: linha de cima desenha "COMPROVANTE DE DESPESA" (cinza, só sobre Tipo/Nº/Data)
+  **e** os outros 6 títulos (fundo branco, um `doc.rect()`/`doc.text()` por coluna, usando as
+  mesmas larguras de `columnStyles`); linha de baixo (`head` do AutoTable) só tem texto em
+  Tipo/Nº/Data — as outras 6 células do `head` ficam com string vazia. O cinza de Tipo/Nº/Data na
+  linha de baixo (para parecer uma continuação do bloco cinza de cima) vem de um hook
+  `didParseCell(data)` que só sobrescreve `data.cell.styles.fillColor` quando `data.section ===
+  'head'` — não dá para usar `columnStyles[i].fillColor` para isso porque essa opção também pinta
+  as células do **corpo** da coluna (tingiria a coluna "Tipo" inteira de cinza). As larguras de
+  coluna (`colWidths`, incluindo o cálculo da largura "auto" de Descrição a partir da largura da
+  página) viraram uma constante única, reaproveitada tanto no desenho manual da linha de cima
+  quanto no `columnStyles` do AutoTable, para as duas linhas do cabeçalho ficarem exatamente
+  alinhadas. Testado com um PDF real (4 despesas), conferindo em várias posições de zoom/scroll do
+  visualizador do Chrome que os 6 títulos aparecem uma única vez, sem espaço em branco.
 - **Datas e prazos (sessão 42)**: o formulário só tem Data do Recebimento (obrigatória), Data Final
   para Aplicação e Prazo de Prestação de Contas — a Data Inicial de Aplicação é sempre igual ao
   recebimento e é gravada automaticamente (`data_inicio_aplicacao = data_recebimento`); leitura
@@ -477,6 +512,18 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   Nota: durante o desenvolvimento, a ferramenta de inspeção de PDF usada para conferir o layout
   mostrou um artefato de renderização que não existe no arquivo real — se for depurar isso de novo,
   confie no PDF baixado de verdade, não na pré-visualização.
+- **Alinhamento dos 3 campos de data no formulário (sessão 43)**: os rótulos "Data Final para
+  Aplicação" e "Prazo de Prestação de Contas" quebravam em 2 linhas dentro da coluna do
+  `.form-grid` (4 colunas), enquanto "Data do Recebimento" ficava em 1 linha só — os 3 campos
+  ficavam desalinhados ("escadinha"). Classe nova `.fp-label-nowrap` (`white-space: nowrap` +
+  fonte um pouco menor, `0.74em`) nos 3 `.form-group` desses campos, no formulário "Novo/Editar
+  Pronto Pagamento" (`#fp-data-recebimento`/`#fp-data-fim`/`#fp-prazo-pc`).
+- **Campos vazando do modal "Nova Despesa" (bugfix, sessão 43)**: Descrição do Material/Serviço e
+  Valor Total (campos que ocupam a linha inteira do `.form-grid`) vazavam para fora do modal. Causa
+  e correção documentadas em `docs/site/padroes-codigo.md` (seção "CSS: `.form-group` como item de
+  grid") — resumo: uma opção longa do `<select>` "Tipo de Comprovante" forçava a coluna do grid a
+  crescer além do espaço disponível; `min-width: 0` em `.form-group` (aplicado a todos os modais de
+  formulário do site, não só a este) resolve na raiz.
 
 ## Viagens e Eventos (`#viagens-eventos`)
 

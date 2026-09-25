@@ -57,6 +57,36 @@ docs/
 
 ---
 
+## Estado atual (sessão 43 — 25/09/2026)
+
+**Implementado nesta sessão:** 4 ajustes pontuais em Prestação de Contas, todos testados no
+navegador (servidor estático, sem login real, `userRole='admin'` simulado + `db` stubado/dados
+simulados, PDFs reais abertos no visualizador nativo do Chrome via `doc.output('bloburl')`).
+(1) **Alinhamento dos 3 campos de data** no formulário "Novo/Editar Pronto Pagamento" — "Data Final
+para Aplicação" e "Prazo de Prestação de Contas" quebravam em 2 linhas (rótulo em `text-transform:
+uppercase` mais largo que a coluna do `.form-grid`), desalinhando os 3 campos em relação a "Data do
+Recebimento". Classe nova `.fp-label-nowrap` (`white-space: nowrap` + fonte `0.74em`) nos 3
+`.form-group` desses campos. (2) **Bugfix real: campos vazando do modal "Nova Despesa"** —
+Descrição do Material/Serviço e Valor Total (campos que ocupam a linha inteira do `.form-grid`)
+vazavam para fora do modal. Causa: o `<select>` "Tipo de Comprovante" tem uma opção longa ("Cupom
+de máquina registradora"), e no Chrome a largura mínima de um `<select>` é baseada na opção **mais
+longa da lista**, não na selecionada — como itens de CSS Grid têm `min-width: auto` por padrão
+(não encolhem abaixo do conteúdo mínimo), isso forçava a coluna inteira do grid a crescer além do
+modal. Corrigido com `min-width: 0` em `.form-group` (index.html:3027) — vale para **todos** os
+modais de formulário do site, não só este; detalhado em `docs/site/padroes-codigo.md`. (3) **Cores
+do PDF do Mapa Demonstrativo no modelo da planilha**: a usuária enviou a planilha
+`MAPA_DEMONSTRATIVO (7) (5).xlsx` como referência de cores — bloco de cabeçalho (`infoRows`) e
+tabela de despesas do `baixarMapaPDF()` ganharam a paleta aproximada da planilha (amarelo/Tomador,
+verde/Data do Recebimento, pêssego/datas de aplicação, lilás/números de PRAZO, azul
+claro/Valor Concedido do cadastro e Saldo Remanescente, verde claro/Valor Concedido do rodapé) e
+`alternateRowStyles` para linhas brancas/cinzas alternadas na tabela de despesas. (4) **Bugfix:
+espaço em branco no cabeçalho da tabela do PDF** — a barra "COMPROVANTE DE DESPESA" era desenhada
+só sobre Tipo/Nº/Data, deixando espaço em branco ao lado e repetindo todos os 9 títulos de coluna
+na linha de baixo; reescrito como cabeçalho manual de 2 linhas (Fornecedor…Valor Total na mesma
+linha de "COMPROVANTE DE DESPESA", sem repetir embaixo — como na planilha), ainda sem
+`colSpan`/`rowSpan` do AutoTable (bug conhecido, ver sessão 42). Ver `docs/site/estrutura-html.md`
+(seção "Prestação de Contas") e `docs/site/padroes-codigo.md`.
+
 ## Estado atual (sessão 42 — 24/09/2026)
 
 **Implementado nesta sessão:** Mapa Demonstrativo de Despesa (Prestação de Contas) atualizado para

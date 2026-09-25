@@ -81,3 +81,19 @@
 ## Padrão de DPs vagas no JavaScript
 
 DPs vagas são representadas pela chave `"dpN-vaga"` (ex: `"dp7-vaga"`). A função `_atualizarNomesVaga()` gera automaticamente o label `"7ª DP (vaga)"` para exibição. Badges de vaga são ordenados por último no calendário.
+
+## CSS: `.form-group` como item de grid (`.form-grid`) — `min-width: 0`
+
+`.form-group { display:flex; flex-direction:column; min-width:0; }` (`index.html`, perto de
+`index.html:3027`) — o `min-width: 0` é necessário porque `.form-group` também é item de um
+`.form-grid` (`display:grid; grid-template-columns: repeat(4, 1fr)`) em todos os modais de
+formulário do site. Por padrão, um item de grid tem `min-width: auto`, que impede a coluna de
+encolher abaixo do **conteúdo mínimo** de qualquer campo nela — inclusive um `<select>`, cujo
+conteúdo mínimo no Chrome é a largura da opção mais longa da lista (não a opção selecionada). Um
+`<select>` com uma opção bem longa numa coluna estreita força essa coluna (e, por tabela, a grade
+inteira) a crescer além do espaço disponível, vazando os campos que ocupam a linha inteira
+(`grid-column: 1 / -1`, ex.: `#fd-descricao` em "Nova Despesa") para fora do modal — bug real
+encontrado na sessão 43 com o campo "Tipo de Comprovante" (opção "Cupom de máquina registradora").
+`min-width: 0` no item de grid remove essa trava, deixando o conteúdo encolher/cortar em vez de
+estourar o container. Ao criar um novo modal de formulário com `<select>`/campo de texto longo
+dentro de `.form-grid`, esse comportamento já está coberto — não precisa de ajuste por modal.
