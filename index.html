@@ -12194,8 +12194,15 @@
             doc.rect(marginLeft, y, comprovanteWidth, headRowH, 'FD');
             doc.text('COMPROVANTE DE DESPESA', marginLeft + comprovanteWidth / 2, y + headRowH / 2 + 1, { align: 'center' });
             for (let i = 3; i < headLabels.length; i++) {
-                doc.setFillColor(255, 255, 255);
-                doc.rect(colX[i], y, colWidths[i], headRowH, 'FD');
+                // Preenche e desenha só as bordas de cima/esquerda/direita — a de
+                // baixo fica por conta da linha do AutoTable (com lineWidth do topo
+                // zerado nela), pra parecer uma única célula mesclada com a linha
+                // de baixo (em branco), igual à planilha de referência.
+                doc.setFillColor(...COR_CINZA_HEADER);
+                doc.rect(colX[i], y, colWidths[i], headRowH, 'F');
+                doc.line(colX[i], y, colX[i] + colWidths[i], y);
+                doc.line(colX[i], y, colX[i], y + headRowH);
+                doc.line(colX[i] + colWidths[i], y, colX[i] + colWidths[i], y + headRowH);
                 const cx = colX[i] + colWidths[i] / 2;
                 const linhas = headLabels[i].split('\n');
                 if (linhas.length > 1) {
@@ -12216,11 +12223,14 @@
                 body,
                 theme: 'grid',
                 styles: { fontSize: 8, cellPadding: 1.5, lineColor: [0, 0, 0], lineWidth: 0.1, textColor: 0, valign: 'middle' },
-                headStyles: { fillColor: [255, 255, 255], textColor: 0, fontStyle: 'bold', halign: 'center' },
+                headStyles: { fillColor: COR_CINZA_HEADER, textColor: 0, fontStyle: 'bold', halign: 'center' },
                 alternateRowStyles: { fillColor: COR_CINZA_LINHA },
                 didParseCell(data) {
-                    if (data.section === 'head' && data.column.index <= 2) {
-                        data.cell.styles.fillColor = COR_CINZA_HEADER;
+                    if (data.section === 'head' && data.column.index >= 3) {
+                        // Sem borda no topo: a célula de cima (Fornecedor…Valor Total,
+                        // desenhada à mão) já tem essa borda — evita a linha dupla que
+                        // faria as 2 linhas parecerem 2 células separadas.
+                        data.cell.styles.lineWidth = { top: 0, right: 0.1, bottom: 0.1, left: 0.1 };
                     }
                 },
                 columnStyles: {
