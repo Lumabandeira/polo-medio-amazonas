@@ -6882,5 +6882,72 @@
         "resumo": "Designa duas defensoras para atuar cumulativamente no Polo Médio Amazonas nos dias 28 e 29 de setembro de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2739,
+    "data": "2026-09-25",
+    "data_formatada": "25/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2739-2026__publicada_em_25_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1744/2026-GDPG/DPE/AM",
+        "sei": "26.0.000013562-2",
+        "sgi": "2601966",
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, no trecho Manaus/Manacapuru/Novo Airão/Manacapuru/Manaus, no dia 29 de setembro de 2026, a fim de realizar o transporte da Defensora Pública Thays Lidianne Campos de Azevedo Pereira ao municipio de Novo Airão-AM",
+          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
+        ],
+        "resumo": "Autoriza deslocamento de servidor para transportar defensor até Novo Airão e autoriza pagamento de diárias em 29 de setembro de 2026"
+      },
+      {
+        "numero": "Portaria Nº 1746/2026-GDPG/DPE/AM",
+        "sei": "26.0.000013542-8",
+        "sgi": "2601967",
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Thays Lidianne Campos de Azevedo Pereira, Defensor Público de 3ª Classe, no trecho Manacapuru/Novo Airão/Manacapuru, no dia 29 de setembro de 2026"
+        ],
+        "resumo": "Autoriza deslocamento da Defensora Thays Lidianne Campos de Azevedo Pereira para Novo Airão em 29 de setembro de 2026"
+      },
+      {
+        "numero": "Portaria Nº 1747/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "plantao",
+          "polo_medio",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - ESTABELECER a escala de plantão da Defensoria Pública do Estado do Amazonas para o 4º trimestre de 2026, do interior, que compreende o período de 28/09/2026 a 19/12/2026, conforme anexos I a III desta portaria",
+          "VII - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Polo do Rio Negro-Polo do Médio Amazonas / Polo do Médio Solimões Polo do Baixo Amazonas"
+        ],
+        "resumo": "Estabelece escala de plantão para o 4º trimestre de 2026 no interior, incluindo o Polo Médio Amazonas e sua escala de substituição entre polos"
+      },
+      {
+        "numero": "Portaria nº 580/2026-GSPG/DPE/AM",
+        "sei": "26.0.000013566-5",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, a contar do dia 01 de outubro de 2026, do inciso I da Portaria nº 580/2026-GSPG/DPE/AM, publicada no dia 08 de junho de 2026, Ano 12, Edição 2664 Pág. 5 de 11, quanto à designação da Defensora Pública de 3ª Classe Renata Visco Costa de Almeida para atuar na 10ª Defensoria Pública do Polo do Médio Solimões (Maraã e Japurá)",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Fernando Figueiredo Prestes para atuar na 10ª Defensoria Pública do Polo do Médio Solimões (Maraã e Japurá), no período de 01 de outubro a 31 de"
+        ],
+        "resumo": "Cessa designação de Renata Visco Costa e designa cumulativamente Fernando Figueiredo Prestes para atuar no Polo Médio Solimões a partir de 01 de outubro de 2026"
+      }
+    ]
   }
 ]
