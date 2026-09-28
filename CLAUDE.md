@@ -102,7 +102,13 @@ por causa do nome (caso: Edição 2739, Portarias 1744/1746 — Thays em Manacap
 ainda com a categoria `comarca` errada). Prompt ajustado + filtro determinístico
 `filtrar_portarias_fora_do_polo()` aplicado à resposta do Claude; histórico do JSON limpo com a
 mesma regra (11 portarias removidas, `comarca` retirada onde não havia cidade do polo). Ver
-`docs/automacao.md`. (7) **Outros polos:** a Portaria 1733 (Edição 2737) entrou como "Polo
+`docs/automacao.md`. (7) **Filtro do DO (continuação):** titulares atualizados em
+`designacoes-2026.json` (Ícaro inativo; Portaria 1708: Miguel 6ª → 3ª e Pedro Henrique na 6ª a partir de
+01/10/2026); nomes aceitam com e sem acento; portaria só entra se o texto citar polo/cidade/integrante
+(inclusive quem era titular na data), salvo atos de interesse geral definidos pela usuária
+(`TERMOS_RELEVANCIA_GERAL`: DPG/Subdefensor, Ordenador de Despesas, ciclos do Adote uma Comarca,
+Expandir Presença, escala de substituição entre polos). Histórico limpo: 52 portarias removidas após
+conferência em lotes. (7) **Outros polos:** a Portaria 1733 (Edição 2737) entrou como "Polo
 Médio" por confusão com o Polo do Médio Solimões (PDF embaralhado); prompt agora lista os outros
 polos, e mais 23 portarias só de outros polos saíram do JSON (lista conferida pela usuária).
 (8) **Projeto 1:** trazido para o `main` um bugfix de 19/05 esquecido no branch

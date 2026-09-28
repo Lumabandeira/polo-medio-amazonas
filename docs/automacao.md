@@ -140,6 +140,9 @@ polo no texto. Correção em duas camadas:
    `termos_integrantes_na_data(data)` acrescenta quem era titular na data da edição (ex.: Elton
    até 02/05/2026) — usado no fluxo diário e na revisão do histórico.
 
+   **Limpeza do histórico com essas regras (28/09/2026):** 52 portarias removidas do JSON depois de
+   conferência da usuária em 4 lotes (outra sessão do mesmo dia já tinha tirado 23 só de outros polos).
+
 A mesma regra foi aplicada ao histórico do JSON: 11 portarias de viagem fora do polo removidas
 (edições 2643, 2657, 2660, 2666, 2684, 2716 e 2739) e `comarca` retirada das que não citavam
 cidade do polo.
