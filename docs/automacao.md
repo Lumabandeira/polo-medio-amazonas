@@ -85,7 +85,7 @@ Requer `firebase-service-account.json` na raiz (gitignored).
 1. `"Polo\s+(?:do\s+)?Médio\s+Amazonas"`
 2. Cidades: Itacoatiara, São Sebastião do Uatumã, Itapiranga, Urucurituba, Urucará, Silves
 3. Servidores (primeiro+segundo nome): Luma Karolyne, Fábio Bastos, Natália Cristina, Arnoud Lucas, Larice Bruce
-4. Titulares vigentes (carregados do JSON)
+4. Titulares vigentes (carregados de `designacoes-2026.json` — entrada sem `fim`; Projeto 2 **não** lê `titulares_admin`, então o JSON precisa estar atualizado). Nomes aceitam com e sem acento, inclusive maiúsculas (`_palavra_sem_acento_regex()`: Ênio/Enio/ENIO)
 
 ### Extração de texto — tabelas (sessão 44)
 
@@ -118,6 +118,10 @@ polo no texto. Correção em duas camadas:
    afastamento, remoção, licença, folga, plantão — esses continuam entrando mesmo com destino em
    outro polo, porque mudam quem atende aqui). Também tira `comarca` quando nenhuma cidade do polo
    aparece.
+3. **Citação obrigatória (sessão 44, 2º ajuste):** a portaria só entra se o texto exato
+   (número + trechos — o `resumo` não conta, porque o Claude às vezes inventa ligação com o
+   polo) casar com algum termo-gatilho: nome do polo, cidade do polo, servidor ou titular
+   vigente. O prompt exige que os trechos tragam a frase/linha de anexo que faz essa citação.
 
 A mesma regra foi aplicada ao histórico do JSON: 11 portarias de viagem fora do polo removidas
 (edições 2643, 2657, 2660, 2666, 2684, 2716 e 2739) e `comarca` retirada das que não citavam

@@ -211,10 +211,24 @@ def verificar_limite_custo(state: dict) -> bool:
 
 # ─── Termos-gatilho ───────────────────────────────────────────────────────────
 
+_CLASSES_ACENTO = {
+    "a": "[aáàâã]", "e": "[eéê]", "i": "[ií]", "o": "[oóôõ]", "u": "[uúü]", "c": "[cç]",
+}
+
+
+def _palavra_sem_acento_regex(palavra: str) -> str:
+    """'Ênio' → '[eéê]n[ií][oóôõ]' — casa com e sem acento (IGNORECASE cobre maiúsculas)."""
+    base = "".join(
+        c for c in unicodedata.normalize("NFD", palavra) if not unicodedata.combining(c)
+    ).lower()
+    return "".join(_CLASSES_ACENTO.get(c, re.escape(c)) for c in base)
+
+
 def _termo_nome(nome: str) -> str:
     """
     Gera regex de primeiro+segundo nome (adjacentes) com tolerância a acentos.
-    Ex: 'Fábio Bastos de Souza' → r'F[aá]bio\s+Bastos'
+    Ex: 'Fábio Bastos de Souza' → casa 'Fábio Bastos' e 'Fabio Bastos';
+        'Ênio Jorge ...'        → casa 'Ênio Jorge' e 'Enio Jorge'.
     Usa primeiro+segundo porque no DO os nomes aparecem em ordem, e palavras
     como 'de'/'da' (len<=2) são descartadas antes de indexar.
     """
@@ -222,16 +236,8 @@ def _termo_nome(nome: str) -> str:
     if not partes:
         return re.escape(nome)
     if len(partes) == 1:
-        return re.escape(partes[0])
-    primeiro = re.escape(partes[0])
-    segundo  = re.escape(partes[1])
-    for orig, alt in [("á", "[aá]"), ("â", "[aâ]"), ("ã", "[aã]"),
-                      ("é", "[eé]"), ("ê", "[eê]"), ("í", "[ií]"),
-                      ("ó", "[oó]"), ("ô", "[oô]"), ("ú", "[uú]"),
-                      ("ç", "[cç]")]:
-        primeiro = primeiro.replace(re.escape(orig), alt)
-        segundo  = segundo.replace(re.escape(orig), alt)
-    return primeiro + r"\s+" + segundo
+        return _palavra_sem_acento_regex(partes[0])
+    return _palavra_sem_acento_regex(partes[0]) + r"\s+" + _palavra_sem_acento_regex(partes[1])
 
 
 def _carregar_titulares_do_json() -> list:
@@ -804,6 +810,7 @@ Se não houver portarias relevantes ao Polo Médio:
 
 REGRAS:
 - Inclua os trechos em texto exato, não parafraseie
+- OBRIGATÓRIO: entre os "trechos" deve estar a frase (ou a linha da tabela/anexo) que cita o Polo Médio Amazonas, a cidade do polo ou o nome do integrante que torna a portaria relevante — portarias sem essa frase nos trechos são descartadas automaticamente
 - O resumo deve ser conciso e informativo (quem, o quê, quando)
 - Se não identificar o número SEI/SGI, use null (não use string vazia)
 - Inclua apenas portarias genuinamente relacionadas ao polo ou seus integrantes
@@ -854,12 +861,17 @@ def filtrar_portarias_fora_do_polo(portarias: list) -> list:
        Designações, substituições, férias, remoções, plantão etc. continuam
        entrando mesmo sem cidade do polo (afetam quem atende aqui).
     2. Tira a categoria "comarca" quando nenhuma cidade do polo é citada.
+    3. Exige que o texto exato da portaria (número + trechos) cite algum
+       termo-gatilho — o nome do polo, uma cidade do polo ou um integrante
+       (servidor ou titular vigente). O "resumo" não conta: é escrito pelo
+       Claude e às vezes afirma ligação com o polo que o texto não tem.
     """
     resultado = []
     for p in portarias:
-        texto = " ".join(
-            [p.get("numero") or "", p.get("resumo") or ""] + list(p.get("trechos") or [])
-        )
+        texto = " ".join([p.get("numero") or ""] + list(p.get("trechos") or []))
+        if not any(re.search(t, texto, re.IGNORECASE) for t in TERMOS_GATILHO):
+            log.info(f"  - Descartada (não cita polo/cidade/integrante): {p.get('numero')}")
+            continue
         menciona_polo = bool(_RE_POLO_MEDIO.search(texto))
         menciona_cidade = bool(_RE_CIDADES_POLO.search(texto))
         if (

@@ -6,7 +6,7 @@
   },
 
   "defensores": {
-    "icaro":        { "nome": "Ícaro Oliveira Avelar Costa",           "nome_curto": "Ícaro Avelar",     "externo": false },
+    "icaro":        { "nome": "Ícaro Oliveira Avelar Costa",           "nome_curto": "Ícaro Avelar",     "externo": false, "ativo": false },
     "jose-antonio": { "nome": "José Antônio Pereira da Silva",         "nome_curto": "José Antônio",     "externo": false, "ativo": false },
     "eliaquim":     { "nome": "Eliaquim Antunes de Souza Santos",      "nome_curto": "Eliaquim Antunes", "externo": false },
     "elton":        { "nome": "Elton Dariva Staub",                    "nome_curto": "Elton Dariva",     "externo": false, "ativo": false },
@@ -18,7 +18,8 @@
     "oswaldo":      { "nome": "Oswaldo Machado Neto",                  "nome_curto": "Oswaldo Machado",  "externo": true  },
     "enio":         { "nome": "Ênio Jorge Lima Barbalho Junior",        "nome_curto": "Ênio Barbalho",    "externo": false },
     "thays":        { "nome": "Thays Lidianne Campos de Azevedo Pereira","nome_curto": "Thays Azevedo",   "externo": false },
-    "emilly":       { "nome": "Emilly Bianca Ferreira dos Santos",       "nome_curto": "Emilly Santos",   "externo": false }
+    "emilly":       { "nome": "Emilly Bianca Ferreira dos Santos",       "nome_curto": "Emilly Santos",   "externo": false },
+    "pedro":        { "nome": "Pedro Henrique Pereira Paiva",            "nome_curto": "Pedro Paiva",     "externo": false }
   },
 
   "defensorias": {
@@ -45,7 +46,9 @@
       "area": "Cível, Infância e Juventude, Registros Públicos e Previdenciário Itacoatiara",
       "destaque": null,
       "historico_titulares": [
-        { "defensor": "icaro", "inicio": "2026-01-01", "fim": null }
+        { "defensor": "icaro",  "inicio": "2026-01-01", "fim": "2026-06-01" },
+        { "defensor": null,     "inicio": "2026-06-01", "fim": "2026-10-01" },
+        { "defensor": "miguel", "inicio": "2026-10-01", "fim": null, "portaria_entrada": "Portaria nº 1708/2026-GDPG/DPE/AM" }
       ]
     },
     "4": {
@@ -71,7 +74,8 @@
       "destaque": "itacoatiara",
       "historico_titulares": [
         { "defensor": "elaine", "inicio": "2025-11-30", "fim": "2026-03-01", "portaria_entrada": "Portaria nº 2145/2025-GDPG/DPE/AM", "portaria_saida": "Portaria nº 187/2026-GDPG/DPE/AM" },
-        { "defensor": "miguel", "inicio": "2026-03-01", "fim": null }
+        { "defensor": "miguel", "inicio": "2026-03-01", "fim": "2026-10-01", "portaria_saida": "Portaria nº 1708/2026-GDPG/DPE/AM" },
+        { "defensor": "pedro",  "inicio": "2026-10-01", "fim": null, "portaria_entrada": "Portaria nº 1708/2026-GDPG/DPE/AM" }
       ]
     },
     "7": {
