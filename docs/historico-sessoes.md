@@ -4,6 +4,30 @@
 
 ---
 
+## Sessão 44 — 28/09/2026
+
+> Sessões 37–43 estão detalhadas só no `CLAUDE.md` (seção "Estado atual").
+
+- Itens (1)–(5) da manhã (link da Edição 2736, popup do Calendário com todos os substitutos,
+  nome vertical da DP no modal de titulares, tabelas do PDF na automação, escala de plantão →
+  CSV): ver `CLAUDE.md` (sessão 44) e `docs/automacao.md`.
+- **Tarde — filtros do Diário Oficial (Projeto 2)** (`docs/automacao.md`, "Filtro pós-Claude"):
+  `filtrar_portarias_fora_do_polo()` descarta viagens de integrante para outro polo e exige
+  que os trechos citem polo/cidade/integrante (com exceções de interesse geral definidas pela
+  usuária em `TERMOS_RELEVANCIA_GERAL`); `_termo_nome()` casa nomes com e sem acento
+  (Ênio/Enio); titulares por data da edição (`termos_integrantes_na_data()`); Pedro Henrique
+  cadastrado (`docs/defensores/pedro.md`). 11 portarias de viagem removidas do histórico.
+- **Noite — outros polos:** a Portaria 1733 (Edição 2737) entrou como "Polo Médio" por confusão
+  com o Polo do Médio Solimões (PDF embaralhado com tabela). Prompt passou a listar os outros
+  polos; 23 portarias só de outros polos removidas do JSON (lista conferida pela usuária).
+- **Projeto 1:** trazido ao `main` o bugfix de 19/05 esquecido no branch
+  `claude/practical-hamilton-ea51c1` (designação cumulativa com período definido sem o ausente
+  nomeado era descartada; agora infere o titular da DP). Branch e worktree apagados.
+- Observação de processo: o notebook descarregou no meio do chat da tarde; o trabalho não se
+  perdeu porque já estava no GitHub — dar `git fetch` antes de concluir que algo sumiu.
+
+---
+
 ## Sessão 36 — 24/08/2026
 
 - **Unidade Gestora Concedente no cadastro de Pronto Pagamento**: usuária mostrou uma segunda

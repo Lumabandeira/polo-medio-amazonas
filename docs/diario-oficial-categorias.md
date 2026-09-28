@@ -8,7 +8,7 @@ Este arquivo documenta as regras de classificação de portarias e atos do Diár
 
 Só inclua um ato se ele **afeta diretamente o Polo Médio Amazonas** — seus defensores, servidores, defensorias (1ª a 12ª DP), escala de plantão ou coordenação. Atos que mencionam o Polo Médio apenas de passagem (ex: tabela de colidência que lista vários polos) podem ser incluídos com categoria `polo_medio` apenas se o conteúdo relevante for transcrito.
 
-**Atos sobre outros polos** (Juruá, Alto Solimões, Purus, Madeira, etc.) **não devem ser incluídos**, mesmo que envolvam defensores conhecidos. Veja a regra crítica sobre `coordenacao` abaixo.
+**Atos sobre outros polos** (Juruá, Alto Solimões, **Médio Solimões**, **Médio Madeira**, Purus, Madeira, Baixo Amazonas, Rio Negro-Solimões, Alto Rio Negro etc.) **não devem ser incluídos**, mesmo que envolvam defensores conhecidos. Atenção: "Polo do Médio Solimões" e "Polo do Médio Madeira" **não** são o Polo Médio Amazonas (caso real: Portaria 1733, Edição 2737 — ver `automacao.md`). Veja a regra crítica sobre `coordenacao` abaixo.
 
 ---
 

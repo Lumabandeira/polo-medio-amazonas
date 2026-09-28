@@ -1,6 +1,6 @@
 # Índice da Documentação — Polo Médio Amazonas 2026
 
-> Atualizado em 14/06/2026. Para o mapa de tarefas → arquivos, consulte `CLAUDE.md` na raiz.
+> Atualizado em 28/09/2026. Para o mapa de tarefas → arquivos, consulte `CLAUDE.md` na raiz.
 
 ---
 
@@ -29,10 +29,11 @@ Um arquivo por defensor. Contém status, DPs titulares, grupo de alternância e 
 |---------|---------|--------|
 | `enio.md` | Ênio Jorge Lima Barbalho Junior | ✅ Ativo (desde 02/05/2026) |
 | `thays.md` | Thays Lidianne Campos de Azevedo Pereira | ✅ Ativo (desde 30/04/2026) |
-| `icaro.md` | Ícaro Oliveira Avelar Costa | ✅ Ativo |
+| `icaro.md` | Ícaro Oliveira Avelar Costa | ❌ Ex-membro (saiu 01/06/2026 — 3ª DP coberta pelo Eliaquim) |
 | `eliaquim.md` | Eliaquim Antunes de Souza Santos | ✅ Ativo |
 | `emilly.md` | Emilly Bianca Ferreira dos Santos | ✅ Ativo (desde 02/05/2026) |
 | `miguel.md` | Miguel Eduardo de Azevedo Martins Filho | ✅ Ativo (desde 01/03/2026) |
+| `pedro.md` | Pedro Henrique Pereira Paiva | ✅ Ativo (a partir de 01/10/2026 — 7º Concurso de Remoção) |
 | `jose-antonio.md` | José Antônio Pereira da Silva | ❌ Ex-membro (saiu 02/05/2026) |
 | `elton.md` | Elton Dariva Staub | ❌ Ex-membro (saiu 02/05/2026) |
 | `elaine.md` | Elaine Maria Sousa Frota | ❌ Ex-membro (saiu 02/05/2026) |
