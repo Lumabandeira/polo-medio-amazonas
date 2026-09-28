@@ -824,9 +824,33 @@ def download_pdf(url: str) -> bytes:
     return r.content
 
 
+def _tabelas_da_pagina(page) -> str:
+    """
+    Tabelas da página, uma linha por registro (células separadas por ' | ').
+    O extract_text() mistura as colunas de uma tabela com a coluna de texto ao
+    lado (layout de 2 colunas do DO), picotando frases como "6ª Defensoria
+    Pública do Polo do Médio Amazonas" em várias linhas — e aí nem o termo-gatilho
+    casa nem o Claude entende a linha. Mesma correção de verificar-diario-completo.py.
+    """
+    try:
+        tabelas = page.extract_tables()
+    except Exception as e:
+        log.warning(f"Falha ao extrair tabelas da página {page.page_number}: {e}")
+        return ""
+    linhas = []
+    for tabela in tabelas:
+        for row in tabela:
+            celulas = [re.sub(r"\s+", " ", c or "").strip() for c in row]
+            if any(celulas):
+                linhas.append(" | ".join(celulas))
+    if not linhas:
+        return ""
+    return f"\n[TABELA — pág. {page.page_number}]\n" + "\n".join(linhas) + "\n[FIM DA TABELA]\n"
+
+
 def extract_pdf_text(pdf_bytes: bytes) -> str:
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-        pages = [page.extract_text() or "" for page in pdf.pages]
+        pages = [(page.extract_text() or "") + _tabelas_da_pagina(page) for page in pdf.pages]
     return "\n".join(pages)
 
 # ─── Análise com Claude ───────────────────────────────────────────────────────

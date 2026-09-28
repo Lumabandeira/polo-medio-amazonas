@@ -352,9 +352,35 @@ def download_pdf(url: str) -> bytes:
     return r.content
 
 
+def _tabelas_da_pagina(page) -> str:
+    """
+    Tabelas da página, uma linha por registro (células separadas por ' | ').
+    O extract_text() mistura as colunas de uma tabela com a coluna de texto ao
+    lado (layout de 2 colunas do DO), picotando frases como "6ª Defensoria
+    Pública do Polo do Médio Amazonas" em várias linhas — e aí nem o termo-gatilho
+    casa nem o Claude entende a linha. Ex.: Edição 2734 (18/09/2026), Anexo I da
+    Portaria 1708 (concurso de remoção), onde a remoção de Pedro Henrique Pereira
+    Paiva para a 6ª DP do Polo não foi detectada.
+    """
+    try:
+        tabelas = page.extract_tables()
+    except Exception as e:
+        log.warning(f"Falha ao extrair tabelas da página {page.page_number}: {e}")
+        return ""
+    linhas = []
+    for tabela in tabelas:
+        for row in tabela:
+            celulas = [re.sub(r"\s+", " ", c or "").strip() for c in row]
+            if any(celulas):
+                linhas.append(" | ".join(celulas))
+    if not linhas:
+        return ""
+    return f"\n[TABELA — pág. {page.page_number}]\n" + "\n".join(linhas) + "\n[FIM DA TABELA]\n"
+
+
 def extract_pdf_text(pdf_bytes: bytes) -> str:
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-        pages = [page.extract_text() or "" for page in pdf.pages]
+        pages = [(page.extract_text() or "") + _tabelas_da_pagina(page) for page in pdf.pages]
     return "\n".join(pages)
 
 # ─── Pré-filtro ───────────────────────────────────────────────────────────────
@@ -454,6 +480,8 @@ REGRAS:
 - O resumo deve ser conciso e informativo (quem, o quê, quando)
 - Se não identificar o número SEI/SGI, use null (não use string vazia)
 - Inclua apenas portarias genuinamente relacionadas ao polo ou seus integrantes
+- Blocos entre [TABELA — pág. N] e [FIM DA TABELA] são tabelas do PDF (anexos de portarias, como a classificação de concurso de remoção), uma linha por registro com as células separadas por " | " e o cabeçalho (ex.: DEFENSOR | ORIGEM | DESTINO) numa das primeiras linhas. Atribua a tabela à portaria da qual ela é anexo, inclua nos "trechos" CADA linha que envolva o polo (como origem OU destino), respeitando a direção origem → destino, e cite cada defensor envolvido no resumo
+- O mesmo conteúdo pode aparecer também, embaralhado, no texto corrido antes da tabela — nesse caso confie na versão da tabela
 
 TRECHOS DO DIÁRIO OFICIAL (janelas de contexto em volta das menções):
 {trechos}""",

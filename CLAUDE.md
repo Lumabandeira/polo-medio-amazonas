@@ -77,7 +77,12 @@ titular ganhou uma faixa lateral à esquerda com o nome da DP na vertical (`.tit
 `writing-mode: vertical-rl` + `rotate(180deg)`, lido de baixo para cima, fonte `0.85em`), e o conteúdo foi para
 `.tit-entry-corpo`. Aproveitado para corrigir campos vazando do card em tela estreita
 (`min-width: 0` em `.tit-field`, `input[type=url]` com `width: 100%`) e, abaixo de 600px, o grid
-dos campos passa para 1 coluna. Testado no navegador em desktop e 375px.
+dos campos passa para 1 coluna. Testado no navegador em desktop e 375px. (4) **Bugfix na
+automação do Diário Oficial:** a remoção de Pedro Henrique Pereira Paiva para a 6ª DP do Polo
+(Edição 2734, 18/09, tabela do Anexo I da Portaria 1708) não foi filtrada porque o texto extraído
+do PDF embaralhava as colunas das tabelas. `extract_pdf_text()` dos dois scripts agora acrescenta
+as tabelas linha a linha (`_tabelas_da_pagina()`); registro da Portaria 1708 corrigido à mão no
+JSON (Pedro incluído, direção do Miguel corrigida: 6ª → 3ª). Ver `docs/automacao.md`.
 
 ## Estado atual (sessão 43 — 25/09/2026)
 

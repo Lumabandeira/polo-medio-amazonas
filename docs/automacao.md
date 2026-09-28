@@ -87,6 +87,19 @@ Requer `firebase-service-account.json` na raiz (gitignored).
 3. Servidores (primeiro+segundo nome): Luma Karolyne, Fábio Bastos, Natália Cristina, Arnoud Lucas, Larice Bruce
 4. Titulares vigentes (carregados do JSON)
 
+### Extração de texto — tabelas (sessão 44)
+
+O DO é diagramado em 2 colunas e `page.extract_text()` do pdfplumber **mistura as colunas de
+uma tabela com a coluna de texto ao lado**, picotando frases ("Polo do / Médio Médio /
+Amazonas"). Com isso nem o termo-gatilho casa nem o Claude entende a linha. Caso real: Edição
+2734 (18/09/2026), Anexo I da Portaria 1708/2026-GDPG (7º Concurso de Remoção) — a remoção de
+Pedro Henrique Pereira Paiva para a 6ª DP do Polo não foi detectada, e a do Miguel saiu com
+origem/destino invertidos. Correção: `extract_pdf_text()` (nos **dois** projetos) acrescenta ao
+texto de cada página as tabelas via `page.extract_tables()` (`_tabelas_da_pagina()`), uma linha
+por registro com células separadas por ` | `, entre `[TABELA — pág. N]` e `[FIM DA TABELA]`. O
+prompt do Projeto 2 explica esse formato ao Claude (cada linha que envolva o polo, respeitando
+origem → destino; em caso de conflito, confiar na tabela).
+
 ### Saída
 
 `docs/diario-oficial-completo-2026.json` — lido diretamente pelo site via `fetch()`. Commitado automaticamente pelo workflow quando há portarias novas.
