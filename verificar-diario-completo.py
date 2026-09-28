@@ -863,6 +863,9 @@ TERMOS_RELEVANCIA_GERAL = [
     r"Ordenador[a]?\s+de\s+Despesas?",
     r"(?:DESIGNAR|PRORROGAR|ENCERRAR|REVOGAR|INSTITUIR)[^;]{0,300}?Ciclo\s+do\s+Projeto\s*[\"'“‘]?\s*Adote\s+uma\s+Comarca",
     r"Expandir\s+Presen[çc]a",
+    # 4. escala de substituição entre polos (a Portaria 493/2024-GDPG fixava essa escala)
+    r"escala\s+de\s+substitui[çc][ãa]o\s+entre\s+(?:os\s+)?Polos",
+    r"Portaria\s+n?[º°.o]*\s*493/2024",
 ]
 _RE_RELEVANCIA_GERAL = [re.compile(t, re.IGNORECASE) for t in TERMOS_RELEVANCIA_GERAL]
 
