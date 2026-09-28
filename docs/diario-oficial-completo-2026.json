@@ -1205,18 +1205,6 @@
         "resumo": "Nomeia Péricles Duarte e Marco Aurélio Martins como Assessores Executivos DPE-6 a partir de 02/03/2026"
       },
       {
-        "numero": "Portaria nº 233/2026-GDPG/DPE/AM",
-        "sei": null,
-        "sgi": null,
-        "categorias": [
-          "nomeacao_diretoria"
-        ],
-        "trechos": [
-          "CESSAR OS EFEITOS, a contar de 02 de março de 2026, do inciso II da Portaria n.º 238/2024-GDPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM em 04 de março de 2024, Ano 10, Edição 2.126, Pág. 4/11, que designou o Defensor Público Murilo Rodrigues Breda como Coordenador do Polo do Alto Solimões."
-        ],
-        "resumo": "Cessa designação de Murilo Rodrigues Breda como Coordenador do Polo do Alto Solimões a partir de 02/03/2026"
-      },
-      {
         "numero": "Portaria nº 231/2026-GDPG/DPE/AM",
         "sei": null,
         "sgi": null,
@@ -1928,18 +1916,14 @@
     "data_formatada": "06/04/2026",
     "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/04/Edicao_2625-2026__publicada_em_06_abril_de_2026.pdf",
     "portarias": [],
-    "portarias_estruturadas": {
-      "numero": "Portaria Nº 504/2026-GDPG/DPE/AM",
-      "sei": "26.0.000003455-9",
-      "sgi": null,
-      "categorias": [
-        "defensor"
-      ],
-      "trechos": [
-        "REVOGAR, a contar de 16 de março de 2026, a gratificação pelo efetivo exercício em comarca de difícil provimento concedida ao Defensor Público Eliaquim Antunes de Souza Santos."
-      ],
-      "resumo": "Revoga gratificação de comarca de difícil provimento de Eliaquim Antunes a partir de 16/03/2026"
-    }
+    "portarias_estruturadas": [
+      "numero",
+      "sei",
+      "sgi",
+      "categorias",
+      "trechos",
+      "resumo"
+    ]
   },
   {
     "edicao": 2626,
@@ -3210,20 +3194,6 @@
         "resumo": "Autoriza deslocamento de servidores para inauguração de unidades da DPE nos municípios de Urucará e Itapiranga do Polo Médio Amazonas, em maio de 2026"
       },
       {
-        "numero": "Portaria Nº 485/2026-GSPG/DPE/AM",
-        "sei": "26.0.000005891-1",
-        "sgi": null,
-        "categorias": [
-          "polo_medio",
-          "defensor",
-          "designacoes"
-        ],
-        "trechos": [
-          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Murilo Rodrigues Breda para atuar na 8ª Defensoria Pública do Polo do Alto Solimões (Amaturá), nos dias 27, 28 e 29 de maio e 01, 02 e 03 de junho de 2026"
-        ],
-        "resumo": "Designa Murilo Rodrigues Breda para atuar cumulativamente em polo do interior, nos dias 27 a 29 de maio e 01 a 03 de junho de 2026"
-      },
-      {
         "numero": "Portaria Nº 509/2026-GSPG/DPE/AM",
         "sei": "26.0.000006786-4",
         "sgi": null,
@@ -3779,20 +3749,6 @@
         "resumo": "Designa Gabriel Herzog Kehde para São Sebastião do Uatumã (01-15/06), Francine Lúcia Buffon Baldissarella para Urucará (01-03/06) e Elânia Cristina Fonseca para Novo Airão (01-18/06)"
       },
       {
-        "numero": "Portaria Nº 571/2026-GSPG/DPE/AM",
-        "sei": "26.0.000005713-3",
-        "sgi": null,
-        "categorias": [
-          "polo_medio",
-          "defensor",
-          "designacoes"
-        ],
-        "trechos": [
-          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Pedro Henrique Pereira Paiva para atuar na 2ª Defensoria Pública do Polo do Médio Solimões, no período de 01 a 30 de junho de 2026"
-        ],
-        "resumo": "Designa Pedro Henrique Pereira Paiva para o Polo do Médio Solimões de 01 a 30 de junho de 2026"
-      },
-      {
         "numero": "EDITAL Nº 67/2026 - ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS",
         "sei": null,
         "sgi": null,
@@ -3818,21 +3774,6 @@
     "portarias": [],
     "portarias_estruturadas": [
       {
-        "numero": "Portaria Nº 924/2026-GDPG/DPE/AM",
-        "sei": null,
-        "sgi": null,
-        "categorias": [
-          "defensor",
-          "substituicao",
-          "polo_medio",
-          "designacoes"
-        ],
-        "trechos": [
-          "DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Arthur de Oliveira Cavalcante para atuar na 7ª Defensoria Pública do Polo do Médio Madeira, nos dias 01 e 02 de junho de 2026"
-        ],
-        "resumo": "Designa Defensor Público de 4ª Classe Arthur de Oliveira Cavalcante para atuar cumulativamente na 7ª DP do Polo Médio Madeira nos dias 01 e 02 de junho de 2026"
-      },
-      {
         "numero": "Portaria Nº 580/2026-GSPG/DPE/AM",
         "sei": "26.0.000007807-6",
         "sgi": null,
@@ -3848,22 +3789,6 @@
           "DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Oswaldo Machado Neto para atuar na 11ª Defensoria Pública do Polo do Médio Solimões (Jutaí), a contar do dia 04 de junho de 2026"
         ],
         "resumo": "Designa cumulativamente quatro defensores públicos para atuar em defensorias do Polo Médio Solimões e Juruá a partir de 04 de junho de 2026"
-      },
-      {
-        "numero": "Portaria Nº 581/2026-GSPG/DPE/AM",
-        "sei": "26.0.000007818-1",
-        "sgi": null,
-        "categorias": [
-          "defensor",
-          "designacoes",
-          "polo_medio",
-          "substituicao"
-        ],
-        "trechos": [
-          "DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Francine Lucia Buffon Baldissarella para atuar na 1ª Defensoria Pública do Polo do Madeira, no período de 22 de junho a 01 de julho de 2026",
-          "DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Fernanda de Carvalho e Santos para atuar na 5ª Defensoria Pública do Polo do Madeira (Apuí), no período de 22 de junho a 01 de julho de 2026"
-        ],
-        "resumo": "Designa cumulativamente duas defensoras públicas para atuar em defensorias do Polo Médio Madeira de 22 de junho a 01 de julho de 2026"
       }
     ]
   },
@@ -4148,20 +4073,6 @@
         "resumo": "Designa membros e servidores do Polo Médio Amazonas (Itacoatiara, Itapiranga, Urucará, Silves, Urucurituba) para o 15º Ciclo do Projeto 'Adote uma Comarca' de 16/06/2026 a 16/09/2026, com atribuição de contraprestação e adicionais."
       },
       {
-        "numero": "Portaria Nº 978/2026-GDPG/DPE/AM",
-        "sei": "26.0.000007927-7",
-        "sgi": null,
-        "categorias": [
-          "polo_medio",
-          "defensor",
-          "substituicao"
-        ],
-        "trechos": [
-          "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Mariana Silva Paixão para atuar na 3ª Defensoria Pública do Polo do Médio Solim"
-        ],
-        "resumo": "Designa Defensora Pública Mariana Silva Paixão para atuar cumulativamente na 3ª Defensoria Pública do Polo do Médio Solimões."
-      },
-      {
         "numero": "Portaria Nº 980/2026-GDPG/DPE/AM",
         "sei": null,
         "sgi": "2600974",
@@ -4380,22 +4291,6 @@
           "XII - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Ali Assaad Hamade de Oliveira para atuar na 9ª Defensoria Pública do Polo do Médio Solimões (Juruá), no período de 22 a 26 de junho de 2026"
         ],
         "resumo": "Designa defensores públicos para atuação cumulativa no Polo Médio Amazonas (Silves) e Médio Solimões (Juruá) em julho e junho de 2026"
-      },
-      {
-        "numero": "Portaria Nº 662/2026-GSPG/DPE/AM",
-        "sei": "26.0.000008815-2",
-        "sgi": null,
-        "categorias": [
-          "nomeacao_diretoria",
-          "defensor",
-          "polo_medio",
-          "coordenacao"
-        ],
-        "trechos": [
-          "I - CESSAR OS EFEITOS, a contar do dia 01 de julho de 2026, a FGD-6 (Coordenadoria do Interior), nos termos da Lei n.º 4.831 de 13 de maio de 2019, concedida ao Defensor Público Vinicius Mariani Cruz Santana",
-          "II - DESIGNAR, a contar do dia 01 de julho de 2026, a Defensora Pública Luisa Martins de Lana Nunes como Coordenadora do Polo do Alto Solimões, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019"
-        ],
-        "resumo": "Cessa coordenação de Vinicius Mariani Cruz Santana e designa Luisa Martins de Lana Nunes como Coordenadora do Polo do Alto Solimões a partir de 01 de julho de 2026"
       }
     ]
   },
@@ -4818,19 +4713,6 @@
         "resumo": "Autoriza deslocamento da Assistente Defensorial Larice Bruce Pereira para auxiliar em atendimentos e inspeção em Silves e Itapiranga de 20 a 23 de julho de 2026"
       },
       {
-        "numero": "Portaria Nº 692/2026-GSPG/DPE/AM",
-        "sei": "26.0.000009577-9",
-        "sgi": null,
-        "categorias": [
-          "defensor",
-          "substituicao"
-        ],
-        "trechos": [
-          "CESSAR OS EFEITOS, a contar do dia 13 de julho de 2026, do inciso VI da PORTARIA Nº 40/2026-GSPG/DPE/AM, publicada no dia 20 de janeiro de 2026, Ano 12, Edição 2576 Pág. 9 de 15, quanto à designação do Defensor Público de 4ª Classe Renato Fernandes Neto para atuar na 5ª Defensoria Pública do Polo do Juruá."
-        ],
-        "resumo": "Cessa designação de Renato Fernandes Neto na 5ª Defensoria Pública do Polo do Juruá a partir de 13 de julho de 2026"
-      },
-      {
         "numero": "Portaria Nº 674/2026-GSPG/DPE/AM",
         "sei": null,
         "sgi": null,
@@ -4979,20 +4861,6 @@
           "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Enio Jorge Lima Barbalho Junior para atuar na 5ª Defensoria Pública do Polo de Coari, nos dias 23 e 24 de julho de 2026;"
         ],
         "resumo": "Designa Defensores Públicos Ian Marcos Martins Palmeira e Enio Jorge Lima Barbalho Junior cumulativamente para atuação no Polo de Coari em 23 e 24/07/2026"
-      },
-      {
-        "numero": "Portaria Nº 725/2026-GSPG/DPE/AM",
-        "sei": "26.0.000009726-7",
-        "sgi": null,
-        "categorias": [
-          "servidor",
-          "nomeacao_diretoria"
-        ],
-        "trechos": [
-          "I - CESSAR OS EFEITOS, no período de 15 a 26 de julho de 2026, da FGS-1 (Subgerência de Núcleo ou Unidade), nos termos do disposto na Lei nº 4.077, de 11 de setembro de 2014 e suas alterações, concedida ao Servidor Público Ádryan Éber Rabelo Silva;",
-          "II - DESIGNAR, no período de 15 a 26 de julho de 2026, o Servidor Público Rafael Souza Castro como Subgerente do Polo do Médio Solimões, atribuindo-lhe a FGS-1 (Subgerência de Núcleo ou Unidade), nos termos do disposto na Lei nº 4.077, de 11 de setembro de"
-        ],
-        "resumo": "Cessa efeitos de FGS-1 do servidor Ádryan Éber Rabelo Silva e designa Rafael Souza Castro como Subgerente do Polo do Médio Solimões de 15 a 26/07/2026"
       }
     ]
   },
@@ -5134,21 +5002,6 @@
     "portarias": [],
     "portarias_estruturadas": [
       {
-        "numero": "Portaria Nº 757/2026-GSPG/DPE/AM",
-        "sei": "26.0.000010179-5",
-        "sgi": null,
-        "categorias": [
-          "polo_medio",
-          "defensor",
-          "nomeacao_diretoria",
-          "coordenacao"
-        ],
-        "trechos": [
-          "I - DESIGNAR, no período de 22 de julho a 05 de agosto de 2026, a Defensora Pública Natália Feitosa de Almeida como Coordenadora do Polo do Médio Solimões, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019."
-        ],
-        "resumo": "Designa Defensora Pública Natália Feitosa de Almeida como Coordenadora do Polo do Médio Solimões (FGD-6) de 22/07 a 05/08/2026"
-      },
-      {
         "numero": "Portaria Nº 751/2026-GSPG/DPE/AM",
         "sei": "26.0.000009868-9",
         "sgi": null,
@@ -5187,20 +5040,6 @@
           "Polo do Médio Amazonas"
         ],
         "resumo": "Altera a Portaria 635/2026 e estabelece escala de substituição para o Polo do Médio Amazonas e demais polos do interior no 3º trimestre de 2026"
-      },
-      {
-        "numero": "Portaria Nº 767/2026-GSPG/DPE/AM",
-        "sei": "26.0.000010179-5",
-        "sgi": null,
-        "categorias": [
-          "polo_medio",
-          "defensor",
-          "designacoes"
-        ],
-        "trechos": [
-          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Rodolfo Pinheiro Bernardo Lôbo para atuar na 2ª Defensoria Pública do Polo do Médio Solimões, no período de 22 de julho a 05 de agosto de 2026"
-        ],
-        "resumo": "Designa Rodolfo Pinheiro Bernardo Lôbo para atuar cumulativamente na 2ª DP do Polo do Médio Solimões de 22/07 a 05/08/2026"
       },
       {
         "numero": "Portaria Nº 768/2026-GSPG/DPE/AM",
@@ -5354,20 +5193,6 @@
         "resumo": "Autoriza deslocamento de defensor de Itacoatiara para Itapiranga-AM no dia 29 de julho de 2026 para atuar em Tribunal do Júri"
       },
       {
-        "numero": "Portaria Nº 784/2026-GSPG/DPE/AM",
-        "sei": "26.0.000010372-0",
-        "sgi": null,
-        "categorias": [
-          "defensor",
-          "designacoes"
-        ],
-        "trechos": [
-          "I - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Ali Assaad Hamade de Oliveira para atuar na 3ª Defensoria Pública do Polo do Rio Negro - Solimões, no período de 01 de agosto a 30 de setembro de 2026",
-          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Danilo Justino Garcia para atuar na 1ª Defensoria Pública do Polo de Maués, no período de 01 de agosto a 20 de outubro de 2026"
-        ],
-        "resumo": "Designa cumulativamente dois defensores públicos para atuação em polos do interior (Rio Negro-Solimões e Maués) em agosto-outubro de 2026"
-      },
-      {
         "numero": "Portaria Nº 787/2026-GSPG/DPE/AM",
         "sei": "26.0.000010081-0",
         "sgi": null,
@@ -5404,23 +5229,6 @@
         "resumo": "Institui Grupo de Trabalho para organizar e executar projeto Meu Pai Tem Nome no Polo Médio Solimões com designação de membros e servidores"
       },
       {
-        "numero": "Portaria Nº 779/2026-GDPG/DPE/AM",
-        "sei": "26.0.000000271-1",
-        "sgi": null,
-        "categorias": [
-          "polo_medio",
-          "defensor",
-          "substituicao",
-          "designacoes"
-        ],
-        "trechos": [
-          "AUTORIZAR a substituição do Defensor Público Pedro Henrique Pereira Paiva, designado para atuar no Grupo de Trabalho do Meu Pai Tem Nome, no Polo do Médio Solimões, com o objetivo de organizar, treinar e executar o projeto no interior do Estado do Amazonas, pela Defensora Pública Érica Andrade de Oliveira, a contar de 29 de julho de 2026",
-          "ENQUADRAR a atuação da membra como designação especial, para fins de promoção, previsto no inciso V do artigo 17 da Resolução nº 004/2018-CSPDE/AM, contando-se a cada 03 (três) dias como uma designação especial, para fins de pontuação",
-          "DETERMINAR a atuação da membra como critério de elegibilidade para meritocracia, nos termos do art. 2º, inciso V, da Resolução nº 022/2021-CSDPE/AM"
-        ],
-        "resumo": "Substitui Defensor no Grupo de Trabalho Meu Pai Tem Nome do Polo Médio Solimões por Defensora Érica Andrade de Oliveira a partir de 29 de julho de 2026"
-      },
-      {
         "numero": "Portaria Nº 1323/2026-GDPG/DPE/AM",
         "sei": null,
         "sgi": null,
@@ -5449,22 +5257,6 @@
           "DESIGNAR, em caráter especial, a Defensora Pública de 3.ª Classe Carine Teresa Lopes de Sousa Possidônio, para atuar na Sessão de Julgamento do Tribunal do Júri da Vara Única da Comarca de Itapiranga no dia 30 de Julho de 2026 às 08h00, conforme Anexo Único"
         ],
         "resumo": "Designa Defensora para atuar em Sessão de Julgamento do Tribunal do Júri da Comarca de Itapiranga em 30 de julho de 2026"
-      },
-      {
-        "numero": "Portaria Nº 786/2026-GSPG/DPE/AM",
-        "sei": "26.0.000010302-0",
-        "sgi": null,
-        "categorias": [
-          "defensor",
-          "substituicao"
-        ],
-        "trechos": [
-          "CESSAR OS EFEITOS, a contar do dia 20 de julho de 2026, do inciso III da Portaria nº 473/2026-GSPG/DPE/AM, publicada no dia 07 de maio de 2026, Ano 12, Edição 2645 Pág. 11 de 28, quanto à designação da Defensora Pública de 3ª Classe Danielle Mascarenhas Cunha de Almeida para atuar na 10ª Defensoria Pública do Polo do Rio Negro - Solimões (Anori)",
-          "CESSAR OS EFEITOS, a contar do dia 25 de julho de 2026, do inciso II da Portaria nº 473/2026-GSPG/DPE/AM, Ano 12, Edição 2698, Pág. 6, no dia 28 de julho de 2026",
-          "CESSAR OS EFEITOS, a contar do dia 25 de julho de 2026, do inciso IV da Portaria nº 473/2026-GSPG/DPE/AM, publicada no dia 07 de maio de 2026, Ano 12, Edição 2645 Pág. 11 de 28, quanto à designação da Defensora Pública de 3ª Classe Danielle Mascarenhas Cunha de Almeida para atuar na 12ª Defensoria Pública do Polo do Rio Negro - Solimões (Beruri)",
-          "DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Rodolfo Pinheiro Bernardo Lôbo para atuar na 10ª Defensoria Pública do Polo do Rio Negro - Solimões (Anori), no período de 20 de julho a 30 de setembro de 2026"
-        ],
-        "resumo": "Cessa designações de Defensora em Anori e Beruri e designa cumulativamente Defensor Rodolfo Pinheiro Bernardo Lôbo no Polo Rio Negro-Solimões de julho a setembro de 2026"
       },
       {
         "numero": "Portaria Nº 795/2026-GSPG/DPE/AM",
@@ -5839,34 +5631,7 @@
     "data_formatada": "12/08/2026",
     "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/08/Edicao_2709-2026__publicada_em_12_agosto_de_2026.pdf",
     "portarias": [],
-    "portarias_estruturadas": [
-      {
-        "numero": "Portaria Nº 830/2026-GSPG/DPE/AM",
-        "sei": null,
-        "sgi": null,
-        "categorias": [
-          "defensor",
-          "substituicao"
-        ],
-        "trechos": [
-          "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Daniele dos Santos Fernandes para atuar na 10ª Defensoria Pública do Polo do Alto Solimões (São Paulo de Olivença), no período de 07 de agosto a 30 de setembro de 2026"
-        ],
-        "resumo": "Designa Daniele dos Santos Fernandes para atuar cumulativamente na 10ª DP do Polo do Alto Solimões de 07/08 a 30/09/2026"
-      },
-      {
-        "numero": "Portaria Nº 838/2026-GSPG/DPE/AM",
-        "sei": "26.0.000011278-9",
-        "sgi": "2600447, 2600508 e 2600511",
-        "categorias": [
-          "defensor",
-          "substituicao"
-        ],
-        "trechos": [
-          "I - DESIGNAR, cumulativamente, o Defensor Público de 1ª Classe Marco Aurélio Martins da Silva para atuar na 1ª Defensoria Pública do Polo Baixo Amazonas, nos períodos de 10 a 13 de agosto e 17 a 26 de agosto de 2026"
-        ],
-        "resumo": "Designa Marco Aurélio Martins da Silva para atuar cumulativamente na 1ª DP do Polo Baixo Amazonas nos períodos de 10-13/08 e 17-26/08/2026"
-      }
-    ]
+    "portarias_estruturadas": []
   },
   {
     "edicao": 2710,
@@ -5887,22 +5652,6 @@
           "I - CONSIDERAR AUTORIZADO o deslocamento de Jonilson Coelho dos Anjos, Assistente Técnico em Tecnologia da Informação de Defensoria, no trecho Manaus/Itacoatiara/Manaus, no período de 10 a 12 de agosto de 2026, a fim de realizar suporte técnico presencial na campanha \"Agosto Lilás\""
         ],
         "resumo": "Autoriza deslocamento de servidor para Itacoatiara para suporte técnico na campanha Agosto Lilás (10-12/08/2026)"
-      },
-      {
-        "numero": "Portaria Nº 827/2026-GSPG/DPE/AM",
-        "sei": "26.0.000010669-0",
-        "sgi": null,
-        "categorias": [
-          "defensor",
-          "designacoes"
-        ],
-        "trechos": [
-          "II - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Arthur de Oliveira Cavalcante para atuar na 2ª Defensoria Pública do Polo do Médio Madeira, a contar do dia 24 de agosto de 2026",
-          "III - DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Patricia Sousa Barros Leal para atuar na 3ª Defensoria Pública do Polo do Médio Madeira, a contar do dia 24 de agosto de 2026",
-          "IV - DESIGNAR, cumulativamente, o Defensor Público de 4ª Classe Arthur de Oliveira Cavalcante para atuar na 7ª Defensoria Pública do Polo do Médio Madeira (Nova Olinda do Norte), a contar do dia 24 de agosto de 2026",
-          "V - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Danilo Justino Garcia para atuar na 6ª Defensoria Pública do Polo Médio Madeira (Borba"
-        ],
-        "resumo": "Designa defensores para atuar cumulativamente no Polo Médio Madeira a partir de 24/08/2026"
       },
       {
         "numero": "Portaria Nº 77/2026-ESUDPAM/DPE/AM",
@@ -6042,22 +5791,6 @@
           "CONSIDERANDO o constante na Portaria n.º 260/2026-GDPG/DPE/AM, Ano 12, Edição 2601, pág. 11, datada de 27 de fevereiro de 2026, que delegou à Segunda Subdefensora Pública Geral, as funções de organização e designação de membros para substituição em casos de férias, folgas, licenças e demais casos de afastamentos previstos em lei"
         ],
         "resumo": "Portaria que delegou à Segunda Subdefensora Pública Geral as funções de organização e designação de membros para substituição em casos de férias, folgas e afastamentos"
-      },
-      {
-        "numero": "Portaria (sem número completo identificado) - Designação para Polo do Médio Solimões",
-        "sei": null,
-        "sgi": null,
-        "categorias": [
-          "polo_medio",
-          "defensor",
-          "designacoes"
-        ],
-        "trechos": [
-          "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Francine Lucia Buffon Baldissarella para atuar na 2ª Defensoria Pública do Polo do Médio Solimões, no período de 17 a 21 de agosto de 2026",
-          "II - DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Érica Andrade de Oliveira para atuar na 4ª Defensoria Pública do Polo do Médio Solimões, no período de 17 a 21 de agosto de 2026",
-          "III - ATRIBUIR a contraprestação na forma do Ato Normativo nº 3/2025-GDPG/DPE/AM, de 22 de maio de 2025, em complemento com o art. 40, § 3º, da Lei Complementar Estadual nº 01, de 30 de março de 1990"
-        ],
-        "resumo": "Designação cumulativa de defensoras públicas para atuação no Polo do Médio Solimões no período de 17-21 de agosto de 2026"
       },
       {
         "numero": "Portaria Nº 835/2026-GSPG/DPE/AM",
@@ -6428,20 +6161,6 @@
     "portarias": [],
     "portarias_estruturadas": [
       {
-        "numero": "Portaria Nº 772/2026-GSPG/DPE/AM",
-        "sei": "26.0.000009772-0",
-        "sgi": null,
-        "categorias": [
-          "substituicao",
-          "defensor"
-        ],
-        "trechos": [
-          "DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Stefany Coimbra Schmidt para atuar na 6ª Defensoria do Polo Baixo Amazonas, nos dias 17 e 18 de setembro de 2026",
-          "DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Stefany Coimbra Schmidt para atuar na 11ª Defensoria do Polo Baixo Amazonas, nos dias 16, 17 e 18 de setembro de 2026"
-        ],
-        "resumo": "Designa defensora para atuar cumulativamente em defensorias do Polo Baixo Amazonas nos dias 16-18 de setembro de 2026"
-      },
-      {
         "numero": "Portaria Nº 889/2026-GSPG/DPE/AM",
         "sei": "26.0.000011340-8",
         "sgi": "2600466",
@@ -6708,20 +6427,6 @@
           "I - AUTORIZAR o deslocamento de Renata Patricia Torres dos Reis, Assessora Técnica I DPE-2, nos trechos Manaus/Urucurituba/Manaus, no período de 14 a 18 de setembro de 2026, a fim de atuar na Ação \"Justiça Pra Elas\", no município de Urucurituba-AM"
         ],
         "resumo": "Autoriza deslocamento de Assessora Técnica para Urucurituba de 14 a 18 de setembro para atuar na Ação 'Justiça Pra Elas'"
-      },
-      {
-        "numero": "Portaria Nº [não identificado]-GDPG/DPE/AM",
-        "sei": "26.0.000012595-3",
-        "sgi": null,
-        "categorias": [
-          "substituicao",
-          "nomeacao_diretoria"
-        ],
-        "trechos": [
-          "I - CESSAR OS EFEITOS, no período de 08 a 16 de setembro de 2026, da FGS-1 (Subgerência de Núcleo ou Unidade), nos termos do disposto na Lei nº 4.077, de 11 de setembro de 2014 e suas alterações, concedida ao Servidor Público Marlon Leite Rios",
-          "II - DESIGNAR, no período de 08 a 16 de setembro de 2026, o Servidor Público Breno Burili como Subgerente do Polo do Purus"
-        ],
-        "resumo": "Cessa FGS-1 de Marlon Leite Rios e designa Breno Burili como Subgerente do Polo do Purus de 08 a 16 de setembro"
       }
     ]
   },
@@ -7048,21 +6753,6 @@
           "IV - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Emilly Bianca Ferreira dos Santos para atuar na 12ª Defensoria Pública do Polo do Médio Amazonas (Silves), no período de 05 a 16 de outubro de 2026"
         ],
         "resumo": "Designa Eliaquim Antunes de Souza Santos, Pedro Henrique Pereira Paiva e Emilly Bianca Ferreira dos Santos para atuação cumulativa em defensorias do Polo Médio Amazonas (incluindo Silves) em outubro de 2026"
-      },
-      {
-        "numero": "Portaria Nº 992/2026-GSPG/DPE/AM",
-        "sei": "26.0.000013374-3",
-        "sgi": "2600513, 2600572",
-        "categorias": [
-          "defensor",
-          "designacoes"
-        ],
-        "trechos": [
-          "I - DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Daiane Ayumi Kassada para atuar na 1ª Defensoria Pública do Polo do Alto Rio Negro, nos dias 01, 02, 05, 06, 07, 08, 09 de outubro e no período de 13 a 27 de outubro de 2026",
-          "II - DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Daiane Ayumi Kassada para atuar na 2ª Defensoria Pública do Polo do Alto Rio Negro, nos dias 01, 02, 05, 06, 07, 08, 09 de outubro e no período de 13 a 27 de outubro de 2026",
-          "III - DESIGNAR, cumulativamente, a Defensora Pública de 4ª Classe Daiane Ayumi Kassada para atuar na 6ª Defensoria Pública do Polo do Alto Rio Negro, nos dias 01, 02, 05, 06, 07, 08, 09 de outubro e no período de 13 a 27 de outubro de 2026"
-        ],
-        "resumo": "Designa Daiane Ayumi Kassada para atuar cumulativamente em múltiplas defensorias do Polo do Alto Rio Negro em outubro de 2026"
       }
     ]
   },
@@ -7073,22 +6763,6 @@
     "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2737-2026__publicada_em_23_setembro_de_2026.pdf",
     "portarias": [],
     "portarias_estruturadas": [
-      {
-        "numero": "Portaria Nº 1733/2026-GDPG/DPE/AM",
-        "sei": "26.0.000003556-3",
-        "sgi": null,
-        "categorias": [
-          "polo_medio",
-          "defensor",
-          "servidor",
-          "nomeacao_diretoria"
-        ],
-        "trechos": [
-          "I - DESIGNAR a servidora pública Alana Barros Silva Yaskara Xavier Luciano Corrêa para apoiar e assessorar o Polo do Médio Lucena Solimões, a partir das 14 (quatorze) horas e sem prejuízo das atribuições ordinárias, pelo período de 23/09/2026 à 09/11/2026",
-          "IV - ATRIBUIR às Defensoras Públicas Yáskara Xavier Luciano Lucena, Carolina Matos Carvalho Norões, Camila Campos de Souza a Função Gratificada FGD-3 (Assessoramento Superior), em razão da atuação no referido Grupo de Trabalho"
-        ],
-        "resumo": "Designa servidora para apoiar o Polo Médio Amazonas e atribui FGD-3 a três defensoras de 23/09/2026 a 09/11/2026"
-      },
       {
         "numero": "Portaria Nº 1007/2026-GSPG/DPE/AM",
         "sei": "26.0.000013470-7",
@@ -7157,21 +6831,6 @@
           "VII - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Polo do Rio Negro-Polo do Médio Amazonas / Polo do Médio Solimões Polo do Baixo Amazonas"
         ],
         "resumo": "Estabelece escala de plantão para o 4º trimestre de 2026 no interior, incluindo o Polo Médio Amazonas e sua escala de substituição entre polos"
-      },
-      {
-        "numero": "Portaria nº 580/2026-GSPG/DPE/AM",
-        "sei": "26.0.000013566-5",
-        "sgi": null,
-        "categorias": [
-          "polo_medio",
-          "defensor",
-          "substituicao"
-        ],
-        "trechos": [
-          "I - CESSAR OS EFEITOS, a contar do dia 01 de outubro de 2026, do inciso I da Portaria nº 580/2026-GSPG/DPE/AM, publicada no dia 08 de junho de 2026, Ano 12, Edição 2664 Pág. 5 de 11, quanto à designação da Defensora Pública de 3ª Classe Renata Visco Costa de Almeida para atuar na 10ª Defensoria Pública do Polo do Médio Solimões (Maraã e Japurá)",
-          "II - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Fernando Figueiredo Prestes para atuar na 10ª Defensoria Pública do Polo do Médio Solimões (Maraã e Japurá), no período de 01 de outubro a 31 de"
-        ],
-        "resumo": "Cessa designação de Renata Visco Costa e designa cumulativamente Fernando Figueiredo Prestes para atuar no Polo Médio Solimões a partir de 01 de outubro de 2026"
       }
     ],
     "plantao_polo": [

@@ -134,6 +134,15 @@ A mesma regra foi aplicada ao histórico do JSON: 11 portarias de viagem fora do
 (edições 2643, 2657, 2660, 2666, 2684, 2716 e 2739) e `comarca` retirada das que não citavam
 cidade do polo.
 
+**Outros polos (sessão 44, 3º ajuste):** a Portaria 1733/2026-GDPG (Edição 2737, GT das
+comarcas satélite) tinha entrado como "Polo Médio" porque o texto do PDF misturou uma tabela de
+nomes com o inciso de outra portaria ("Polo do Médio Lucena Solimões") e o Claude confundiu
+Médio Solimões com o nosso polo. A citação obrigatória (item 3) já a descarta; o prompt passou a
+listar os outros polos (Médio Solimões, Médio Madeira, Baixo Amazonas…) e a pedir para não juntar
+incisos de portarias vizinhas. Histórico: removidas mais 23 portarias só de outros polos (lista
+conferida pela usuária), incluindo 571 e 779 (Pedro Henrique no Médio Solimões antes de vir para
+o polo) — essas duas passariam pelo filtro atual, porque o nome dele hoje é termo-gatilho.
+
 ### Escala de plantão do Polo → CSV (sessão 44)
 
 `extrair_escala_plantao_polo(pdf_bytes, data_pub)` lê, **sem Claude** (determinístico, custo
