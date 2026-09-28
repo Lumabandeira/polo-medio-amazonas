@@ -7339,6 +7339,80 @@
         ],
         "resumo": "Cessa designação de Renata Visco Costa e designa cumulativamente Fernando Figueiredo Prestes para atuar no Polo Médio Solimões a partir de 01 de outubro de 2026"
       }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-09-28",
+        "data_fim": "2026-10-04",
+        "defensor": "Eliaquim Antunes de Souza Santos (R)",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-10-05",
+        "data_fim": "2026-10-11",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": "Luma Karolayne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-10-12",
+        "data_fim": "2026-10-18",
+        "defensor": "Emilly Bianca Ferreira dos Santos (R)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-10-19",
+        "data_fim": "2026-10-25",
+        "defensor": "Enio Jorge Lima Barbalho Júnior (F)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-10-26",
+        "data_fim": "2026-11-01",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-11-02",
+        "data_fim": "2026-11-08",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-11-09",
+        "data_fim": "2026-11-15",
+        "defensor": "Eliaquim Antunes de Souza (R)",
+        "assessoria": "Luma Karolayne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-11-16",
+        "data_fim": "2026-11-22",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho (R)",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-11-23",
+        "data_fim": "2026-11-29",
+        "defensor": "Eliaquim Antunes de Souza (R)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-11-30",
+        "data_fim": "2026-12-06",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho (R)",
+        "assessoria": "Luma Karolayne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-12-07",
+        "data_fim": "2026-12-13",
+        "defensor": "Enio Jorge Lima Barbalho Junior (R)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-12-14",
+        "data_fim": "2026-12-19",
+        "defensor": "Emilly Bianca Ferreira dos Santos (R)",
+        "assessoria": "Larice Bruce Pereira"
+      }
     ]
   }
 ]

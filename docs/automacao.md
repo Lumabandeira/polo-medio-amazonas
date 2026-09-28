@@ -117,7 +117,10 @@ página (deduzido pela ordem fixa dos polos — quem vem depois de "Polo do Made
 do topo da página seguinte sem borda superior, que o pdfplumber deixa fora da tabela
 (`_linha_orfa_acima()`, remonta pelas colunas da tabela a partir das palavras); nome quebrado
 em 2 linhas; colunas extras vazias (`_valores_semanas()`); linha Cível extraída antes do
-cabeçalho de semanas. Validado nas edições 2644, 2660, 2686, 2714 e 2731 (backfill já feito) —
+cabeçalho de semanas; colunas estreitas que partem palavras no meio sem hífen ("Eliaqui|m",
+"Amazo|nas", "28/0|9" — Edição 2739), remendadas em `_texto_celula()` quando a junção forma
+palavra conhecida do vocabulário tirado do próprio JSON do DO + designações
+(`_vocabulario_nomes()`). Validado nas edições 2644, 2660, 2686, 2714, 2731 e 2739 (backfill já feito) —
 a 2686 bate 100% com o seed da Portaria 764 (`PLANTAO_SEED_2026`).
 
 ### Saída

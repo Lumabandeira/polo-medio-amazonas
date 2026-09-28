@@ -17,6 +17,7 @@ import re
 import json
 import logging
 import smtplib
+import unicodedata
 import requests
 import pdfplumber
 from datetime import datetime, date
@@ -400,6 +401,67 @@ def _data_semana(dia: str, mes: str, ano: str, pub: date) -> date:
     return date(pub.year + 1 if m < pub.month - 6 else pub.year, m, d)
 
 
+_VOCAB_NOMES = None
+
+
+def _sem_acento(s: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFD", s) if not unicodedata.combining(c)).lower()
+
+
+def _vocabulario_nomes() -> set:
+    """Palavras (sem acento, minúsculas) dos arquivos do site — o JSON do DO tem
+    centenas de nomes de defensores/servidores nos trechos; o de designações
+    tem os nomes completos. Usado para remendar palavras partidas nas células."""
+    global _VOCAB_NOMES
+    if _VOCAB_NOMES is None:
+        vocab = set()
+        for arq in (JSON_PATH, DESIGNACOES_JSON):
+            try:
+                texto = arq.read_text(encoding="utf-8")
+            except Exception:
+                continue
+            vocab.update(_sem_acento(w) for w in re.findall(r"[A-Za-zÀ-ÿ]{2,}", texto))
+        _VOCAB_NOMES = vocab
+    return _VOCAB_NOMES
+
+
+_PARTICULAS = {"de", "da", "do", "dos", "das", "e"}
+
+
+def _texto_celula(txt: str | None) -> str:
+    """
+    Texto de uma célula com as quebras de linha resolvidas. Em colunas estreitas
+    (ex. Edição 2739) o PDF parte palavras no meio, sem hífen: "Eliaqui|m",
+    "Henriqu|e", "Amazo|nas", "Assess|oria", "28/0|9". Junta os dois pedaços
+    quando a junção forma palavra conhecida (e algum pedaço sozinho não é), ou,
+    para nomes fora do vocabulário, quando o 2º pedaço começa minúsculo e não é
+    partícula (de/da/do/dos/das/e). Números partidos ("28/0|9") sempre juntam.
+    """
+    if not txt:
+        return ""
+    linhas = [l.strip() for l in txt.replace("\xa0", " ").split("\n") if l.strip()]
+    if not linhas:
+        return ""
+    vocab = _vocabulario_nomes()
+    out = linhas[0]
+    for prox in linhas[1:]:
+        a = out.split(" ")[-1]
+        b = prox.split(" ")[0]
+        a_n, b_n = _sem_acento(a), _sem_acento(b)
+        if re.search(r"[\d/]$", a) and re.match(r"\d", b):
+            juntar = True
+        elif not (a[-1:].isalpha() and b[:1].isalpha()):
+            juntar = False
+        elif (a_n + b_n) in vocab and (a_n not in vocab or b_n not in vocab):
+            juntar = True
+        elif (a_n + b_n) not in vocab and a_n not in vocab and b[:1].islower() and b_n not in _PARTICULAS:
+            juntar = True
+        else:
+            juntar = False
+        out = out + prox if juntar else f"{out} {prox}"
+    return re.sub(r"\s+", " ", out).strip()
+
+
 def _valores_semanas(celulas: list, n_semanas: int) -> list:
     """
     Nomes de uma linha (sem as 2 colunas de rótulo), um por semana. Algumas
@@ -444,10 +506,21 @@ def _linha_orfa_acima(page, tabela) -> list:
         meio = (w["x0"] + w["x1"]) / 2
         for i, (cx0, cx1) in enumerate(colunas):
             if cx0 - 1 <= meio <= cx1 + 1:
-                celulas[i].append(w["text"])
+                celulas[i].append((round(w["top"]), w["text"]))
                 break
-    linha = [" ".join(c) for c in celulas]
-    rotulo = linha[1].lower()
+    # Texto cru (linhas visuais separadas por \n), como o de tabela.extract() —
+    # o chamador passa por _texto_celula(), que remenda palavras partidas.
+    def _cru(palavras_celula):
+        linhas, ultimo_top = [], None
+        for t, txt in palavras_celula:
+            if ultimo_top is not None and abs(t - ultimo_top) <= 2:
+                linhas[-1] += " " + txt
+            else:
+                linhas.append(txt)
+            ultimo_top = t
+        return "\n".join(linhas)
+    linha = [_cru(c) for c in celulas]
+    rotulo = _texto_celula(linha[1]).lower()
     if not (rotulo.startswith("assessor") or rotulo.startswith("plant")):
         return []
     return [linha]
@@ -489,7 +562,7 @@ def extrair_escala_plantao_polo(pdf_bytes: bytes, data_pub: str) -> list:
                     if t_idx == 0 and bloco is not None and not bloco["assessoria"]:
                         linhas = _linha_orfa_acima(page, tabela) + linhas
                     for row in linhas:
-                        cel = [re.sub(r"\s+", " ", c or "").strip() for c in row]
+                        cel = [_texto_celula(c) for c in row]
                         if not any(cel):
                             continue
 

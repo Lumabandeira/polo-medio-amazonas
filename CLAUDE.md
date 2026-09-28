@@ -90,7 +90,8 @@ a automação (Projeto 2) lê a tabela da escala de plantão do PDF sem IA
 Diário Oficial do site, a edição ganha o bloco "🗓️ Escala de plantão do Polo" com o CSV
 (`DD/MM/AAAA;DD/MM/AAAA;defensor;assessoria`) e o botão "📋 Copiar CSV"
 (`_diarioEscalaPlantaoHtml()`/`_diarioCopiarEscala()`), pronto para Plantão → Importar CSV.
-Backfill feito nas edições 2644, 2660, 2686, 2714 e 2731; as 63 linhas passam em
+Backfill feito nas edições 2644, 2660, 2686, 2714, 2731 e 2739 (4º trimestre, 12 semanas — PDF
+com colunas estreitas que partem palavras no meio, remendadas por `_texto_celula()`); as linhas passam em
 `_plantaoParseCSV()` e a 2686 bate 100% com `PLANTAO_SEED_2026`. Detalhes das armadilhas do PDF
 em `docs/automacao.md`.
 
