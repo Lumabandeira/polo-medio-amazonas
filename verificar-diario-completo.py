@@ -278,6 +278,9 @@ def inicializar_termos():
 
     # Resoluções de meta trimestral emitidas pelo Conselho Superior (CSDPEAM)
     termos.append(r"CSDPEAM")
+
+    # Atos de interesse geral (alta administração, ordenador de despesas, projetos)
+    termos.extend(TERMOS_RELEVANCIA_GERAL)
     termos.append(r"metas?\s+(?:para\s+o\s+)?\d+[ºo°]\s+trimestre")
 
     # Cidades do polo
@@ -814,6 +817,7 @@ REGRAS:
 - O resumo deve ser conciso e informativo (quem, o quê, quando)
 - Se não identificar o número SEI/SGI, use null (não use string vazia)
 - Inclua apenas portarias genuinamente relacionadas ao polo ou seus integrantes
+- Inclua TAMBÉM, mesmo sem citar o polo: (a) nomeação ou exoneração de Defensor(a) Público(a) Geral ou Subdefensor(a) Público(a) Geral; (b) designação ou delegação da função de Ordenador(a) de Despesas; (c) atos que designem, prorroguem ou encerrem um ciclo inteiro do Projeto "Adote uma Comarca" (não a troca pontual de um servidor em comarca de outro polo); (d) qualquer ato do Projeto "Expandir Presença" (faz as audiências do polo). NÃO inclua nomeações para diretorias, assessorias ou coordenação de outros polos
 - NÃO inclua portarias que só autorizam deslocamento, transporte ou diárias de um integrante do polo para trabalhar FORA do polo (ex.: trecho Manacapuru/Novo Airão, em outro polo) — o nome do integrante sozinho não torna o ato relevante. Designações, substituições, férias e afastamentos de integrantes continuam relevantes mesmo que o destino seja outro polo
 - Use "comarca" somente quando o texto citar uma das 6 cidades do polo; cidades de outros polos (Manaus, Manacapuru, Novo Airão etc.) não contam
 - Blocos entre [TABELA — pág. N] e [FIM DA TABELA] são tabelas do PDF (anexos de portarias, como a classificação de concurso de remoção), uma linha por registro com as células separadas por " | " e o cabeçalho (ex.: DEFENSOR | ORIGEM | DESTINO) numa das primeiras linhas. Atribua a tabela à portaria da qual ela é anexo, inclua nos "trechos" CADA linha que envolva o polo (como origem OU destino), respeitando a direção origem → destino, e cite cada defensor envolvido no resumo
@@ -848,8 +852,54 @@ _RE_ATO_DE_LOTACAO = re.compile(
     re.IGNORECASE,
 )
 
+# Atos de interesse geral para o polo mesmo sem citá-lo (padrões definidos pela
+# usuária na sessão 44, ao conferir o histórico):
+#   1. nomeação/exoneração de Defensor(a) Público(a) Geral e Subdefensor(a) Público(a) Geral
+#   2. designação/delegação de Ordenador(a) de Despesas
+#   3. atos do ciclo inteiro do "Adote uma Comarca" (designar/prorrogar/encerrar — não
+#      a troca pontual de um servidor em outra comarca) e qualquer ato do "Expandir Presença"
+TERMOS_RELEVANCIA_GERAL = [
+    r"(?:NOMEAR|EXONERAR|nomea[çc][ãa]o|exonera[çc][ãa]o)[^.;]{0,200}?(?:Sub)?defensor[a]?\s+P[úu]blic[oa]\s*[-–]?\s*Geral",
+    r"Ordenador[a]?\s+de\s+Despesas?",
+    r"(?:DESIGNAR|PRORROGAR|ENCERRAR|REVOGAR|INSTITUIR)[^;]{0,300}?Ciclo\s+do\s+Projeto\s*[\"'“‘]?\s*Adote\s+uma\s+Comarca",
+    r"Expandir\s+Presen[çc]a",
+]
+_RE_RELEVANCIA_GERAL = [re.compile(t, re.IGNORECASE) for t in TERMOS_RELEVANCIA_GERAL]
 
-def filtrar_portarias_fora_do_polo(portarias: list) -> list:
+
+def _eh_relevancia_geral(texto: str) -> bool:
+    return any(r.search(texto) for r in _RE_RELEVANCIA_GERAL)
+
+
+def termos_integrantes_na_data(data_iso: str) -> list:
+    """
+    Regex (1º+2º nome) de quem era titular de alguma DP do polo na data `data_iso`
+    (histórico do designacoes-2026.json, sem externos). Usado ao revisar edições
+    antigas: um ex-integrante (ex.: Elton, até 02/05/2026) ainda conta para as
+    portarias publicadas enquanto ele estava no polo.
+    """
+    try:
+        with open(DESIGNACOES_JSON, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return []
+    defensores = data.get("defensores", {})
+    termos = []
+    for dp in (data.get("defensorias") or {}).values():
+        for h in dp.get("historico_titulares") or []:
+            chave = h.get("defensor")
+            info = defensores.get(chave or "", {})
+            if not chave or info.get("externo"):
+                continue
+            ini, fim = h.get("inicio") or "", h.get("fim")
+            if ini <= data_iso and (fim is None or data_iso <= fim):
+                t = _termo_nome(info.get("nome") or chave)
+                if t not in termos:
+                    termos.append(t)
+    return termos
+
+
+def filtrar_portarias_fora_do_polo(portarias: list, termos_extra: list | None = None) -> list:
     """
     Corrige dois erros recorrentes do Claude (caso real: Edição 2739, Portarias
     1744 e 1746/2026-GDPG — deslocamento da Thays, titular do polo mas designada
@@ -865,11 +915,16 @@ def filtrar_portarias_fora_do_polo(portarias: list) -> list:
        termo-gatilho — o nome do polo, uma cidade do polo ou um integrante
        (servidor ou titular vigente). O "resumo" não conta: é escrito pelo
        Claude e às vezes afirma ligação com o polo que o texto não tem.
+       Exceção: atos de interesse geral (TERMOS_RELEVANCIA_GERAL).
+    `termos_extra`: termos adicionais de integrante (ex.: titulares na data da
+    edição, de termos_integrantes_na_data(), ao revisar edições antigas).
     """
+    termos = list(TERMOS_GATILHO) + list(termos_extra or [])
     resultado = []
     for p in portarias:
         texto = " ".join([p.get("numero") or ""] + list(p.get("trechos") or []))
-        if not any(re.search(t, texto, re.IGNORECASE) for t in TERMOS_GATILHO):
+        geral = _eh_relevancia_geral(texto)
+        if not geral and not any(re.search(t, texto, re.IGNORECASE) for t in termos):
             log.info(f"  - Descartada (não cita polo/cidade/integrante): {p.get('numero')}")
             continue
         menciona_polo = bool(_RE_POLO_MEDIO.search(texto))
@@ -1061,7 +1116,9 @@ def main():
 
                 if result.get("tem_portarias") or escala:
                     portarias = result.get("portarias", []) if result.get("tem_portarias") else []
-                    portarias = filtrar_portarias_fora_do_polo(portarias)
+                    portarias = filtrar_portarias_fora_do_polo(
+                        portarias, termos_integrantes_na_data(edition.get("data_publicacao", ""))
+                    )
                     log.info(f"Edição {num}: {len(portarias)} portaria(s) detectada(s).")
                     for p in portarias:
                         log.info(

@@ -123,6 +123,13 @@ polo no texto. Correção em duas camadas:
    polo) casar com algum termo-gatilho: nome do polo, cidade do polo, servidor ou titular
    vigente. O prompt exige que os trechos tragam a frase/linha de anexo que faz essa citação.
 
+   **Exceções (atos de interesse geral, `TERMOS_RELEVANCIA_GERAL`, definidas pela usuária):**
+   nomeação/exoneração de Defensor(a)/Subdefensor(a) Público(a) Geral; designação/delegação de
+   Ordenador(a) de Despesas; atos do ciclo inteiro do "Adote uma Comarca"; qualquer ato do
+   "Expandir Presença". Também entram como termo-gatilho no pré-filtro e no prompt.
+   `termos_integrantes_na_data(data)` acrescenta quem era titular na data da edição (ex.: Elton
+   até 02/05/2026) — usado no fluxo diário e na revisão do histórico.
+
 A mesma regra foi aplicada ao histórico do JSON: 11 portarias de viagem fora do polo removidas
 (edições 2643, 2657, 2660, 2666, 2684, 2716 e 2739) e `comarca` retirada das que não citavam
 cidade do polo.
