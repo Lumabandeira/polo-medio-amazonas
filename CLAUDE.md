@@ -57,6 +57,22 @@ docs/
 
 ---
 
+## Estado atual (sessão 44 — 28/09/2026)
+
+**Implementado nesta sessão:** (1) link da Edição 2736 do Diário Oficial corrigido em
+`docs/diario-oficial-completo-2026.json` — a DPE trocou o arquivo e o link com sufixo `-1.pdf`
+passou a dar 404 (Firestore já tinha o link certo). (2) **Bugfix:** o popup do dia no Calendário
+de afastamentos (`openModal()`) só mostrava os substitutos que cobriam **aquele dia** (vinha de
+`detalhesAfastamentos`, indexado por dia), enquanto a Lista de Substituições mostra todos os
+substitutos/períodos do afastamento — ex.: férias do Miguel 05–16/10 com a 3ª DP dividida entre
+Eliaquim (05–09) e Pedro Henrique (10–16): clicando em 05/10, o Pedro sumia. A montagem das
+linhas da Lista virou o helper `_linhasSubstituicaoAfastamento(origem, reg)`, usado pelas duas
+telas; o popup continua descobrindo **quais** afastamentos existem no dia pelo
+`detalhesAfastamentos`, mas troca as linhas de cada um pelas do registro inteiro
+(`afastamentosFirestoreMap`/`jsonEventosMap`). Itens sem ID de registro seguem como antes.
+Testado no navegador com o registro simulado (dias 05 e 12/10 mostram as mesmas 4 linhas da
+Lista, botões de admin preservados, sem erro no console).
+
 ## Estado atual (sessão 43 — 25/09/2026)
 
 **Implementado nesta sessão:** 8 ajustes pontuais em Prestação de Contas, todos testados no

@@ -4974,6 +4974,25 @@
                     }
                 });
 
+                // Troca as linhas do dia pelas linhas do afastamento inteiro (todos os
+                // substitutos e períodos), igual à Lista de Substituições — senão um
+                // substituto que só cobre outros dias do afastamento some do popup.
+                grupos.forEach(grupo => {
+                    const primeiro = grupo.itens[0];
+                    const origem = primeiro.firestoreId ? 'firestore' : (primeiro.jsonEventoId ? 'json' : null);
+                    const reg = origem === 'firestore' ? afastamentosFirestoreMap[primeiro.firestoreId]
+                              : origem === 'json' ? jsonEventosMap[primeiro.jsonEventoId] : null;
+                    if (!reg) return;
+                    const r = _linhasSubstituicaoAfastamento(origem, reg);
+                    grupo.itens = r.linhas.map(l => ({
+                        defensor: r.defNome, tipo: r.tipoLabel, processo: r.processo,
+                        firestoreId: r.firestoreId, jsonEventoId: r.jsonEventoId,
+                        defensoria: l.dp, substituto: l.subNome, link: l.link,
+                        sub_inicio: l.subInicio, sub_fim: l.subFim,
+                        afastamento_inicio: reg.data_inicio, afastamento_fim: reg.data_fim
+                    }));
+                });
+
                 grupos.forEach((grupo, grupoIdx) => {
                     const span = grupo.itens.length;
                     const sepClass = grupoIdx > 0 ? ' grupo-inicio' : '';
@@ -6571,6 +6590,65 @@
             }
         }
 
+        // Monta as linhas (uma por DP × substituto) de um afastamento inteiro, com todos
+        // os períodos de substituição — usado pela Lista de Substituições e pelo popup do
+        // dia no Calendário de afastamentos, para os dois mostrarem a mesma informação.
+        function _linhasSubstituicaoAfastamento(origem, reg) {
+            const defs = jsonDesignacoes?.defensores || {};
+            let defNome, tipoLabel, processo, firestoreId, jsonEventoId;
+            const linhas = []; // { dp, subNome, subInicio, subFim, link }
+
+            if (origem === 'firestore') {
+                const defInfo = defs[reg.defensor] || {};
+                defNome = defInfo.nome_curto || reg.defensor;
+                tipoLabel = reg.tipo === 'outro' ? (reg.tipo_custom || 'Outro') : (TIPO_LABELS[reg.tipo] || reg.tipo || 'Folga');
+                const pNum = reg.processo_sei || reg.portaria_sei || '';
+                const pTipo = reg.processo_tipo || '';
+                processo = pNum ? (pTipo ? pTipo + ': ' + pNum : pNum) : '';
+                firestoreId = reg.id;
+
+                const desigDp = reg.designacoes_dp;
+                const desigOld = reg.designacoes || [];
+                if (desigDp && desigDp.length > 0) {
+                    desigDp.forEach(desig => {
+                        const dpLabel = dpDisplayLabel(desig.dp);
+                        const subs = desig.substitutos || [];
+                        if (subs.length === 0) {
+                            linhas.push({ dp: dpLabel, subNome: 'ainda não definido', subInicio: null, subFim: null, link: '' });
+                        } else {
+                            subs.forEach(sub => {
+                                const sn = sub.substituto === '_outro'
+                                    ? (sub.substituto_nome_externo || 'Externo')
+                                    : (defs[sub.substituto]?.nome_curto || sub.substituto || 'ainda não definido');
+                                linhas.push({ dp: dpLabel, subNome: sn || 'ainda não definido', subInicio: sub.data_inicio || reg.data_inicio, subFim: sub.data_fim || reg.data_fim, link: sub.portaria_url || '' });
+                            });
+                        }
+                    });
+                } else if (desigOld.length > 0) {
+                    desigOld.forEach(des => {
+                        const subInfo = defs[des.substituto] || {};
+                        linhas.push({ dp: dpDisplayLabel(des.dp), subNome: subInfo.nome_curto || des.substituto || '', subInicio: reg.data_inicio, subFim: reg.data_fim, link: reg.portaria_url || '' });
+                    });
+                } else {
+                    linhas.push({ dp: '—', subNome: '', subInicio: null, subFim: null, link: '' });
+                }
+            } else {
+                const ev = reg;
+                const defInfo = defs[ev.defensor] || {};
+                defNome = defInfo.nome_curto || ev.defensor;
+                tipoLabel = TIPO_LABELS[ev.tipo] || ev.tipo;
+                processo = ev.portaria?.sei || ev.portaria?.numero || '';
+                jsonEventoId = ev.id;
+                (ev.designacoes || []).forEach(des => {
+                    const subNome = des.substituto && defs[des.substituto] ? (defs[des.substituto].nome_curto || defs[des.substituto].nome) : '';
+                    linhas.push({ dp: dpDisplayLabel(des.dp), subNome, subInicio: des.data_inicio || ev.data_inicio, subFim: des.data_fim || ev.data_fim, link: ev.portaria?.url || '' });
+                });
+                if (linhas.length === 0) linhas.push({ dp: '—', subNome: '', subInicio: null, subFim: null, link: '' });
+            }
+
+            return { defNome, tipoLabel, processo, firestoreId, jsonEventoId, linhas };
+        }
+
         function renderListaSubstituicoes() {
             const container = document.getElementById('lista-substituicoes-container');
             if (!container) return;
@@ -6670,57 +6748,8 @@
                 </tr></thead><tbody>`;
 
                 itensDoMes.forEach(({ origem, reg }, regIdx) => {
-                    // Resolve campos comuns
-                    let defNome, tipoLabel, processo, firestoreId, jsonEventoId;
-                    let linhas = []; // { dp, subNome, subInicio, subFim, link }
-
-                    if (origem === 'firestore') {
-                        const defInfo = defs[reg.defensor] || {};
-                        defNome = defInfo.nome_curto || reg.defensor;
-                        tipoLabel = reg.tipo === 'outro' ? (reg.tipo_custom || 'Outro') : (TIPO_LABELS[reg.tipo] || reg.tipo || 'Folga');
-                        const pNum = reg.processo_sei || reg.portaria_sei || '';
-                        const pTipo = reg.processo_tipo || '';
-                        processo = pNum ? (pTipo ? pTipo + ': ' + pNum : pNum) : '';
-                        firestoreId = reg.id;
-
-                        const desigDp = reg.designacoes_dp;
-                        const desigOld = reg.designacoes || [];
-                        if (desigDp && desigDp.length > 0) {
-                            desigDp.forEach(desig => {
-                                const dpLabel = dpDisplayLabel(desig.dp);
-                                const subs = desig.substitutos || [];
-                                if (subs.length === 0) {
-                                    linhas.push({ dp: dpLabel, subNome: 'ainda não definido', subInicio: null, subFim: null, link: '' });
-                                } else {
-                                    subs.forEach(sub => {
-                                        const sn = sub.substituto === '_outro'
-                                            ? (sub.substituto_nome_externo || 'Externo')
-                                            : (defs[sub.substituto]?.nome_curto || sub.substituto || 'ainda não definido');
-                                        linhas.push({ dp: dpLabel, subNome: sn || 'ainda não definido', subInicio: sub.data_inicio || reg.data_inicio, subFim: sub.data_fim || reg.data_fim, link: sub.portaria_url || '' });
-                                    });
-                                }
-                            });
-                        } else if (desigOld.length > 0) {
-                            desigOld.forEach(des => {
-                                const subInfo = defs[des.substituto] || {};
-                                linhas.push({ dp: dpDisplayLabel(des.dp), subNome: subInfo.nome_curto || des.substituto || '', subInicio: reg.data_inicio, subFim: reg.data_fim, link: reg.portaria_url || '' });
-                            });
-                        } else {
-                            linhas.push({ dp: '—', subNome: '', subInicio: null, subFim: null, link: '' });
-                        }
-                    } else {
-                        const ev = reg;
-                        const defInfo = defs[ev.defensor] || {};
-                        defNome = defInfo.nome_curto || ev.defensor;
-                        tipoLabel = TIPO_LABELS[ev.tipo] || ev.tipo;
-                        processo = ev.portaria?.sei || ev.portaria?.numero || '';
-                        jsonEventoId = ev.id;
-                        (ev.designacoes || []).forEach(des => {
-                            const subNome = des.substituto && defs[des.substituto] ? (defs[des.substituto].nome_curto || defs[des.substituto].nome) : '';
-                            linhas.push({ dp: dpDisplayLabel(des.dp), subNome, subInicio: des.data_inicio || ev.data_inicio, subFim: des.data_fim || ev.data_fim, link: ev.portaria?.url || '' });
-                        });
-                        if (linhas.length === 0) linhas.push({ dp: '—', subNome: '', subInicio: null, subFim: null, link: '' });
-                    }
+                    const { defNome, tipoLabel, processo, firestoreId, jsonEventoId, linhas } =
+                        _linhasSubstituicaoAfastamento(origem, reg);
 
                     const span = linhas.length;
                     const tipoClass = tipoLabel === 'Férias' ? 'tipo-ferias' : tipoLabel === 'Folga' ? 'tipo-folga' : 'tipo-licenca';
