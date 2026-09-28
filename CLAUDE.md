@@ -82,7 +82,17 @@ automação do Diário Oficial:** a remoção de Pedro Henrique Pereira Paiva pa
 (Edição 2734, 18/09, tabela do Anexo I da Portaria 1708) não foi filtrada porque o texto extraído
 do PDF embaralhava as colunas das tabelas. `extract_pdf_text()` dos dois scripts agora acrescenta
 as tabelas linha a linha (`_tabelas_da_pagina()`); registro da Portaria 1708 corrigido à mão no
-JSON (Pedro incluído, direção do Miguel corrigida: 6ª → 3ª). Ver `docs/automacao.md`.
+JSON (Pedro incluído, direção do Miguel corrigida: 6ª → 3ª). Varredura de todas as edições de
+2026 achou o mesmo problema na Edição 2636 (Portaria 602 — remoção de Emilly para a 5ª e de Ênio
+para a 1ª DP), também corrigida à mão. Ver `docs/automacao.md`. (5) **Escala de plantão → CSV:**
+a automação (Projeto 2) lê a tabela da escala de plantão do PDF sem IA
+(`extrair_escala_plantao_polo()`) e grava as semanas do Polo em `plantao_polo` da edição; no
+Diário Oficial do site, a edição ganha o bloco "🗓️ Escala de plantão do Polo" com o CSV
+(`DD/MM/AAAA;DD/MM/AAAA;defensor;assessoria`) e o botão "📋 Copiar CSV"
+(`_diarioEscalaPlantaoHtml()`/`_diarioCopiarEscala()`), pronto para Plantão → Importar CSV.
+Backfill feito nas edições 2644, 2660, 2686, 2714 e 2731; as 63 linhas passam em
+`_plantaoParseCSV()` e a 2686 bate 100% com `PLANTAO_SEED_2026`. Detalhes das armadilhas do PDF
+em `docs/automacao.md`.
 
 ## Estado atual (sessão 43 — 25/09/2026)
 

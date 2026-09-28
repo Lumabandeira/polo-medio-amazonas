@@ -2311,9 +2311,11 @@
           "11º José Antonio Pereira da Silva - Defensoria Pública do Polo do Médio Amazonas - Defensoria Pública do Polo do Rio Negro",
           "13ª Isabela do Amaral Sales - Defensoria Pública do Polo do Médio Amazonas - Defensoria Pública do Polo do Rio Negro Solimões",
           "14º Elton Dariva Staub - Defensoria Pública do Polo do Médio Amazonas - Defensoria Pública do Polo do Rio Negro Solimões",
-          "17ª Thays Lidianne Campos de Azevedo Pereira - Defensoria Pública do Polo do Médio Solimões - Defensoria Pública do Polo do Médio Amazonas"
+          "17ª Thays Lidianne Campos de Azevedo Pereira - Defensoria Pública do Polo do Médio Solimões - Defensoria Pública do Polo do Médio Amazonas",
+          "15ª | Emilly Bianca Ferreira dos Santos | 5ª Defensoria Pública do Polo do Baixo Amazonas | 5ª Defensoria Pública do Polo do Médio Amazonas",
+          "18º | Ênio Jorge Lima Barbalho Junior | 1ª Defensoria Pública do Polo de Coari | 1ª Defensoria Pública do Polo do Médio Amazonas"
         ],
-        "resumo": "Concurso de Remoção de 2026 com vagas para defensores públicos no Polo do Médio Amazonas e Polo do Médio Solimões"
+        "resumo": "Concurso de Remoção de 2026 com vagas para defensores públicos no Polo do Médio Amazonas e Polo do Médio Solimões — inclui a remoção de Emilly Bianca Ferreira dos Santos para a 5ª e de Ênio Jorge Lima Barbalho Junior para a 1ª Defensoria Pública do Polo do Médio Amazonas"
       },
       {
         "numero": "Portaria Nº 603/2026-GDPG/DPE/AM",
@@ -2704,6 +2706,80 @@
           "XI - Os Anexos I, II e III da Portaria n.º 298/2026-GSPG/DPE/AM, passam a viger conforme anexo único, desta Portaria, disponibilizado no sítio eletrônico da Defensoria Pública do Estado do Amazonas, no link 'Escala de Plantão - Atendimento e Custódia'"
         ],
         "resumo": "Altera escala de plantão e formaliza substituições de defensores públicos para diversos polos, incluindo Médio Amazonas, Médio Solimões e Rio Negro-Solimões, com designação especial para fins de promoção"
+      }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-04-06",
+        "data_fim": "2026-04-12",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-04-13",
+        "data_fim": "2026-04-19",
+        "defensor": "José Antônio Pereira da Silva (F)",
+        "assessoria": "Natália Cristina de Moraes"
+      },
+      {
+        "data_inicio": "2026-04-20",
+        "data_fim": "2026-04-26",
+        "defensor": "José Antônio Pereira da Silva (F)",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-04-27",
+        "data_fim": "2026-05-03",
+        "defensor": "Laiane Tammy Abati",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-05-04",
+        "data_fim": "2026-05-10",
+        "defensor": "Eliaquim Antunes de Souza",
+        "assessoria": "Luma Karolyne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-05-11",
+        "data_fim": "2026-05-17",
+        "defensor": "Ícaro Oliveira Avelar Costa",
+        "assessoria": "Arnoud Lucas Andrade da Silva"
+      },
+      {
+        "data_inicio": "2026-05-18",
+        "data_fim": "2026-05-24",
+        "defensor": "Eliaquim Antunes de Souza",
+        "assessoria": "Natália Cristina de Moraes"
+      },
+      {
+        "data_inicio": "2026-05-25",
+        "data_fim": "2026-05-31",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-06-01",
+        "data_fim": "2026-06-07",
+        "defensor": "Eliaquim Antunes de Souza (F)",
+        "assessoria": "Arnoud Lucas Andrade da Silva"
+      },
+      {
+        "data_inicio": "2026-06-08",
+        "data_fim": "2026-06-14",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-06-15",
+        "data_fim": "2026-06-21",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Luma Karolyne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-06-22",
+        "data_fim": "2026-06-28",
+        "defensor": "Elton Dariva Staub",
+        "assessoria": "Natália Cristina de Moraes"
       }
     ]
   },
@@ -3579,6 +3655,80 @@
           "III - DESIGNAR a Defensora Pública de 3ª Classe Bruna Costa de Farias para atuar na audiência designada para o dia 03 de junho de 2026, na 1ª Vara da Comarca de Iranduba (família), conforme Anexo Único"
         ],
         "resumo": "Designa defensoras para atuação em audiências nas Comarcas de Itacoatiara e Iranduba entre 29 de maio e 03 de junho de 2026"
+      }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-04-06",
+        "data_fim": "2026-04-12",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-04-13",
+        "data_fim": "2026-04-19",
+        "defensor": "José Antônio Pereira da Silva (F)",
+        "assessoria": "Natália Cristina de Moraes"
+      },
+      {
+        "data_inicio": "2026-04-20",
+        "data_fim": "2026-04-26",
+        "defensor": "José Antônio Pereira da Silva (F)",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-04-27",
+        "data_fim": "2026-05-03",
+        "defensor": "Laiane Tammy Abati",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-05-04",
+        "data_fim": "2026-05-10",
+        "defensor": "Eliaquim Antunes de Souza",
+        "assessoria": "Luma Karolyne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-05-11",
+        "data_fim": "2026-05-17",
+        "defensor": "Ícaro Oliveira Avelar Costa",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-05-18",
+        "data_fim": "2026-05-24",
+        "defensor": "Eliaquim Antunes de Souza",
+        "assessoria": "Natália Cristina de Moraes"
+      },
+      {
+        "data_inicio": "2026-05-25",
+        "data_fim": "2026-05-31",
+        "defensor": "Ícaro Oliveira Avelar Costa",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-06-01",
+        "data_fim": "2026-06-07",
+        "defensor": "Kleber Luiz Miyasato",
+        "assessoria": "Arnoud Lucas Andrade da Silva"
+      },
+      {
+        "data_inicio": "2026-06-08",
+        "data_fim": "2026-06-14",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-06-15",
+        "data_fim": "2026-06-21",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Luma Karolyne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-06-22",
+        "data_fim": "2026-06-28",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Larice Bruce Pereira"
       }
     ]
   },
@@ -4803,6 +4953,86 @@
         ],
         "resumo": "Altera escala de plantão dos Polos, estabelecendo substituição recíproca entre Polo do Médio Amazonas e Polo do Rio Negro-Solimões, com anexos contendo nomes de defensores e servidores"
       }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-06-29",
+        "data_fim": "2026-07-05",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-07-06",
+        "data_fim": "2026-07-12",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Luma Karolayne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-07-13",
+        "data_fim": "2026-07-19",
+        "defensor": "Enio Jorge Lima Barbalho Júnior (F)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-07-20",
+        "data_fim": "2026-07-26",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-07-27",
+        "data_fim": "2026-08-02",
+        "defensor": "Emilly Bianca Ferreira dos Santos",
+        "assessoria": "Natália Cristina de Moraes"
+      },
+      {
+        "data_inicio": "2026-08-03",
+        "data_fim": "2026-08-09",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Deborah Loureiro Ohana Lavareda"
+      },
+      {
+        "data_inicio": "2026-08-10",
+        "data_fim": "2026-08-16",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-08-17",
+        "data_fim": "2026-08-23",
+        "defensor": "Enio Jorge Lima Barbalho Júnior",
+        "assessoria": "Natália Cristina de Moraes"
+      },
+      {
+        "data_inicio": "2026-08-24",
+        "data_fim": "2026-08-30",
+        "defensor": "Enio Jorge Lima Barbalho Júnior",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-08-31",
+        "data_fim": "2026-09-06",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Renata Patrícia Torres dos Reis"
+      },
+      {
+        "data_inicio": "2026-09-07",
+        "data_fim": "2026-09-13",
+        "defensor": "Emilly Bianca Ferreira dos Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-09-14",
+        "data_fim": "2026-09-20",
+        "defensor": "Catarina Lopes Maia (F)",
+        "assessoria": "Luma Karolayne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-09-21",
+        "data_fim": "2026-09-27",
+        "defensor": "Emilly Bianca Ferreira dos Santos",
+        "assessoria": "Natália Cristina de Moraes"
+      }
     ]
   },
   {
@@ -5971,6 +6201,86 @@
         ],
         "resumo": "Autoriza substituições em plantões do Polo do Médio Amazonas e Polo do Médio Solimões, estabelecendo escala de substituição recíproca entre polos"
       }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-06-29",
+        "data_fim": "2026-07-05",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-07-06",
+        "data_fim": "2026-07-12",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Luma Karolayne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-07-13",
+        "data_fim": "2026-07-19",
+        "defensor": "Enio Jorge Lima Barbalho Júnior (F)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-07-20",
+        "data_fim": "2026-07-26",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-07-27",
+        "data_fim": "2026-08-02",
+        "defensor": "Emilly Bianca Ferreira dos Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-08-03",
+        "data_fim": "2026-08-09",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Deborah Loureiro Ohana Lavareda"
+      },
+      {
+        "data_inicio": "2026-08-10",
+        "data_fim": "2026-08-16",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-08-17",
+        "data_fim": "2026-08-23",
+        "defensor": "Enio Jorge Lima Barbalho Júnior",
+        "assessoria": "Luma Karolyne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-08-24",
+        "data_fim": "2026-08-30",
+        "defensor": "Enio Jorge Lima Barbalho Júnior",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-08-31",
+        "data_fim": "2026-09-06",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Renata Patrícia Torres dos Reis"
+      },
+      {
+        "data_inicio": "2026-09-07",
+        "data_fim": "2026-09-13",
+        "defensor": "Emilly Bianca Ferreira dos Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-09-14",
+        "data_fim": "2026-09-20",
+        "defensor": "Catarina Lopes Maia (F)",
+        "assessoria": "Luma Karolayne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-09-21",
+        "data_fim": "2026-09-27",
+        "defensor": "Emilly Bianca Ferreira dos Santos",
+        "assessoria": "Natália Cristina de Moraes"
+      }
     ]
   },
   {
@@ -6638,6 +6948,86 @@
           "VI - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Escala de substituição Polo do Rio Negro-Solimões Polo do Médio Amazonas"
         ],
         "resumo": "Autoriza substituições de servidoras do Polo Médio Amazonas nas semanas 12 e 13 do plantão (14-27/09/2026) e estabelece escala de substituição entre polos"
+      }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-06-29",
+        "data_fim": "2026-07-05",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-07-06",
+        "data_fim": "2026-07-12",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Luma Karolyne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-07-13",
+        "data_fim": "2026-07-19",
+        "defensor": "Enio Jorge Lima Barbalho Júnior (F)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-07-20",
+        "data_fim": "2026-07-26",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-07-27",
+        "data_fim": "2026-08-02",
+        "defensor": "Emilly Bianca Ferreira dos Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-08-03",
+        "data_fim": "2026-08-09",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Deborah Loureiro Ohana Lavareda"
+      },
+      {
+        "data_inicio": "2026-08-10",
+        "data_fim": "2026-08-16",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-08-17",
+        "data_fim": "2026-08-23",
+        "defensor": "Enio Jorge Lima Barbalho Júnior",
+        "assessoria": "Luma Karolyne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-08-24",
+        "data_fim": "2026-08-30",
+        "defensor": "Enio Jorge Lima Barbalho Júnior",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-08-31",
+        "data_fim": "2026-09-06",
+        "defensor": "Eliaquim Antunes de Souza Santos",
+        "assessoria": "Renata Patrícia Torres dos Reis"
+      },
+      {
+        "data_inicio": "2026-09-07",
+        "data_fim": "2026-09-13",
+        "defensor": "Emilly Bianca Ferreira dos Santos",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-09-14",
+        "data_fim": "2026-09-20",
+        "defensor": "Catarina Lopes Maia (F)",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-09-21",
+        "data_fim": "2026-09-27",
+        "defensor": "Emilly Bianca Ferreira dos Santos",
+        "assessoria": "Luma Karolyne Pantoja Bandeira"
       }
     ]
   },

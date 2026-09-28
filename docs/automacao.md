@@ -100,6 +100,26 @@ por registro com células separadas por ` | `, entre `[TABELA — pág. N]` e `[
 prompt do Projeto 2 explica esse formato ao Claude (cada linha que envolva o polo, respeitando
 origem → destino; em caso de conflito, confiar na tabela).
 
+### Escala de plantão do Polo → CSV (sessão 44)
+
+`extrair_escala_plantao_polo(pdf_bytes, data_pub)` lê, **sem Claude** (determinístico, custo
+zero), a tabela da escala de plantão do interior (colunas = semanas `"09) 24/08 a 30/08"`, às
+vezes com ano; cada polo = linhas Cível e de Família / Criminal e de Custódia / Assessoria) e
+grava as semanas do Polo Médio Amazonas em `plantao_polo` da edição:
+`[{data_inicio, data_fim, defensor, assessoria}]` (ISO; defensor = Plantão Cível e de Família,
+com "(F)" preservado). Roda em toda edição processada; se achar escala, cria/atualiza a entrada
+da edição mesmo sem portaria detectada pelo Claude. O site mostra como CSV
+`DD/MM/AAAA;DD/MM/AAAA;defensor;assessoria` com botão "📋 Copiar CSV" (Plantão → Importar CSV).
+
+Armadilhas do PDF tratadas (todas vistas em edições reais): bloco do polo quebrando de página
+(estado carregado entre tabelas); nome do polo ausente na 1ª coluna quando o bloco cai no fim da
+página (deduzido pela ordem fixa dos polos — quem vem depois de "Polo do Madeira" etc.); linha
+do topo da página seguinte sem borda superior, que o pdfplumber deixa fora da tabela
+(`_linha_orfa_acima()`, remonta pelas colunas da tabela a partir das palavras); nome quebrado
+em 2 linhas; colunas extras vazias (`_valores_semanas()`); linha Cível extraída antes do
+cabeçalho de semanas. Validado nas edições 2644, 2660, 2686, 2714 e 2731 (backfill já feito) —
+a 2686 bate 100% com o seed da Portaria 764 (`PLANTAO_SEED_2026`).
+
 ### Saída
 
 `docs/diario-oficial-completo-2026.json` — lido diretamente pelo site via `fetch()`. Commitado automaticamente pelo workflow quando há portarias novas.

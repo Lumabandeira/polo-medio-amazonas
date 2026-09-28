@@ -383,6 +383,207 @@ def extract_pdf_text(pdf_bytes: bytes) -> str:
         pages = [(page.extract_text() or "") + _tabelas_da_pagina(page) for page in pdf.pages]
     return "\n".join(pages)
 
+# ─── Escala de plantão do Polo (tabela) ──────────────────────────────────────
+
+_RE_POLO_MEDIO = re.compile(r"Polo\s+(?:do\s+)?M[eé]dio\s+Amazonas", re.IGNORECASE)
+_RE_SEMANA     = re.compile(
+    r"^\d{1,2}\)\s*(\d{1,2})/(\d{1,2})(?:/(\d{4}))?\s*a\s*(\d{1,2})/(\d{1,2})(?:/(\d{4}))?$"
+)
+
+
+def _data_semana(dia: str, mes: str, ano: str, pub: date) -> date:
+    """DD/MM[/AAAA] → date. Sem ano, usa o da edição (virada de ano: mês bem
+    anterior ao da publicação = ano seguinte, ex. escala de jan publicada em dez)."""
+    d, m = int(dia), int(mes)
+    if ano:
+        return date(int(ano), m, d)
+    return date(pub.year + 1 if m < pub.month - 6 else pub.year, m, d)
+
+
+def _valores_semanas(celulas: list, n_semanas: int) -> list:
+    """
+    Nomes de uma linha (sem as 2 colunas de rótulo), um por semana. Algumas
+    páginas dividem as células em colunas extras vazias (ex. 8 colunas para 4
+    semanas); nesse caso vale a lista dos não-vazios, se bater com o nº de semanas.
+    """
+    if len(celulas) == n_semanas:
+        return celulas
+    preenchidos = [c for c in celulas if c]
+    if len(preenchidos) == n_semanas:
+        return preenchidos
+    if len(celulas) > n_semanas:
+        return celulas[:n_semanas]
+    return celulas + [""] * (n_semanas - len(celulas))
+
+
+def _linha_orfa_acima(page, tabela) -> list:
+    """
+    Linha de tabela que continua da página anterior e perdeu a borda de cima: o
+    pdfplumber não a inclui na tabela (ex. Edição 2731 p19 — a "Assessoria" do
+    Polo Médio Amazonas das semanas 01-04 fica solta acima da tabela). Remonta a
+    linha agrupando as palavras dessa faixa pelas colunas da própria tabela.
+    Só devolve algo se a faixa tiver um rótulo de linha da escala.
+    """
+    x0, top, x1, _ = tabela.bbox
+    # Colunas: a linha da tabela com mais células
+    linha_ref = max(tabela.rows, key=lambda r: sum(1 for c in r.cells if c), default=None)
+    if linha_ref is None:
+        return []
+    colunas = [(c[0], c[2]) for c in linha_ref.cells if c]
+    if len(colunas) < 3:
+        return []
+    # Faixa entre o cabeçalho da página ("... Pág. N de M") e o topo da tabela
+    palavras = page.extract_words()
+    cab = [w["bottom"] for w in palavras if w["text"].startswith("Pág") and w["bottom"] < top]
+    teto = max(cab) + 1 if cab else max(0, top - 60)
+    faixa = [w for w in palavras if teto <= w["top"] < top and x0 - 2 <= w["x0"] <= x1]
+    if not faixa:
+        return []
+    celulas = [[] for _ in colunas]
+    for w in sorted(faixa, key=lambda w: (round(w["top"]), w["x0"])):
+        meio = (w["x0"] + w["x1"]) / 2
+        for i, (cx0, cx1) in enumerate(colunas):
+            if cx0 - 1 <= meio <= cx1 + 1:
+                celulas[i].append(w["text"])
+                break
+    linha = [" ".join(c) for c in celulas]
+    rotulo = linha[1].lower()
+    if not (rotulo.startswith("assessor") or rotulo.startswith("plant")):
+        return []
+    return [linha]
+
+
+def extrair_escala_plantao_polo(pdf_bytes: bytes, data_pub: str) -> list:
+    """
+    Lê a escala de plantão do interior (tabela: colunas = semanas, cabeçalho
+    "09) 24/08 a 30/08"; cada polo = linhas "Plantão Cível e de Família",
+    "Plantão Criminal e de Custódia" e "Assessoria") e devolve as semanas do
+    Polo Médio Amazonas: [{data_inicio, data_fim, defensor, assessoria}], datas
+    ISO. Determinístico, sem Claude. O defensor é o do Plantão Cível e de Família,
+    com o "(F)" preservado — mesmo formato do Importar CSV do site.
+
+    Armadilhas do PDF que isto trata:
+    - o bloco de um polo quebra de página (a "Assessoria" vai para o topo da
+      página seguinte, em outra tabela) → estado carregado entre tabelas;
+    - o nome do polo (1ª coluna, célula mesclada) às vezes some quando o bloco
+      cai no fim da página → deduzido pela ordem fixa dos polos, aprendida dos
+      blocos que têm nome (quem vem depois de X / antes de Y);
+    - nome de pessoa quebrado em 2 linhas da tabela → linha de continuação
+      (rótulos vazios) é colada na célula de cima;
+    - colunas extras vazias → `_valores_semanas()`.
+    """
+    try:
+        pub = date.fromisoformat(data_pub)
+    except Exception:
+        pub = date.today()
+
+    grupos = []     # [{"semanas": [(ini, fim)], "blocos": [bloco]}]
+    bloco  = None   # {"nome": str|None, "civel": [...], "assessoria": [...]}
+    ultima = None   # última linha de nomes (lista de células), p/ continuação
+
+    try:
+        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+            for page in pdf.pages:
+                for t_idx, tabela in enumerate(page.find_tables()):
+                    linhas = tabela.extract()
+                    if t_idx == 0 and bloco is not None and not bloco["assessoria"]:
+                        linhas = _linha_orfa_acima(page, tabela) + linhas
+                    for row in linhas:
+                        cel = [re.sub(r"\s+", " ", c or "").strip() for c in row]
+                        if not any(cel):
+                            continue
+
+                        semanas = [_RE_SEMANA.match(c) for c in cel]
+                        if sum(1 for s in semanas if s) >= 2:
+                            sems = []
+                            for s in semanas:
+                                if not s:
+                                    continue
+                                ini = _data_semana(s.group(1), s.group(2), s.group(3), pub)
+                                fim = _data_semana(s.group(4), s.group(5), s.group(6), pub)
+                                if fim < ini:
+                                    fim = date(fim.year + 1, fim.month, fim.day)
+                                sems.append((ini.isoformat(), fim.isoformat()))
+                            novo = {"semanas": sems, "blocos": []}
+                            # Linha Cível extraída antes do cabeçalho (tabela partida):
+                            # o bloco ainda incompleto pertence ao grupo novo.
+                            if grupos and grupos[-1]["blocos"] and bloco is grupos[-1]["blocos"][-1] \
+                                    and not bloco["assessoria"]:
+                                novo["blocos"].append(grupos[-1]["blocos"].pop())
+                            grupos.append(novo)
+                            ultima = None
+                            continue
+
+                        if len(cel) < 3 or not grupos:
+                            continue
+                        rotulo = cel[1].lower()
+
+                        if not cel[0] and not cel[1]:
+                            # Continuação: cola cada pedaço na célula não-vazia mais próxima de cima
+                            if ultima is not None:
+                                for i, pedaco in enumerate(cel[2:]):
+                                    if not pedaco:
+                                        continue
+                                    for j in (i, i + 1, i - 1):
+                                        if 0 <= j < len(ultima) and ultima[j]:
+                                            ultima[j] = f"{ultima[j]} {pedaco}"
+                                            break
+                            continue
+
+                        if "plant" in rotulo and re.search(r"c[ií]vel", rotulo):
+                            bloco = {"nome": cel[0] or None, "civel": cel[2:], "assessoria": []}
+                            grupos[-1]["blocos"].append(bloco)
+                            ultima = bloco["civel"]
+                        elif bloco is not None and rotulo.startswith("assessor"):
+                            bloco["assessoria"] = cel[2:]
+                            ultima = bloco["assessoria"]
+                            if cel[0] and not bloco["nome"]:
+                                bloco["nome"] = cel[0]
+                        elif bloco is not None and "plant" in rotulo:   # Criminal e de Custódia
+                            ultima = None
+                            if cel[0] and not bloco["nome"]:
+                                bloco["nome"] = cel[0]
+    except Exception as e:
+        log.warning(f"Falha ao ler escala de plantão: {e}")
+        return []
+
+    # Ordem dos polos aprendida dos pares vizinhos que têm nome
+    def _chave(nome):
+        return re.sub(r"[^a-z]", "", (nome or "").lower())
+    depois, antes = {}, {}
+    for g in grupos:
+        for a, b in zip(g["blocos"], g["blocos"][1:]):
+            if a["nome"] and b["nome"]:
+                depois[_chave(a["nome"])] = b["nome"]
+                antes[_chave(b["nome"])] = a["nome"]
+    for g in grupos:
+        bl = g["blocos"]
+        for _ in range(2):  # 2 passadas: um nome deduzido ajuda a deduzir o vizinho
+            for i, b in enumerate(bl):
+                if b["nome"]:
+                    continue
+                if i > 0 and bl[i - 1]["nome"] and _chave(bl[i - 1]["nome"]) in depois:
+                    b["nome"] = depois[_chave(bl[i - 1]["nome"])]
+                elif i + 1 < len(bl) and bl[i + 1]["nome"] and _chave(bl[i + 1]["nome"]) in antes:
+                    b["nome"] = antes[_chave(bl[i + 1]["nome"])]
+
+    escala = {}
+    for g in grupos:
+        n = len(g["semanas"])
+        for b in g["blocos"]:
+            if not b["nome"] or not _RE_POLO_MEDIO.search(b["nome"]):
+                continue
+            defs = _valores_semanas(b["civel"], n)
+            asss = _valores_semanas(b["assessoria"], n) if b["assessoria"] else [""] * n
+            for (ini, fim), d, a in zip(g["semanas"], defs, asss):
+                if d:
+                    escala[(ini, fim)] = {"defensor": d, "assessoria": a}
+
+    return [
+        {"data_inicio": ini, "data_fim": fim, "defensor": v["defensor"], "assessoria": v["assessoria"]}
+        for (ini, fim), v in sorted(escala.items())
+    ]
+
 # ─── Pré-filtro ───────────────────────────────────────────────────────────────
 
 def _extrair_trechos_relevantes(text: str, janela: int = 1500) -> str:
@@ -527,9 +728,12 @@ def save_json_diario(data: list):
 def atualizar_json_diario(
     portarias: list,
     edition: dict,
+    escala_plantao: list | None = None,
 ) -> int:
     """
     Adiciona ou mescla portarias_estruturadas da edição no JSON.
+    `escala_plantao` (de extrair_escala_plantao_polo) vai em `plantao_polo` da
+    edição — o site mostra como CSV pronto para o Importar CSV do Plantão.
     Retorna o número de portarias novas inseridas.
     """
     data = load_json_diario()
@@ -569,6 +773,10 @@ def atualizar_json_diario(
             log.info(f"  + Portaria nova: {numero}")
         elif numero:
             log.info(f"  = Portaria já existe, pulando: {numero}")
+
+    if escala_plantao:
+        entry["plantao_polo"] = escala_plantao
+        log.info(f"  + Escala de plantão do Polo: {len(escala_plantao)} semana(s)")
 
     # Mantém ordenado por número de edição
     data.sort(key=lambda e: e.get("edicao", 0))
@@ -652,18 +860,19 @@ def main():
 
                 log.info(f"Edição {num}: {len(text)} chars extraídos do PDF.")
                 result = parse_portarias(text, state)
+                escala = extrair_escala_plantao_polo(pdf_bytes, edition.get("data_publicacao", ""))
 
                 if verificar_limite_custo(state):
                     break
 
-                if result.get("tem_portarias"):
-                    portarias = result.get("portarias", [])
+                if result.get("tem_portarias") or escala:
+                    portarias = result.get("portarias", []) if result.get("tem_portarias") else []
                     log.info(f"Edição {num}: {len(portarias)} portaria(s) detectada(s).")
                     for p in portarias:
                         log.info(
                             f"  → {p.get('numero')} | {p.get('categorias')} | {p.get('resumo', '')[:80]}"
                         )
-                    novas = atualizar_json_diario(portarias, edition)
+                    novas = atualizar_json_diario(portarias, edition, escala)
                     total_novas += novas
                 else:
                     log.info(f"Edição {num}: sem portarias relevantes ao polo.")

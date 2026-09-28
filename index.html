@@ -1970,6 +1970,35 @@
         }
 
         /* ─── Trechos do ato ─────────────────────────────────── */
+        .escala-csv {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 10px 0 8px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 0.8em;
+            line-height: 1.7;
+            white-space: pre;
+            overflow-x: auto;
+            color: var(--text-primary);
+        }
+        .escala-csv-aviso {
+            margin-top: 8px;
+            font-size: 0.85em;
+            color: #b45309;
+        }
+        .btn-copiar-csv {
+            background: var(--primary-color, #1e40af);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-copiar-csv:hover { opacity: 0.9; }
         .ato-trecho {
             background: #fafafa;
             border: 1px solid #e2e8f0;
@@ -10236,7 +10265,8 @@
                 // Suporte ao novo formato (portarias_estruturadas) e ao legado (portarias)
                 const comAtos = data.filter(e =>
                     (e.portarias_estruturadas && e.portarias_estruturadas.length > 0) ||
-                    (e.portarias && e.portarias.length > 0)
+                    (e.portarias && e.portarias.length > 0) ||
+                    (e.plantao_polo && e.plantao_polo.length > 0)
                 ).reverse();
 
                 const totalAtos = comAtos.reduce((s, e) =>
@@ -10251,6 +10281,7 @@
                 comAtos.forEach(e => (e.portarias_estruturadas || []).forEach(a =>
                     (a.categorias || []).forEach(c => todasCats.add(c))
                 ));
+                if (comAtos.some(e => (e.plantao_polo || []).length)) todasCats.add('plantao');
 
                 let filtrosHtml = '<div class="diario-filtros" id="diario-filtros">'
                     + '<button class="filtro-btn ativo" onclick="filtrarCategoria(\'\', this)">Todos</button>';
@@ -10269,6 +10300,7 @@
                     // Categorias presentes nesta edição (para filtro)
                     const catsEdicao = new Set();
                     atos.forEach(a => (a.categorias || []).forEach(c => catsEdicao.add(c)));
+                    if ((edicao.plantao_polo || []).length) catsEdicao.add('plantao');
                     const dataAttr = catsEdicao.size ? ' data-cats="' + [...catsEdicao].join(' ') + '"' : '';
 
                     html += '<div class="accordion-item" data-idx="' + idx + '"' + dataAttr + '>'
@@ -10280,6 +10312,8 @@
                           + '<div class="accordion-body" id="acc-body-' + idx + '" style="display:none">'
                           + '<div style="margin-bottom:15px"><a href="' + edicao.url + '" target="_blank" class="pdf-link">'
                           + '📄 Abrir PDF — Edição ' + edicao.edicao + '</a></div>';
+
+                    html += _diarioEscalaPlantaoHtml(edicao);
 
                     if (atos.length > 0) {
                         // Novo formato estruturado
@@ -10337,6 +10371,52 @@
                 container.innerHTML = '<p style="text-align:center;padding:40px;color:#ef4444;">❌ Erro ao carregar: '
                     + e.message + '<br><small style="color:#94a3b8">Acesse pelo GitHub Pages para visualização completa.</small></p>';
             }
+        }
+
+        // Escala de plantão do Polo lida da tabela do PDF pela automação
+        // (edicao.plantao_polo) → CSV no formato do "Importar CSV" do Plantão:
+        // data_início;data_fim;defensor;assessoria (datas DD/MM/AAAA).
+        function _diarioEscalaCsv(escala) {
+            const br = iso => iso ? iso.slice(8, 10) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4) : '';
+            return escala.map(s => [br(s.data_inicio), br(s.data_fim), s.defensor || '', s.assessoria || ''].join(';')).join('\n');
+        }
+
+        function _diarioEscalaPlantaoHtml(edicao) {
+            const escala = edicao.plantao_polo || [];
+            if (!escala.length) return '';
+            const semAssessoria = escala.filter(s => !s.assessoria).length;
+            const aviso = semAssessoria
+                ? '<div class="escala-csv-aviso">⚠️ ' + semAssessoria + ' semana(s) sem assessoria identificada no PDF — preencha antes de importar.</div>'
+                : '';
+            return '<div class="portaria-block escala-csv-block" data-cats="plantao">'
+                 + '<div class="portaria-numero">🗓️ Escala de plantão do Polo — ' + escala.length + ' semana(s)</div>'
+                 + '<div class="ato-resumo">💡 Lida da tabela do PDF. Copie e cole em Plantão → Importar CSV '
+                 + '(data início;data fim;defensor;assessoria). Confira com o PDF antes de importar.</div>'
+                 + aviso
+                 + '<pre class="escala-csv" id="escala-csv-' + edicao.edicao + '">' + esc(_diarioEscalaCsv(escala)).replace(/<br>/g, '\n') + '</pre>'
+                 + '<button type="button" class="btn-copiar-csv" onclick="_diarioCopiarEscala(' + edicao.edicao + ', this)">📋 Copiar CSV</button>'
+                 + '</div>';
+        }
+
+        async function _diarioCopiarEscala(numEdicao, btn) {
+            const pre = document.getElementById('escala-csv-' + numEdicao);
+            if (!pre) return;
+            const texto = pre.textContent;
+            try {
+                await navigator.clipboard.writeText(texto);
+            } catch (e) {
+                // Fallback (clipboard API bloqueada): seleciona o texto para Ctrl+C
+                const sel = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(pre);
+                sel.removeAllRanges();
+                sel.addRange(range);
+                mostrarToast('Texto selecionado — use Ctrl+C para copiar.');
+                return;
+            }
+            const original = btn.textContent;
+            btn.textContent = '✅ Copiado!';
+            setTimeout(() => { btn.textContent = original; }, 2000);
         }
 
         function esc(str) {
