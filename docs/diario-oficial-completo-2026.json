@@ -1542,7 +1542,6 @@
           "polo_medio",
           "defensor",
           "servidor",
-          "comarca",
           "plantao"
         ],
         "trechos": [
@@ -2302,8 +2301,7 @@
         "sgi": null,
         "categorias": [
           "polo_medio",
-          "defensor",
-          "comarca"
+          "defensor"
         ],
         "trechos": [
           "3ª Defensoria Pública do Polo do Médio Solimões",
@@ -2647,20 +2645,6 @@
           "II - DESIGNAR, no período de 04 a 17 de maio de 2026, o Defensor Público Ícaro Oliveira Avelar Costa como Coordenador do Polo do Médio Amazonas, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019."
         ],
         "resumo": "Designa Ícaro Oliveira Avelar Costa cumulativamente na 5ª DP do Polo Médio Amazonas (04-15/05/2026) e como Coordenador do Polo (04-17/05/2026), substituindo Emilly Bianca Ferreira dos Santos na FGD-6."
-      },
-      {
-        "numero": "Portaria Nº 451/2026-GSPG/DPE/AM",
-        "sei": "26.0.000002130-9",
-        "sgi": "2600689, 2600691, 2600693",
-        "categorias": [
-          "servidor",
-          "comarca"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Renan Lopes Aparicio, sem titulação, nos trechos Tabatinga/Santo Antônio do Içá/Tabatinga, no período de 16 a 23 de maio de 2026, a fim de prestar apoio na realização de mutirão de atendimentos em comunidades do município de Santo Antônio do Içá-AM;",
-          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
-        ],
-        "resumo": "Autoriza deslocamento de servidor Renan Lopes Aparicio para Santo Antônio do Içá-AM (16-23/05/2026) em apoio a mutirão de atendimentos, com pagamento de diárias."
       }
     ]
   },
@@ -2695,7 +2679,6 @@
           "defensor",
           "servidor",
           "substituicao",
-          "comarca",
           "plantao"
         ],
         "trechos": [
@@ -2906,7 +2889,6 @@
         "sei": null,
         "sgi": null,
         "categorias": [
-          "comarca",
           "projeto"
         ],
         "trechos": [
@@ -3121,7 +3103,6 @@
         "sei": "26.0.000004495-3",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor",
           "designacoes"
         ],
@@ -3176,8 +3157,7 @@
         "sgi": null,
         "categorias": [
           "polo_medio",
-          "substituicao",
-          "comarca"
+          "substituicao"
         ],
         "trechos": [
           "V - A escala prevista na Portaria nº 493/2024-GDPG/DPE-AM passa a viger conforme anexo único desta portaria",
@@ -3284,7 +3264,6 @@
         "sei": "26.0.000005210-7",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor",
           "substituicao"
         ],
@@ -3332,7 +3311,6 @@
         "sei": "26.0.000006578-0",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor"
         ],
         "trechos": [
@@ -3345,7 +3323,6 @@
         "sei": "26.0.000005807-5",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor"
         ],
         "trechos": [
@@ -3375,41 +3352,11 @@
     "portarias": [],
     "portarias_estruturadas": [
       {
-        "numero": "Portaria Nº 540/2026-GSPG/DPE/AM",
-        "sei": "26.0.000007129-2",
-        "sgi": "2600810",
-        "categorias": [
-          "comarca",
-          "defensor",
-          "substituicao"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Rodrigo Hilario Rabelo, Assistente Técnico de Defensoria, nos trechos Tabatinga/Atalaia do Norte/Tabatinga, no período de 14 a 19 de junho de 2026, a fim de auxiliar o Defensor Público Kleber Luiz Miyasato na realização de atendimentos presenciais, na Comarca de Atalaia do Norte-AM",
-          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
-        ],
-        "resumo": "Autoriza deslocamento de assistente técnico para auxiliar defensor em atendimentos presenciais na Comarca de Atalaia do Norte de 14 a 19 de junho de 2026"
-      },
-      {
-        "numero": "Portaria Nº 542/2026-GSPG/DPE/AM",
-        "sei": "26.0.000007147-0",
-        "sgi": "2600808",
-        "categorias": [
-          "comarca",
-          "defensor",
-          "substituicao"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Kleber Luiz Miyasato, Defensor Público 4ª Classe, nos trechos Tabatinga/Atalaia do Norte/Tabatinga, no período de 14"
-        ],
-        "resumo": "Autoriza deslocamento de Defensor Público Kleber Luiz Miyasato para atendimentos presenciais em Atalaia do Norte de 14 a 19 de junho de 2026"
-      },
-      {
         "numero": "Portaria Nº 92/2026-CG/DPE/AM",
         "sei": null,
         "sgi": null,
         "categorias": [
-          "polo_medio",
-          "comarca"
+          "polo_medio"
         ],
         "trechos": [
           "Art. 1º – Publicar pauta de correição, conforme anexo único desta portaria.",
@@ -3575,19 +3522,6 @@
           "III - DETERMINAR o pagamento de diárias ao Primeiro Subdefensor Público Geral e ao servidor público acima relacionados."
         ],
         "resumo": "Autoriza deslocamento de Primeiro Subdefensor e servidor para Itapiranga para participar de cerimônia de inauguração no dia 30/05/2026"
-      },
-      {
-        "numero": "Portaria Nº 876/2026-GDPG/DPE/AM",
-        "sei": "26.0.000007474-7",
-        "sgi": "2600852",
-        "categorias": [
-          "servidor"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Luciana de Oliveira Castro, Assessora Técnica I DPE-2, no trecho Manaus/Anamã/Manaus, no período de 31 de maio a 03 de junho de 2026, a fim de realizar treinamento quanto ao fluxo de atendimento que será realizado na PAV do município de Anamã-AM",
-          "II - DETERMINAR o pagamento de diárias à servidora pública acima relacionada."
-        ],
-        "resumo": "Autoriza deslocamento de servidora para Anamã para treinamento de fluxo de atendimento de 31/05 a 03/06/2026"
       },
       {
         "numero": "Portaria Nº 554/2026-GSPG/DPE/AM",
@@ -3819,8 +3753,7 @@
         "categorias": [
           "polo_medio",
           "defensor",
-          "designacoes",
-          "comarca"
+          "designacoes"
         ],
         "trechos": [
           "I - DESIGNAR, cumulativamente, o Defensor Público de 2ª Classe Helom César da Silva Nunes para atuar na 1ª Defensoria Pública de Iranduba, no período de 01 a 03 de junho de 2026",
@@ -3852,8 +3785,7 @@
         "categorias": [
           "polo_medio",
           "defensor",
-          "designacoes",
-          "comarca"
+          "designacoes"
         ],
         "trechos": [
           "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Pedro Henrique Pereira Paiva para atuar na 2ª Defensoria Pública do Polo do Médio Solimões, no período de 01 a 30 de junho de 2026"
@@ -3996,8 +3928,7 @@
         "sei": null,
         "sgi": null,
         "categorias": [
-          "polo_medio",
-          "comarca"
+          "polo_medio"
         ],
         "trechos": [
           "CONSIDERANDO a Portaria n° 92/2026/CG/DPE/AM, de 26 de maio de 2026 (Correição Ordinária no Polo do Médio Amazonas, de 09 a 12 de junho de 2026);"
@@ -4027,24 +3958,10 @@
         "resumo": "Autoriza deslocamento de servidor para Urucurituba de 10 a 15 de junho de 2026"
       },
       {
-        "numero": "Portaria Nº 945/2026-GDPG/DPE/AM",
-        "sei": "26.0.000007903-0",
-        "sgi": "1759",
-        "categorias": [
-          "defensor",
-          "comarca"
-        ],
-        "trechos": [
-          "I - CONSIDERAR AUTORIZADO o deslocamento de Helom Cesar da Silva Nunes, Primeiro Subdefensor Público Geral, nos trechos Manaus/Iranduba/Manaus, no dia 01 de junho de 2026, a fim de realizar visita à unidade da Defensoria Pública em Iranduba-AM, bem como para participação em reunião com o Prefeito da referida comarca"
-        ],
-        "resumo": "Autoriza deslocamento de Primeiro Subdefensor para Iranduba em 01 de junho de 2026"
-      },
-      {
         "numero": "Portaria Nº 558/2026-GSPG/DPE/AM",
         "sei": "26.0.000007519-0",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor",
           "substituicao"
         ],
@@ -4059,7 +3976,6 @@
         "sei": "26.0.000006561-6",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor"
         ],
         "trechos": [
@@ -4072,7 +3988,6 @@
         "sei": "26.0.000007894-7",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor"
         ],
         "trechos": [
@@ -4771,36 +4686,6 @@
         "resumo": "Autoriza deslocamento de servidor técnico para Urucurituba para implantação de infraestrutura do PAV (08-11/07/2026)"
       },
       {
-        "numero": "Portaria Nº 1167/2026-GDPG/DPE/AM",
-        "sei": "26.0.000009435-7",
-        "sgi": "2601261",
-        "categorias": [
-          "defensor",
-          "servidor",
-          "comarca",
-          "projeto"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Thiago Nobre Rosas, Defensor Público de 2ª Classe, Karine Casara Batista, Diretora Adjunta DPE-4, e Lúcio Claudio Zahluth Lins, Assistente Técnico de Defensoria, nos trechos Manaus/Borba/Manaus, no dia 13 de julho de 2026, a fim de realizar visita institucional para tratar sobre a realização das atividades preliminares visando à implementação do Projeto \"Gente da 319\", no município de Borba-AM",
-          "II - DETERMINAR o pagamento de diárias ao defensor público e aos servidores públicos acima relacionados."
-        ],
-        "resumo": "Autoriza deslocamento de defensor e servidores para Borba para atividades preliminares do Projeto Gente da 319 (13/07/2026)"
-      },
-      {
-        "numero": "Portaria Nº 1168/2026-GDPG/DPE/AM",
-        "sei": "26.0.000009436-5",
-        "sgi": "2601255; 2601232",
-        "categorias": [
-          "comarca",
-          "servidor"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, no trecho Manaus/Manacapuru/Novo Airão/Manaus, no dia 09 de julho de 2026, a fim de conduzir o Defensor Público Ian Marcos Martins Palmeira ao município de Novo Airão-AM",
-          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
-        ],
-        "resumo": "Autoriza deslocamento de servidor para conduzir defensor a Novo Airão (09/07/2026)"
-      },
-      {
         "numero": "Portaria Nº 1165/2026-GDPG/DPE/AM",
         "sei": "26.0.000009436-5",
         "sgi": "2601255",
@@ -5060,8 +4945,7 @@
         "sgi": null,
         "categorias": [
           "defensor",
-          "substituicao",
-          "comarca"
+          "substituicao"
         ],
         "trechos": [
           "I - DESIGNAR, em caráter especial, o Defensor Público de 4.ª Classe Ian Marcos Martins Palmeira, para atuar na Sessão de Julgamento do Tribunal do Júri da 1ª Vara da Comarca de Manacapuru, no dia 21 de julho de 2026, às 09h, nos autos de n.º 002465-"
@@ -5193,8 +5077,7 @@
         "sgi": null,
         "categorias": [
           "polo_medio",
-          "servidor",
-          "comarca"
+          "servidor"
         ],
         "trechos": [
           "ANALISTA JURIDICO DE DEFENSORIA POLO DO MÉDIO AMAZONAS",
@@ -5270,7 +5153,6 @@
         "sei": "26.0.000009868-9",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor",
           "designacoes"
         ],
@@ -5339,7 +5221,6 @@
         "sei": "26.0.000010325-9",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor"
         ],
         "trechos": [
@@ -5386,7 +5267,6 @@
         "sei": "26.0.000010194-9",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor",
           "designacoes"
         ],
@@ -5591,7 +5471,6 @@
         "sei": "26.0.000009907-3",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor",
           "designacoes"
         ],
@@ -5680,8 +5559,7 @@
         "categorias": [
           "polo_medio",
           "servidor",
-          "designacoes",
-          "comarca"
+          "designacoes"
         ],
         "trechos": [
           "PRORROGAR, a contar de 1º de setembro de 2026, pelo período de 2 (dois) meses, os efeitos da Portaria n.º 1075/2026-GDPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM em 30 de junho de 2026, Ano 12, Edição 2678, Pág. 4 de 35, referente à designação dos servidores Elaine Cristina da Silva Nascimento e Francisco Patrick Barbosa Chagas para atuação junto à 5ª e à 6ª Defensorias Públicas do Polo do Médio Amazonas, respectivamente, sem prejuízo de suas atribuições ordinárias e após o horário regular de expediente."
@@ -5782,7 +5660,6 @@
         "sei": "26.0.000010718-1",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor"
         ],
         "trechos": [
@@ -5933,8 +5810,7 @@
         "sei": null,
         "sgi": null,
         "categorias": [
-          "polo_medio",
-          "comarca"
+          "polo_medio"
         ],
         "trechos": [
           "A DIRETORA DA ESCOLA SUPERIOR DA DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS e a COORDENAÇÃO DA UNIDADE DE PRESIDENTE FIGUEIREDO, no uso de suas atribuições e considerando as disposições da Resolução nº 10/2019 – CSDPE/AM",
@@ -5970,8 +5846,7 @@
         "sgi": null,
         "categorias": [
           "defensor",
-          "substituicao",
-          "comarca"
+          "substituicao"
         ],
         "trechos": [
           "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Daniele dos Santos Fernandes para atuar na 10ª Defensoria Pública do Polo do Alto Solimões (São Paulo de Olivença), no período de 07 de agosto a 30 de setembro de 2026"
@@ -5984,8 +5859,7 @@
         "sgi": "2600447, 2600508 e 2600511",
         "categorias": [
           "defensor",
-          "substituicao",
-          "comarca"
+          "substituicao"
         ],
         "trechos": [
           "I - DESIGNAR, cumulativamente, o Defensor Público de 1ª Classe Marco Aurélio Martins da Silva para atuar na 1ª Defensoria Pública do Polo Baixo Amazonas, nos períodos de 10 a 13 de agosto e 17 a 26 de agosto de 2026"
@@ -6176,8 +6050,7 @@
         "categorias": [
           "polo_medio",
           "defensor",
-          "designacoes",
-          "comarca"
+          "designacoes"
         ],
         "trechos": [
           "I - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Francine Lucia Buffon Baldissarella para atuar na 2ª Defensoria Pública do Polo do Médio Solimões, no período de 17 a 21 de agosto de 2026",
@@ -6401,33 +6274,6 @@
         "resumo": "Autoriza deslocamento de servidora para entregar materiais em cidades do Polo Médio (Itacoatiara, Silves, Rio Preto da Eva) em 10-11/09/2026"
       },
       {
-        "numero": "Portaria Nº 1521/2026-GDPG/DPE/AM",
-        "sei": "26.0.000011723-3",
-        "sgi": null,
-        "categorias": [
-          "defensor",
-          "comarca"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Monalysa Helena Lima Façanha, Defensora Pública de 3ª Classe, nos trechos Manaus/[texto cortado]"
-        ],
-        "resumo": "Autoriza deslocamento de defensora pública de 3ª classe em trechos relacionados ao interior do Amazonas"
-      },
-      {
-        "numero": "Portaria Nº 1523/2026-GDPG/DPE/AM",
-        "sei": "26.0.000011821-3",
-        "sgi": "2601631",
-        "categorias": [
-          "defensor",
-          "comarca"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Wilson Oliveira de Melo Júnior, Defensor Público de 1ª Classe, no trecho Manaus/Nova Olinda do Norte/Manaus, no período de 25 a 27 de agosto de 2026, a fim de realizar sessões do Tribunal do Júri na Vara Única da Comarca de Nova Olinda do Norte-AM",
-          "II - DETERMINAR o pagamento de diárias ao defensor público acima relacionado"
-        ],
-        "resumo": "Autoriza deslocamento de defensor para realizar sessões do Tribunal do Júri em Nova Olinda do Norte em 25-27/08/2026"
-      },
-      {
         "numero": "Portaria Nº 1519/2026-GSPG/DPE/AM",
         "sei": "26.0.000011819-1",
         "sgi": "2601668, 2601547",
@@ -6461,8 +6307,7 @@
         "sei": "26.0.000011727-6",
         "sgi": null,
         "categorias": [
-          "defensor",
-          "comarca"
+          "defensor"
         ],
         "trechos": [
           "I - DESIGNAR, em caráter especial, o Defensor Público de 3.ª Classe Oswaldo Machado Neto, para atuar na Sessão de Julgamento do Tribunal do Júri da Vara Única da Comarca de Rio Preto da Eva, no dia 24 de agosto de 2026, às 08h, autos de n.º 0600234-30.2023.8.04.6600, conforme Anexo Único"
@@ -6621,7 +6466,6 @@
         "sei": "26.0.000010921-4",
         "sgi": null,
         "categorias": [
-          "comarca",
           "defensor"
         ],
         "trechos": [
@@ -6634,8 +6478,7 @@
         "sei": "26.0.000012202-4",
         "sgi": null,
         "categorias": [
-          "polo_medio",
-          "comarca"
+          "polo_medio"
         ],
         "trechos": [
           "salvo a 1ª Defensoria Pública do Polo Médio Amazonas, a 2ª Defensoria Pública do Polo Médio Amazonas, a 3ª Defensoria Pública do Polo Médio Amazonas, a 4ª Defensoria Pública do Polo Médio Amazonas"
@@ -6843,7 +6686,6 @@
         "sgi": null,
         "categorias": [
           "polo_medio",
-          "comarca",
           "projeto",
           "defensor",
           "servidor"
@@ -7088,8 +6930,7 @@
         "sgi": null,
         "categorias": [
           "polo_medio",
-          "defensor",
-          "comarca"
+          "defensor"
         ],
         "trechos": [
           "1 (uma) vaga para a 3ª Defensoria Pública do Polo Médio Amazonas",
@@ -7301,33 +7142,6 @@
     "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2739-2026__publicada_em_25_setembro_de_2026.pdf",
     "portarias": [],
     "portarias_estruturadas": [
-      {
-        "numero": "Portaria Nº 1744/2026-GDPG/DPE/AM",
-        "sei": "26.0.000013562-2",
-        "sgi": "2601966",
-        "categorias": [
-          "defensor",
-          "comarca"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, no trecho Manaus/Manacapuru/Novo Airão/Manacapuru/Manaus, no dia 29 de setembro de 2026, a fim de realizar o transporte da Defensora Pública Thays Lidianne Campos de Azevedo Pereira ao municipio de Novo Airão-AM",
-          "II - DETERMINAR o pagamento de diárias ao servidor público acima relacionado."
-        ],
-        "resumo": "Autoriza deslocamento de servidor para transportar defensor até Novo Airão e autoriza pagamento de diárias em 29 de setembro de 2026"
-      },
-      {
-        "numero": "Portaria Nº 1746/2026-GDPG/DPE/AM",
-        "sei": "26.0.000013542-8",
-        "sgi": "2601967",
-        "categorias": [
-          "defensor",
-          "comarca"
-        ],
-        "trechos": [
-          "I - AUTORIZAR o deslocamento de Thays Lidianne Campos de Azevedo Pereira, Defensor Público de 3ª Classe, no trecho Manacapuru/Novo Airão/Manacapuru, no dia 29 de setembro de 2026"
-        ],
-        "resumo": "Autoriza deslocamento da Defensora Thays Lidianne Campos de Azevedo Pereira para Novo Airão em 29 de setembro de 2026"
-      },
       {
         "numero": "Portaria Nº 1011/2026-GSPG/DPE/AM",
         "sei": null,

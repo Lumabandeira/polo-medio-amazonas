@@ -807,6 +807,8 @@ REGRAS:
 - O resumo deve ser conciso e informativo (quem, o quê, quando)
 - Se não identificar o número SEI/SGI, use null (não use string vazia)
 - Inclua apenas portarias genuinamente relacionadas ao polo ou seus integrantes
+- NÃO inclua portarias que só autorizam deslocamento, transporte ou diárias de um integrante do polo para trabalhar FORA do polo (ex.: trecho Manacapuru/Novo Airão, em outro polo) — o nome do integrante sozinho não torna o ato relevante. Designações, substituições, férias e afastamentos de integrantes continuam relevantes mesmo que o destino seja outro polo
+- Use "comarca" somente quando o texto citar uma das 6 cidades do polo; cidades de outros polos (Manaus, Manacapuru, Novo Airão etc.) não contam
 - Blocos entre [TABELA — pág. N] e [FIM DA TABELA] são tabelas do PDF (anexos de portarias, como a classificação de concurso de remoção), uma linha por registro com as células separadas por " | " e o cabeçalho (ex.: DEFENSOR | ORIGEM | DESTINO) numa das primeiras linhas. Atribua a tabela à portaria da qual ela é anexo, inclua nos "trechos" CADA linha que envolva o polo (como origem OU destino), respeitando a direção origem → destino, e cite cada defensor envolvido no resumo
 - O mesmo conteúdo pode aparecer também, embaralhado, no texto corrido antes da tabela — nesse caso confie na versão da tabela
 
@@ -826,6 +828,53 @@ TRECHOS DO DIÁRIO OFICIAL (janelas de contexto em volta das menções):
         except json.JSONDecodeError:
             log.warning("Resposta do Claude não é JSON válido")
     return {"tem_portarias": False, "portarias": []}
+
+# ─── Filtro pós-Claude (determinístico) ─────────────────────────────────────
+
+_RE_POLO_MEDIO = re.compile(r"Polo\s+(?:do\s+)?M[ée]dio\s+Amazonas", re.IGNORECASE)
+_RE_CIDADES_POLO = re.compile("|".join(CIDADES_POLO), re.IGNORECASE)
+# Ato só de logística de viagem: autorizar deslocamento, transporte, diárias.
+_RE_LOGISTICA = re.compile(r"\bdeslocamento\b|\btransporte\b|\bdi[áa]rias?\b", re.IGNORECASE)
+# Atos que mudam quem atende no polo — nunca descartados por este filtro.
+_RE_ATO_DE_LOTACAO = re.compile(
+    r"designa|substitu|f[ée]rias|afast|remo[çc][ãa]o|remov|licen[çc]a|folga|plant[ãa]o|lota[çc][ãa]o",
+    re.IGNORECASE,
+)
+
+
+def filtrar_portarias_fora_do_polo(portarias: list) -> list:
+    """
+    Corrige dois erros recorrentes do Claude (caso real: Edição 2739, Portarias
+    1744 e 1746/2026-GDPG — deslocamento da Thays, titular do polo mas designada
+    no Polo Rio Negro-Solimões, no trecho Manacapuru/Novo Airão):
+
+    1. Descarta portarias de pura logística de viagem (deslocamento, transporte,
+       diárias) cujo texto não cita o Polo Médio Amazonas nem nenhuma cidade do
+       polo — o nome de um integrante sozinho não basta; a viagem é de outro polo.
+       Designações, substituições, férias, remoções, plantão etc. continuam
+       entrando mesmo sem cidade do polo (afetam quem atende aqui).
+    2. Tira a categoria "comarca" quando nenhuma cidade do polo é citada.
+    """
+    resultado = []
+    for p in portarias:
+        texto = " ".join(
+            [p.get("numero") or "", p.get("resumo") or ""] + list(p.get("trechos") or [])
+        )
+        menciona_polo = bool(_RE_POLO_MEDIO.search(texto))
+        menciona_cidade = bool(_RE_CIDADES_POLO.search(texto))
+        if (
+            not menciona_polo
+            and not menciona_cidade
+            and _RE_LOGISTICA.search(texto)
+            and not _RE_ATO_DE_LOTACAO.search(texto)
+        ):
+            log.info(f"  - Descartada (viagem fora do polo): {p.get('numero')}")
+            continue
+        cats = p.get("categorias") or []
+        if "comarca" in cats and not menciona_cidade:
+            p["categorias"] = [c for c in cats if c != "comarca"]
+        resultado.append(p)
+    return resultado
 
 # ─── Atualização do JSON ──────────────────────────────────────────────────────
 
@@ -1000,6 +1049,7 @@ def main():
 
                 if result.get("tem_portarias") or escala:
                     portarias = result.get("portarias", []) if result.get("tem_portarias") else []
+                    portarias = filtrar_portarias_fora_do_polo(portarias)
                     log.info(f"Edição {num}: {len(portarias)} portaria(s) detectada(s).")
                     for p in portarias:
                         log.info(

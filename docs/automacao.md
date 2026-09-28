@@ -100,6 +100,29 @@ por registro com células separadas por ` | `, entre `[TABELA — pág. N]` e `[
 prompt do Projeto 2 explica esse formato ao Claude (cada linha que envolva o polo, respeitando
 origem → destino; em caso de conflito, confiar na tabela).
 
+### Filtro pós-Claude: viagens fora do polo (sessão 44)
+
+O pré-filtro casa pelo **nome** de qualquer titular vigente, e o Haiku acabava incluindo
+portarias em que um integrante do polo só aparece viajando para trabalhar **em outro polo**.
+Caso real: Edição 2739 (25/09/2026), Portarias 1744 e 1746/2026-GDPG — deslocamento/transporte
+da Thays (titular da 2ª DP, mas designada cumulativamente no Polo Rio Negro-Solimões até 30/09)
+no trecho Manacapuru/Novo Airão, ainda marcadas com a categoria `comarca` sem nenhuma cidade do
+polo no texto. Correção em duas camadas:
+
+1. **Prompt:** instrui a não incluir atos de deslocamento/transporte/diárias para fora do polo
+   e a usar `comarca` só com uma das 6 cidades do polo.
+2. **`filtrar_portarias_fora_do_polo()`** (determinístico, roda sobre a resposta do Claude antes
+   de gravar no JSON): descarta a portaria quando o texto (número + trechos + resumo) é de
+   logística de viagem (`deslocamento`/`transporte`/`diárias`), **não** cita "Polo Médio
+   Amazonas" nem cidade do polo e **não** é ato de lotação (designação, substituição, férias,
+   afastamento, remoção, licença, folga, plantão — esses continuam entrando mesmo com destino em
+   outro polo, porque mudam quem atende aqui). Também tira `comarca` quando nenhuma cidade do polo
+   aparece.
+
+A mesma regra foi aplicada ao histórico do JSON: 11 portarias de viagem fora do polo removidas
+(edições 2643, 2657, 2660, 2666, 2684, 2716 e 2739) e `comarca` retirada das que não citavam
+cidade do polo.
+
 ### Escala de plantão do Polo → CSV (sessão 44)
 
 `extrair_escala_plantao_polo(pdf_bytes, data_pub)` lê, **sem Claude** (determinístico, custo

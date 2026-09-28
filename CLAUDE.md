@@ -96,7 +96,13 @@ aparece a portaria da escala (número + 1º inciso, `plantao_polo_portaria`, de
 `extrair_portaria_escala_plantao()`); na 2739 a IA tinha inventado o número "1747" — corrigido
 para 1011. As linhas passam em
 `_plantaoParseCSV()` e a 2686 bate 100% com `PLANTAO_SEED_2026`. Detalhes das armadilhas do PDF
-em `docs/automacao.md`.
+em `docs/automacao.md`. (6) **Bugfix no filtro do Diário Oficial (Projeto 2):** portarias de
+deslocamento/transporte/diárias de integrante do polo trabalhando **em outro polo** entravam só
+por causa do nome (caso: Edição 2739, Portarias 1744/1746 — Thays em Manacapuru/Novo Airão,
+ainda com a categoria `comarca` errada). Prompt ajustado + filtro determinístico
+`filtrar_portarias_fora_do_polo()` aplicado à resposta do Claude; histórico do JSON limpo com a
+mesma regra (11 portarias removidas, `comarca` retirada onde não havia cidade do polo). Ver
+`docs/automacao.md`.
 
 ## Estado atual (sessão 43 — 25/09/2026)
 
