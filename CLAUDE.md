@@ -74,7 +74,7 @@ Testado no navegador com o registro simulado (dias 05 e 12/10 mostram as mesmas 
 Lista, botões de admin preservados, sem erro no console). (3) **Ajuste visual** no modal de
 editar titulares de uma DP (`_renderEntradas()`, aberto pelo ✏️ da aba Defensorias): cada card de
 titular ganhou uma faixa lateral à esquerda com o nome da DP na vertical (`.tit-entry-lateral`,
-`writing-mode: vertical-rl` + `rotate(180deg)`, lido de baixo para cima), e o conteúdo foi para
+`writing-mode: vertical-rl` + `rotate(180deg)`, lido de baixo para cima, fonte `0.85em`), e o conteúdo foi para
 `.tit-entry-corpo`. Aproveitado para corrigir campos vazando do card em tela estreita
 (`min-width: 0` em `.tit-field`, `input[type=url]` com `width: 100%`) e, abaixo de 600px, o grid
 dos campos passa para 1 coluna. Testado no navegador em desktop e 375px.
