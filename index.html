@@ -1983,6 +1983,12 @@
             overflow-x: auto;
             color: var(--text-primary);
         }
+        .escala-portaria-numero {
+            margin-top: 8px;
+            font-weight: 700;
+            font-size: 0.9em;
+            color: var(--text-primary);
+        }
         .escala-csv-aviso {
             margin-top: 8px;
             font-size: 0.85em;
@@ -10388,8 +10394,15 @@
             const aviso = semAssessoria
                 ? '<div class="escala-csv-aviso">⚠️ ' + semAssessoria + ' semana(s) sem assessoria identificada no PDF — preencha antes de importar.</div>'
                 : '';
+            // Portaria da escala (número + 1º inciso), extraída do PDF pela automação
+            const port = edicao.plantao_polo_portaria;
+            const portHtml = port
+                ? '<div class="escala-portaria-numero">' + esc(port.numero || '') + '</div>'
+                  + (port.texto ? '<div class="ato-trecho">' + esc(port.texto) + '</div>' : '')
+                : '';
             return '<div class="portaria-block escala-csv-block" data-cats="plantao">'
                  + '<div class="portaria-numero">🗓️ Escala de plantão do Polo — ' + escala.length + ' semana(s)</div>'
+                 + portHtml
                  + '<div class="ato-resumo">💡 Lida da tabela do PDF. Copie e cole em Plantão → Importar CSV '
                  + '(data início;data fim;defensor;assessoria). Confira com o PDF antes de importar.</div>'
                  + aviso

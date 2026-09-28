@@ -110,6 +110,13 @@ grava as semanas do Polo Médio Amazonas em `plantao_polo` da edição:
 com "(F)" preservado). Roda em toda edição processada; se achar escala, cria/atualiza a entrada
 da edição mesmo sem portaria detectada pelo Claude. O site mostra como CSV
 `DD/MM/AAAA;DD/MM/AAAA;defensor;assessoria` com botão "📋 Copiar CSV" (Plantão → Importar CSV).
+Acima do CSV, a portaria da escala: `extrair_portaria_escala_plantao()` (também sem Claude) grava
+em `plantao_polo_portaria` = `{numero, texto}` — o cabeçalho "PORTARIA Nº …" (maiúsculas, início
+de linha; não as portarias citadas nos CONSIDERANDOs) e o 1º inciso do RESOLVE, aceitando
+"ESTABELECER a escala de plantão … do interior …" ou "ALTERAR a Portaria … nos seguintes termos"
+seguido de "Plantão do Polo …". Lê a página inteira e, se não achar, coluna por coluna (o
+extract_text() mistura as 2 colunas em algumas edições). Motivo: o resumo do Claude na Edição
+2739 inventou o número (1747, inexistente no PDF — a certa é 1011; corrigida à mão no JSON).
 
 Armadilhas do PDF tratadas (todas vistas em edições reais): bloco do polo quebrando de página
 (estado carregado entre tabelas); nome do polo ausente na 1ª coluna quando o bloco cai no fim da

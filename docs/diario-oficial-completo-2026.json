@@ -2781,7 +2781,11 @@
         "defensor": "Elton Dariva Staub",
         "assessoria": "Natália Cristina de Moraes"
       }
-    ]
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 440/2026-GSPG/DPE/AM",
+      "texto": "ALTERAR a Portaria n.º 298/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição n.º 2.622, de 30 de março de 2026, pág. 16 a 24, nos seguintes termos"
+    }
   },
   {
     "edicao": 2645,
@@ -3730,7 +3734,11 @@
         "defensor": "Miguel Eduardo de Azevedo Martins Filho",
         "assessoria": "Larice Bruce Pereira"
       }
-    ]
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 546/2026-GSPG/DPE/AM",
+      "texto": "ALTERAR a Portaria n.º 298/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição n.º 2.622, de 30 de março de 2026, pág. 16 a 24, nos seguintes termos"
+    }
   },
   {
     "edicao": 2661,
@@ -5033,7 +5041,11 @@
         "defensor": "Emilly Bianca Ferreira dos Santos",
         "assessoria": "Natália Cristina de Moraes"
       }
-    ]
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 674/2026-GSPG/DPE/AM",
+      "texto": "ALTERAR a Portaria 635/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.677, de 25 de junho de 2026, pág. 10-17, nos seguintes termos"
+    }
   },
   {
     "edicao": 2689,
@@ -6281,7 +6293,11 @@
         "defensor": "Emilly Bianca Ferreira dos Santos",
         "assessoria": "Natália Cristina de Moraes"
       }
-    ]
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 835/2026-GSPG/DPE/AM",
+      "texto": "ALTERAR a Portaria 635/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.677, de 25 de junho de 2026, pág. 10-17, nos seguintes termos"
+    }
   },
   {
     "edicao": 2715,
@@ -7029,7 +7045,11 @@
         "defensor": "Emilly Bianca Ferreira dos Santos",
         "assessoria": "Luma Karolyne Pantoja Bandeira"
       }
-    ]
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 926/2026-GSPG/DPE/AM",
+      "texto": "ALTERAR a Portaria 635/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.677, de 25 de junho de 2026, pág. 10-17, nos seguintes termos"
+    }
   },
   {
     "edicao": 2732,
@@ -7309,7 +7329,7 @@
         "resumo": "Autoriza deslocamento da Defensora Thays Lidianne Campos de Azevedo Pereira para Novo Airão em 29 de setembro de 2026"
       },
       {
-        "numero": "Portaria Nº 1747/2026-GSPG/DPE/AM",
+        "numero": "Portaria Nº 1011/2026-GSPG/DPE/AM",
         "sei": null,
         "sgi": null,
         "categorias": [
@@ -7413,6 +7433,10 @@
         "defensor": "Emilly Bianca Ferreira dos Santos (R)",
         "assessoria": "Larice Bruce Pereira"
       }
-    ]
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 1011/2026-GSPG/DPE/AM",
+      "texto": "ESTABELECER a escala de plantão da Defensoria Pública do Estado do Amazonas para o 4º trimestre de 2026, do interior, que compreende o período de 28/09/2026 a 19/12/2026, conforme anexos I a III desta portaria"
+    }
   }
 ]

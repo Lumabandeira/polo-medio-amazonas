@@ -526,6 +526,59 @@ def _linha_orfa_acima(page, tabela) -> list:
     return [linha]
 
 
+# Só o cabeçalho (maiúsculas, início de linha) — não "a Portaria n.º 231/2026" citada num CONSIDERANDO
+_RE_PORTARIA_CAB = re.compile(r"(?m)^\s*PORTARIA\s+N[º°o.]*\s*([\d.]+/\d{4}\s*[-–]\s*[A-Z]+(?:/[A-Z]+)*)")
+_RE_INCISO_I = re.compile(
+    r"RESOLVE\s*:?\s*I\s*[-–]\s*(.{10,900}?)(?=[;:]\s|\n\s*II\s*[-–])",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def extrair_portaria_escala_plantao(pdf_bytes: bytes) -> dict | None:
+    """
+    Número e 1º inciso da portaria que estabelece/altera a escala de plantão do
+    INTERIOR (ex. "PORTARIA Nº 1011/2026-GSPG/DPE/AM" + "ESTABELECER a escala de
+    plantão ... do interior, que compreende o período de 28/09/2026 a
+    19/12/2026 ..."). Sem Claude — o resumo do Claude já errou esse número (Edição
+    2739). O DO é em 2 colunas e o extract_text() da página inteira mistura as
+    colunas em algumas edições, então tenta a página inteira e, se não achar,
+    coluna por coluna (esquerda depois direita). O número é o último cabeçalho
+    "PORTARIA Nº" antes do inciso, no mesmo fluxo de texto.
+    """
+    try:
+        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+            inteira = "\n".join(p.extract_text() or "" for p in pdf.pages)
+            colunas = "\n".join(
+                (p.crop((0, 0, p.width / 2, p.height)).extract_text() or "") + "\n" +
+                (p.crop((p.width / 2, 0, p.width, p.height)).extract_text() or "")
+                for p in pdf.pages
+            )
+    except Exception as e:
+        log.warning(f"Falha ao ler portaria da escala de plantão: {e}")
+        return None
+
+    for texto in (inteira, colunas):
+        candidatos = []
+        for m in _RE_INCISO_I.finditer(texto):
+            inciso = re.sub(r"\s+", " ", m.group(1)).strip()
+            seguinte = texto[m.end():m.end() + 3000]
+            # Escala nova do interior, ou alteração de escala ("ALTERAR a Portaria
+            # 635/2026 ... nos seguintes termos:" seguida de "Plantão do Polo ...")
+            estabelece = re.search(r"escala\s+de\s+plant[aã]o", inciso, re.I) and re.search(r"interior", inciso, re.I)
+            altera = re.match(r"ALTERA", inciso, re.I) and re.search(r"Plant[aã]o\s+do\s+Polo", seguinte, re.I)
+            if not (estabelece or altera):
+                continue
+            cabs = list(_RE_PORTARIA_CAB.finditer(texto, 0, m.start()))
+            if not cabs:
+                continue
+            numero = re.sub(r"\s+", "", cabs[-1].group(1)).replace("–", "-")
+            cita_polo = bool(_RE_POLO_MEDIO.search(inciso + " " + seguinte))
+            candidatos.append((not cita_polo, not estabelece, {"numero": f"PORTARIA Nº {numero}", "texto": inciso}))
+        if candidatos:
+            return sorted(candidatos, key=lambda c: (c[0], c[1]))[0][2]
+    return None
+
+
 def extrair_escala_plantao_polo(pdf_bytes: bytes, data_pub: str) -> list:
     """
     Lê a escala de plantão do interior (tabela: colunas = semanas, cabeçalho
@@ -802,11 +855,14 @@ def atualizar_json_diario(
     portarias: list,
     edition: dict,
     escala_plantao: list | None = None,
+    portaria_escala: dict | None = None,
 ) -> int:
     """
     Adiciona ou mescla portarias_estruturadas da edição no JSON.
     `escala_plantao` (de extrair_escala_plantao_polo) vai em `plantao_polo` da
-    edição — o site mostra como CSV pronto para o Importar CSV do Plantão.
+    edição — o site mostra como CSV pronto para o Importar CSV do Plantão — e
+    `portaria_escala` (de extrair_portaria_escala_plantao: {numero, texto}) em
+    `plantao_polo_portaria`, exibido acima do CSV.
     Retorna o número de portarias novas inseridas.
     """
     data = load_json_diario()
@@ -850,6 +906,9 @@ def atualizar_json_diario(
     if escala_plantao:
         entry["plantao_polo"] = escala_plantao
         log.info(f"  + Escala de plantão do Polo: {len(escala_plantao)} semana(s)")
+        if portaria_escala:
+            entry["plantao_polo_portaria"] = portaria_escala
+            log.info(f"    ({portaria_escala['numero']})")
 
     # Mantém ordenado por número de edição
     data.sort(key=lambda e: e.get("edicao", 0))
@@ -934,6 +993,7 @@ def main():
                 log.info(f"Edição {num}: {len(text)} chars extraídos do PDF.")
                 result = parse_portarias(text, state)
                 escala = extrair_escala_plantao_polo(pdf_bytes, edition.get("data_publicacao", ""))
+                portaria_escala = extrair_portaria_escala_plantao(pdf_bytes) if escala else None
 
                 if verificar_limite_custo(state):
                     break
@@ -945,7 +1005,7 @@ def main():
                         log.info(
                             f"  → {p.get('numero')} | {p.get('categorias')} | {p.get('resumo', '')[:80]}"
                         )
-                    novas = atualizar_json_diario(portarias, edition, escala)
+                    novas = atualizar_json_diario(portarias, edition, escala, portaria_escala)
                     total_novas += novas
                 else:
                     log.info(f"Edição {num}: sem portarias relevantes ao polo.")
