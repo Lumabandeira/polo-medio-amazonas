@@ -35,6 +35,16 @@
 - Nome bate com titular do polo → `substituto: "abrev"`, `substituto_nome_externo: ""`
 - Não bate → `substituto: "_outro"`, `substituto_nome_externo: "Nome completo"`
 
+### Designação cumulativa com período definido (commit de 19/05, aplicado em 28/09)
+
+"DESIGNAR, cumulativamente, … de 18 a 31/05" é cobertura de ausência → vai para `afastamentos`
+(não `designacoes_cumulativas`, que é só sem data fim). Como a portaria muitas vezes não nomeia o
+ausente, `defensor_ausente` vinha vazio e o registro era descartado sem aviso. Correção: exemplo
+concreto no prompt (Portaria 516/2026, Emilly/Miguel) e fallback em
+`salvar_afastamentos_firestore()` que infere o ausente pelo titular vigente (`DEFENSORES_POLO`) da
+DP citada na designação. O commit ficou esquecido no branch `claude/practical-hamilton-ea51c1`
+desde 19/05 e só entrou no `main` na sessão 44.
+
 ### Persistência de estado (corrigido na sessão 24)
 
 O estado (`ultima_edicao`) é salvo em dois lugares:

@@ -105,6 +105,9 @@ mesma regra (11 portarias removidas, `comarca` retirada onde não havia cidade d
 `docs/automacao.md`. (7) **Outros polos:** a Portaria 1733 (Edição 2737) entrou como "Polo
 Médio" por confusão com o Polo do Médio Solimões (PDF embaralhado); prompt agora lista os outros
 polos, e mais 23 portarias só de outros polos saíram do JSON (lista conferida pela usuária).
+(8) **Projeto 1:** trazido para o `main` um bugfix de 19/05 esquecido no branch
+`claude/practical-hamilton-ea51c1` (designação cumulativa com período definido sem o ausente
+nomeado era descartada; agora infere o titular da DP). Branch e worktree antigos apagados.
 
 ## Estado atual (sessão 43 — 25/09/2026)
 
