@@ -71,7 +71,13 @@ telas; o popup continua descobrindo **quais** afastamentos existem no dia pelo
 `detalhesAfastamentos`, mas troca as linhas de cada um pelas do registro inteiro
 (`afastamentosFirestoreMap`/`jsonEventosMap`). Itens sem ID de registro seguem como antes.
 Testado no navegador com o registro simulado (dias 05 e 12/10 mostram as mesmas 4 linhas da
-Lista, botões de admin preservados, sem erro no console).
+Lista, botões de admin preservados, sem erro no console). (3) **Ajuste visual** no modal de
+editar titulares de uma DP (`_renderEntradas()`, aberto pelo ✏️ da aba Defensorias): cada card de
+titular ganhou uma faixa lateral à esquerda com o nome da DP na vertical (`.tit-entry-lateral`,
+`writing-mode: vertical-rl` + `rotate(180deg)`, lido de baixo para cima), e o conteúdo foi para
+`.tit-entry-corpo`. Aproveitado para corrigir campos vazando do card em tela estreita
+(`min-width: 0` em `.tit-field`, `input[type=url]` com `width: 100%`) e, abaixo de 600px, o grid
+dos campos passa para 1 coluna. Testado no navegador em desktop e 375px.
 
 ## Estado atual (sessão 43 — 25/09/2026)
 

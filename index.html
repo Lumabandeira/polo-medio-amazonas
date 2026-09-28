@@ -2642,10 +2642,34 @@
             background: var(--bg-color, #f9fafb);
             border: 1px solid var(--border-color, #e5e7eb);
             border-radius: 12px;
-            padding: 18px 20px;
+            padding: 18px 20px 18px 0;
             margin-bottom: 14px;
             position: relative;
+            display: flex;
+            gap: 16px;
         }
+        /* Nome da DP na vertical, na lateral esquerda do card (lido de baixo para cima) */
+        .tit-entry-lateral {
+            flex: 0 0 auto;
+            width: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-right: 1px solid var(--border-color, #e5e7eb);
+        }
+        .tit-entry-lateral span {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 100%;
+            font-weight: 700;
+            font-size: 1.05em;
+            color: var(--primary-color, #1e40af);
+        }
+        .tit-entry-corpo { flex: 1; min-width: 0; }
         .tit-entry-card.tit-entry-vigente {
             border-left: 4px solid #10b981;
         }
@@ -2658,7 +2682,11 @@
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
-        .tit-entry-grid .tit-field { display: flex; flex-direction: column; gap: 4px; }
+        .tit-entry-grid .tit-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        .tit-entry-grid input[type="url"] { width: 100%; box-sizing: border-box; }
+        @media (max-width: 600px) {
+            .tit-entry-grid { grid-template-columns: 1fr; }
+        }
         .tit-entry-grid .tit-field.full { grid-column: 1 / -1; }
         .tit-entry-grid label {
             font-size: 0.75em;
@@ -5705,6 +5733,8 @@
                 const nomeDisplay = _resolverNomeDefensor(h.defensor);
 
                 html += `<div class="tit-entry-card tit-entry-${tipo}" data-idx="${idx}">
+                    <div class="tit-entry-lateral" title="${_escAttr(dp.nome)}"><span>${esc(dp.nome)}</span></div>
+                    <div class="tit-entry-corpo">
                     <span class="tit-entry-badge ${tipo}">${badgeLabel}</span>
                     <button type="button" class="tit-btn-remover" onclick="_removerEntrada(${idx})">✕ Remover</button>
                     <div class="tit-entry-grid">
@@ -5749,6 +5779,7 @@
                                 value="${esc(h.do_saida || '')}"
                                 placeholder="https://...">
                         </div>
+                    </div>
                     </div>
                 </div>`;
             });
