@@ -23,8 +23,15 @@
 - **Projeto 1:** trazido ao `main` o bugfix de 19/05 esquecido no branch
   `claude/practical-hamilton-ea51c1` (designação cumulativa com período definido sem o ausente
   nomeado era descartada; agora infere o titular da DP). Branch e worktree apagados.
+- **Limpeza final do histórico pela citação obrigatória** (commit `7e02b6b`, chat da nuvem):
+  52 portarias sem relação com o polo removidas, lista conferida pela usuária em 4 lotes de ~20.
+  Mantidos os atos de interesse geral (Subdefensores, Ordenador de Despesas, Adote uma Comarca,
+  Expandir Presença, escala de substituição entre polos) e os de ex-integrantes na data da
+  edição (ex.: Elton). Total removido do JSON na sessão: 11 (viagens) + 23 (outros polos) + 52
+  = 86; restam 278 portarias, e o filtro atual não descartaria nenhuma delas.
 - Observação de processo: o notebook descarregou no meio do chat da tarde; o trabalho não se
-  perdeu porque já estava no GitHub — dar `git fetch` antes de concluir que algo sumiu.
+  perdeu porque o chat rodava na nuvem (https://claude.ai/code/session_01KGa4nPRQZfA1dZybLnFpVb)
+  e os commits já estavam no GitHub — dar `git fetch` antes de concluir que algo sumiu.
 
 ---
 
