@@ -11816,7 +11816,10 @@
                         html += `<div class="pc-modelo-linha">
                             <div class="pc-modelo-servico">
                                 <strong>${esc(item.servico || '')}</strong>
-                                <button class="btn-editar" style="padding:2px 6px;font-size:0.75em" onclick="pcRemoverServicoModelo('${categoria}', ${idx})">🗑️</button>
+                                <span style="display:inline-flex;gap:6px;flex-shrink:0">
+                                    <button class="btn-editar" style="padding:2px 6px;font-size:0.75em" title="Renomear serviço" onclick="pcRenomearServicoModelo('${categoria}', ${idx})">✏️</button>
+                                    <button class="btn-editar" style="padding:2px 6px;font-size:0.75em" title="Remover serviço" onclick="pcRemoverServicoModelo('${categoria}', ${idx})">🗑️</button>
+                                </span>
                             </div>
                             <div class="pc-modelo-slots">
                                 ${_pcModeloSlotHtml(categoria, idx, 'justificativa', '📄 Justificativa', item)}
@@ -11847,6 +11850,29 @@
                 _renderModelosPrestacaoContas();
             } catch (e) {
                 console.error('Erro ao adicionar serviço:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function pcRenomearServicoModelo(categoria, idx) {
+            const atual = ((_pcModelos[categoria] || [])[idx] || {}).servico || '';
+            const novo = prompt('Novo nome do serviço:', atual);
+            if (novo === null || !novo.trim() || novo.trim() === atual) return;
+            // Clona o array e o item antes de mudar (mesmo cuidado de pcAdicionar/pcRemover).
+            const itens = (_pcModelos[categoria] || []).map(it => ({ ...it }));
+            if (!itens[idx]) return;
+            itens[idx].servico = novo.trim();
+            try {
+                await db.collection('secoes').doc('prestacao_contas_modelos').set({
+                    [categoria]: itens,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                _pcModelos[categoria] = itens;
+                _renderModelosPrestacaoContas();
+                mostrarToast('✅ Serviço renomeado.');
+            } catch (e) {
+                console.error('Erro ao renomear serviço:', e);
                 mostrarToast('❌ ' + e.message, true);
             }
         }

@@ -72,6 +72,8 @@ de Pesquisa de Mercado aparecia em branco porque todo o conteúdo está numa cai
 (quadro do LibreOffice), que o docx-preview não desenha. `_pcDesembrulharCaixasDeTexto()` move o
 conteúdo das caixas para o corpo só na visualização (arquivo baixado inalterado). Testado em
 Chromium headless com docx-preview 0.3.5 e o arquivo real: antes vazio, depois formulário completo.
+Também: botão ✏️ para renomear um serviço já cadastrado nos Modelos de Documentos
+(`pcRenomearServicoModelo()`), mantendo os anexos. Testado no navegador com Firestore simulado.
 
 ## Estado atual (sessão 44 — 28/09/2026)
 

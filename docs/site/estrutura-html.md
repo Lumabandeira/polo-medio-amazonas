@@ -319,6 +319,10 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   `prestacoes-contas/_modelos/{categoria}/recibo-{timestamp}.ext`. Todos caem dentro do path
   admin-only já existente em `storage.rules`, sem precisar de redeploy. Não interfere nos slots
   de Anexos por despesa — é só uma biblioteca de referência/download.
+  **Renomear serviço (sessão 45):** botão ✏️ ao lado da 🗑️ de cada serviço
+  (`pcRenomearServicoModelo(categoria, idx)`) abre um `prompt` com o nome atual e regrava o
+  array da categoria com o novo `servico` (clona array e item antes de mudar). Os arquivos
+  anexados (Justificativa/Atesto) continuam ligados ao serviço — só o nome muda.
   **Visualizar modelo (sessão 45):** o botão "Abrir" de qualquer slot (geral, recibo ou
   serviço) não baixa mais o arquivo — abre o modal `#modal-modelo-overlay` com o conteúdo na
   tela e os botões "⬇️ Baixar" e "🔄 Substituir". `pcAbrirModelo(ref)` recebe uma chave
