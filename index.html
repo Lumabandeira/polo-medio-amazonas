@@ -12005,7 +12005,7 @@
                     await _pcCarregarScript('https://cdn.jsdelivr.net/npm/docx-preview@0.3.5/dist/docx-preview.min.js');
                     if (_pcModeloAbertoRef !== ref) return;
                     cont.innerHTML = '';
-                    await docx.renderAsync(buf, cont, null, { inWrapper: true, ignoreLastRenderedPageBreak: true });
+                    await docx.renderAsync(buf, cont, null, { inWrapper: true, ignoreLastRenderedPageBreak: true, renderHeaders: false });
                 } else {
                     await _pcCarregarScript('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
                     if (_pcModeloAbertoRef !== ref) return;
