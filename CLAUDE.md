@@ -67,6 +67,11 @@ via SheetJS (carregados sob demanda do jsDelivr), `.pdf` em iframe — com botõ
 slot). Testado no navegador (servidor estático, `_pcModelos` simulado com .docx/.xlsx locais):
 renderização dos dois formatos, download com o nome original e Substituir disparando o input
 certo, sem erro no console. Ver `docs/site/estrutura-html.md` (seção "Modelos de Documentos").
+Ajustes no mesmo dia: cabeçalho e rodapé do Word ocultos na visualização; e **bugfix** — o modelo
+de Pesquisa de Mercado aparecia em branco porque todo o conteúdo está numa caixa de texto
+(quadro do LibreOffice), que o docx-preview não desenha. `_pcDesembrulharCaixasDeTexto()` move o
+conteúdo das caixas para o corpo só na visualização (arquivo baixado inalterado). Testado em
+Chromium headless com docx-preview 0.3.5 e o arquivo real: antes vazio, depois formulário completo.
 
 ## Estado atual (sessão 44 — 28/09/2026)
 

@@ -11976,6 +11976,51 @@
             return _pcScriptsCarregados[src];
         }
 
+        // O docx-preview não desenha caixas de texto/quadros flutuantes (ex.: modelo de
+        // Pesquisa de Mercado feito no LibreOffice, todo dentro de um "Quadro"). Só para a
+        // visualização, move o conteúdo dessas caixas para o corpo, logo após o parágrafo
+        // em que estavam ancoradas. O arquivo baixado não é alterado.
+        async function _pcDesembrulharCaixasDeTexto(buf) {
+            const zip = await JSZip.loadAsync(buf);
+            const arq = zip.file('word/document.xml');
+            if (!arq) return buf;
+            const xml = await arq.async('string');
+            if (!xml.includes('txbxContent')) return buf;
+            const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+            const MC = 'http://schemas.openxmlformats.org/markup-compatibility/2006';
+            const dom = new DOMParser().parseFromString(xml, 'application/xml');
+            if (dom.getElementsByTagName('parsererror').length) return buf;
+            const ancestral = (el, ns, nomes) => {
+                for (let p = el.parentNode; p && p.nodeType === 1; p = p.parentNode)
+                    if (p.namespaceURI === ns && nomes.includes(p.localName)) return p;
+                return null;
+            };
+            for (let voltas = 0; voltas < 50; voltas++) {
+                const tb = dom.getElementsByTagNameNS(W, 'txbxContent')[0];
+                if (!tb) break;
+                const recipiente = ancestral(tb, MC, ['AlternateContent']) || ancestral(tb, W, ['pict', 'drawing']);
+                const hospedeiro = recipiente && ancestral(recipiente, W, ['p']);
+                if (!hospedeiro) break;
+                // Em AlternateContent, usa só um dos ramos (Choice ou Fallback) para não duplicar.
+                let ramo = recipiente;
+                if (recipiente.localName === 'AlternateContent') {
+                    const ramos = [...recipiente.childNodes].filter(n => n.nodeType === 1);
+                    ramo = ramos.find(n => n.localName === 'Choice' && n.getElementsByTagNameNS(W, 'txbxContent').length)
+                        || ramos.find(n => n.getElementsByTagNameNS(W, 'txbxContent').length) || recipiente;
+                }
+                const caixas = [...ramo.getElementsByTagNameNS(W, 'txbxContent')]
+                    .filter(c => !ancestral(c, W, ['txbxContent']) || !ramo.contains(ancestral(c, W, ['txbxContent'])));
+                // Parágrafo com quebra de seção: o conteúdo entra antes dele, para ficar na mesma seção.
+                const temSecao = [...hospedeiro.getElementsByTagNameNS(W, 'sectPr')].length > 0;
+                const antesDe = temSecao ? hospedeiro : hospedeiro.nextSibling;
+                const pai = hospedeiro.parentNode;
+                caixas.forEach(c => [...c.childNodes].forEach(n => pai.insertBefore(n, antesDe)));
+                recipiente.parentNode.removeChild(recipiente);
+            }
+            zip.file('word/document.xml', new XMLSerializer().serializeToString(dom));
+            return zip.generateAsync({ type: 'arraybuffer' });
+        }
+
         async function pcAbrirModelo(ref) {
             const m = _pcResolverModelo(ref);
             if (!m.url) return;
@@ -12003,9 +12048,12 @@
                 if (ext === 'docx') {
                     await _pcCarregarScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
                     await _pcCarregarScript('https://cdn.jsdelivr.net/npm/docx-preview@0.3.5/dist/docx-preview.min.js');
+                    let bufVisual = buf;
+                    try { bufVisual = await _pcDesembrulharCaixasDeTexto(buf); }
+                    catch (e) { console.warn('Caixas de texto mantidas como estão:', e); }
                     if (_pcModeloAbertoRef !== ref) return;
                     cont.innerHTML = '';
-                    await docx.renderAsync(buf, cont, null, { inWrapper: true, ignoreLastRenderedPageBreak: true, renderHeaders: false, renderFooters: false });
+                    await docx.renderAsync(bufVisual, cont, null, { inWrapper: true, ignoreLastRenderedPageBreak: true, renderHeaders: false, renderFooters: false });
                 } else {
                     await _pcCarregarScript('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
                     if (_pcModeloAbertoRef !== ref) return;

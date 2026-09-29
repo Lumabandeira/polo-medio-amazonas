@@ -329,7 +329,15 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   abertura; `.pdf` em `<iframe>`; `.doc` antigo mostra aviso para usar "Baixar". Depende do CORS
   do bucket (o arquivo é lido via `fetch()`). "Baixar" usa `fetch`+blob com o nome original do
   arquivo; "Substituir" fecha o modal e clica o `<input type=file>` escondido do próprio slot,
-  reaproveitando as funções de upload já existentes.
+  reaproveitando as funções de upload já existentes. Cabeçalho e rodapé do Word não são
+  desenhados (`renderHeaders: false`, `renderFooters: false`). **Caixas de texto:** o
+  docx-preview não desenha caixas de texto/quadros flutuantes (`w:txbxContent`, dentro de
+  `mc:AlternateContent`/`w:drawing`/`w:pict`) — o modelo de Pesquisa de Mercado (feito no
+  LibreOffice, todo dentro do "Quadro1") aparecia com a página em branco. Antes de renderizar,
+  `_pcDesembrulharCaixasDeTexto(buf)` move o conteúdo dessas caixas para o corpo, logo após o
+  parágrafo onde estavam ancoradas (usa só um ramo do AlternateContent, para não duplicar).
+  Só afeta a visualização; o arquivo baixado continua o original. Se a conversão falhar, renderiza
+  o arquivo sem alteração.
 - **Detalhe** (`#pc-detalhe-view`): réplica do "Mapa Demonstrativo de Despesa" (planilha em papel
   usada pela Defensoria) — tabela de despesas com totais calculados automaticamente (valor das
   despesas, saldo remanescente).
