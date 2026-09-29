@@ -319,6 +319,17 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   `prestacoes-contas/_modelos/{categoria}/recibo-{timestamp}.ext`. Todos caem dentro do path
   admin-only já existente em `storage.rules`, sem precisar de redeploy. Não interfere nos slots
   de Anexos por despesa — é só uma biblioteca de referência/download.
+  **Visualizar modelo (sessão 45):** o botão "Abrir" de qualquer slot (geral, recibo ou
+  serviço) não baixa mais o arquivo — abre o modal `#modal-modelo-overlay` com o conteúdo na
+  tela e os botões "⬇️ Baixar" e "🔄 Substituir". `pcAbrirModelo(ref)` recebe uma chave
+  (`'geral:{campo}'` | `'recibo:{categoria}'` | `'servico:{categoria}:{idx}:{tipo}'`), resolvida
+  em `_pcResolverModelo()` contra `_pcModelos` (mesma ideia de `_anexoPreviewCampo`: guarda a
+  chave, não a URL). `.docx` é renderizado com **docx-preview** (+ JSZip) e `.xlsx`/`.xls` com
+  **SheetJS**, ambos carregados sob demanda do jsDelivr (`_pcCarregarScript()`) só na 1ª
+  abertura; `.pdf` em `<iframe>`; `.doc` antigo mostra aviso para usar "Baixar". Depende do CORS
+  do bucket (o arquivo é lido via `fetch()`). "Baixar" usa `fetch`+blob com o nome original do
+  arquivo; "Substituir" fecha o modal e clica o `<input type=file>` escondido do próprio slot,
+  reaproveitando as funções de upload já existentes.
 - **Detalhe** (`#pc-detalhe-view`): réplica do "Mapa Demonstrativo de Despesa" (planilha em papel
   usada pela Defensoria) — tabela de despesas com totais calculados automaticamente (valor das
   despesas, saldo remanescente).

@@ -2672,6 +2672,16 @@
 
         #form-titulares-overlay .form-af-content { max-width: 720px; }
         #modal-anexos-overlay .form-af-content { max-width: 1200px; }
+        #modal-modelo-overlay .form-af-content { max-width: 1000px; }
+        .pc-modelo-view-acoes { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+        .pc-modelo-view-area { background: #e5e7eb; border-radius: 8px; padding: 12px; max-height: 70vh; overflow: auto; }
+        .pc-modelo-view-msg { text-align: center; padding: 40px 12px; color: #374151; }
+        .pc-modelo-view-area .docx-wrapper { background: transparent; padding: 0; }
+        .pc-modelo-view-area .docx-wrapper > section.docx { margin: 0 auto 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+        .pc-modelo-view-planilha { background: #fff; padding: 12px; border-radius: 6px; overflow-x: auto; }
+        .pc-modelo-view-planilha h4 { margin: 12px 0 6px; }
+        .pc-modelo-view-planilha table { border-collapse: collapse; font-size: 0.85em; color: #111; }
+        .pc-modelo-view-planilha td { border: 1px solid #d1d5db; padding: 4px 6px; vertical-align: top; }
 
         .tit-entry-card {
             background: var(--bg-color, #f9fafb);
@@ -4318,6 +4328,26 @@
             </div>
             <div class="form-af-body">
                 <div id="modal-anexos-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visualizar Modelo de Documento -->
+    <div id="modal-modelo-overlay" class="form-af-overlay" onclick="pcFecharModelo(event)">
+        <div class="form-af-content" onclick="event.stopPropagation()">
+            <div class="form-af-header">
+                <h2 id="modal-modelo-titulo">📄 Modelo</h2>
+                <button class="modal-close" onclick="pcFecharModelo()">×</button>
+            </div>
+            <div class="form-af-body">
+                <div class="pc-modelo-view-acoes">
+                    <span class="pc-anexo-preview-nome" id="modal-modelo-nome"></span>
+                    <div class="pc-anexo-preview-acoes">
+                        <button class="btn-editar" onclick="pcBaixarModelo()">⬇️ Baixar</button>
+                        <button class="btn-editar" onclick="pcSubstituirModelo()">🔄 Substituir</button>
+                    </div>
+                </div>
+                <div id="modal-modelo-conteudo" class="pc-modelo-view-area"></div>
             </div>
         </div>
     </div>
@@ -11732,7 +11762,7 @@
                 <span class="pc-anexo-slot-label">${label}</span>
                 <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
                 <div class="pc-anexo-slot-acoes">
-                    ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                    ${url ? `<button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="pcAbrirModelo('geral:${campo}')">Abrir</button>` : ''}
                     <input type="file" accept="${accept}" style="display:none" id="pc-modelo-geral-input-${campo}" onchange="pcUploadModeloGeral('${campo}', this.files[0])">
                     <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-modelo-geral-input-${campo}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
                 </div>
@@ -11744,7 +11774,7 @@
             return `<div class="pc-modelo-slot ${url ? 'ok' : 'pendente'}">
                 <span class="pc-modelo-slot-label">${label}</span>
                 <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
-                ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                ${url ? `<button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="pcAbrirModelo('servico:${categoria}:${idx}:${tipo}')">Abrir</button>` : ''}
                 <input type="file" accept="${PC_ACCEPT_DOCX}" style="display:none" id="pc-modelo-input-${categoria}-${idx}-${tipo}" onchange="pcUploadModeloArquivo('${categoria}', ${idx}, '${tipo}', this.files[0])">
                 <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-modelo-input-${categoria}-${idx}-${tipo}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
             </div>`;
@@ -11760,7 +11790,7 @@
                 <span class="pc-anexo-slot-label">🧾 Modelo de Recibo</span>
                 <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
                 <div class="pc-anexo-slot-acoes">
-                    ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener" class="btn-editar" style="padding:4px 8px;font-size:0.8em">Abrir</a>` : ''}
+                    ${url ? `<button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="pcAbrirModelo('recibo:${categoria}')">Abrir</button>` : ''}
                     <input type="file" accept="${PC_ACCEPT_DOCX}" style="display:none" id="pc-modelo-recibo-input-${categoria}" onchange="pcUploadModeloRecibo('${categoria}', this.files[0])">
                     <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-modelo-recibo-input-${categoria}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
                 </div>
@@ -11902,6 +11932,134 @@
                 console.error('Erro ao enviar modelo:', e);
                 mostrarToast('❌ ' + e.message, true);
             }
+        }
+
+        // ── Visualizar modelo (modal com pré-visualização + Baixar/Substituir) ──
+        // ref: 'geral:{campo}' | 'recibo:{categoria}' | 'servico:{categoria}:{idx}:{tipo}'
+        let _pcModeloAbertoRef = null;
+
+        function _pcResolverModelo(ref) {
+            const [tipoRef, a, b, c] = ref.split(':');
+            if (tipoRef === 'geral') {
+                const titulos = { memorando: '📝 Modelo de Memorando', pesquisa_mercado: '📑 Modelo de Pesquisa de Mercado' };
+                return { url: _pcModelos[`${a}_url`], nome: _pcModelos[`${a}_nome`], titulo: titulos[a] || 'Modelo',
+                         inputId: `pc-modelo-geral-input-${a}` };
+            }
+            if (tipoRef === 'recibo') {
+                const r = (_pcModelos.recibo && _pcModelos.recibo[a]) || {};
+                return { url: r.url, nome: r.nome, titulo: '🧾 Modelo de Recibo', inputId: `pc-modelo-recibo-input-${a}` };
+            }
+            const item = (_pcModelos[a] || [])[Number(b)] || {};
+            const rotulo = c === 'atesto' ? '✅ Atesto' : '📄 Justificativa';
+            return { url: item[`${c}_url`], nome: item[`${c}_nome`], titulo: `${rotulo} — ${item.servico || ''}`,
+                     inputId: `pc-modelo-input-${a}-${b}-${c}` };
+        }
+
+        function _pcExtensaoModelo(m) {
+            const fonte = m.nome || decodeURIComponent((m.url || '').split('?')[0]);
+            const ext = fonte.match(/\.([a-zA-Z0-9]+)$/);
+            return ext ? ext[1].toLowerCase() : '';
+        }
+
+        // Bibliotecas do visualizador carregadas só na 1ª vez que um modelo é aberto.
+        const _pcScriptsCarregados = {};
+        function _pcCarregarScript(src) {
+            if (!_pcScriptsCarregados[src]) {
+                _pcScriptsCarregados[src] = new Promise((resolve, reject) => {
+                    const s = document.createElement('script');
+                    s.src = src;
+                    s.onload = resolve;
+                    s.onerror = () => { delete _pcScriptsCarregados[src]; reject(new Error('falha ao carregar o visualizador')); };
+                    document.head.appendChild(s);
+                });
+            }
+            return _pcScriptsCarregados[src];
+        }
+
+        async function pcAbrirModelo(ref) {
+            const m = _pcResolverModelo(ref);
+            if (!m.url) return;
+            _pcModeloAbertoRef = ref;
+            const cont = document.getElementById('modal-modelo-conteudo');
+            document.getElementById('modal-modelo-titulo').textContent = m.titulo;
+            document.getElementById('modal-modelo-nome').textContent = m.nome || '';
+            cont.innerHTML = '<div class="pc-modelo-view-msg">⏳ Carregando documento...</div>';
+            document.getElementById('modal-modelo-overlay').classList.add('active');
+
+            const ext = _pcExtensaoModelo(m);
+            try {
+                if (ext === 'pdf') {
+                    cont.innerHTML = `<iframe src="${_escAttr(m.url)}" style="width:100%;height:65vh;border:0;background:#fff"></iframe>`;
+                    return;
+                }
+                if (!['docx', 'xlsx', 'xls'].includes(ext)) {
+                    cont.innerHTML = `<div class="pc-modelo-view-msg">Não é possível pré-visualizar arquivos <strong>.${esc(ext || '?')}</strong> no navegador.<br>Use o botão "⬇️ Baixar" para abrir no computador.</div>`;
+                    return;
+                }
+                const resp = await fetch(m.url);
+                if (!resp.ok) throw new Error('falha ao carregar o arquivo');
+                const buf = await resp.arrayBuffer();
+                if (_pcModeloAbertoRef !== ref) return;
+                if (ext === 'docx') {
+                    await _pcCarregarScript('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
+                    await _pcCarregarScript('https://cdn.jsdelivr.net/npm/docx-preview@0.3.5/dist/docx-preview.min.js');
+                    if (_pcModeloAbertoRef !== ref) return;
+                    cont.innerHTML = '';
+                    await docx.renderAsync(buf, cont, null, { inWrapper: true, ignoreLastRenderedPageBreak: true });
+                } else {
+                    await _pcCarregarScript('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
+                    if (_pcModeloAbertoRef !== ref) return;
+                    const wb = XLSX.read(buf, { type: 'array' });
+                    cont.innerHTML = `<div class="pc-modelo-view-planilha">${wb.SheetNames.map(nome =>
+                        `${wb.SheetNames.length > 1 ? `<h4>${esc(nome)}</h4>` : ''}${XLSX.utils.sheet_to_html(wb.Sheets[nome], { header: '', footer: '' })}`
+                    ).join('')}</div>`;
+                }
+            } catch (e) {
+                console.error('Erro ao visualizar modelo:', e);
+                if (_pcModeloAbertoRef === ref) {
+                    cont.innerHTML = `<div class="pc-modelo-view-msg">❌ Não foi possível exibir o documento (${esc(e.message)}).<br>Use o botão "⬇️ Baixar".</div>`;
+                }
+            }
+        }
+
+        function pcFecharModelo(event) {
+            if (event && event.target !== event.currentTarget &&
+                !event.target.classList.contains('modal-close')) return;
+            document.getElementById('modal-modelo-overlay').classList.remove('active');
+            document.getElementById('modal-modelo-conteudo').innerHTML = '';
+            _pcModeloAbertoRef = null;
+        }
+
+        async function pcBaixarModelo() {
+            if (!_pcModeloAbertoRef) return;
+            const m = _pcResolverModelo(_pcModeloAbertoRef);
+            if (!m.url) return;
+            try {
+                const resp = await fetch(m.url);
+                if (!resp.ok) throw new Error('Falha ao baixar arquivo.');
+                const blob = await resp.blob();
+                const ext = _pcExtensaoModelo(m);
+                const nomeArquivo = (m.nome || ('modelo' + (ext ? '.' + ext : ''))).replace(/[\\/:*?"<>|]+/g, '_');
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = nomeArquivo;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+            } catch (e) {
+                console.error('Erro ao baixar modelo:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        // Fecha o modal e reusa o <input type=file> escondido do slot — o upload segue o fluxo de sempre.
+        function pcSubstituirModelo() {
+            if (!_pcModeloAbertoRef) return;
+            const input = document.getElementById(_pcResolverModelo(_pcModeloAbertoRef).inputId);
+            pcFecharModelo();
+            if (input) input.click();
         }
 
         // ── Regra de negócio: 2 abertos por tomador, categorias distintas ──

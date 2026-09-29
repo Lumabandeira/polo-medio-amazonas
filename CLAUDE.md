@@ -57,6 +57,17 @@ docs/
 
 ---
 
+## Estado atual (sessão 45 — 29/09/2026)
+
+**Implementado nesta sessão:** em Prestação de Contas → "📚 Modelos de Documentos", o botão
+"Abrir" deixou de baixar o arquivo e passou a abrir um modal (`#modal-modelo-overlay`,
+`pcAbrirModelo(ref)`) que mostra o conteúdo na tela — `.docx` via docx-preview, `.xlsx`/`.xls`
+via SheetJS (carregados sob demanda do jsDelivr), `.pdf` em iframe — com botões "⬇️ Baixar"
+(`pcBaixarModelo()`) e "🔄 Substituir" (`pcSubstituirModelo()`, reusa o input de upload do
+slot). Testado no navegador (servidor estático, `_pcModelos` simulado com .docx/.xlsx locais):
+renderização dos dois formatos, download com o nome original e Substituir disparando o input
+certo, sem erro no console. Ver `docs/site/estrutura-html.md` (seção "Modelos de Documentos").
+
 ## Estado atual (sessão 44 — 28/09/2026)
 
 **Implementado nesta sessão:** (1) link da Edição 2736 do Diário Oficial corrigido em
