@@ -378,7 +378,8 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   mostra só "📎 Anexos — {tipo} nº {número}"; logo abaixo, dentro da faixa verde,
   `#modal-anexos-dados` (`.anexos-header-dados`, grid) lista os mesmos campos do modal "Editar
   Despesa": data de emissão, fornecedor, descrição, quantidade, valor unitário, desconto e valor
-  total. Preenchido em `abrirModalAnexos()`; abaixo de 600px vira 2 colunas.
+  total. Preenchido em `abrirModalAnexos()`; abaixo de 600px vira 2 colunas. Só nesse modal o
+  cabeçalho tem padding vertical de 8px (os demais `.form-af-header` seguem com 22px).
 - **Visualização inline dos anexos (painel dividido):** o modal de Anexos por despesa
   (`#modal-anexos-overlay`, alargado para `max-width: 1200px` só nesse modal) mostra a lista de
   anexos à esquerda (`.pc-anexos-lista`) e um painel de visualização fixo à direita

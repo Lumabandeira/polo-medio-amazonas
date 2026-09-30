@@ -63,7 +63,8 @@ docs/
 passou a mostrar todos os dados do cadastro da despesa. O título ficou só "📎 Anexos — {tipo} nº
 {número}" e, abaixo dele, `#modal-anexos-dados` (grid `.anexos-header-dados`) lista data de
 emissão, fornecedor, descrição, quantidade, valor unitário, desconto (— se zero) e valor total.
-Abaixo de 600px vira 2 colunas. Testado no navegador com despesa simulada, em desktop e 375px.
+Abaixo de 600px vira 2 colunas. Ajuste: padding vertical da faixa verde reduzido de 22px para 8px
+só nesse modal (`#modal-anexos-overlay .form-af-header`). Testado no navegador com despesa simulada, em desktop e 375px.
 Ver `docs/site/estrutura-html.md` (seção "Prestação de Contas").
 
 ## Estado atual (sessão 45 — 29/09/2026)
