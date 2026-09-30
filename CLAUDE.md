@@ -57,6 +57,15 @@ docs/
 
 ---
 
+## Estado atual (sessão 46 — 30/09/2026)
+
+**Implementado nesta sessão:** a faixa verde do modal de Anexos por despesa (`abrirModalAnexos()`)
+passou a mostrar todos os dados do cadastro da despesa. O título ficou só "📎 Anexos — {tipo} nº
+{número}" e, abaixo dele, `#modal-anexos-dados` (grid `.anexos-header-dados`) lista data de
+emissão, fornecedor, descrição, quantidade, valor unitário, desconto (— se zero) e valor total.
+Abaixo de 600px vira 2 colunas. Testado no navegador com despesa simulada, em desktop e 375px.
+Ver `docs/site/estrutura-html.md` (seção "Prestação de Contas").
+
 ## Estado atual (sessão 45 — 29/09/2026)
 
 **Implementado nesta sessão:** em Prestação de Contas → "📚 Modelos de Documentos", o botão
