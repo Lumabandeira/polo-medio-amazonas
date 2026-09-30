@@ -6213,5 +6213,55 @@
       "numero": "PORTARIA Nº 1011/2026-GSPG/DPE/AM",
       "texto": "ESTABELECER a escala de plantão da Defensoria Pública do Estado do Amazonas para o 4º trimestre de 2026, do interior, que compreende o período de 28/09/2026 a 19/12/2026, conforme anexos I a III desta portaria"
     }
+  },
+  {
+    "edicao": 2741,
+    "data": "2026-09-29",
+    "data_formatada": "29/09/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/09/Edicao_2741-2026__publicada_em_29_setembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1760/2026-GDPG/DPE/AM",
+        "sei": "26.0.000013621-1",
+        "sgi": "2601951",
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - CONSIDERAR AUTORIZADO o deslocamento de Daniel Bettanin e Silva, Defensor Público de 3ª classe, no trecho Manaus/Itacoatiara/Manaus, no período de 23 a 25 de setembro de 2026, a fim de atuar em sessão do Tribunal do Júri da 1ª Vara da referida comarca."
+        ],
+        "resumo": "Autoriza deslocamento do Defensor Daniel Bettanin e Silva para Itacoatiara (23-25 set 2026) para atuar em sessão do Tribunal do Júri"
+      },
+      {
+        "numero": "Portaria Nº 983/2026-GSPG/DPE/AM",
+        "sei": "26.0.000013212-7",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3ª Classe Daniel Bettanin e Silva, para atuar na Sessão de Julgamento do Tribunal do Júri da 1ª Vara da Comarca de Itacoatiara nos dias 24 e 25 de setembro de 2026, nos autos de n.º 0604661-81.2022.8.04.4700, às 08h;"
+        ],
+        "resumo": "Designa Defensor Daniel Bettanin e Silva para atuar no Tribunal do Júri de Itacoatiara (24-25 set 2026) com concessão de folga por dia trabalhado"
+      },
+      {
+        "numero": "Portaria Nº 1032/2026-GSPG/DPE/AM",
+        "sei": "26.0.000013470-7",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "designacoes",
+          "polo_medio"
+        ],
+        "trechos": [
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Rodolfo Pinheiro Bernardo Lôbo para atuar na 9ª Defensoria Pública do Polo Médio Amazonas (Urucurituba), no período de 01 de outubro a 31 de dezembro de 2026;"
+        ],
+        "resumo": "Designa Defensor Rodolfo Pinheiro Bernardo Lôbo para atuar cumulativamente na 9ª Defensoria do Polo Médio Amazonas em Urucurituba (01 out - 31 dez 2026)"
+      }
+    ]
   }
 ]
