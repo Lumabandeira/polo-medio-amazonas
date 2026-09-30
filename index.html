@@ -2809,6 +2809,26 @@
 
         .form-af-header h2 { margin: 0; font-size: 1.4em; }
 
+        /* Modal de Anexos: dados completos da despesa no cabeçalho verde */
+        .anexos-header-info { flex: 1; min-width: 0; margin-right: 16px; }
+        .anexos-header-dados {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px 18px;
+            margin-top: 12px;
+        }
+        .anexos-header-dados .ahd-item { min-width: 0; }
+        .anexos-header-dados .ahd-largo { grid-column: span 2; }
+        .anexos-header-dados .ahd-rotulo {
+            font-size: 0.7em; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.04em; opacity: 0.8;
+        }
+        .anexos-header-dados .ahd-valor { font-size: 0.95em; font-weight: 600; overflow-wrap: anywhere; }
+        @media (max-width: 600px) {
+            .anexos-header-dados { grid-template-columns: 1fr 1fr; }
+            .anexos-header-dados .ahd-largo { grid-column: 1 / -1; }
+        }
+
         .form-af-body { padding: 28px; }
 
         /* Modal de visualização (somente leitura) */
@@ -4323,7 +4343,10 @@
     <div id="modal-anexos-overlay" class="form-af-overlay" onclick="fecharModalAnexos(event)">
         <div class="form-af-content" onclick="event.stopPropagation()" ondragover="event.preventDefault()" ondrop="event.preventDefault()">
             <div class="form-af-header">
-                <h2 id="modal-anexos-titulo">📎 Anexos da Despesa</h2>
+                <div class="anexos-header-info">
+                    <h2 id="modal-anexos-titulo">📎 Anexos da Despesa</h2>
+                    <div id="modal-anexos-dados" class="anexos-header-dados"></div>
+                </div>
                 <button class="modal-close" onclick="fecharModalAnexos()">×</button>
             </div>
             <div class="form-af-body">
@@ -12799,7 +12822,20 @@
             const d = p && (p.despesas || [])[idx];
             if (!p || !d) return;
             document.getElementById('modal-anexos-titulo').textContent =
-                `📎 Anexos — ${d.tipo || ''} ${d.numero || ''} (${[d.descricao, d.data_emissao ? formatarData(d.data_emissao) : ''].filter(Boolean).join(' - ')})`;
+                `📎 Anexos — ${d.tipo || 'Despesa'}${d.numero ? ' nº ' + d.numero : ''}`;
+            // Mesmos campos do cadastro da despesa (modal "Editar Despesa")
+            const dadosDespesa = [
+                ['Data de emissão', d.data_emissao ? formatarData(d.data_emissao) : '—'],
+                ['Fornecedor', d.fornecedor || '—', true],
+                ['Descrição do material/serviço', d.descricao || '—', true],
+                ['Quantidade', d.quantidade || '—'],
+                ['Valor unitário', formatarMoeda(d.valor_unitario)],
+                ['Desconto', Number(d.desconto) ? formatarMoeda(d.desconto) : '—'],
+                ['Valor total', formatarMoeda(d.valor_total)]
+            ];
+            document.getElementById('modal-anexos-dados').innerHTML = dadosDespesa.map(([rotulo, valor, largo]) =>
+                `<div class="ahd-item${largo ? ' ahd-largo' : ''}"><div class="ahd-rotulo">${rotulo}</div><div class="ahd-valor">${esc(String(valor))}</div></div>`
+            ).join('');
             _renderCorpoModalAnexos(d);
             document.getElementById('modal-anexos-overlay').classList.add('active');
         }
