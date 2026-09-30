@@ -12589,7 +12589,7 @@
             // usar colSpan/rowSpan no head do AutoTable, que causa perda de conteúdo
             // na 1ª linha do corpo quando alguma célula quebra em 2 linhas (bug
             // observado no jsPDF-AutoTable 3.8.4 com header mesclado).
-            const colWidths = [22, 10, 24, 45, null, 15, 22, 24, 25];
+            const colWidths = [22, 15, 24, 45, null, 15, 22, 24, 25]; // Nº: 15mm cabe até 7 dígitos sem quebrar
             const fixedWidthSum = colWidths.reduce((s, w) => s + (w || 0), 0);
             colWidths[4] = (pageWidth - marginLeft * 2) - fixedWidthSum;
             const colX = [marginLeft];

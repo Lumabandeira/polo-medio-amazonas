@@ -66,6 +66,9 @@ emissão, fornecedor, descrição, quantidade, valor unitário, desconto (— se
 Abaixo de 600px vira 2 colunas. Ajuste: padding vertical da faixa verde reduzido de 22px para 8px
 só nesse modal (`#modal-anexos-overlay .form-af-header`). Testado no navegador com despesa simulada, em desktop e 375px.
 Ver `docs/site/estrutura-html.md` (seção "Prestação de Contas").
+Também: no PDF do Mapa Demonstrativo (`baixarMapaPDF()`), coluna "Nº" do comprovante alargada de
+10mm para 15mm (cabe até 7 dígitos sem quebrar; a coluna Descrição, de largura calculada, perde 5mm).
+Testado gerando o PDF com despesas simuladas (nº 32435, 137574 e 1234567 numa linha só).
 
 ## Estado atual (sessão 45 — 29/09/2026)
 
