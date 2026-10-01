@@ -2844,6 +2844,7 @@
         .pc-ia-instrucoes { width: 100%; box-sizing: border-box; min-height: 54px; padding: 6px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; }
         .pc-ia-acoes { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         .pc-ia-sugestoes { display: flex; gap: 6px; flex-wrap: wrap; }
+        .pc-ia-sig-outro { display: flex; flex-direction: column; gap: 4px; margin-left: 22px; }
         .pc-ia-chip { border: 1px solid #c4b5fd; background: #f5f3ff; color: #5b21b6; border-radius: 999px; padding: 2px 10px; font-size: 0.95em; cursor: pointer; }
 
         /* Modal de Anexos: dados completos da despesa no cabeçalho verde */
@@ -13688,6 +13689,19 @@
         const PC_IA_EMAIL = 'bandeira.lkp@gmail.com';
         const PC_IA_MODELO_PADRAO = 'claude-sonnet-5-5';
         const PC_IA_DOC_CONFIG = ['config_privada', 'anthropic'];
+        // Dados de quem usa o "Gerar com Claude" — opção pronta no "Quem assina o atesto".
+        const PC_IA_USUARIA = { nome: 'Luma Karolyne Pantoja Bandeira', cargo: 'Assistente Técnica de Defensoria', matricula: '000.498-7A' };
+
+        // Mesmo nome de pessoa? (sem acento/caixa; exige primeiro e último nome iguais, ou um contido no outro)
+        function _pcMesmaPessoa(a, b) {
+            const pal = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase()
+                .replace(/[^A-Z ]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !['DOS', 'DAS', 'DE', 'DA', 'DO'].includes(w));
+            const x = pal(a), y = pal(b);
+            if (!x.length || !y.length) return false;
+            if (x[0] === y[0] && x[x.length - 1] === y[y.length - 1]) return true;
+            const [menor, maior] = x.length <= y.length ? [x, y] : [y, x];
+            return menor.length >= 2 && menor.every(w => maior.includes(w));
+        }
         let _pcIaConfigCache = null;
         let _pcIa = null; // estado do fluxo aberto no painel
 
@@ -14063,6 +14077,7 @@ Regras obrigatórias:
                 corpo = `<div class="pc-ia-msg">⏳ Montando o .docx sobre o modelo e salvando...</div>`;
             }
             painel.innerHTML = _pcIaCabecalho() + `<div class="pc-ia-corpo">${corpo}</div>`;
+            if (ia.etapa === 'conferencia' && ia.campo === 'atesto_url') _pcIaAtualizarSignatario();
             if (ia.etapa === 'conferencia' || ia.etapa === 'perguntas' || ia.etapa === 'erro' || ia.etapa === 'sem_chave') _pcMostrarPainelPreview();
         }
 
@@ -14101,12 +14116,60 @@ Regras obrigatórias:
                 ${pend.length ? `<h4 class="pc-ia-h4">Antes de gerar, responda:</h4>${perguntas}
                     <label class="pc-ia-check"><input type="checkbox" id="pc-ia-atualizar-cadastro" checked> Atualizar o cadastro da despesa com os valores escolhidos</label>`
                     : '<div class="pc-ia-msg pc-ia-tudo-ok">✅ Tudo confere com o cadastro.</div>'}
+                ${ia.campo === 'atesto_url' ? _pcIaHtmlSignatario() : ''}
                 <label class="pc-ia-label">Instruções adicionais para o Claude (opcional)</label>
                 <textarea id="pc-ia-instrucoes" class="pc-ia-instrucoes" placeholder="Ex.: mencionar que a entrega foi feita no PAV de Urucará">${esc(ia.instrucoes || '')}</textarea>
                 <div class="pc-ia-acoes">
                     <button class="btn-editar" onclick="_pcIaLerComprovante()">🔄 Ler a nota de novo</button>
                     <button class="btn-editar pc-btn-ia" onclick="pcIaConfirmarConferencia()">✨ Gerar ${ia.campo === 'atesto_url' ? 'Atesto' : 'Justificativa'}</button>
                 </div>`;
+        }
+
+        // "Quem assina o atesto": regra — o tomador do pronto pagamento não deve atestar; se for
+        // ele mesmo, a justificativa é obrigatória e entra no texto do atesto.
+        function _pcIaHtmlSignatario() {
+            const ia = _pcIa;
+            const p = prestacoesContas.find(x => x.id === ia.prestacaoId);
+            const d = p && (p.despesas || [])[ia.idx];
+            const salvo = ia.signatario || (d && d.ia_atesto_signatario) || null;
+            const ehEu = salvo ? _pcMesmaPessoa(salvo.nome, PC_IA_USUARIA.nome) : !_pcMesmaPessoa(p.tomador, PC_IA_USUARIA.nome);
+            const outro = salvo && !ehEu ? salvo : {};
+            const tomadorEhEu = _pcMesmaPessoa(p.tomador, PC_IA_USUARIA.nome);
+            return `<div class="pc-ia-pergunta pc-ia-signatario">
+                <div><strong>✍️ Quem assina o atesto?</strong> Tomador(a) deste pronto pagamento: <strong>${esc(p.tomador || '—')}</strong>.
+                    Via de regra, <u>o tomador não pode atestar</u>.</div>
+                <label><input type="radio" name="pc-ia-sig" value="eu" ${ehEu ? 'checked' : ''} onchange="_pcIaAtualizarSignatario()"> Eu — ${esc(PC_IA_USUARIA.nome)} (${esc(PC_IA_USUARIA.cargo)}, mat. ${esc(PC_IA_USUARIA.matricula)})${tomadorEhEu ? ' <span class="pc-ia-obs">— você é a tomadora</span>' : ''}</label>
+                <label><input type="radio" name="pc-ia-sig" value="outro" ${ehEu ? '' : 'checked'} onchange="_pcIaAtualizarSignatario()"> Outro servidor:</label>
+                <div class="pc-ia-sig-outro" id="pc-ia-sig-outro">
+                    <input type="text" id="pc-ia-sig-nome" class="pc-ia-resposta" placeholder="Nome completo" value="${_escAttr(outro.nome || '')}" oninput="_pcIaAtualizarSignatario()">
+                    <input type="text" id="pc-ia-sig-cargo" class="pc-ia-resposta" placeholder="Cargo" value="${_escAttr(outro.cargo || '')}">
+                    <input type="text" id="pc-ia-sig-matricula" class="pc-ia-resposta" placeholder="Matrícula" value="${_escAttr(outro.matricula || '')}">
+                </div>
+                <div id="pc-ia-sig-just-box" style="display:none">
+                    <div class="pc-ia-erro" style="font-size:0.95em">⚠️ Quem vai assinar é o(a) próprio(a) tomador(a). Informe a justificativa — ela será registrada no texto do atesto.</div>
+                    <textarea id="pc-ia-sig-just" class="pc-ia-instrucoes" placeholder="Ex.: único servidor lotado na unidade na data do recebimento">${esc((salvo && salvo.justificativa) || '')}</textarea>
+                </div>
+            </div>`;
+        }
+
+        function _pcIaLerSignatario() {
+            const ia = _pcIa;
+            const p = prestacoesContas.find(x => x.id === ia.prestacaoId);
+            const sel = document.querySelector('input[name="pc-ia-sig"]:checked');
+            if (!sel) return null;
+            const sig = sel.value === 'eu' ? { ...PC_IA_USUARIA }
+                : { nome: document.getElementById('pc-ia-sig-nome').value.trim(), cargo: document.getElementById('pc-ia-sig-cargo').value.trim(), matricula: document.getElementById('pc-ia-sig-matricula').value.trim() };
+            sig.eh_tomador = _pcMesmaPessoa(sig.nome, p.tomador);
+            sig.justificativa = sig.eh_tomador ? document.getElementById('pc-ia-sig-just').value.trim() : '';
+            return sig;
+        }
+
+        function _pcIaAtualizarSignatario() {
+            const sel = document.querySelector('input[name="pc-ia-sig"]:checked');
+            if (!sel) return;
+            document.getElementById('pc-ia-sig-outro').style.display = sel.value === 'outro' ? '' : 'none';
+            const sig = _pcIaLerSignatario();
+            document.getElementById('pc-ia-sig-just-box').style.display = sig && sig.eh_tomador ? '' : 'none';
         }
 
         async function pcIaConfirmarConferencia() {
@@ -14136,6 +14199,12 @@ Regras obrigatórias:
                 escolhas[l.campo] = v;
             }
             if (faltando.length) { mostrarToast('⚠️ Responda antes de continuar: ' + faltando.join(', '), true); return; }
+            if (ia.campo === 'atesto_url') {
+                const sig = _pcIaLerSignatario();
+                if (!sig || !sig.nome) { mostrarToast('⚠️ Informe quem assina o atesto.', true); return; }
+                if (sig.eh_tomador && !sig.justificativa) { mostrarToast('⚠️ Quem assina é o(a) tomador(a): informe a justificativa.', true); return; }
+                ia.signatario = sig;
+            }
             ia.instrucoes = (document.getElementById('pc-ia-instrucoes') || {}).value || '';
 
             // Dados confirmados = cadastro + escolhas
@@ -14178,6 +14247,7 @@ Regras obrigatórias:
                 }
             }
             if (!d.fornecedor_cnpj && conf.fornecedor_cnpj) patch.fornecedor_cnpj = conf.fornecedor_cnpj;
+            if (ia.signatario) patch.ia_atesto_signatario = ia.signatario;
             try {
                 await _atualizarDespesaFirestore(ia.prestacaoId, ia.idx, patch);
                 if (Object.keys(patchCadastro).length && atualizarCad) _renderDetalhePrestacao();
@@ -14289,7 +14359,8 @@ Regras obrigatórias:
 6. Devolva TODOS os parágrafos do documento final (inclusive os vazios e os da assinatura), cada um com o índice [n] do parágrafo do modelo cuja formatação deve ser usada (normalmente o mesmo parágrafo correspondente do modelo). Não acrescente parágrafos novos, salvo se as instruções da usuária pedirem.
 7. Não use marcações (asteriscos, markdown). Texto puro.
 8. No MODELO, os trechos entre ⟦ e ⟧ são os que a usuária grifou porque normalmente mudam de uma despesa para outra: confira cada um com os dados desta despesa (e pergunte se não houver dado). Os marcadores ⟦ ⟧ NUNCA aparecem no texto final.
-9. Pode haver ANEXOS depois do JSON. A "Pesquisa de mercado" é fonte para quantos e quais fornecedores foram consultados (nomes, CNPJs, telefones), os preços cotados e a data da pesquisa. A "Justificativa já conferida pela usuária" é fonte confiável para trecho/rota, beneficiários, município/unidade, período, portaria e demais dados da mesma despesa. Use o que estiver nos anexos e não pergunte o que já consta neles. Se um anexo contradisser os dados confirmados, prevalecem os dados confirmados e você avisa em "observacoes".`;
+9. Pode haver ANEXOS depois do JSON. A "Pesquisa de mercado" é fonte para quantos e quais fornecedores foram consultados (nomes, CNPJs, telefones), os preços cotados e a data da pesquisa. A "Justificativa já conferida pela usuária" é fonte confiável para trecho/rota, beneficiários, município/unidade, período, portaria e demais dados da mesma despesa. Use o que estiver nos anexos e não pergunte o que já consta neles. Se um anexo contradisser os dados confirmados, prevalecem os dados confirmados e você avisa em "observacoes".
+10. No ATESTO, quem atesta é exatamente "signatario_do_atesto" (nome, cargo e matrícula) — no corpo ("Eu, ...") e no bloco de assinatura; não pergunte quem atesta. Se "eh_tomador" for true, acrescente, antes da linha de local e data, um parágrafo curto registrando que o atesto é firmado pelo(a) próprio(a) tomador(a) do suprimento de fundos, em caráter excepcional, pelo motivo em "justificativa" (redija formalmente, sem inventar fatos além do motivo informado; use como "modelo" o índice de um parágrafo de corpo do modelo).`;
                 const ctx = {
                     documento: tipoNome,
                     servico_do_modelo: ia.modelo.servico.servico,
@@ -14302,6 +14373,7 @@ Regras obrigatórias:
                     dados_confirmados_da_despesa: ia.confirmados,
                     dados_extras_lidos_do_comprovante: ia.dadosExtras,
                     avisos_que_a_usuaria_declarou_ciencia: ia.avisosCiente || [],
+                    signatario_do_atesto: ia.campo === 'atesto_url' ? ia.signatario : undefined,
                     respostas_da_usuaria: ia.respostas,
                     instrucoes_adicionais: ia.instrucoes || null
                 };

@@ -88,6 +88,9 @@ documento gerado sai sem grifo (`_docxRemoverDestaques()`, opção `removerDesta
 **Ajuste (mesmo dia):** a geração também lê a Pesquisa de mercado anexada (na Justificativa) e a
 Justificativa já anexada/conferida (no Atesto), para não perguntar o que já consta nelas
 (`_pcIaFontesExtras()`/`_pcIaBlocosFontes()`).
+**Regra (mesmo dia):** o tomador do pronto pagamento não deve assinar o atesto. Antes de gerar o
+Atesto, o site exige escolher quem assina; se for o próprio tomador, a justificativa é obrigatória e
+vira parágrafo no atesto (`_pcIaHtmlSignatario()`, `_pcMesmaPessoa()`, `ia_atesto_signatario`).
 
 ## Estado atual (sessão 46 — 30/09/2026)
 

@@ -269,6 +269,7 @@ despesas: [
     fornecedor_cnpj: "17.980.600/0001-66" | null,
     modelo_servico: "Água mineral - PAV Urucará" | null,   ← nome do serviço em secoes/prestacao_contas_modelos (mesma categoria)
     ia_conferencia: { recibo_url, extraido: {...dados lidos pelo Claude}, confirmados: {campo: valor|"ciente"}, em: ISO } | ausente
+    ia_atesto_signatario: { nome, cargo, matricula, eh_tomador, justificativa } | ausente   ← quem assina o atesto gerado
   }
 ]
 // justificativa_url / atesto_url podem apontar para .pdf, imagem ou .docx (sessão 47).
