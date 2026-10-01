@@ -85,6 +85,9 @@ usuária e confirmadas (a chave foi lida).
 **Ajuste (mesmo dia):** os modelos da usuária têm grifo amarelo no que muda por despesa. O
 documento gerado sai sem grifo (`_docxRemoverDestaques()`, opção `removerDestaques` de
 `_docxAplicarTexto()`), e o prompt manda esses trechos entre ⟦ ⟧ para o Claude saber o que conferir.
+**Ajuste (mesmo dia):** a geração também lê a Pesquisa de mercado anexada (na Justificativa) e a
+Justificativa já anexada/conferida (no Atesto), para não perguntar o que já consta nelas
+(`_pcIaFontesExtras()`/`_pcIaBlocosFontes()`).
 
 ## Estado atual (sessão 46 — 30/09/2026)
 

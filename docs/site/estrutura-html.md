@@ -619,7 +619,7 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
     os parágrafos numerados do modelo + dados confirmados + respostas + instruções opcionais,
     ferramenta `entregar_documento`: devolve `status: "perguntas"` (nunca inventar: data de
     recebimento, quem atesta, fornecedores pesquisados etc.) ou `paragrafos[{modelo, texto}]`;
-    perguntas aparecem com sugestões clicáveis e voltam ao Claude (máx. 5 rodadas). (4) **Montagem**
+    perguntas aparecem com sugestões clicáveis e voltam ao Claude (máx. 5 rodadas). **Fontes extras** (`_pcIaFontesExtras()`/`_pcIaBlocosFontes()`): na Justificativa vai junto a Pesquisa de mercado anexada; no Atesto, a Justificativa já anexada (conferida pela usuária) — .docx como texto, PDF/imagem como arquivo; o prompt manda usá-las e não perguntar o que já consta nelas (dados confirmados prevalecem). Lidas uma vez por geração (`ia.fontesCache`) e listadas no painel de conferência. (4) **Montagem**
     — `_docxAplicarTexto(modeloBuf, paragrafos)` usa o índice `modelo` de cada parágrafo para
     herdar a formatação do parágrafo do modelo e remove grifo/sombreamento de texto (`removerDestaques` — a usuária grifa de amarelo nos modelos o que muda; no prompt esses trechos vão entre ⟦ ⟧ via `_docxTextoParagrafosMarcados()` para orientar o Claude, e os marcadores são limpos da resposta); confirma antes de substituir arquivo já existente
     no slot. O resultado é .docx (sem assinatura) e pode ser ajustado em "✏️ Editar texto".

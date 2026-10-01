@@ -13778,11 +13778,11 @@
             return btoa(s);
         }
 
-        async function _pcIaBlocoArquivo(url) {
+        async function _pcIaBlocoArquivo(url, titulo) {
             const buf = await _baixarArrayBuffer(url);
             const dados = _bytesParaBase64(buf);
             if (_ehPdfUrl(url) || new Uint8Array(buf.slice(0, 4)).join(',') === '37,80,68,70') {
-                return { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: dados } };
+                return { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: dados }, ...(titulo ? { title: titulo } : {}) };
             }
             const b = new Uint8Array(buf.slice(0, 12));
             let mt = null;
@@ -14092,7 +14092,11 @@ Regras obrigatórias:
                     <label><input type="radio" name="${nome}" value="outro" data-campo="${l.campo}"> Outro: <input type="${tipo}" class="pc-ia-outro" id="${nome}-outro" value="${valorPre != null ? _escAttr(String(valorPre)) : ''}" oninput="document.querySelector('input[name=${nome}][value=outro]').checked=true"></label>
                     ${l.alerta ? `<div class="pc-ia-obs">${esc(l.alerta)}</div>` : ''}</div>`;
             }).join('');
-            return `<p class="pc-ia-sub">Dados lidos do Recibo/NF comparados com o cadastro da despesa. Modelo: <strong>${esc(ia.modelo.servico.servico)}</strong>.</p>
+            const pAtual = prestacoesContas.find(x => x.id === ia.prestacaoId);
+            const dAtual = pAtual && (pAtual.despesas || [])[ia.idx];
+            const extras = dAtual ? _pcIaFontesExtras(dAtual, ia.campo).map(f => f.rotulo) : [];
+            return `<p class="pc-ia-sub">Dados lidos do Recibo/NF comparados com o cadastro da despesa. Modelo: <strong>${esc(ia.modelo.servico.servico)}</strong>.<br>
+                Fontes que o Claude vai usar na redação: Recibo/NF${extras.map(e => ', ' + esc(e)).join('')}.${ia.campo === 'justificativa_url' && !extras.length ? ' <em>(Pesquisa de mercado ainda não anexada.)</em>' : ''}${ia.campo === 'atesto_url' && !extras.length ? ' <em>(Justificativa ainda não anexada.)</em>' : ''}</p>
                 <div class="pc-ia-tabela-wrap"><table class="pc-ia-tabela"><thead><tr><th></th><th>Campo</th><th>Cadastro</th><th>Recibo / NF</th></tr></thead><tbody>${linhasTabela}</tbody></table></div>
                 ${pend.length ? `<h4 class="pc-ia-h4">Antes de gerar, responda:</h4>${perguntas}
                     <label class="pc-ia-check"><input type="checkbox" id="pc-ia-atualizar-cadastro" checked> Atualizar o cadastro da despesa com os valores escolhidos</label>`
@@ -14233,6 +14237,38 @@ Regras obrigatórias:
             return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}-${String(h.getDate()).padStart(2, '0')}`;
         }
 
+        // Documentos já anexados que servem de fonte para a geração, além do Recibo/NF (já lido):
+        // a Pesquisa de mercado (para a Justificativa) e a Justificativa já conferida (para o
+        // Atesto — trecho, beneficiários, município, datas). .docx entra como texto; PDF/imagem
+        // vão como arquivo para o Claude ler.
+        function _pcIaFontesExtras(d, campo) {
+            const fontes = [];
+            const cm = d.comprovacao_mercado && d.comprovacao_mercado.url;
+            if (campo === 'justificativa_url' && cm) fontes.push({ rotulo: 'Pesquisa de mercado', url: cm });
+            if (campo === 'atesto_url' && d.justificativa_url) fontes.push({ rotulo: 'Justificativa já conferida pela usuária', url: d.justificativa_url });
+            return fontes;
+        }
+
+        async function _pcIaBlocosFontes(fontes) {
+            const blocos = [], usadas = [], falhas = [];
+            for (const f of fontes) {
+                try {
+                    if (_ehDocxUrl(f.url)) {
+                        const texto = (await _docxTextoParagrafos(await _baixarArrayBuffer(f.url))).join('\n');
+                        blocos.push({ type: 'text', text: `ANEXO — ${f.rotulo} (texto do .docx):\n${texto}` });
+                    } else {
+                        blocos.push({ type: 'text', text: `ANEXO — ${f.rotulo} (arquivo a seguir):` });
+                        blocos.push(await _pcIaBlocoArquivo(f.url, f.rotulo));
+                    }
+                    usadas.push(f.rotulo);
+                } catch (e) {
+                    console.warn(`Fonte "${f.rotulo}" não pôde ser lida:`, e);
+                    falhas.push(f.rotulo);
+                }
+            }
+            return { blocos, usadas, falhas };
+        }
+
         async function _pcIaGerar() {
             const ia = _pcIa;
             const p = prestacoesContas.find(x => x.id === ia.prestacaoId);
@@ -14252,7 +14288,8 @@ Regras obrigatórias:
 5. Valores no padrão brasileiro "R$ 1.234,56" e por extenso corretos.
 6. Devolva TODOS os parágrafos do documento final (inclusive os vazios e os da assinatura), cada um com o índice [n] do parágrafo do modelo cuja formatação deve ser usada (normalmente o mesmo parágrafo correspondente do modelo). Não acrescente parágrafos novos, salvo se as instruções da usuária pedirem.
 7. Não use marcações (asteriscos, markdown). Texto puro.
-8. No MODELO, os trechos entre ⟦ e ⟧ são os que a usuária grifou porque normalmente mudam de uma despesa para outra: confira cada um com os dados desta despesa (e pergunte se não houver dado). Os marcadores ⟦ ⟧ NUNCA aparecem no texto final.`;
+8. No MODELO, os trechos entre ⟦ e ⟧ são os que a usuária grifou porque normalmente mudam de uma despesa para outra: confira cada um com os dados desta despesa (e pergunte se não houver dado). Os marcadores ⟦ ⟧ NUNCA aparecem no texto final.
+9. Pode haver ANEXOS depois do JSON. A "Pesquisa de mercado" é fonte para quantos e quais fornecedores foram consultados (nomes, CNPJs, telefones), os preços cotados e a data da pesquisa. A "Justificativa já conferida pela usuária" é fonte confiável para trecho/rota, beneficiários, município/unidade, período, portaria e demais dados da mesma despesa. Use o que estiver nos anexos e não pergunte o que já consta neles. Se um anexo contradisser os dados confirmados, prevalecem os dados confirmados e você avisa em "observacoes".`;
                 const ctx = {
                     documento: tipoNome,
                     servico_do_modelo: ia.modelo.servico.servico,
@@ -14270,7 +14307,12 @@ Regras obrigatórias:
                 };
                 const texto = `MODELO (parágrafos numerados):\n${paragrafos.map((t, i) => `[${i}] ${t}`).join('\n')}\n\nCONTEXTO E DADOS (JSON):\n${JSON.stringify(ctx, null, 2)}\n\nGere o documento com a ferramenta entregar_documento.`;
                 const meu = ia;
-                const r = await _pcIaChamar(system, [{ type: 'text', text: texto }], _PC_IA_TOOL_GERACAO);
+                if (!ia.fontesCache) {
+                    const dAtual = (p.despesas || [])[ia.idx];
+                    ia.fontesCache = await _pcIaBlocosFontes(_pcIaFontesExtras(dAtual, ia.campo));
+                    if (ia.fontesCache.falhas.length) mostrarToast(`⚠️ Não foi possível ler: ${ia.fontesCache.falhas.join(', ')} — gerando sem esse anexo.`, true);
+                }
+                const r = await _pcIaChamar(system, [{ type: 'text', text: texto }, ...ia.fontesCache.blocos], _PC_IA_TOOL_GERACAO);
                 if (_pcIa !== meu) return;
                 ia.rodadas++;
                 if (r.status === 'perguntas' && (r.perguntas || []).length) {
