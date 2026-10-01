@@ -605,7 +605,7 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
     `config_privada/anthropic` (botão "🔑 Chave da API" no painel; `pcIaConfigurarChave()`).
     Fluxo no painel da direita (`_pcIa`, `_pcIaRender()`):
     (1) **Leitura** — `_pcIaExtrair()` manda o arquivo (bloco `document`/`image`) ao Claude com
-    a ferramenta `registrar_dados_comprovante` (saída estruturada, `temperature: 0`; instrução de
+    a ferramenta `registrar_dados_comprovante` (`tool_choice: auto` + instrução no system de responder só pela ferramenta — o Claude Sonnet 5.5 devolve 400 para `tool_choice` forçado e para `temperature`; se vier texto, tenta ler JSON dele; `output_config.effort: medium`; instrução de
     devolver `null` e listar em `campos_ilegiveis` o que não ler com certeza). Chamada direta do
     navegador (`anthropic-dangerous-direct-browser-access`), modelo `PC_IA_MODELO_PADRAO` ou o
     `modelo` gravado no doc de config. (2) **Conferência sem IA** — `_pcIaMontarConferencia()`

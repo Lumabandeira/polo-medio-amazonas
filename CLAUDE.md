@@ -76,6 +76,12 @@ no `firestore.rules` (só o e-mail dela lê/grava) — **regra ainda precisa ser
 Firebase e API simulados (fixtures .docx com cabeçalho/logo, NF 1340 real, declaração em
 página grande, PDF girado, foto, documento de 2 páginas). Ver `docs/site/estrutura-html.md`
 (Prestação de Contas) e `docs/firebase.md`.
+**Bugfix no 1º uso real (mesmo dia):** a API devolveu 400 "tool_choice: type "tool" and "any" are
+not supported for this model" — o Claude Sonnet 5.5 não aceita `tool_choice` forçado nem
+`temperature`. `_pcIaChamar()` passou a usar `tool_choice: {type: 'auto'}` + instrução no system,
+sem `temperature`, com `output_config.effort: 'medium'`, `max_tokens: 16000` (thinking adaptativo é
+padrão nesse modelo) e leitura de JSON do texto como reserva. Regras do Firestore publicadas pela
+usuária e confirmadas (a chave foi lida).
 
 ## Estado atual (sessão 46 — 30/09/2026)
 

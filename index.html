@@ -13708,13 +13708,15 @@
                     'anthropic-version': '2023-06-01',
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
+                // Claude Sonnet 5.5 recusa tool_choice forçado ("tool"/"any") e temperature —
+                // usa "auto" e a instrução no prompt de sempre responder pela ferramenta.
                 body: JSON.stringify({
                     model: cfg.modelo || PC_IA_MODELO_PADRAO,
-                    max_tokens: 8000,
-                    temperature: 0,
-                    system,
+                    max_tokens: 16000,
+                    system: system + `\n\nResponda SEMPRE e SOMENTE chamando a ferramenta ${tool.name}, uma única vez. Não escreva texto fora dela.`,
                     tools: [tool],
-                    tool_choice: { type: 'tool', name: tool.name },
+                    tool_choice: { type: 'auto' },
+                    output_config: { effort: 'medium' },
                     messages: [{ role: 'user', content }]
                 })
             });
@@ -13725,9 +13727,14 @@
                 throw new Error(`API do Claude (${resp.status}): ${msg || resp.statusText}`);
             }
             const j = await resp.json();
-            const bloco = (j.content || []).find(c => c.type === 'tool_use');
-            if (!bloco) throw new Error('resposta do Claude veio sem os dados estruturados');
-            return bloco.input;
+            const bloco = (j.content || []).find(c => c.type === 'tool_use' && c.name === tool.name);
+            if (bloco) return bloco.input;
+            // Sem tool_choice forçado o modelo pode, raramente, responder em texto: tenta ler um JSON dele.
+            const texto = (j.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n');
+            const m = texto.match(/\{[\s\S]*\}/);
+            if (m) { try { return JSON.parse(m[0]); } catch (e) { /* cai no erro abaixo */ } }
+            if (j.stop_reason === 'max_tokens') throw new Error('a resposta do Claude foi cortada por tamanho — tente de novo');
+            throw new Error('resposta do Claude veio sem os dados estruturados' + (texto ? ': ' + texto.slice(0, 200) : ''));
         }
 
         function _bytesParaBase64(buf) {
