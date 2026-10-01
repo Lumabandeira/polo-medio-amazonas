@@ -82,6 +82,9 @@ not supported for this model" — o Claude Sonnet 5.5 não aceita `tool_choice` 
 sem `temperature`, com `output_config.effort: 'medium'`, `max_tokens: 16000` (thinking adaptativo é
 padrão nesse modelo) e leitura de JSON do texto como reserva. Regras do Firestore publicadas pela
 usuária e confirmadas (a chave foi lida).
+**Ajuste (mesmo dia):** os modelos da usuária têm grifo amarelo no que muda por despesa. O
+documento gerado sai sem grifo (`_docxRemoverDestaques()`, opção `removerDestaques` de
+`_docxAplicarTexto()`), e o prompt manda esses trechos entre ⟦ ⟧ para o Claude saber o que conferir.
 
 ## Estado atual (sessão 46 — 30/09/2026)
 

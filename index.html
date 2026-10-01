@@ -13259,6 +13259,39 @@
             return { zip, dom, body, sectPr, itens, editaveis: itens.filter(i => i.editavel) };
         }
 
+        // Grifo (marca-texto) de um run: <w:highlight> ou sombreamento <w:shd> com cor de fundo.
+        function _rPrTemDestaque(rPr) {
+            if (!rPr) return false;
+            if (_wFilhos(rPr, 'highlight').some(h => (h.getAttribute('w:val') || '') !== 'none')) return true;
+            return _wFilhos(rPr, 'shd').some(h => { const f = (h.getAttribute('w:fill') || '').toLowerCase(); return f && f !== 'auto' && f !== 'ffffff'; });
+        }
+
+        // Texto do modelo com os trechos grifados entre ⟦ ⟧ — a usuária grifa nos modelos o que
+        // muda de uma despesa para outra; isso orienta o Claude sobre o que trocar.
+        async function _docxTextoParagrafosMarcados(buf) {
+            const doc = await _docxAbrir(buf);
+            return doc.editaveis.map(i => {
+                let out = '', dentro = false;
+                for (const c of _docxCaracteres(i.el)) {
+                    const g = _rPrTemDestaque(c.rPr);
+                    if (g && !dentro) { out += '⟦'; dentro = true; }
+                    if (!g && dentro) { out += '⟧'; dentro = false; }
+                    out += c.ch;
+                }
+                return dentro ? out + '⟧' : out;
+            });
+        }
+
+        // Remove grifo amarelo/sombreamento de texto de todo o corpo (usado no documento gerado).
+        function _docxRemoverDestaques(dom) {
+            const body = dom.getElementsByTagNameNS(W_NS, 'body')[0];
+            if (!body) return;
+            for (const rPr of [...body.getElementsByTagNameNS(W_NS, 'rPr')]) {
+                _wFilhos(rPr, 'highlight').forEach(h => rPr.removeChild(h));
+                _wFilhos(rPr, 'shd').forEach(h => rPr.removeChild(h));
+            }
+        }
+
         async function _docxTextoParagrafos(buf) {
             const doc = await _docxAbrir(buf);
             return doc.editaveis.map(i => i.texto);
@@ -13350,7 +13383,7 @@
         // {texto, modelo} (geração pelo Claude — `modelo` é o índice do parágrafo do modelo
         // cuja formatação deve ser usada). Parágrafos idênticos ao original mantêm o XML
         // exatamente como estava. Cabeçalho, rodapé, estilos e imagens nunca são tocados.
-        async function _docxAplicarTexto(buf, linhas) {
+        async function _docxAplicarTexto(buf, linhas, opcoes = {}) {
             const doc = await _docxAbrir(buf);
             const ed = doc.editaveis;
             const novas = linhas.map(l => typeof l === 'string' ? { texto: l, modelo: null } : { texto: String(l.texto ?? ''), modelo: l.modelo });
@@ -13411,6 +13444,7 @@
                 (depoisDe.get(i) || []).forEach(inserir);
             });
 
+            if (opcoes.removerDestaques) _docxRemoverDestaques(doc.dom);
             doc.zip.file('word/document.xml', new XMLSerializer().serializeToString(doc.dom));
             return await doc.zip.generateAsync({ type: 'blob', mimeType: DOCX_MIME });
         }
@@ -14206,7 +14240,7 @@ Regras obrigatórias:
             _pcIaRender();
             try {
                 if (!ia.modeloBuf) ia.modeloBuf = await _baixarArrayBuffer(ia.modelo.url);
-                const paragrafos = await _docxTextoParagrafos(ia.modeloBuf);
+                const paragrafos = await _docxTextoParagrafosMarcados(ia.modeloBuf);
                 const tipoNome = ia.tipo === 'atesto' || ia.modelo.tipo === 'atesto' ? 'ATESTO DE RECEBIMENTO' : 'JUSTIFICATIVA';
                 const hoje = _pcIaHojeIso();
                 const system = `Você redige documentos de prestação de contas de pronto pagamento (suprimento de fundos) da Defensoria Pública do Estado do Amazonas — Polo do Médio Amazonas, a partir de um MODELO já aprovado.
@@ -14217,7 +14251,8 @@ Regras obrigatórias:
 4. Datas por extenso no padrão "18 de setembro de 2026". A data da linha de local e data do documento é a de hoje (${_pcIaDataExtenso(hoje)}), salvo resposta diferente.
 5. Valores no padrão brasileiro "R$ 1.234,56" e por extenso corretos.
 6. Devolva TODOS os parágrafos do documento final (inclusive os vazios e os da assinatura), cada um com o índice [n] do parágrafo do modelo cuja formatação deve ser usada (normalmente o mesmo parágrafo correspondente do modelo). Não acrescente parágrafos novos, salvo se as instruções da usuária pedirem.
-7. Não use marcações (asteriscos, markdown). Texto puro.`;
+7. Não use marcações (asteriscos, markdown). Texto puro.
+8. No MODELO, os trechos entre ⟦ e ⟧ são os que a usuária grifou porque normalmente mudam de uma despesa para outra: confira cada um com os dados desta despesa (e pergunte se não houver dado). Os marcadores ⟦ ⟧ NUNCA aparecem no texto final.`;
                 const ctx = {
                     documento: tipoNome,
                     servico_do_modelo: ia.modelo.servico.servico,
@@ -14289,7 +14324,9 @@ Regras obrigatórias:
             }
             ia.etapa = 'salvando';
             _pcIaRender();
-            const blob = await _docxAplicarTexto(ia.modeloBuf, paragrafos.map(x => ({ texto: x.texto, modelo: x.modelo })));
+            const blob = await _docxAplicarTexto(ia.modeloBuf,
+                paragrafos.map(x => ({ texto: String(x.texto ?? '').replace(/[⟦⟧]/g, ''), modelo: x.modelo })),
+                { removerDestaques: true });
             if (_anexoPrestacaoId !== ia.prestacaoId || _anexoDespesaIdx !== ia.idx) throw new Error('o modal de anexos foi trocado durante a geração');
             await _pcGravarDocxNoSlot(ia.campo, blob);
             const obs = ia.observacoes;

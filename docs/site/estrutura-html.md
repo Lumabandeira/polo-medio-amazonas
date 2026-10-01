@@ -621,7 +621,7 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
     recebimento, quem atesta, fornecedores pesquisados etc.) ou `paragrafos[{modelo, texto}]`;
     perguntas aparecem com sugestões clicáveis e voltam ao Claude (máx. 5 rodadas). (4) **Montagem**
     — `_docxAplicarTexto(modeloBuf, paragrafos)` usa o índice `modelo` de cada parágrafo para
-    herdar a formatação do parágrafo do modelo; confirma antes de substituir arquivo já existente
+    herdar a formatação do parágrafo do modelo e remove grifo/sombreamento de texto (`removerDestaques` — a usuária grifa de amarelo nos modelos o que muda; no prompt esses trechos vão entre ⟦ ⟧ via `_docxTextoParagrafosMarcados()` para orientar o Claude, e os marcadores são limpos da resposta); confirma antes de substituir arquivo já existente
     no slot. O resultado é .docx (sem assinatura) e pode ser ajustado em "✏️ Editar texto".
   - **Cadastro da despesa:** campos "CNPJ do Fornecedor" (`fd-cnpj` → `fornecedor_cnpj`) e
     "Modelo de documentos" (`fd-modelo-servico` → `modelo_servico`, opções = serviços da
