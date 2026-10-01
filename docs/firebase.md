@@ -312,6 +312,7 @@ atualizado_por / atualizado_em
   (`collection != 'config_privada'`). Como a chamada sai do navegador, quem lê o doc consegue ver
   a chave (F12) — por isso a restrição a uma conta só e o limite de gasto no Console da Anthropic.
 - Criada pelo próprio site (botão "🔑 Chave da API"), depois que o `firestore.rules` for publicado.
+- `config_privada/signatarios` — `{ lista: [{nome, cargo, matricula}] }`, signatários do atesto do "Gerar com Claude"; mesma regra (só a Luma).
 
 ### `automacao_config/estado_diario` — estado da automação (Projeto 1)
 ```

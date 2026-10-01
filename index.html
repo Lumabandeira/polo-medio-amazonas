@@ -14003,6 +14003,7 @@ Regras obrigatórias:
             try { cfg = await _pcIaObterConfig(); }
             catch (e) { _pcIa.etapa = 'erro'; _pcIa.erro = 'Não foi possível ler a configuração da IA (' + e.message + '). As regras do Firestore foram publicadas?'; return _pcIaRender(); }
             if (!cfg.api_key) { _pcIa.etapa = 'sem_chave'; return _pcIaRender(); }
+            if (campo === 'atesto_url') await _pcIaCarregarSignatarios();
 
             // Reaproveita a leitura já conferida se o Recibo/NF não mudou.
             const salva = d.ia_conferencia;
@@ -14127,23 +14128,70 @@ Regras obrigatórias:
 
         // "Quem assina o atesto": regra — o tomador do pronto pagamento não deve atestar; se for
         // ele mesmo, a justificativa é obrigatória e entra no texto do atesto.
+        // Signatários do atesto: lista guardada em config_privada/signatarios (só a conta da Luma lê
+        // e grava). Na 1ª vez que o doc não existe, é criado com PC_IA_SIGNATARIOS_PADRAO.
+        const PC_IA_SIGNATARIOS_PADRAO = [
+            { nome: 'Luma Karolyne Pantoja Bandeira', cargo: 'Assistente Técnica de Defensoria', matricula: '000.498-7A' },
+            { nome: 'Larice Bruce Pereira', cargo: 'Assistente Defensorial DPE-1', matricula: '002.102-4 A' },
+            { nome: 'Fábio Bastos de Souza', cargo: 'Assistente Técnico de Defensoria', matricula: '000.580-A' },
+            { nome: 'Emilly Bianca Ferreira dos Santos', cargo: 'Defensora Pública', matricula: '000.859-1 B' }
+        ];
+        let _pcIaSignatarios = null;
+
+        async function _pcIaCarregarSignatarios() {
+            if (_pcIaSignatarios) return _pcIaSignatarios;
+            const ref = db.collection(PC_IA_DOC_CONFIG[0]).doc('signatarios');
+            try {
+                const snap = await ref.get();
+                if (snap.exists && Array.isArray(snap.data().lista)) {
+                    _pcIaSignatarios = snap.data().lista;
+                } else {
+                    _pcIaSignatarios = PC_IA_SIGNATARIOS_PADRAO.map(x => ({ ...x }));
+                    await ref.set({ lista: _pcIaSignatarios, atualizado_por: currentUser.email, atualizado_em: firebase.firestore.FieldValue.serverTimestamp() });
+                }
+            } catch (e) {
+                console.warn('Lista de signatários não carregada — usando a padrão:', e);
+                _pcIaSignatarios = PC_IA_SIGNATARIOS_PADRAO.map(x => ({ ...x }));
+            }
+            return _pcIaSignatarios;
+        }
+
+        async function _pcIaSalvarSignatarioNaLista(sig) {
+            const lista = (_pcIaSignatarios || []).filter(x => !_pcMesmaPessoa(x.nome, sig.nome));
+            lista.push({ nome: sig.nome, cargo: sig.cargo, matricula: sig.matricula });
+            lista.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+            await db.collection(PC_IA_DOC_CONFIG[0]).doc('signatarios').set({ lista, atualizado_por: currentUser.email, atualizado_em: firebase.firestore.FieldValue.serverTimestamp() });
+            _pcIaSignatarios = lista;
+        }
+
+        // "Quem assina o atesto": regra — o tomador do pronto pagamento não deve atestar; se for
+        // ele mesmo, a justificativa é obrigatória e entra no texto do atesto.
         function _pcIaHtmlSignatario() {
             const ia = _pcIa;
             const p = prestacoesContas.find(x => x.id === ia.prestacaoId);
             const d = p && (p.despesas || [])[ia.idx];
+            const lista = _pcIaSignatarios || PC_IA_SIGNATARIOS_PADRAO;
             const salvo = ia.signatario || (d && d.ia_atesto_signatario) || null;
-            const ehEu = salvo ? _pcMesmaPessoa(salvo.nome, PC_IA_USUARIA.nome) : !_pcMesmaPessoa(p.tomador, PC_IA_USUARIA.nome);
-            const outro = salvo && !ehEu ? salvo : {};
-            const tomadorEhEu = _pcMesmaPessoa(p.tomador, PC_IA_USUARIA.nome);
+            // Pré-seleção: o último usado nesta despesa; senão eu (se não sou a tomadora); senão o 1º que não é o tomador.
+            let idxSel = salvo ? lista.findIndex(x => _pcMesmaPessoa(x.nome, salvo.nome)) : -1;
+            if (idxSel < 0 && !salvo) {
+                const eu = lista.findIndex(x => _pcMesmaPessoa(x.nome, PC_IA_USUARIA.nome));
+                idxSel = eu >= 0 && !_pcMesmaPessoa(p.tomador, PC_IA_USUARIA.nome) ? eu : lista.findIndex(x => !_pcMesmaPessoa(x.nome, p.tomador));
+            }
+            const outro = salvo && idxSel < 0 ? salvo : {};
+            const opcoes = lista.map((x, i) => `<option value="${i}" ${i === idxSel ? 'selected' : ''}>${esc(x.nome)} — ${esc(x.cargo)}, mat. ${esc(x.matricula)}${_pcMesmaPessoa(x.nome, p.tomador) ? ' (tomador)' : ''}</option>`).join('');
             return `<div class="pc-ia-pergunta pc-ia-signatario">
                 <div><strong>✍️ Quem assina o atesto?</strong> Tomador(a) deste pronto pagamento: <strong>${esc(p.tomador || '—')}</strong>.
                     Via de regra, <u>o tomador não pode atestar</u>.</div>
-                <label><input type="radio" name="pc-ia-sig" value="eu" ${ehEu ? 'checked' : ''} onchange="_pcIaAtualizarSignatario()"> Eu — ${esc(PC_IA_USUARIA.nome)} (${esc(PC_IA_USUARIA.cargo)}, mat. ${esc(PC_IA_USUARIA.matricula)})${tomadorEhEu ? ' <span class="pc-ia-obs">— você é a tomadora</span>' : ''}</label>
-                <label><input type="radio" name="pc-ia-sig" value="outro" ${ehEu ? '' : 'checked'} onchange="_pcIaAtualizarSignatario()"> Outro servidor:</label>
+                <select id="pc-ia-sig-sel" class="pc-ia-resposta" onchange="_pcIaAtualizarSignatario()">
+                    ${opcoes}
+                    <option value="outro" ${idxSel < 0 ? 'selected' : ''}>Outro servidor (digitar)…</option>
+                </select>
                 <div class="pc-ia-sig-outro" id="pc-ia-sig-outro">
                     <input type="text" id="pc-ia-sig-nome" class="pc-ia-resposta" placeholder="Nome completo" value="${_escAttr(outro.nome || '')}" oninput="_pcIaAtualizarSignatario()">
                     <input type="text" id="pc-ia-sig-cargo" class="pc-ia-resposta" placeholder="Cargo" value="${_escAttr(outro.cargo || '')}">
                     <input type="text" id="pc-ia-sig-matricula" class="pc-ia-resposta" placeholder="Matrícula" value="${_escAttr(outro.matricula || '')}">
+                    <label class="pc-ia-check"><input type="checkbox" id="pc-ia-sig-salvar" checked> Salvar este servidor na lista de signatários</label>
                 </div>
                 <div id="pc-ia-sig-just-box" style="display:none">
                     <div class="pc-ia-erro" style="font-size:0.95em">⚠️ Quem vai assinar é o(a) próprio(a) tomador(a). Informe a justificativa — ela será registrada no texto do atesto.</div>
@@ -14155,17 +14203,19 @@ Regras obrigatórias:
         function _pcIaLerSignatario() {
             const ia = _pcIa;
             const p = prestacoesContas.find(x => x.id === ia.prestacaoId);
-            const sel = document.querySelector('input[name="pc-ia-sig"]:checked');
+            const sel = document.getElementById('pc-ia-sig-sel');
             if (!sel) return null;
-            const sig = sel.value === 'eu' ? { ...PC_IA_USUARIA }
-                : { nome: document.getElementById('pc-ia-sig-nome').value.trim(), cargo: document.getElementById('pc-ia-sig-cargo').value.trim(), matricula: document.getElementById('pc-ia-sig-matricula').value.trim() };
+            const lista = _pcIaSignatarios || PC_IA_SIGNATARIOS_PADRAO;
+            const sig = sel.value === 'outro'
+                ? { nome: document.getElementById('pc-ia-sig-nome').value.trim(), cargo: document.getElementById('pc-ia-sig-cargo').value.trim(), matricula: document.getElementById('pc-ia-sig-matricula').value.trim(), novo: true }
+                : { ...lista[Number(sel.value)] };
             sig.eh_tomador = _pcMesmaPessoa(sig.nome, p.tomador);
             sig.justificativa = sig.eh_tomador ? document.getElementById('pc-ia-sig-just').value.trim() : '';
             return sig;
         }
 
         function _pcIaAtualizarSignatario() {
-            const sel = document.querySelector('input[name="pc-ia-sig"]:checked');
+            const sel = document.getElementById('pc-ia-sig-sel');
             if (!sel) return;
             document.getElementById('pc-ia-sig-outro').style.display = sel.value === 'outro' ? '' : 'none';
             const sig = _pcIaLerSignatario();
@@ -14202,6 +14252,11 @@ Regras obrigatórias:
             if (ia.campo === 'atesto_url') {
                 const sig = _pcIaLerSignatario();
                 if (!sig || !sig.nome) { mostrarToast('⚠️ Informe quem assina o atesto.', true); return; }
+                if (sig.novo && (!sig.cargo || !sig.matricula)) { mostrarToast('⚠️ Informe cargo e matrícula de quem assina o atesto.', true); return; }
+                if (sig.novo && (document.getElementById('pc-ia-sig-salvar') || {}).checked) {
+                    try { await _pcIaSalvarSignatarioNaLista(sig); } catch (e) { console.warn('Signatário não salvo na lista:', e); }
+                }
+                delete sig.novo;
                 if (sig.eh_tomador && !sig.justificativa) { mostrarToast('⚠️ Quem assina é o(a) tomador(a): informe a justificativa.', true); return; }
                 ia.signatario = sig;
             }

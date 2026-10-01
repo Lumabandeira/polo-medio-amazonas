@@ -91,6 +91,8 @@ Justificativa já anexada/conferida (no Atesto), para não perguntar o que já c
 **Regra (mesmo dia):** o tomador do pronto pagamento não deve assinar o atesto. Antes de gerar o
 Atesto, o site exige escolher quem assina; se for o próprio tomador, a justificativa é obrigatória e
 vira parágrafo no atesto (`_pcIaHtmlSignatario()`, `_pcMesmaPessoa()`, `ia_atesto_signatario`).
+Signatários salvos em `config_privada/signatarios` (lista inicial: Luma, Larice Bruce Pereira, Fábio
+Bastos de Souza, Emilly — `PC_IA_SIGNATARIOS_PADRAO`), escolhidos num select; "Outro" pode ser salvo na lista.
 
 ## Estado atual (sessão 46 — 30/09/2026)
 
