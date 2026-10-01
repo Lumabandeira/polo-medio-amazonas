@@ -57,6 +57,26 @@ docs/
 
 ---
 
+## Estado atual (sessão 47 — 01/10/2026)
+
+**Implementado nesta sessão (Prestação de Contas → modal de Anexos):** (1) slots de
+Justificativa e Atesto aceitam `.docx` além de PDF/imagem (aviso "📝 .docx sem assinatura";
+só o último arquivo enviado fica no slot); o painel desenha o .docx com cabeçalho/rodapé.
+(2) "✏️ Editar texto": edição só de texto (uma linha = um parágrafo, Enter cria parágrafo) que
+regrava o `document.xml` preservando a formatação do Word (`_docxAplicarTexto()`). (3) "🧷 Baixar
+anexos em 1 PDF" converte .docx em páginas (docx-preview + html2canvas, com paginação própria
+`_docxPaginar()`) e põe **tudo em A4** (PDF fora do padrão/girado é redimensionado, foto é
+centralizada). (4) "✨ Gerar com Claude", **só para bandeira.lkp@gmail.com** (`PC_IA_EMAIL`):
+Claude lê o Recibo/NF → conferência com o cadastro feita pelo site (sem IA) com perguntas para
+divergências/alertas → Claude reescreve o modelo .docx do serviço e pergunta o que faltar em vez
+de inventar → .docx gravado no slot. Cadastro da despesa ganhou "CNPJ do Fornecedor" e "Modelo de
+documentos" (visíveis só para ela). Chave da API em `config_privada/anthropic`, com regra própria
+no `firestore.rules` (só o e-mail dela lê/grava) — **regra ainda precisa ser publicada**
+(`firebase deploy --only firestore:rules`, login da usuária). Testado em Chromium headless com
+Firebase e API simulados (fixtures .docx com cabeçalho/logo, NF 1340 real, declaração em
+página grande, PDF girado, foto, documento de 2 páginas). Ver `docs/site/estrutura-html.md`
+(Prestação de Contas) e `docs/firebase.md`.
+
 ## Estado atual (sessão 46 — 30/09/2026)
 
 **Implementado nesta sessão:** a faixa verde do modal de Anexos por despesa (`abrirModalAnexos()`)

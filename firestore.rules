@@ -11,9 +11,9 @@ service cloud.firestore {
         get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Leitura: qualquer usuário autenticado, exceto prestacoes_contas (regra própria abaixo)
+    // Leitura: qualquer usuário autenticado, exceto prestacoes_contas e config_privada (regras próprias abaixo)
     match /{collection}/{document=**} {
-      allow read: if isAuthenticated() && collection != 'prestacoes_contas';
+      allow read: if isAuthenticated() && collection != 'prestacoes_contas' && collection != 'config_privada';
     }
 
     // Escrita restrita a admins
@@ -65,6 +65,12 @@ service cloud.firestore {
     // — leitura e escrita restritas a admin, diferente do padrão de leitura aberta acima.
     match /prestacoes_contas/{id} {
       allow read, write: if isAdmin();
+    }
+
+    // Chave da API do Claude ("✨ Gerar com Claude" da Prestação de Contas): só a conta da Luma
+    // lê e grava — nem os demais admins.
+    match /config_privada/{id} {
+      allow read, write: if isAuthenticated() && request.auth.token.email == 'bandeira.lkp@gmail.com';
     }
   }
 }

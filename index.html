@@ -2809,6 +2809,43 @@
 
         .form-af-header h2 { margin: 0; font-size: 1.4em; }
 
+        /* Sessão 47: .docx em Justificativa/Atesto, edição de texto e "Gerar com Claude" */
+        .pc-anexo-sem-assinatura { color: #b45309; font-weight: 600; }
+        /* O site estiliza a tag <header> globalmente (faixa azul do topo); o cabeçalho do
+           Word desenhado pelo docx-preview também é um <header> — neutraliza aqui. */
+        section.docx > header, section.docx > footer {
+            background: none !important; color: inherit !important; padding: 0 !important;
+            text-align: inherit !important; position: static !important; text-shadow: none !important;
+        }
+        section.docx > header p { font-size: inherit; opacity: 1; }
+        .pc-anexo-docx-view { flex: 1; max-height: 62vh; }
+        .pc-anexo-docx-view .docx-wrapper { background: transparent; padding: 0; }
+        .pc-anexo-docx-view .docx-wrapper > section.docx { margin: 0 auto 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+        .pc-edicao-dica { font-size: 0.8em; color: var(--text-secondary); margin: 4px 0 8px; }
+        .pc-edicao-texto { width: 100%; min-height: 52vh; flex: 1; box-sizing: border-box; padding: 10px; font-family: 'Times New Roman', serif; font-size: 0.95em; line-height: 1.45; border: 1px solid var(--border-color); border-radius: 8px; resize: vertical; }
+        .pc-btn-ia { border-color: #7c3aed !important; color: #6d28d9 !important; }
+        .pc-ia-corpo { overflow: auto; max-height: 68vh; }
+        .pc-ia-msg { text-align: center; padding: 28px 12px; color: #374151; }
+        .pc-ia-erro { color: #b91c1c; }
+        .pc-ia-tudo-ok { padding: 10px; color: #15803d; }
+        .pc-ia-sub { font-size: 0.85em; color: var(--text-secondary); margin: 6px 0 10px; }
+        .pc-ia-tabela-wrap { overflow-x: auto; }
+        .pc-ia-tabela { width: 100%; border-collapse: collapse; font-size: 0.82em; }
+        .pc-ia-tabela th, .pc-ia-tabela td { border-bottom: 1px solid var(--border-color); padding: 5px 6px; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+        .pc-ia-tabela tr.pc-ia-div td { background: #fffbeb; }
+        .pc-ia-h4 { margin: 14px 0 6px; font-size: 0.95em; }
+        .pc-ia-pergunta { border: 1px solid #fde68a; background: #fffbeb; border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; font-size: 0.85em; display: flex; flex-direction: column; gap: 4px; }
+        .pc-ia-pergunta label { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .pc-ia-outro, .pc-ia-resposta { padding: 4px 6px; border: 1px solid var(--border-color); border-radius: 6px; min-width: 0; }
+        .pc-ia-resposta { width: 100%; box-sizing: border-box; }
+        .pc-ia-obs { color: #92400e; font-size: 0.92em; }
+        .pc-ia-check { display: flex; gap: 6px; align-items: center; font-size: 0.85em; margin: 6px 0; }
+        .pc-ia-label { display: block; font-size: 0.8em; font-weight: 600; margin-top: 10px; }
+        .pc-ia-instrucoes { width: 100%; box-sizing: border-box; min-height: 54px; padding: 6px; border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit; }
+        .pc-ia-acoes { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .pc-ia-sugestoes { display: flex; gap: 6px; flex-wrap: wrap; }
+        .pc-ia-chip { border: 1px solid #c4b5fd; background: #f5f3ff; color: #5b21b6; border-radius: 999px; padding: 2px 10px; font-size: 0.95em; cursor: pointer; }
+
         /* Modal de Anexos: dados completos da despesa no cabeçalho verde */
         #modal-anexos-overlay .form-af-header { padding-top: 8px; padding-bottom: 8px; }
         .anexos-header-info { flex: 1; min-width: 0; margin-right: 16px; }
@@ -4329,6 +4366,14 @@
                         <div class="form-group">
                             <label>Valor Total (R$)</label>
                             <input type="number" step="0.01" id="fd-valor-total" readonly style="background:#f1f5f9">
+                        </div>
+                        <div class="form-group" id="fd-grupo-cnpj" style="display:none">
+                            <label>CNPJ do Fornecedor</label>
+                            <input type="text" id="fd-cnpj" placeholder="00.000.000/0000-00">
+                        </div>
+                        <div class="form-group" id="fd-grupo-modelo" style="grid-column: span 3; display:none">
+                            <label>Modelo de documentos (Justificativa/Atesto)</label>
+                            <select id="fd-modelo-servico"></select>
                         </div>
                     </div>
                     <div class="form-actions">
@@ -12687,7 +12732,24 @@
             document.getElementById('fd-idx').value = '';
             document.getElementById('fd-quantidade').value = 1;
             document.getElementById('fd-valor-total').value = '';
+            _fdPrepararCamposIa(prestacaoId, null);
             document.getElementById('form-despesa-overlay').classList.add('active');
+        }
+
+        // Campos usados só pelo "✨ Gerar com Claude" — visíveis apenas para PC_IA_EMAIL.
+        function _fdPrepararCamposIa(prestacaoId, d) {
+            const habilitado = _pcIaHabilitada();
+            document.getElementById('fd-grupo-cnpj').style.display = habilitado ? '' : 'none';
+            document.getElementById('fd-grupo-modelo').style.display = habilitado ? '' : 'none';
+            if (!habilitado) return;
+            const p = prestacoesContas.find(x => x.id === prestacaoId);
+            const lista = (p && _pcModelos[p.categoria]) || [];
+            const atual = (d && d.modelo_servico) || '';
+            const opcoes = ['<option value="">— nenhum —</option>'].concat(lista.map(s =>
+                `<option value="${_escAttr(s.servico)}"${s.servico === atual ? ' selected' : ''}>${esc(s.servico)}</option>`));
+            if (atual && !lista.some(s => s.servico === atual)) opcoes.push(`<option value="${_escAttr(atual)}" selected>${esc(atual)} (não existe mais)</option>`);
+            document.getElementById('fd-modelo-servico').innerHTML = opcoes.join('');
+            document.getElementById('fd-cnpj').value = (d && d.fornecedor_cnpj) || '';
         }
 
         function abrirEditarDespesa(prestacaoId, idx) {
@@ -12707,6 +12769,7 @@
             document.getElementById('fd-valor-unitario').value = d.valor_unitario || '';
             document.getElementById('fd-desconto').value = Number(d.desconto) ? d.desconto : '';
             document.getElementById('fd-valor-total').value = d.valor_total || '';
+            _fdPrepararCamposIa(prestacaoId, d);
             document.getElementById('form-despesa-overlay').classList.add('active');
         }
 
@@ -12742,6 +12805,10 @@
                 desconto: Number(document.getElementById('fd-desconto').value) || 0,
                 valor_total: Number(document.getElementById('fd-valor-total').value) || 0
             };
+            if (_pcIaHabilitada()) {
+                nova.fornecedor_cnpj = document.getElementById('fd-cnpj').value.trim() || null;
+                nova.modelo_servico = document.getElementById('fd-modelo-servico').value || null;
+            }
 
             if (idxStr !== '') {
                 const idx = Number(idxStr);
@@ -12845,6 +12912,8 @@
             if (event && event.target !== event.currentTarget &&
                 !event.target.classList.contains('modal-close')) return;
             document.getElementById('modal-anexos-overlay').classList.remove('active');
+            _pcEdicao = null;
+            _pcIa = null;
             _anexoPrestacaoId = null;
             _anexoDespesaIdx = null;
             _anexoPreviewCampo = null;
@@ -12885,9 +12954,11 @@
             if (!item) {
                 return `<div class="pc-anexo-preview-placeholder">Selecione um anexo ao lado para visualizar aqui.</div>`;
             }
-            const isPdf = /\.pdf(\?|$)/i.test(item.url);
+            const isPdf = _ehPdfUrl(item.url);
             const conteudo = isPdf
                 ? `<iframe src="${esc(item.url)}" title="${esc(item.nome)}"></iframe>`
+                : _ehDocxUrl(item.url)
+                ? `<div id="pc-anexo-docx-view" class="pc-modelo-view-area pc-anexo-docx-view" data-url="${_escAttr(item.url)}"><div class="pc-modelo-view-msg">⏳ Carregando documento...</div></div>`
                 : `<img src="${esc(item.url)}" alt="${esc(item.nome)}">`;
             return `
                 <div class="pc-anexo-preview-header">
@@ -12905,7 +12976,10 @@
             _anexoPreviewCampo = campo;
             const d = _despesaAtualAnexos();
             if (!d) return;
+            _pcEdicao = null;
+            _pcIa = null;
             document.getElementById('pc-anexo-preview-painel').innerHTML = _painelPreviewHtml(d);
+            _posRenderPainelPreview();
         }
 
         async function _baixarAnexo() {
@@ -12957,26 +13031,21 @@
             try {
                 const mergedPdf = await PDFDocument.create();
                 const falhas = [];
+                const semAssinatura = [];
 
+                // Tudo sai em folha A4: PDF fora do padrão é reduzido/ampliado, imagem é
+                // centralizada na folha e .docx é desenhado e convertido em imagem por página.
                 for (const item of itens) {
                     try {
-                        const resp = await fetch(item.url);
-                        if (!resp.ok) throw new Error('Falha ao baixar arquivo.');
-                        const bytes = await resp.arrayBuffer();
-                        const isPdf = /\.pdf(\?|$)/i.test(item.url);
-                        if (isPdf) {
-                            const srcPdf = await PDFDocument.load(bytes);
-                            const paginas = await mergedPdf.copyPages(srcPdf, srcPdf.getPageIndices());
-                            paginas.forEach(pagina => mergedPdf.addPage(pagina));
+                        const bytes = await _baixarArrayBuffer(item.url);
+                        if (_ehPdfUrl(item.url)) {
+                            await _pcAdicionarPdfA4(mergedPdf, bytes);
+                        } else if (_ehDocxUrl(item.url)) {
+                            const paginas = await _docxParaImagens(bytes);
+                            for (const pg of paginas) await _pcAdicionarImagemA4(mergedPdf, pg.bytes, true, true);
+                            semAssinatura.push(item.nome);
                         } else {
-                            const isPng = /\.png(\?|$)/i.test(item.url);
-                            const imagem = isPng ? await mergedPdf.embedPng(bytes) : await mergedPdf.embedJpg(bytes);
-                            const A4 = { largura: 595.28, altura: 841.89 };
-                            const escala = Math.min(1, A4.largura / imagem.width, A4.altura / imagem.height);
-                            const largura = imagem.width * escala;
-                            const altura = imagem.height * escala;
-                            const pagina = mergedPdf.addPage([largura, altura]);
-                            pagina.drawImage(imagem, { x: 0, y: 0, width: largura, height: altura });
+                            await _pcAdicionarImagemA4(mergedPdf, bytes, _pcTipoImagem(bytes, item.url) === 'png', false);
                         }
                     } catch (e) {
                         console.error(`Erro ao juntar anexo "${item.nome}":`, e);
@@ -13002,8 +13071,11 @@
                 a.remove();
                 URL.revokeObjectURL(blobUrl);
 
-                if (falhas.length > 0) {
-                    mostrarToast(`⚠️ PDF gerado, mas falhou ao incluir: ${falhas.join(', ')}.`, true);
+                const avisos = [];
+                if (falhas.length > 0) avisos.push(`falhou ao incluir: ${falhas.join(', ')}`);
+                if (semAssinatura.length > 0) avisos.push(`${semAssinatura.join(' e ')} em .docx, sem assinatura`);
+                if (avisos.length > 0) {
+                    mostrarToast(`⚠️ PDF gerado, mas ${avisos.join('; ')}.`, true);
                 } else {
                     mostrarToast('✅ PDF com os anexos gerado com sucesso.');
                 }
@@ -13014,16 +13086,24 @@
         }
 
         function _slotAnexoSimples(campo, label, url, descricao) {
+            const aceitaDocx = PC_CAMPOS_DOCX.includes(campo);
+            const ehDocx = aceitaDocx && _ehDocxUrl(url);
+            const status = !url ? '⚠️ Pendente'
+                : ehDocx ? '✅ Anexado <span class="pc-anexo-sem-assinatura" title="Arquivo .docx — ainda sem assinatura">· 📝 .docx sem assinatura</span>'
+                : '✅ Anexado';
+            const podeGerar = aceitaDocx && _pcIaHabilitada();
             return `<div class="pc-anexo-slot ${url ? 'ok' : 'pendente'}" ondragover="_anexoDragOver(event)" ondragleave="_anexoDragLeave(event)" ondrop="_anexoDrop(event, 'slot', '${campo}')">
                 <div class="pc-anexo-slot-titulo">
                     <span class="pc-anexo-slot-label">${label}</span>
                     ${descricao ? `<span class="pc-anexo-slot-desc">${descricao}</span>` : ''}
-                    <span class="pc-anexo-drop-hint">📥 ou arraste o arquivo aqui</span>
+                    <span class="pc-anexo-drop-hint">📥 ou arraste o arquivo aqui${aceitaDocx ? ' (PDF, imagem ou .docx)' : ''}</span>
                 </div>
-                <span class="pc-anexo-slot-status">${url ? '✅ Anexado' : '⚠️ Pendente'}</span>
+                <span class="pc-anexo-slot-status">${status}</span>
                 <div class="pc-anexo-slot-acoes">
                     ${url ? `<button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="_visualizarAnexoCampo('${campo}')">👁️ Visualizar</button>` : ''}
-                    <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-${campo}" onchange="_uploadSlotSimples('${campo}', this.files[0])">
+                    ${ehDocx ? `<button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="pcEditarTextoAnexo('${campo}')">✏️ Editar texto</button>` : ''}
+                    ${podeGerar ? `<button class="btn-editar pc-btn-ia" style="padding:4px 8px;font-size:0.8em" onclick="pcIaIniciar('${campo}')">✨ Gerar com Claude</button>` : ''}
+                    <input type="file" accept="${aceitaDocx ? PC_ACCEPT_ANEXO_DOCX : PC_ACCEPT_ANEXO}" style="display:none" id="pc-input-${campo}" onchange="_uploadSlotSimples('${campo}', this.files[0])">
                     <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-input-${campo}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
                 </div>
             </div>`;
@@ -13090,6 +13170,1125 @@
                 </div>
             `;
             document.getElementById('modal-anexos-body').innerHTML = html;
+            if (_pcIa && _pcIa.etapa !== 'salvando') _pcIaRender();
+            else _posRenderPainelPreview();
+        }
+
+        // ══ Justificativa/Atesto em .docx: leitura, edição de texto e conversão p/ PDF ══
+        // (sessão 47) Os slots de Justificativa e Atesto aceitam .docx além de PDF/imagem.
+        // Um .docx anexado é tratado como documento ainda sem assinatura (aviso no slot e no
+        // "Baixar anexos em 1 PDF"). Todo o processamento é no navegador: JSZip + DOMParser
+        // para ler/regravar o XML do Word, docx-preview para desenhar, html2canvas para
+        // transformar as páginas desenhadas em imagem dentro do PDF final.
+        const PC_ACCEPT_ANEXO = 'application/pdf,image/*';
+        const PC_ACCEPT_ANEXO_DOCX = PC_ACCEPT_ANEXO + ',.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        const PC_CAMPOS_DOCX = ['justificativa_url', 'atesto_url'];
+        const PC_LIB_JSZIP = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+        const PC_LIB_DOCX_PREVIEW = 'https://cdn.jsdelivr.net/npm/docx-preview@0.3.5/dist/docx-preview.min.js';
+        const PC_LIB_HTML2CANVAS = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+        const W_NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+        const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+        function _ehDocxUrl(url) { return /\.docx(\?|$)/i.test(url || ''); }
+        function _ehPdfUrl(url) { return /\.pdf(\?|$)/i.test(url || ''); }
+
+        async function _docxCarregarLibs(comCanvas) {
+            await _pcCarregarScript(PC_LIB_JSZIP);
+            await _pcCarregarScript(PC_LIB_DOCX_PREVIEW);
+            if (comCanvas) await _pcCarregarScript(PC_LIB_HTML2CANVAS);
+        }
+
+        async function _baixarArrayBuffer(url) {
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error('falha ao baixar o arquivo');
+            return await resp.arrayBuffer();
+        }
+
+        // ── Leitura do corpo do documento ──────────────────────────────────
+        // Parágrafos "editáveis" = <w:p> filhos diretos do <w:body> sem imagem, caixa de
+        // texto, objeto ou campo automático. Todo o resto (tabelas, imagens, sectPr) é
+        // mantido intacto e "ancorado" ao parágrafo editável que vem antes dele.
+        function _wFilhos(el, nome) {
+            return [...el.childNodes].filter(n => n.nodeType === 1 && n.namespaceURI === W_NS && (!nome || n.localName === nome));
+        }
+
+        function _docxParagrafoEditavel(p) {
+            if (p.localName !== 'p' || p.namespaceURI !== W_NS) return false;
+            const proibidos = ['drawing', 'pict', 'object', 'txbxContent', 'fldChar', 'fldSimple', 'sdt'];
+            return !proibidos.some(t => p.getElementsByTagNameNS(W_NS, t).length > 0);
+        }
+
+        // Lista os caracteres do parágrafo com a formatação (w:rPr) do run de cada um.
+        function _docxCaracteres(p) {
+            const chars = [];
+            const visitar = (no) => {
+                for (const n of no.childNodes) {
+                    if (n.nodeType !== 1) continue;
+                    if (n.namespaceURI === W_NS && n.localName === 'r') {
+                        const rPr = _wFilhos(n, 'rPr')[0] || null;
+                        for (const c of n.childNodes) {
+                            if (c.nodeType !== 1 || c.namespaceURI !== W_NS) continue;
+                            if (c.localName === 't') for (const ch of c.textContent) chars.push({ ch, rPr });
+                            else if (c.localName === 'tab') chars.push({ ch: '\t', rPr });
+                            else if (c.localName === 'br' && c.getAttribute('w:type') !== 'page') chars.push({ ch: ' ', rPr });
+                            else if (c.localName === 'noBreakHyphen') chars.push({ ch: '-', rPr });
+                        }
+                    } else if (n.namespaceURI === W_NS && ['hyperlink', 'ins', 'smartTag', 'customXml'].includes(n.localName)) {
+                        visitar(n);
+                    }
+                }
+            };
+            visitar(p);
+            return chars;
+        }
+
+        async function _docxAbrir(buf) {
+            await _pcCarregarScript(PC_LIB_JSZIP);
+            const zip = await JSZip.loadAsync(buf);
+            const arq = zip.file('word/document.xml');
+            if (!arq) throw new Error('arquivo .docx inválido (sem word/document.xml)');
+            const dom = new DOMParser().parseFromString(await arq.async('string'), 'application/xml');
+            if (dom.getElementsByTagName('parsererror').length) throw new Error('não foi possível ler o XML do documento');
+            const body = dom.getElementsByTagNameNS(W_NS, 'body')[0];
+            const filhos = _wFilhos(body);
+            const sectPr = filhos.find(n => n.localName === 'sectPr') || null;
+            const itens = filhos.filter(n => n !== sectPr).map(el => {
+                const editavel = _docxParagrafoEditavel(el);
+                return { el, editavel, texto: editavel ? _docxCaracteres(el).map(c => c.ch).join('') : null };
+            });
+            return { zip, dom, body, sectPr, itens, editaveis: itens.filter(i => i.editavel) };
+        }
+
+        async function _docxTextoParagrafos(buf) {
+            const doc = await _docxAbrir(buf);
+            return doc.editaveis.map(i => i.texto);
+        }
+
+        // ── Montagem de um parágrafo com texto novo, herdando a formatação ────────
+        // Compara o texto antigo e o novo palavra a palavra (LCS): o que não mudou mantém
+        // a formatação original de cada caractere (ex.: nome em negrito); o que foi trocado
+        // herda a formatação do trecho substituído; o que foi só acrescentado herda a do
+        // caractere anterior.
+        function _tokens(s) { return s.match(/\s+|[\p{L}\p{N}]+|[^\s\p{L}\p{N}]/gu) || []; }
+
+        function _lcsPares(a, b, igual) {
+            const n = a.length, m = b.length;
+            const dp = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
+            for (let i = n - 1; i >= 0; i--)
+                for (let j = m - 1; j >= 0; j--)
+                    dp[i][j] = igual(a[i], b[j]) ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+            const pares = [];
+            let i = 0, j = 0;
+            while (i < n && j < m) {
+                if (igual(a[i], b[j])) { pares.push([i, j]); i++; j++; }
+                else if (dp[i + 1][j] >= dp[i][j + 1]) i++;
+                else j++;
+            }
+            return pares;
+        }
+
+        function _docxFormatarTextoNovo(charsAntigos, textoNovo) {
+            const tokA = [], tokB = _tokens(textoNovo);
+            let pos = 0;
+            for (const t of _tokens(charsAntigos.map(c => c.ch).join(''))) { tokA.push({ t, ini: pos }); pos += t.length; }
+            const pares = _lcsPares(tokA, tokB, (x, y) => x.t === y);
+            const saida = [];
+            const rPrPadrao = charsAntigos.length ? charsAntigos[0].rPr : null;
+            let ia = 0, ib = 0;
+            const emitirHunk = (aFim, bFim) => {
+                const rPrTroca = ia < aFim ? charsAntigos[tokA[ia].ini].rPr : undefined;
+                for (; ib < bFim; ib++) {
+                    const rPr = rPrTroca !== undefined ? rPrTroca : (saida.length ? saida[saida.length - 1].rPr : rPrPadrao);
+                    for (const ch of tokB[ib]) saida.push({ ch, rPr });
+                }
+                ia = aFim;
+            };
+            for (const [pa, pb] of pares) {
+                emitirHunk(pa, pb);
+                const t = tokA[pa];
+                for (let k = 0; k < t.t.length; k++) saida.push({ ch: t.t[k], rPr: charsAntigos[t.ini + k].rPr });
+                ia = pa + 1; ib = pb + 1;
+            }
+            emitirHunk(tokA.length, tokB.length);
+            return saida;
+        }
+
+        function _docxNovoParagrafo(dom, modeloP, charsAntigos, textoNovo) {
+            const p = dom.createElementNS(W_NS, 'w:p');
+            const pPr = _wFilhos(modeloP, 'pPr')[0];
+            if (pPr) p.appendChild(pPr.cloneNode(true));
+            const chars = _docxFormatarTextoNovo(charsAntigos, textoNovo);
+            let i = 0;
+            while (i < chars.length) {
+                const rPr = chars[i].rPr;
+                let j = i;
+                while (j < chars.length && chars[j].rPr === rPr) j++;
+                const r = dom.createElementNS(W_NS, 'w:r');
+                if (rPr) r.appendChild(rPr.cloneNode(true));
+                let buffer = '';
+                const fecharTexto = () => {
+                    if (!buffer) return;
+                    const t = dom.createElementNS(W_NS, 'w:t');
+                    t.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+                    t.textContent = buffer;
+                    r.appendChild(t);
+                    buffer = '';
+                };
+                for (let k = i; k < j; k++) {
+                    if (chars[k].ch === '\t') { fecharTexto(); r.appendChild(dom.createElementNS(W_NS, 'w:tab')); }
+                    else buffer += chars[k].ch;
+                }
+                fecharTexto();
+                p.appendChild(r);
+                i = j;
+            }
+            return p;
+        }
+
+        // ── Aplicar um texto novo ao documento inteiro ─────────────────────────
+        // `linhas`: array de strings (edição manual — cada linha é um parágrafo) ou de
+        // {texto, modelo} (geração pelo Claude — `modelo` é o índice do parágrafo do modelo
+        // cuja formatação deve ser usada). Parágrafos idênticos ao original mantêm o XML
+        // exatamente como estava. Cabeçalho, rodapé, estilos e imagens nunca são tocados.
+        async function _docxAplicarTexto(buf, linhas) {
+            const doc = await _docxAbrir(buf);
+            const ed = doc.editaveis;
+            const novas = linhas.map(l => typeof l === 'string' ? { texto: l, modelo: null } : { texto: String(l.texto ?? ''), modelo: l.modelo });
+            const plano = new Array(novas.length); // {manter: el} | {modelo: idx}
+
+            if (novas.some(l => Number.isInteger(l.modelo))) {
+                novas.forEach((l, i) => {
+                    const m = Math.min(Math.max(Number.isInteger(l.modelo) ? l.modelo : 0, 0), Math.max(ed.length - 1, 0));
+                    plano[i] = (ed[m] && ed[m].texto === l.texto) ? { manter: ed[m].el, modelo: m, usado: true } : { modelo: m };
+                });
+                // Um mesmo parágrafo original não pode ser "mantido" duas vezes.
+                const vistos = new Set();
+                plano.forEach(pl => { if (pl.manter) { if (vistos.has(pl.manter)) delete pl.manter; else vistos.add(pl.manter); } });
+            } else {
+                const pares = _lcsPares(ed.map(e => e.texto), novas.map(l => l.texto), (x, y) => x === y);
+                let ia = 0, ib = 0;
+                const hunk = (aFim, bFim) => {
+                    for (let k = 0; ib < bFim; ib++, k++) {
+                        const m = ia + k < aFim ? ia + k : (aFim > ia ? aFim - 1 : Math.max(ia - 1, 0));
+                        plano[ib] = { modelo: Math.min(m, Math.max(ed.length - 1, 0)) };
+                    }
+                    ia = aFim;
+                };
+                for (const [pa, pb] of pares) {
+                    hunk(pa, pb);
+                    plano[pb] = { manter: ed[pa].el, modelo: pa };
+                    ia = pa + 1; ib = pb + 1;
+                }
+                hunk(ed.length, novas.length);
+            }
+
+            // Elementos não editáveis (tabelas, imagens...) ancorados ao parágrafo editável anterior.
+            const ancorados = new Map(); // idx editável (-1 = antes de todos) → [el]
+            let ultimo = -1;
+            doc.itens.forEach(it => {
+                if (it.editavel) { ultimo = ed.indexOf(it); return; }
+                if (!ancorados.has(ultimo)) ancorados.set(ultimo, []);
+                ancorados.get(ultimo).push(it.el);
+            });
+            // Cada âncora sai depois da última linha nova que usa um parágrafo de índice ≤ ao dela.
+            const depoisDe = new Map();
+            for (const k of ancorados.keys()) {
+                let pos = -1;
+                plano.forEach((pl, i) => { if (pl.modelo <= k) pos = i; });
+                if (!depoisDe.has(pos)) depoisDe.set(pos, []);
+                depoisDe.get(pos).push(...ancorados.get(k));
+            }
+
+            const body = doc.body;
+            [...body.childNodes].forEach(n => { if (n !== doc.sectPr) body.removeChild(n); });
+            const inserir = (el) => doc.sectPr ? body.insertBefore(el, doc.sectPr) : body.appendChild(el);
+            (depoisDe.get(-1) || []).forEach(inserir);
+            novas.forEach((l, i) => {
+                const pl = plano[i];
+                if (pl.manter) inserir(pl.manter);
+                else if (ed.length) inserir(_docxNovoParagrafo(doc.dom, ed[pl.modelo].el, _docxCaracteres(ed[pl.modelo].el), l.texto));
+                else inserir(_docxNovoParagrafo(doc.dom, doc.dom.createElementNS(W_NS, 'w:p'), [], l.texto));
+                (depoisDe.get(i) || []).forEach(inserir);
+            });
+
+            doc.zip.file('word/document.xml', new XMLSerializer().serializeToString(doc.dom));
+            return await doc.zip.generateAsync({ type: 'blob', mimeType: DOCX_MIME });
+        }
+
+        // ── Desenho do .docx (pré-visualização e conversão para PDF) ───────────────
+        async function _docxRenderizar(buf, cont) {
+            await _docxCarregarLibs(false);
+            let bufVisual = buf;
+            try { bufVisual = await _pcDesembrulharCaixasDeTexto(buf); }
+            catch (e) { console.warn('Caixas de texto mantidas como estão:', e); }
+            cont.innerHTML = '';
+            await docx.renderAsync(bufVisual, cont, null, {
+                inWrapper: true, ignoreLastRenderedPageBreak: true,
+                renderHeaders: true, renderFooters: true, breakPages: true
+            });
+            _docxPaginar(cont);
+        }
+
+        // O docx-preview só quebra página onde o Word tem quebra explícita: um texto que
+        // "transborda" vira uma página comprida. Aqui as páginas compridas são divididas
+        // em páginas do tamanho do papel, repetindo cabeçalho e rodapé, sem cortar parágrafo.
+        function _docxPaginar(cont) {
+            let secoes = [...cont.querySelectorAll('section.docx')];
+            for (let s = 0; s < secoes.length && s < 200; s++) {
+                const sec = secoes[s];
+                const alturaPagina = parseFloat(getComputedStyle(sec).minHeight) || 0;
+                const art = sec.querySelector(':scope > article');
+                if (!alturaPagina || !art) continue;
+                const rSec = sec.getBoundingClientRect();
+                if (rSec.height <= alturaPagina + 1) continue;
+                const rodapeEspaco = rSec.bottom - art.getBoundingClientRect().bottom;
+                const limite = rSec.top + alturaPagina - rodapeEspaco;
+                const filhos = [...art.children];
+                let corte = filhos.findIndex(f => f.getBoundingClientRect().bottom > limite + 0.5);
+                if (corte <= 0) continue; // 1º bloco maior que a página: não há onde cortar
+                const nova = sec.cloneNode(true);
+                const artNova = nova.querySelector(':scope > article');
+                artNova.innerHTML = '';
+                filhos.slice(corte).forEach(f => artNova.appendChild(f));
+                sec.after(nova);
+                secoes.splice(s + 1, 0, nova);
+            }
+            return secoes;
+        }
+
+        // Reduz as páginas desenhadas para caberem na largura do painel (sem rolagem lateral).
+        function _docxAjustarLargura(area) {
+            const disponivel = area.clientWidth - 24;
+            area.querySelectorAll('section.docx').forEach(sec => {
+                const escala = Math.min(1, disponivel / sec.offsetWidth);
+                sec.style.zoom = escala < 1 ? String(escala) : '';
+            });
+        }
+
+        // Converte o .docx em imagens PNG, uma por página (para entrar no PDF juntado).
+        async function _docxParaImagens(buf) {
+            await _docxCarregarLibs(true);
+            const palco = document.createElement('div');
+            palco.style.cssText = 'position:fixed;left:-20000px;top:0;width:1000px;background:#fff;z-index:-1';
+            document.body.appendChild(palco);
+            try {
+                await _docxRenderizar(buf, palco);
+                const wrapper = palco.querySelector('.docx-wrapper');
+                if (wrapper) { wrapper.style.padding = '0'; wrapper.style.background = '#fff'; }
+                const imagens = [];
+                for (const sec of palco.querySelectorAll('section.docx')) {
+                    sec.style.margin = '0';
+                    sec.style.boxShadow = 'none';
+                    const alturaPagina = parseFloat(getComputedStyle(sec).minHeight) || sec.offsetHeight;
+                    sec.style.height = alturaPagina + 'px';
+                    sec.style.overflow = 'hidden';
+                    const canvas = await html2canvas(sec, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
+                    const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+                    imagens.push({ bytes: await blob.arrayBuffer(), largura: canvas.width, altura: canvas.height });
+                }
+                return imagens;
+            } finally {
+                palco.remove();
+            }
+        }
+
+        // ── Pré-visualização do .docx no painel do modal de Anexos ─────────────────
+        async function _posRenderPainelPreview() {
+            const area = document.getElementById('pc-anexo-docx-view');
+            if (!area) return;
+            const url = area.getAttribute('data-url');
+            try {
+                const buf = await _baixarArrayBuffer(url);
+                if (area.getAttribute('data-url') !== url || !document.body.contains(area)) return;
+                await _docxRenderizar(buf, area);
+                _docxAjustarLargura(area);
+            } catch (e) {
+                console.error('Erro ao visualizar .docx:', e);
+                area.innerHTML = `<div class="pc-modelo-view-msg">❌ Não foi possível exibir o documento (${esc(e.message)}).<br>Use o botão "⬇️ Baixar".</div>`;
+            }
+        }
+
+        // ── Edição de texto (sem formatação) do .docx anexado ─────────────────────
+        let _pcEdicao = null; // { campo, url, buf }
+
+        // Em tela estreita o painel fica abaixo da lista: leva o usuário até ele.
+        function _pcMostrarPainelPreview() {
+            const painel = document.getElementById('pc-anexo-preview-painel');
+            if (painel && window.innerWidth < 900) painel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        async function pcEditarTextoAnexo(campo) {
+            const d = _despesaAtualAnexos();
+            const url = d && d[campo];
+            if (!url || !_ehDocxUrl(url)) return;
+            _anexoPreviewCampo = campo;
+            const painel = document.getElementById('pc-anexo-preview-painel');
+            const rotulo = campo === 'atesto_url' ? 'Atesto' : 'Justificativa';
+            painel.innerHTML = `<div class="pc-modelo-view-msg">⏳ Abrindo o texto...</div>`;
+            try {
+                const buf = await _baixarArrayBuffer(url);
+                const paragrafos = await _docxTextoParagrafos(buf);
+                _pcEdicao = { campo, url, buf };
+                painel.innerHTML = `
+                    <div class="pc-anexo-preview-header">
+                        <span class="pc-anexo-preview-nome">✏️ Editando texto — ${rotulo}</span>
+                        <div class="pc-anexo-preview-acoes">
+                            <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="pcCancelarEdicaoTexto()">Cancelar</button>
+                            <button class="btn-editar" style="padding:4px 8px;font-size:0.8em;font-weight:600" onclick="pcSalvarEdicaoTexto()">💾 Salvar</button>
+                        </div>
+                    </div>
+                    <p class="pc-edicao-dica">Cada linha é um parágrafo do documento — use <strong>Enter</strong> para criar um parágrafo novo. Só o texto pode ser alterado; cabeçalho, logotipo, rodapé e formatação do modelo são mantidos.</p>
+                    <textarea id="pc-edicao-texto" class="pc-edicao-texto" spellcheck="true"></textarea>`;
+                document.getElementById('pc-edicao-texto').value = paragrafos.join('\n');
+                _pcMostrarPainelPreview();
+            } catch (e) {
+                console.error('Erro ao abrir texto do .docx:', e);
+                _pcEdicao = null;
+                painel.innerHTML = `<div class="pc-modelo-view-msg">❌ Não foi possível abrir o texto (${esc(e.message)}).</div>`;
+            }
+        }
+
+        function pcCancelarEdicaoTexto() {
+            const campo = _pcEdicao ? _pcEdicao.campo : _anexoPreviewCampo;
+            _pcEdicao = null;
+            _visualizarAnexoCampo(campo);
+        }
+
+        async function pcSalvarEdicaoTexto() {
+            if (!_pcEdicao) return;
+            const { campo, url, buf } = _pcEdicao;
+            const d = _despesaAtualAnexos();
+            if (!d || d[campo] !== url) { mostrarToast('⚠️ O arquivo mudou enquanto você editava. Abra a edição de novo.', true); return; }
+            const linhas = document.getElementById('pc-edicao-texto').value.replace(/\r/g, '').split('\n');
+            try {
+                mostrarToast('⏳ Salvando texto...');
+                const blob = await _docxAplicarTexto(buf, linhas);
+                await _pcGravarDocxNoSlot(campo, blob);
+                _pcEdicao = null;
+                mostrarToast('✅ Texto salvo no .docx.');
+            } catch (e) {
+                console.error('Erro ao salvar texto do .docx:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function _pcGravarDocxNoSlot(campo, blob) {
+            const prestacaoId = _anexoPrestacaoId, idx = _anexoDespesaIdx;
+            const caminho = `prestacoes-contas/${prestacaoId}/despesas/${idx}/${campo}-${Date.now()}.docx`;
+            const arquivo = new File([blob], `${campo}.docx`, { type: DOCX_MIME });
+            const novaUrl = await _uploadParaStorage(caminho, arquivo);
+            const dAtual = await _atualizarDespesaFirestore(prestacaoId, idx, { [campo]: novaUrl });
+            if (_anexoPrestacaoId === prestacaoId && _anexoDespesaIdx === idx) {
+                _anexoPreviewCampo = campo;
+                _renderCorpoModalAnexos(dAtual);
+            }
+            _renderDetalhePrestacao();
+            return novaUrl;
+        }
+
+        // ── PDF juntado: tudo em folha A4 ────────────────────────────────────────
+        const PC_A4 = { largura: 595.28, altura: 841.89 };
+
+        function _pcFolhaA4(paisagem) {
+            return paisagem ? [PC_A4.altura, PC_A4.largura] : [PC_A4.largura, PC_A4.altura];
+        }
+
+        // Página de PDF: se já for A4 (retrato ou paisagem) e sem rotação, é copiada como
+        // está (texto continua selecionável); senão é reduzida/ampliada para caber numa A4.
+        async function _pcAdicionarPdfA4(destino, bytes) {
+            const { PDFDocument, degrees } = window.PDFLib;
+            const origem = await PDFDocument.load(bytes, { ignoreEncryption: true });
+            const paginas = origem.getPages();
+            for (let i = 0; i < paginas.length; i++) {
+                const pag = paginas[i];
+                const { width: w, height: h } = pag.getSize();
+                const rot = ((pag.getRotation().angle % 360) + 360) % 360;
+                const deitada = rot === 90 || rot === 270;
+                const larguraVis = deitada ? h : w, alturaVis = deitada ? w : h;
+                const paisagem = larguraVis > alturaVis;
+                const [fw, fh] = _pcFolhaA4(paisagem);
+                const jaA4 = rot === 0 && Math.abs(w - fw) / fw < 0.02 && Math.abs(h - fh) / fh < 0.02;
+                if (jaA4) {
+                    const [copia] = await destino.copyPages(origem, [i]);
+                    destino.addPage(copia);
+                    continue;
+                }
+                const embutida = await destino.embedPage(pag);
+                const escala = Math.min(fw / larguraVis, fh / alturaVis);
+                const ox = (fw - larguraVis * escala) / 2, oy = (fh - alturaVis * escala) / 2;
+                const nova = destino.addPage([fw, fh]);
+                const opc = { xScale: escala, yScale: escala };
+                if (rot === 0) Object.assign(opc, { x: ox, y: oy });
+                else if (rot === 90) Object.assign(opc, { x: ox, y: oy + w * escala, rotate: degrees(-90) });
+                else if (rot === 180) Object.assign(opc, { x: ox + w * escala, y: oy + h * escala, rotate: degrees(180) });
+                else Object.assign(opc, { x: ox + h * escala, y: oy, rotate: degrees(90) });
+                nova.drawPage(embutida, opc);
+            }
+        }
+
+        async function _pcAdicionarImagemA4(destino, bytes, ehPng, inteira) {
+            const img = ehPng ? await destino.embedPng(bytes) : await destino.embedJpg(bytes);
+            const paisagem = !inteira && img.width > img.height;
+            const [fw, fh] = _pcFolhaA4(paisagem);
+            const margem = inteira ? 0 : 18;
+            const escala = Math.min((fw - 2 * margem) / img.width, (fh - 2 * margem) / img.height);
+            const w = img.width * escala, h = img.height * escala;
+            destino.addPage([fw, fh]).drawImage(img, { x: (fw - w) / 2, y: (fh - h) / 2, width: w, height: h });
+        }
+
+        function _pcTipoImagem(bytes, url) {
+            const b = new Uint8Array(bytes.slice(0, 4));
+            if (b[0] === 0x89 && b[1] === 0x50) return 'png';
+            if (b[0] === 0xFF && b[1] === 0xD8) return 'jpg';
+            return /\.png(\?|$)/i.test(url) ? 'png' : 'jpg';
+        }
+
+        // ══ "✨ Gerar com Claude" — Justificativa e Atesto a partir do modelo cadastrado ══
+        // (sessão 47) Só aparece para a conta PC_IA_EMAIL. A chave da API fica em
+        // config_privada/anthropic, que o firestore.rules libera só para esse e-mail.
+        // Fluxo: (1) Claude lê o Recibo/NF anexado e devolve os dados em formato fixo;
+        // (2) o próprio site compara com o cadastro da despesa (sem IA) e pergunta o que
+        // divergir ou não puder ser lido; (3) Claude reescreve o modelo .docx do serviço
+        // com os dados confirmados — e pergunta em vez de inventar o que faltar; (4) o texto
+        // é aplicado sobre o próprio .docx do modelo e gravado no slot.
+        const PC_IA_EMAIL = 'bandeira.lkp@gmail.com';
+        const PC_IA_MODELO_PADRAO = 'claude-sonnet-5-5';
+        const PC_IA_DOC_CONFIG = ['config_privada', 'anthropic'];
+        let _pcIaConfigCache = null;
+        let _pcIa = null; // estado do fluxo aberto no painel
+
+        function _pcIaHabilitada() {
+            return !!(currentUser && String(currentUser.email || '').toLowerCase() === PC_IA_EMAIL);
+        }
+
+        async function _pcIaObterConfig(forcar) {
+            if (_pcIaConfigCache && !forcar) return _pcIaConfigCache;
+            const snap = await db.collection(PC_IA_DOC_CONFIG[0]).doc(PC_IA_DOC_CONFIG[1]).get();
+            _pcIaConfigCache = snap.exists ? snap.data() : {};
+            return _pcIaConfigCache;
+        }
+
+        async function pcIaConfigurarChave() {
+            if (!_pcIaHabilitada()) return;
+            let atual = {};
+            try { atual = await _pcIaObterConfig(true); } catch (e) { console.warn('Config da IA não lida:', e); }
+            const chave = prompt('Cole a chave da API da Anthropic (começa com "sk-ant-").\nEla fica guardada no Firestore, visível só para a sua conta.',
+                atual.api_key ? '(mantida — apague e cole outra para trocar)' : '');
+            if (chave === null) return;
+            const limpa = chave.trim();
+            if (!limpa.startsWith('sk-ant-')) {
+                if (limpa.startsWith('(mantida')) return;
+                mostrarToast('⚠️ A chave deve começar com "sk-ant-".', true);
+                return;
+            }
+            try {
+                await db.collection(PC_IA_DOC_CONFIG[0]).doc(PC_IA_DOC_CONFIG[1]).set({
+                    api_key: limpa,
+                    modelo: atual.modelo || PC_IA_MODELO_PADRAO,
+                    atualizado_por: currentUser.email,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                _pcIaConfigCache = null;
+                mostrarToast('✅ Chave da API salva.');
+                if (_pcIa) _pcIaRender();
+            } catch (e) {
+                console.error('Erro ao salvar chave da API:', e);
+                mostrarToast('❌ Não foi possível salvar a chave (' + e.message + '). As regras do Firestore já foram publicadas?', true);
+            }
+        }
+
+        async function _pcIaChamar(system, content, tool) {
+            const cfg = await _pcIaObterConfig();
+            if (!cfg.api_key) throw new Error('Chave da API não cadastrada — use "🔑 Chave da API".');
+            const resp = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                    'x-api-key': cfg.api_key,
+                    'anthropic-version': '2023-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
+                },
+                body: JSON.stringify({
+                    model: cfg.modelo || PC_IA_MODELO_PADRAO,
+                    max_tokens: 8000,
+                    temperature: 0,
+                    system,
+                    tools: [tool],
+                    tool_choice: { type: 'tool', name: tool.name },
+                    messages: [{ role: 'user', content }]
+                })
+            });
+            if (!resp.ok) {
+                let msg = '';
+                try { const j = await resp.json(); msg = (j.error && j.error.message) || ''; } catch (e) { /* corpo não-JSON */ }
+                if (resp.status === 401) msg = 'chave da API inválida ou revogada';
+                throw new Error(`API do Claude (${resp.status}): ${msg || resp.statusText}`);
+            }
+            const j = await resp.json();
+            const bloco = (j.content || []).find(c => c.type === 'tool_use');
+            if (!bloco) throw new Error('resposta do Claude veio sem os dados estruturados');
+            return bloco.input;
+        }
+
+        function _bytesParaBase64(buf) {
+            const b = new Uint8Array(buf);
+            let s = '';
+            for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000));
+            return btoa(s);
+        }
+
+        async function _pcIaBlocoArquivo(url) {
+            const buf = await _baixarArrayBuffer(url);
+            const dados = _bytesParaBase64(buf);
+            if (_ehPdfUrl(url) || new Uint8Array(buf.slice(0, 4)).join(',') === '37,80,68,70') {
+                return { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: dados } };
+            }
+            const b = new Uint8Array(buf.slice(0, 12));
+            let mt = null;
+            if (b[0] === 0x89 && b[1] === 0x50) mt = 'image/png';
+            else if (b[0] === 0xFF && b[1] === 0xD8) mt = 'image/jpeg';
+            else if (b[0] === 0x52 && b[1] === 0x49 && b[8] === 0x57) mt = 'image/webp';
+            else if (b[0] === 0x47 && b[1] === 0x49) mt = 'image/gif';
+            if (!mt) throw new Error('o Recibo/NF precisa estar em PDF, JPG ou PNG para o Claude ler');
+            return { type: 'image', source: { type: 'base64', media_type: mt, data: dados } };
+        }
+
+        // ── Passo A: extração dos dados do comprovante ─────────────────────────
+        const _PC_IA_TOOL_EXTRACAO = {
+            name: 'registrar_dados_comprovante',
+            description: 'Registra os dados lidos do comprovante de despesa (nota fiscal, cupom ou recibo).',
+            input_schema: {
+                type: 'object',
+                properties: {
+                    tipo_documento: { type: 'string', enum: ['nota_fiscal_eletronica', 'nfc_e', 'cupom_fiscal', 'recibo', 'outro'] },
+                    fornecedor_razao_social: { type: ['string', 'null'] },
+                    fornecedor_nome_fantasia: { type: ['string', 'null'] },
+                    fornecedor_cnpj: { type: ['string', 'null'], description: 'CNPJ do emitente/fornecedor, no formato 00.000.000/0000-00' },
+                    fornecedor_cpf: { type: ['string', 'null'] },
+                    fornecedor_municipio: { type: ['string', 'null'] },
+                    numero: { type: ['string', 'null'], description: 'número do documento, sem zeros à esquerda' },
+                    serie: { type: ['string', 'null'] },
+                    data_emissao: { type: ['string', 'null'], description: 'AAAA-MM-DD' },
+                    destinatario_nome: { type: ['string', 'null'] },
+                    destinatario_cnpj: { type: ['string', 'null'] },
+                    natureza_operacao: { type: ['string', 'null'] },
+                    cfop: { type: ['string', 'null'], description: 'CFOP dos itens, ex. 5102' },
+                    forma_pagamento: { type: ['string', 'null'] },
+                    itens: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                descricao: { type: ['string', 'null'] },
+                                quantidade: { type: ['number', 'null'] },
+                                unidade: { type: ['string', 'null'] },
+                                valor_unitario: { type: ['number', 'null'] },
+                                valor_total: { type: ['number', 'null'] }
+                            },
+                            required: ['descricao', 'quantidade', 'valor_unitario', 'valor_total']
+                        }
+                    },
+                    desconto: { type: ['number', 'null'] },
+                    valor_total: { type: ['number', 'null'], description: 'valor total do documento' },
+                    campos_ilegiveis: { type: 'array', items: { type: 'string' }, description: 'campos que existem no documento mas não puderam ser lidos com certeza' },
+                    observacoes: { type: ['string', 'null'] }
+                },
+                required: ['tipo_documento', 'fornecedor_razao_social', 'fornecedor_cnpj', 'numero', 'data_emissao', 'destinatario_cnpj', 'itens', 'valor_total', 'campos_ilegiveis']
+            }
+        };
+
+        const _PC_IA_SYSTEM_EXTRACAO = `Você transcreve comprovantes de despesa (notas fiscais, NFC-e, cupons e recibos manuscritos) para a prestação de contas de um pronto pagamento da Defensoria Pública do Estado do Amazonas.
+Regras obrigatórias:
+- Transcreva exatamente o que está escrito. Nunca deduza, complete, arredonde ou "corrija" um valor.
+- Se um campo existir no documento mas não puder ser lido com certeza (borrado, cortado, manuscrito ambíguo), devolva null e cite o campo em campos_ilegiveis.
+- Se o campo simplesmente não existir no documento, devolva null (sem citar em campos_ilegiveis).
+- Datas no formato AAAA-MM-DD. Valores numéricos com ponto decimal (12.75), sem "R$".
+- Em recibo com carimbo de CNPJ, o CNPJ do carimbo é o do fornecedor.
+- O destinatário/consumidor é quem recebeu a nota (normalmente a Defensoria).`;
+
+        async function _pcIaExtrair(d) {
+            const bloco = await _pcIaBlocoArquivo(d.recibo_url);
+            return await _pcIaChamar(_PC_IA_SYSTEM_EXTRACAO, [
+                bloco,
+                { type: 'text', text: 'Leia este comprovante e registre os dados com a ferramenta registrar_dados_comprovante.' }
+            ], _PC_IA_TOOL_EXTRACAO);
+        }
+
+        // ── Passo B: conferência (sem IA) ─────────────────────────────────────
+        function _iaNorm(s) {
+            return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase()
+                .replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+        function _iaDigitos(s) { return String(s || '').replace(/\D/g, ''); }
+        function _iaNumIgual(a, b) { return a != null && b != null && Math.abs(Number(a) - Number(b)) < 0.005; }
+        function _iaFmtCnpj(s) {
+            const d = _iaDigitos(s);
+            return d.length === 14 ? d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5') : (s || '');
+        }
+        const _IA_PALAVRAS_SOCIETARIAS = ['LTDA', 'ME', 'EPP', 'EIRELI', 'SA', 'S', 'A', 'MEI', 'CIA', 'DE', 'DA', 'DO', 'DAS', 'DOS', 'E'];
+        function _iaFornecedorConfere(cadastro, ...nomesNota) {
+            const pal = s => _iaNorm(s).split(' ').filter(w => w && !_IA_PALAVRAS_SOCIETARIAS.includes(w));
+            const cad = pal(cadastro);
+            if (!cad.length) return false;
+            return nomesNota.filter(Boolean).some(n => {
+                const nota = new Set(pal(n));
+                return cad.filter(w => nota.has(w)).length / cad.length >= 0.6;
+            });
+        }
+        function _iaCfopRemessa(cfop) {
+            const d = _iaDigitos(cfop);
+            return d.length === 4 && /^[1-7]9/.test(d);
+        }
+
+        function _pcIaMontarConferencia(p, d, ex) {
+            const itens = Array.isArray(ex.itens) ? ex.itens : [];
+            const umItem = itens.length === 1 ? itens[0] : null;
+            const fmtData = v => v ? formatarData(v) : '—';
+            const linhas = [];
+            const add = (campo, rotulo, cadastro, nota, ok, extra = {}) => linhas.push({ campo, rotulo, cadastro, nota, ok, ...extra });
+            const leg = v => v == null || v === '';
+
+            // Fornecedor
+            const nomeNota = ex.fornecedor_razao_social || ex.fornecedor_nome_fantasia;
+            add('fornecedor', 'Fornecedor', d.fornecedor || '—', nomeNota || null,
+                !leg(nomeNota) && _iaFornecedorConfere(d.fornecedor, ex.fornecedor_razao_social, ex.fornecedor_nome_fantasia),
+                { editavel: true, valorNota: ex.fornecedor_razao_social || ex.fornecedor_nome_fantasia, valorCadastro: d.fornecedor });
+            // CNPJ do fornecedor
+            const cnpjNota = ex.fornecedor_cnpj ? _iaFmtCnpj(ex.fornecedor_cnpj) : null;
+            if (d.fornecedor_cnpj) {
+                add('fornecedor_cnpj', 'CNPJ do fornecedor', d.fornecedor_cnpj, cnpjNota,
+                    !leg(cnpjNota) && _iaDigitos(cnpjNota) === _iaDigitos(d.fornecedor_cnpj),
+                    { editavel: true, valorNota: cnpjNota, valorCadastro: d.fornecedor_cnpj });
+            } else {
+                add('fornecedor_cnpj', 'CNPJ do fornecedor', '— (não cadastrado)', cnpjNota || (ex.fornecedor_cpf ? 'CPF ' + ex.fornecedor_cpf : null),
+                    !leg(cnpjNota), { editavel: true, valorNota: cnpjNota, valorCadastro: '', semCadastro: true });
+            }
+            // Número
+            const numNota = ex.numero != null ? String(ex.numero) : null;
+            const numIgual = !leg(numNota) && String(_iaDigitos(numNota)).replace(/^0+/, '') === String(_iaDigitos(d.numero)).replace(/^0+/, '') && _iaDigitos(d.numero) !== '';
+            add('numero', 'Nº do comprovante', d.numero || '—', numNota, numIgual, { editavel: true, valorNota: numNota, valorCadastro: d.numero || '' });
+            // Data de emissão
+            add('data_emissao', 'Data de emissão', fmtData(d.data_emissao), ex.data_emissao ? fmtData(ex.data_emissao) : null,
+                !leg(ex.data_emissao) && ex.data_emissao === d.data_emissao,
+                { editavel: true, tipo: 'date', valorNota: ex.data_emissao, valorCadastro: d.data_emissao || '' });
+            // Itens
+            if (itens.length > 1) {
+                add('itens', 'Itens da nota', `1 item: ${d.descricao || '—'}`, itens.map(i => `${i.quantidade ?? '?'} × ${i.descricao || '?'}`).join('; '), false,
+                    { alerta: `A nota tem ${itens.length} itens e o cadastro tem 1. Confira se a despesa cadastrada corresponde à nota inteira.` });
+            }
+            const qtdNota = umItem ? umItem.quantidade : null;
+            const vuNota = umItem ? umItem.valor_unitario : null;
+            if (itens.length <= 1) {
+                add('quantidade', 'Quantidade', String(d.quantidade ?? '—'), qtdNota, _iaNumIgual(qtdNota, d.quantidade),
+                    { editavel: true, tipo: 'number', valorNota: qtdNota, valorCadastro: d.quantidade });
+                add('valor_unitario', 'Valor unitário', formatarMoeda(d.valor_unitario), vuNota != null ? formatarMoeda(vuNota) : null,
+                    _iaNumIgual(vuNota, d.valor_unitario), { editavel: true, tipo: 'number', valorNota: vuNota, valorCadastro: d.valor_unitario });
+            }
+            if (Number(d.desconto) || Number(ex.desconto)) {
+                add('desconto', 'Desconto', formatarMoeda(d.desconto), ex.desconto != null ? formatarMoeda(ex.desconto) : null,
+                    _iaNumIgual(ex.desconto || 0, d.desconto || 0), { editavel: true, tipo: 'number', valorNota: ex.desconto, valorCadastro: d.desconto || 0 });
+            }
+            add('valor_total', 'Valor total', formatarMoeda(d.valor_total), ex.valor_total != null ? formatarMoeda(ex.valor_total) : null,
+                _iaNumIgual(ex.valor_total, d.valor_total), { editavel: true, tipo: 'number', valorNota: ex.valor_total, valorCadastro: d.valor_total });
+
+            // Verificações de regra (não há "valor do cadastro" — só ciência ou cancelamento)
+            const cnpjUg = _iaDigitos((p.unidade_gestora_cnpj || PC_UG_CONCEDENTE_PADRAO.cnpj).split(' ')[0]);
+            const destOk = _iaDigitos(ex.destinatario_cnpj) === cnpjUg;
+            add('destinatario', 'Em nome da DPE/AM', _iaFmtCnpj(cnpjUg), ex.destinatario_cnpj ? `${_iaFmtCnpj(ex.destinatario_cnpj)}${ex.destinatario_nome ? ' — ' + ex.destinatario_nome : ''}` : (ex.destinatario_nome || null),
+                destOk, { alerta: destOk ? null : 'O comprovante precisa estar em nome da Unidade Gestora (CNPJ da DPE/AM). Não foi possível confirmar isso no documento.' });
+            const ini = _pcDataRecebimento(p), fim = p.data_fim_aplicacao;
+            const dataRef = ex.data_emissao || d.data_emissao;
+            if (dataRef && ini && fim) {
+                const dentro = dataRef >= ini && dataRef <= fim;
+                add('periodo', 'Dentro do período de aplicação', `${fmtData(ini)} a ${fmtData(fim)}`, fmtData(dataRef), dentro,
+                    { alerta: dentro ? null : 'A data do comprovante está fora do período de aplicação do pronto pagamento.' });
+            }
+            if (ex.cfop || ex.natureza_operacao) {
+                const remessa = _iaCfopRemessa(ex.cfop) || /remessa|comodato|bonifica|devolu/i.test(ex.natureza_operacao || '');
+                add('cfop', 'Operação de venda', 'venda', (ex.natureza_operacao && ex.cfop && ex.natureza_operacao.includes(_iaDigitos(ex.cfop))) ? ex.natureza_operacao : [ex.cfop, ex.natureza_operacao].filter(Boolean).join(' – '), !remessa,
+                    { alerta: remessa ? 'A natureza da operação não é de venda (ex.: CFOP 5920 = remessa de vasilhame). Pode ser preciso nota de venda ou declaração do fornecedor.' : null });
+            }
+            if (ex.tipo_documento === 'recibo' && (cnpjNota || d.fornecedor_cnpj)) {
+                add('recibo_cnpj', 'Recibo de empresa com CNPJ', '—', 'recibo simples', false,
+                    { alerta: 'Fornecedor com CNPJ deveria emitir nota fiscal. Se não houver nota, a justificativa deve explicar o motivo.' });
+            }
+            if ((ex.campos_ilegiveis || []).length) {
+                add('ilegiveis', 'Trechos não lidos com certeza', '—', ex.campos_ilegiveis.join(', '), false,
+                    { alerta: 'O Claude não conseguiu ler esses trechos com segurança. Confira no documento.' });
+            }
+            return linhas;
+        }
+
+        // ── Fluxo no painel da direita do modal de Anexos ─────────────────────────
+        function _pcIaModeloDaDespesa(p, d, campo) {
+            const lista = _pcModelos[p.categoria] || [];
+            const servico = lista.find(s => s.servico === d.modelo_servico);
+            if (!servico) return { erro: d.modelo_servico ? `O modelo "${d.modelo_servico}" não existe mais em Modelos de Documentos.` : 'Escolha o modelo desta despesa no cadastro (✏️ Editar despesa → "Modelo de documentos").' };
+            const tipo = campo === 'atesto_url' ? 'atesto' : 'justificativa';
+            const url = servico[`${tipo}_url`];
+            if (!url) return { erro: `O serviço "${servico.servico}" ainda não tem modelo de ${tipo === 'atesto' ? 'Atesto' : 'Justificativa'} anexado.` };
+            const nome = servico[`${tipo}_nome`] || '';
+            if (!/\.docx$/i.test(nome) && !_ehDocxUrl(url)) return { erro: `O modelo de ${tipo} de "${servico.servico}" precisa ser um arquivo .docx.` };
+            return { servico, url, tipo };
+        }
+
+        async function pcIaIniciar(campo) {
+            if (!_pcIaHabilitada()) return;
+            const p = prestacoesContas.find(x => x.id === _anexoPrestacaoId);
+            const d = _despesaAtualAnexos();
+            if (!p || !d) return;
+            _anexoPreviewCampo = null;
+            _pcEdicao = null;
+            _pcIa = { campo, prestacaoId: p.id, idx: _anexoDespesaIdx, etapa: 'inicio', erro: null, perguntas: [], respostas: [], rodadas: 0 };
+            if (!d.recibo_url) { _pcIa.etapa = 'erro'; _pcIa.erro = 'Anexe primeiro o Recibo / Nota Fiscal — é dele que os dados são lidos.'; return _pcIaRender(); }
+            const modelo = _pcIaModeloDaDespesa(p, d, campo);
+            if (modelo.erro) { _pcIa.etapa = 'erro'; _pcIa.erro = modelo.erro; return _pcIaRender(); }
+            _pcIa.modelo = modelo;
+            let cfg = {};
+            try { cfg = await _pcIaObterConfig(); }
+            catch (e) { _pcIa.etapa = 'erro'; _pcIa.erro = 'Não foi possível ler a configuração da IA (' + e.message + '). As regras do Firestore foram publicadas?'; return _pcIaRender(); }
+            if (!cfg.api_key) { _pcIa.etapa = 'sem_chave'; return _pcIaRender(); }
+
+            // Reaproveita a leitura já conferida se o Recibo/NF não mudou.
+            const salva = d.ia_conferencia;
+            if (salva && salva.recibo_url === d.recibo_url && salva.extraido) {
+                _pcIa.extraido = salva.extraido;
+                _pcIa.preConfirmado = salva.confirmados || null;
+                _pcIa.etapa = 'conferencia';
+                _pcIa.conferencia = _pcIaMontarConferencia(p, d, salva.extraido);
+                return _pcIaRender();
+            }
+            await _pcIaLerComprovante();
+        }
+
+        async function _pcIaLerComprovante() {
+            const p = prestacoesContas.find(x => x.id === _pcIa.prestacaoId);
+            const d = (p.despesas || [])[_pcIa.idx];
+            _pcIa.etapa = 'lendo';
+            _pcIa.preConfirmado = null;
+            _pcIaRender();
+            const meu = _pcIa;
+            try {
+                const ex = await _pcIaExtrair(d);
+                if (_pcIa !== meu) return;
+                _pcIa.extraido = ex;
+                _pcIa.conferencia = _pcIaMontarConferencia(p, d, ex);
+                _pcIa.etapa = 'conferencia';
+            } catch (e) {
+                if (_pcIa !== meu) return;
+                console.error('Erro na leitura do comprovante:', e);
+                _pcIa.etapa = 'erro';
+                _pcIa.erro = 'Não foi possível ler o Recibo/NF: ' + e.message;
+            }
+            _pcIaRender();
+        }
+
+        function pcIaFechar() {
+            _pcIa = null;
+            const d = _despesaAtualAnexos();
+            if (d) document.getElementById('pc-anexo-preview-painel').innerHTML = _painelPreviewHtml(d);
+        }
+
+        function _pcIaCabecalho(titulo) {
+            const rotulo = _pcIa && _pcIa.campo === 'atesto_url' ? 'Atesto' : 'Justificativa';
+            return `<div class="pc-anexo-preview-header">
+                <span class="pc-anexo-preview-nome">✨ ${esc(titulo || ('Gerar ' + rotulo + ' com Claude'))}</span>
+                <div class="pc-anexo-preview-acoes">
+                    <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="pcIaConfigurarChave()">🔑 Chave da API</button>
+                    <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="pcIaFechar()">✕ Fechar</button>
+                </div>
+            </div>`;
+        }
+
+        function _pcIaRender() {
+            const painel = document.getElementById('pc-anexo-preview-painel');
+            if (!painel || !_pcIa) return;
+            const ia = _pcIa;
+            let corpo = '';
+            if (ia.etapa === 'erro') {
+                corpo = `<div class="pc-ia-msg pc-ia-erro">❌ ${esc(ia.erro)}</div>`;
+            } else if (ia.etapa === 'sem_chave') {
+                corpo = `<div class="pc-ia-msg">🔑 Nenhuma chave da API cadastrada ainda.<br><br>
+                    <button class="btn-editar" onclick="pcIaConfigurarChave()">Cadastrar chave da API</button></div>`;
+            } else if (ia.etapa === 'lendo') {
+                corpo = `<div class="pc-ia-msg">⏳ O Claude está lendo o Recibo / Nota Fiscal...</div>`;
+            } else if (ia.etapa === 'conferencia') {
+                corpo = _pcIaHtmlConferencia();
+            } else if (ia.etapa === 'gerando') {
+                corpo = `<div class="pc-ia-msg">⏳ O Claude está redigindo a partir do modelo "${esc(ia.modelo.servico.servico)}"...</div>`;
+            } else if (ia.etapa === 'perguntas') {
+                corpo = _pcIaHtmlPerguntas();
+            } else if (ia.etapa === 'salvando') {
+                corpo = `<div class="pc-ia-msg">⏳ Montando o .docx sobre o modelo e salvando...</div>`;
+            }
+            painel.innerHTML = _pcIaCabecalho() + `<div class="pc-ia-corpo">${corpo}</div>`;
+            if (ia.etapa === 'conferencia' || ia.etapa === 'perguntas' || ia.etapa === 'erro' || ia.etapa === 'sem_chave') _pcMostrarPainelPreview();
+        }
+
+        function _pcIaHtmlConferencia() {
+            const ia = _pcIa;
+            const pend = ia.conferencia.filter(l => !l.ok);
+            const pre = ia.preConfirmado || {};
+            const linhasTabela = ia.conferencia.map(l => `<tr class="${l.ok ? 'pc-ia-ok' : 'pc-ia-div'}">
+                    <td>${l.ok ? '✅' : '⚠️'}</td><td>${esc(l.rotulo)}</td>
+                    <td>${esc(String(l.cadastro ?? '—'))}</td>
+                    <td>${l.nota == null || l.nota === '' ? '<em>não lido</em>' : esc(String(l.nota))}</td></tr>`).join('');
+            const perguntas = pend.map((l, k) => {
+                const nome = `pc-ia-q-${l.campo}`;
+                if (l.alerta && !l.editavel) {
+                    const marcado = pre[l.campo] === 'ciente' ? 'checked' : '';
+                    return `<div class="pc-ia-pergunta"><div><strong>${esc(l.rotulo)}:</strong> ${esc(l.alerta)}</div>
+                        <label><input type="checkbox" name="${nome}" data-campo="${l.campo}" data-tipo="ciente" ${marcado}> Estou ciente — pode continuar</label></div>`;
+                }
+                const tipo = l.tipo === 'date' ? 'date' : (l.tipo === 'number' ? 'number" step="0.01' : 'text');
+                const temNota = l.valorNota != null && l.valorNota !== '';
+                const temCad = !l.semCadastro && l.valorCadastro != null && l.valorCadastro !== '';
+                const fmt = v => l.tipo === 'date' ? formatarData(v) : (l.tipo === 'number' && l.campo !== 'quantidade' ? formatarMoeda(v) : String(v));
+                const valorPre = pre[l.campo];
+                return `<div class="pc-ia-pergunta"><div><strong>${esc(l.rotulo)}</strong>${l.nota == null || l.nota === '' ? ' — não foi possível ler no documento' : ' — nota e cadastro não batem'}. Qual valor usar?</div>
+                    ${temNota ? `<label><input type="radio" name="${nome}" value="nota" data-campo="${l.campo}"> Da nota: <strong>${esc(fmt(l.valorNota))}</strong></label>` : ''}
+                    ${temCad ? `<label><input type="radio" name="${nome}" value="cadastro" data-campo="${l.campo}"> Do cadastro: <strong>${esc(fmt(l.valorCadastro))}</strong></label>` : ''}
+                    <label><input type="radio" name="${nome}" value="outro" data-campo="${l.campo}"> Outro: <input type="${tipo}" class="pc-ia-outro" id="${nome}-outro" value="${valorPre != null ? _escAttr(String(valorPre)) : ''}" oninput="document.querySelector('input[name=${nome}][value=outro]').checked=true"></label>
+                    ${l.alerta ? `<div class="pc-ia-obs">${esc(l.alerta)}</div>` : ''}</div>`;
+            }).join('');
+            return `<p class="pc-ia-sub">Dados lidos do Recibo/NF comparados com o cadastro da despesa. Modelo: <strong>${esc(ia.modelo.servico.servico)}</strong>.</p>
+                <div class="pc-ia-tabela-wrap"><table class="pc-ia-tabela"><thead><tr><th></th><th>Campo</th><th>Cadastro</th><th>Recibo / NF</th></tr></thead><tbody>${linhasTabela}</tbody></table></div>
+                ${pend.length ? `<h4 class="pc-ia-h4">Antes de gerar, responda:</h4>${perguntas}
+                    <label class="pc-ia-check"><input type="checkbox" id="pc-ia-atualizar-cadastro" checked> Atualizar o cadastro da despesa com os valores escolhidos</label>`
+                    : '<div class="pc-ia-msg pc-ia-tudo-ok">✅ Tudo confere com o cadastro.</div>'}
+                <label class="pc-ia-label">Instruções adicionais para o Claude (opcional)</label>
+                <textarea id="pc-ia-instrucoes" class="pc-ia-instrucoes" placeholder="Ex.: mencionar que a entrega foi feita no PAV de Urucará">${esc(ia.instrucoes || '')}</textarea>
+                <div class="pc-ia-acoes">
+                    <button class="btn-editar" onclick="_pcIaLerComprovante()">🔄 Ler a nota de novo</button>
+                    <button class="btn-editar pc-btn-ia" onclick="pcIaConfirmarConferencia()">✨ Gerar ${ia.campo === 'atesto_url' ? 'Atesto' : 'Justificativa'}</button>
+                </div>`;
+        }
+
+        async function pcIaConfirmarConferencia() {
+            const ia = _pcIa;
+            if (!ia) return;
+            const p = prestacoesContas.find(x => x.id === ia.prestacaoId);
+            const d = (p.despesas || [])[ia.idx];
+            const escolhas = {};
+            const faltando = [];
+            for (const l of ia.conferencia.filter(x => !x.ok)) {
+                const nome = `pc-ia-q-${l.campo}`;
+                if (l.alerta && !l.editavel) {
+                    const cb = document.querySelector(`input[name="${nome}"]`);
+                    if (!cb || !cb.checked) faltando.push(l.rotulo); else escolhas[l.campo] = 'ciente';
+                    continue;
+                }
+                const sel = document.querySelector(`input[name="${nome}"]:checked`);
+                if (!sel) { faltando.push(l.rotulo); continue; }
+                let v;
+                if (sel.value === 'nota') v = l.valorNota;
+                else if (sel.value === 'cadastro') v = l.valorCadastro;
+                else {
+                    v = document.getElementById(`${nome}-outro`).value.trim();
+                    if (v === '') { faltando.push(l.rotulo); continue; }
+                    if (l.tipo === 'number') v = Number(v);
+                }
+                escolhas[l.campo] = v;
+            }
+            if (faltando.length) { mostrarToast('⚠️ Responda antes de continuar: ' + faltando.join(', '), true); return; }
+            ia.instrucoes = (document.getElementById('pc-ia-instrucoes') || {}).value || '';
+
+            // Dados confirmados = cadastro + escolhas
+            const conf = {
+                tipo_comprovante: d.tipo, numero: d.numero, data_emissao: d.data_emissao,
+                fornecedor: d.fornecedor, fornecedor_cnpj: d.fornecedor_cnpj || _iaFmtCnpj(ia.extraido.fornecedor_cnpj) || null,
+                descricao: d.descricao, quantidade: d.quantidade, valor_unitario: d.valor_unitario,
+                desconto: d.desconto || 0, valor_total: d.valor_total
+            };
+            const camposCadastro = ['fornecedor', 'fornecedor_cnpj', 'numero', 'data_emissao', 'quantidade', 'valor_unitario', 'desconto', 'valor_total'];
+            const patchCadastro = {};
+            for (const [k, v] of Object.entries(escolhas)) {
+                if (!camposCadastro.includes(k)) continue;
+                conf[k] = v;
+                if (String(d[k] ?? '') !== String(v ?? '')) patchCadastro[k] = v;
+            }
+            ia.avisosCiente = ia.conferencia.filter(l => l.alerta && !l.editavel && escolhas[l.campo] === 'ciente').map(l => `${l.rotulo}: ${l.alerta}`);
+            ia.confirmados = conf;
+            ia.dadosExtras = {
+                fornecedor_razao_social_na_nota: ia.extraido.fornecedor_razao_social || null,
+                fornecedor_nome_fantasia: ia.extraido.fornecedor_nome_fantasia || null,
+                fornecedor_municipio: ia.extraido.fornecedor_municipio || null,
+                itens_da_nota: ia.extraido.itens || [],
+                forma_pagamento: ia.extraido.forma_pagamento || null,
+                natureza_operacao: ia.extraido.natureza_operacao || null
+            };
+
+            const atualizarCad = (document.getElementById('pc-ia-atualizar-cadastro') || {}).checked;
+            const patch = {
+                ia_conferencia: {
+                    recibo_url: d.recibo_url, extraido: ia.extraido, confirmados: escolhas,
+                    em: new Date().toISOString()
+                }
+            };
+            if (atualizarCad && Object.keys(patchCadastro).length) {
+                Object.assign(patch, patchCadastro);
+                if (patch.quantidade != null || patch.valor_unitario != null || patch.desconto != null) {
+                    const q = patch.quantidade ?? d.quantidade, vu = patch.valor_unitario ?? d.valor_unitario, ds = patch.desconto ?? d.desconto ?? 0;
+                    if (patch.valor_total == null) patch.valor_total = Number((q * vu - ds).toFixed(2));
+                }
+            }
+            if (!d.fornecedor_cnpj && conf.fornecedor_cnpj) patch.fornecedor_cnpj = conf.fornecedor_cnpj;
+            try {
+                await _atualizarDespesaFirestore(ia.prestacaoId, ia.idx, patch);
+                if (Object.keys(patchCadastro).length && atualizarCad) _renderDetalhePrestacao();
+            } catch (e) {
+                console.error('Erro ao gravar conferência:', e);
+                mostrarToast('⚠️ Não foi possível gravar a conferência (' + e.message + '), mas a geração continua.', true);
+            }
+            await _pcIaGerar();
+        }
+
+        // ── Passo D: geração do texto a partir do modelo ───────────────────────
+        const _PC_IA_TOOL_GERACAO = {
+            name: 'entregar_documento',
+            description: 'Entrega o texto do documento pronto, parágrafo por parágrafo, ou as perguntas que precisam ser respondidas antes.',
+            input_schema: {
+                type: 'object',
+                properties: {
+                    status: { type: 'string', enum: ['pronto', 'perguntas'] },
+                    paragrafos: {
+                        type: 'array',
+                        description: 'Todos os parágrafos do documento final, na ordem. Inclua também os vazios e os da assinatura.',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                modelo: { type: 'integer', description: 'índice [n] do parágrafo do modelo cuja formatação deve ser usada' },
+                                texto: { type: 'string' }
+                            },
+                            required: ['modelo', 'texto']
+                        }
+                    },
+                    perguntas: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                id: { type: 'string' },
+                                pergunta: { type: 'string' },
+                                sugestoes: { type: 'array', items: { type: 'string' } }
+                            },
+                            required: ['id', 'pergunta']
+                        }
+                    },
+                    observacoes: { type: 'string', description: 'avisos curtos para a usuária sobre o texto gerado (opcional)' }
+                },
+                required: ['status']
+            }
+        };
+
+        function _pcIaDataExtenso(iso) {
+            const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            const [a, m, d] = iso.split('-').map(Number);
+            return `${d} de ${meses[m - 1]} de ${a}`;
+        }
+
+        function _pcIaHojeIso() {
+            const h = new Date();
+            return `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}-${String(h.getDate()).padStart(2, '0')}`;
+        }
+
+        async function _pcIaGerar() {
+            const ia = _pcIa;
+            const p = prestacoesContas.find(x => x.id === ia.prestacaoId);
+            ia.etapa = 'gerando';
+            _pcIaRender();
+            try {
+                if (!ia.modeloBuf) ia.modeloBuf = await _baixarArrayBuffer(ia.modelo.url);
+                const paragrafos = await _docxTextoParagrafos(ia.modeloBuf);
+                const tipoNome = ia.tipo === 'atesto' || ia.modelo.tipo === 'atesto' ? 'ATESTO DE RECEBIMENTO' : 'JUSTIFICATIVA';
+                const hoje = _pcIaHojeIso();
+                const system = `Você redige documentos de prestação de contas de pronto pagamento (suprimento de fundos) da Defensoria Pública do Estado do Amazonas — Polo do Médio Amazonas, a partir de um MODELO já aprovado.
+Regras obrigatórias:
+1. Mantenha a redação, a estrutura e a ordem do modelo. Altere somente o que depende desta despesa: fornecedor, CNPJ, tipo e número do comprovante, quantidades, valores (sempre com o valor por extenso entre parênteses, como no modelo), datas, unidade/município e descrição do material — e só quando os dados fornecidos indicarem.
+2. NUNCA invente informação. Se o documento precisar de um dado que não está nos dados confirmados, nas respostas da usuária ou no próprio modelo (por exemplo: data de recebimento do material, quem atesta, quantos fornecedores foram consultados e quais, data da pesquisa, município/unidade de entrega quando diferente do modelo), devolva status "perguntas" com perguntas curtas e objetivas, com sugestões quando houver opções prováveis. Não pergunte o que já foi informado.
+3. Quando o modelo traz um dado de outra despesa que não pode ser confirmado pelos dados desta (ex.: outro município ou outra quantidade de fornecedores pesquisados), pergunte em vez de manter ou trocar por conta própria.
+4. Datas por extenso no padrão "18 de setembro de 2026". A data da linha de local e data do documento é a de hoje (${_pcIaDataExtenso(hoje)}), salvo resposta diferente.
+5. Valores no padrão brasileiro "R$ 1.234,56" e por extenso corretos.
+6. Devolva TODOS os parágrafos do documento final (inclusive os vazios e os da assinatura), cada um com o índice [n] do parágrafo do modelo cuja formatação deve ser usada (normalmente o mesmo parágrafo correspondente do modelo). Não acrescente parágrafos novos, salvo se as instruções da usuária pedirem.
+7. Não use marcações (asteriscos, markdown). Texto puro.`;
+                const ctx = {
+                    documento: tipoNome,
+                    servico_do_modelo: ia.modelo.servico.servico,
+                    categoria: PC_CATEGORIA_LABELS[p.categoria] || p.categoria,
+                    tomador_do_pronto_pagamento: p.tomador,
+                    processo_sei: p.processo_sei || null,
+                    periodo_de_aplicacao: { inicio: _pcDataRecebimento(p), fim: p.data_fim_aplicacao },
+                    usuaria_que_gera: 'Luma Karolyne Pantoja Bandeira (Assistente Técnica de Defensoria, matrícula 000.498-7A)',
+                    hoje,
+                    dados_confirmados_da_despesa: ia.confirmados,
+                    dados_extras_lidos_do_comprovante: ia.dadosExtras,
+                    avisos_que_a_usuaria_declarou_ciencia: ia.avisosCiente || [],
+                    respostas_da_usuaria: ia.respostas,
+                    instrucoes_adicionais: ia.instrucoes || null
+                };
+                const texto = `MODELO (parágrafos numerados):\n${paragrafos.map((t, i) => `[${i}] ${t}`).join('\n')}\n\nCONTEXTO E DADOS (JSON):\n${JSON.stringify(ctx, null, 2)}\n\nGere o documento com a ferramenta entregar_documento.`;
+                const meu = ia;
+                const r = await _pcIaChamar(system, [{ type: 'text', text: texto }], _PC_IA_TOOL_GERACAO);
+                if (_pcIa !== meu) return;
+                ia.rodadas++;
+                if (r.status === 'perguntas' && (r.perguntas || []).length) {
+                    if (ia.rodadas > 5) throw new Error('o Claude continuou pedindo informações depois de 5 rodadas — revise o modelo ou as instruções');
+                    ia.perguntas = r.perguntas;
+                    ia.etapa = 'perguntas';
+                    return _pcIaRender();
+                }
+                if (!Array.isArray(r.paragrafos) || !r.paragrafos.length) throw new Error('o Claude não devolveu o texto do documento');
+                ia.observacoes = r.observacoes || '';
+                await _pcIaSalvar(r.paragrafos);
+            } catch (e) {
+                console.error('Erro ao gerar documento:', e);
+                if (_pcIa === ia) { ia.etapa = 'erro'; ia.erro = 'Não foi possível gerar o documento: ' + e.message; _pcIaRender(); }
+            }
+        }
+
+        function _pcIaHtmlPerguntas() {
+            const ia = _pcIa;
+            return `<p class="pc-ia-sub">O Claude precisa destas informações para não inventar nada:</p>
+                ${ia.perguntas.map((q, i) => `<div class="pc-ia-pergunta">
+                    <div><strong>${esc(q.pergunta)}</strong></div>
+                    ${(q.sugestoes || []).length ? `<div class="pc-ia-sugestoes">${q.sugestoes.map(s => `<button type="button" class="pc-ia-chip" onclick="document.getElementById('pc-ia-resp-${i}').value=this.textContent">${esc(s)}</button>`).join('')}</div>` : ''}
+                    <input type="text" class="pc-ia-resposta" id="pc-ia-resp-${i}" placeholder="Sua resposta">
+                </div>`).join('')}
+                <div class="pc-ia-acoes">
+                    <button class="btn-editar pc-btn-ia" onclick="pcIaResponderPerguntas()">Enviar respostas</button>
+                </div>`;
+        }
+
+        async function pcIaResponderPerguntas() {
+            const ia = _pcIa;
+            if (!ia) return;
+            const novas = [];
+            for (let i = 0; i < ia.perguntas.length; i++) {
+                const v = document.getElementById(`pc-ia-resp-${i}`).value.trim();
+                if (!v) { mostrarToast('⚠️ Responda todas as perguntas.', true); return; }
+                novas.push({ pergunta: ia.perguntas[i].pergunta, resposta: v });
+            }
+            ia.respostas.push(...novas);
+            ia.perguntas = [];
+            await _pcIaGerar();
+        }
+
+        async function _pcIaSalvar(paragrafos) {
+            const ia = _pcIa;
+            const p = prestacoesContas.find(x => x.id === ia.prestacaoId);
+            const d = (p.despesas || [])[ia.idx];
+            if (d[ia.campo] && !confirm('Este slot já tem um arquivo. Substituir pelo documento gerado pelo Claude?')) {
+                ia.etapa = 'erro'; ia.erro = 'Geração cancelada — o arquivo atual foi mantido.'; return _pcIaRender();
+            }
+            ia.etapa = 'salvando';
+            _pcIaRender();
+            const blob = await _docxAplicarTexto(ia.modeloBuf, paragrafos.map(x => ({ texto: x.texto, modelo: x.modelo })));
+            if (_anexoPrestacaoId !== ia.prestacaoId || _anexoDespesaIdx !== ia.idx) throw new Error('o modal de anexos foi trocado durante a geração');
+            await _pcGravarDocxNoSlot(ia.campo, blob);
+            const obs = ia.observacoes;
+            _pcIa = null;
+            _visualizarAnexoCampo(ia.campo);
+            mostrarToast(obs ? `✅ Documento gerado. Observação do Claude: ${obs}` : '✅ Documento gerado — confira e use "✏️ Editar texto" se precisar ajustar.');
         }
 
         // ── Upload para Firebase Storage ──────────────────────────────────
@@ -13154,6 +14353,15 @@
 
         async function _uploadSlotSimples(campo, file) {
             if (!file) return;
+            const ehDocx = /\.docx$/i.test(file.name);
+            if (/\.doc$/i.test(file.name)) {
+                mostrarToast('⚠️ Formato .doc antigo não é aceito — salve como .docx ou PDF.', true);
+                return;
+            }
+            if (ehDocx && !PC_CAMPOS_DOCX.includes(campo)) {
+                mostrarToast('⚠️ Este anexo aceita só PDF ou imagem.', true);
+                return;
+            }
             try {
                 mostrarToast('⏳ Enviando arquivo...');
                 const caminho = `prestacoes-contas/${_anexoPrestacaoId}/despesas/${_anexoDespesaIdx}/${campo}-${Date.now()}${_extensaoArquivo(file)}`;

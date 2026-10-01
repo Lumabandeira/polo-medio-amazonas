@@ -4,6 +4,19 @@
 
 ---
 
+## Sessão 47 — 01/10/2026
+
+- **Prestação de Contas → Anexos:** Justificativa e Atesto aceitam .docx (aviso "sem
+  assinatura"), pré-visualização com cabeçalho/rodapé, "✏️ Editar texto" (texto puro, preserva
+  formatação do Word) e "🧷 Baixar anexos em 1 PDF" convertendo .docx em páginas e padronizando
+  tudo em A4 (PDF fora do padrão, página girada, foto).
+- **"✨ Gerar com Claude"** (só bandeira.lkp@gmail.com): lê o Recibo/NF, confere com o cadastro
+  sem IA (inclui CFOP de remessa, destinatário, período de aplicação), pergunta divergências e o
+  que faltar, e gera Justificativa/Atesto em .docx sobre o modelo do serviço. Campos novos no
+  cadastro da despesa (CNPJ do fornecedor, Modelo de documentos) e coleção `config_privada`
+  com regra própria no `firestore.rules` (precisa `firebase deploy --only firestore:rules`).
+- Detalhes: `docs/site/estrutura-html.md` (Prestação de Contas) e `docs/firebase.md`.
+
 ## Sessão 44 — 28/09/2026
 
 > Sessões 37–43 estão detalhadas só no `CLAUDE.md` (seção "Estado atual").

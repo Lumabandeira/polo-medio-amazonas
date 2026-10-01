@@ -569,6 +569,65 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   crescer além do espaço disponível; `min-width: 0` em `.form-group` (aplicado a todos os modais de
   formulário do site, não só a este) resolve na raiz.
 
+- **Justificativa/Atesto em .docx, edição de texto e "✨ Gerar com Claude" (sessão 47)** — código
+  no bloco "Justificativa/Atesto em .docx" e "Gerar com Claude" de `index.html` (antes de
+  "Upload para Firebase Storage"):
+  - **Slots aceitam .docx:** só `justificativa_url`/`atesto_url` (`PC_CAMPOS_DOCX`); os outros
+    continuam PDF/imagem (`_uploadSlotSimples()` recusa .docx fora deles e .doc antigo em todos).
+    Cada slot guarda só o último arquivo enviado. Um .docx mostra "📝 .docx sem assinatura" no
+    status e ganha o botão "✏️ Editar texto". A pré-visualização do painel desenha o .docx com
+    docx-preview **com** cabeçalho e rodapé (`_posRenderPainelPreview()` → `_docxRenderizar()`),
+    reduzido à largura do painel (`_docxAjustarLargura()`, `zoom`). O CSS global de `header` do
+    site (faixa azul do topo) vazava para o `<header>` do Word desenhado — neutralizado em
+    `section.docx > header/footer`.
+  - **Edição de texto** (`pcEditarTextoAnexo()`/`pcSalvarEdicaoTexto()`): textarea no painel, uma
+    linha = um parágrafo do corpo do Word; Enter cria parágrafo novo. Ao salvar,
+    `_docxAplicarTexto(buf, linhas)` regrava só o `word/document.xml`: parágrafos iguais ao
+    original (casados por LCS) ficam com o XML intacto; parágrafo alterado herda o `pPr` e a
+    formatação caractere a caractere do original via diff por palavra (`_docxFormatarTextoNovo()`
+    — trecho substituído herda a formatação do que saiu, trecho só acrescentado herda a do
+    caractere anterior; pontuação é token separado). Parágrafo novo herda o parágrafo de cima.
+    Tabelas/imagens/campos ficam "ancorados" ao parágrafo editável anterior e não são tocados;
+    cabeçalho, rodapé, estilos e `sectPr` nunca são alterados. Grava um arquivo novo no Storage
+    (`_pcGravarDocxNoSlot()`) e troca a URL do slot. Disponível para qualquer admin.
+  - **"Baixar anexos em 1 PDF" sempre em A4:** `_pcAdicionarPdfA4()` copia como está a página que
+    já é A4 (retrato ou paisagem, sem rotação — texto continua selecionável) e redimensiona/
+    centraliza as demais numa folha A4 na mesma orientação, respeitando `/Rotate`;
+    `_pcAdicionarImagemA4()` centraliza foto numa A4 com margem; .docx vira imagem por página
+    (`_docxParaImagens()`: docx-preview fora da tela → `_docxPaginar()` divide páginas que
+    "transbordam", já que o docx-preview só quebra em quebra explícita, repetindo cabeçalho e
+    rodapé sem cortar parágrafo → html2canvas `scale: 2`). Toast avisa quais itens foram em .docx
+    (sem assinatura). html2canvas carregado sob demanda (`PC_LIB_HTML2CANVAS`).
+  - **"✨ Gerar com Claude"** (só para `PC_IA_EMAIL` = bandeira.lkp@gmail.com, `_pcIaHabilitada()`):
+    botão nos slots de Justificativa e Atesto. Pré-requisitos: Recibo/NF anexado (PDF/JPG/PNG),
+    campo "Modelo de documentos" preenchido no cadastro da despesa (`modelo_servico` = nome do
+    serviço em Modelos de Documentos da mesma categoria, modelo em .docx) e chave da API em
+    `config_privada/anthropic` (botão "🔑 Chave da API" no painel; `pcIaConfigurarChave()`).
+    Fluxo no painel da direita (`_pcIa`, `_pcIaRender()`):
+    (1) **Leitura** — `_pcIaExtrair()` manda o arquivo (bloco `document`/`image`) ao Claude com
+    a ferramenta `registrar_dados_comprovante` (saída estruturada, `temperature: 0`; instrução de
+    devolver `null` e listar em `campos_ilegiveis` o que não ler com certeza). Chamada direta do
+    navegador (`anthropic-dangerous-direct-browser-access`), modelo `PC_IA_MODELO_PADRAO` ou o
+    `modelo` gravado no doc de config. (2) **Conferência sem IA** — `_pcIaMontarConferencia()`
+    compara fornecedor (palavras, ignorando LTDA/EIRELI/acentos), CNPJ, nº, data, quantidade,
+    valor unitário, desconto e total com o cadastro, e verifica destinatário = CNPJ da UG,
+    data dentro do período de aplicação, CFOP de remessa (5.9xx/6.9xx) e recibo de empresa com
+    CNPJ. Divergência ou campo não lido vira pergunta (nota / cadastro / outro); alerta de regra
+    exige marcar "Estou ciente". Opção (marcada) de atualizar o cadastro com os valores
+    escolhidos. A leitura fica salva em `despesas[].ia_conferencia` e é reaproveitada enquanto o
+    `recibo_url` não mudar ("🔄 Ler a nota de novo" força). (3) **Geração** — `_pcIaGerar()` manda
+    os parágrafos numerados do modelo + dados confirmados + respostas + instruções opcionais,
+    ferramenta `entregar_documento`: devolve `status: "perguntas"` (nunca inventar: data de
+    recebimento, quem atesta, fornecedores pesquisados etc.) ou `paragrafos[{modelo, texto}]`;
+    perguntas aparecem com sugestões clicáveis e voltam ao Claude (máx. 5 rodadas). (4) **Montagem**
+    — `_docxAplicarTexto(modeloBuf, paragrafos)` usa o índice `modelo` de cada parágrafo para
+    herdar a formatação do parágrafo do modelo; confirma antes de substituir arquivo já existente
+    no slot. O resultado é .docx (sem assinatura) e pode ser ajustado em "✏️ Editar texto".
+  - **Cadastro da despesa:** campos "CNPJ do Fornecedor" (`fd-cnpj` → `fornecedor_cnpj`) e
+    "Modelo de documentos" (`fd-modelo-servico` → `modelo_servico`, opções = serviços da
+    categoria do pronto pagamento) só aparecem e só são gravados para `PC_IA_EMAIL`
+    (`_fdPrepararCamposIa()`); outros admins salvam a despesa sem apagar esses campos.
+
 ## Viagens e Eventos (`#viagens-eventos`)
 
 Botão visível a **todos os usuários logados** (viewer e admin), diferente de Prestação de

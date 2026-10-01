@@ -264,9 +264,14 @@ despesas: [
     justificativa_url: "https://..." | null,
     atesto_url: "https://..." | null,
     fotos_urls: ["https://...", ...],
-    outros_documentos: [{ nome: "...", url: "https://..." }]
+    outros_documentos: [{ nome: "...", url: "https://..." }],
+    // sessão 47 — só gravados pela conta PC_IA_EMAIL ("✨ Gerar com Claude"):
+    fornecedor_cnpj: "17.980.600/0001-66" | null,
+    modelo_servico: "Água mineral - PAV Urucará" | null,   ← nome do serviço em secoes/prestacao_contas_modelos (mesma categoria)
+    ia_conferencia: { recibo_url, extraido: {...dados lidos pelo Claude}, confirmados: {campo: valor|"ciente"}, em: ISO } | ausente
   }
 ]
+// justificativa_url / atesto_url podem apontar para .pdf, imagem ou .docx (sessão 47).
 criado_por / atualizado_por: "email@..."
 criado_em / atualizado_em:   timestamp
 ```
@@ -294,6 +299,19 @@ criado_em / atualizado_em:   timestamp
 - **Storage:** arquivos em `prestacoes-contas/{id}/despesas/{idx}/{campo}-{timestamp}.{ext}` e
   `prestacoes-contas/{id}/{memorando|termo_devolucao|comprovante_devolucao}-{timestamp}.{ext}`.
 
+### `config_privada/anthropic` — chave da API do Claude (sessão 47)
+```
+api_key:        "sk-ant-..."
+modelo:         "claude-sonnet-5-5"
+atualizado_por / atualizado_em
+```
+- Usada só pelo "✨ Gerar com Claude" da Prestação de Contas, chamado direto do navegador.
+- **Regra própria:** leitura e escrita só para `request.auth.token.email == 'bandeira.lkp@gmail.com'`
+  — nem os demais admins. A coleção também foi excluída da regra genérica de leitura
+  (`collection != 'config_privada'`). Como a chamada sai do navegador, quem lê o doc consegue ver
+  a chave (F12) — por isso a restrição a uma conta só e o limite de gasto no Console da Anthropic.
+- Criada pelo próprio site (botão "🔑 Chave da API"), depois que o `firestore.rules` for publicado.
+
 ### `automacao_config/estado_diario` — estado da automação (Projeto 1)
 ```
 ultima_edicao:       2680   ← número da última edição processada
@@ -310,6 +328,7 @@ atualizado_em:       timestamp
 - **Escrita:** apenas usuários com `role == "admin"`
 - Coleções protegidas: `usuarios`, `secoes`, `afastamentos_admin`, `titulares_admin`, `defensores_admin`, `remocoes_admin`, `designacoes_cumulativas_admin`, `afastamentos_equipe`, `plantao_admin`
 - **Exceção:** `prestacoes_contas` tem leitura **e** escrita restritas a admin (não apenas escrita) — ver acima.
+- **Exceção:** `config_privada` tem leitura e escrita restritas ao e-mail bandeira.lkp@gmail.com (sessão 47).
 
 ## Regras de Segurança do Storage
 
