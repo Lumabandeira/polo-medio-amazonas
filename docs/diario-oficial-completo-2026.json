@@ -6263,5 +6263,28 @@
         "resumo": "Designa Defensor Rodolfo Pinheiro Bernardo Lôbo para atuar cumulativamente na 9ª Defensoria do Polo Médio Amazonas em Urucurituba (01 out - 31 dez 2026)"
       }
     ]
+  },
+  {
+    "edicao": 2743,
+    "data": "2026-10-01",
+    "data_formatada": "01/10/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/10/Edicao_2743-2026__publicada_em_01_outubro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1047/2026-GSPG/DPE/AM",
+        "sei": "26.0.000013892-3",
+        "sgi": "2601806",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Enio Jorge Lima Barbalho Junior, Defensor Público de 3ª Classe, nos trechos Itacoatiara/São Sebastião do Uatumã/Itacoatiara, no período de 07 a 09 de outubro de 2026, a fim de realizar inspeção carcerária, atendimentos prisionais e orientação da equipe da UDI de São Sebastião do Uatumã;"
+        ],
+        "resumo": "Autoriza deslocamento do Defensor Enio Jorge Lima Barbalho Junior de Itacoatiara a São Sebastião do Uatumã para inspeção carcerária e atendimentos prisionais de 07 a 09 de outubro de 2026"
+      }
+    ]
   }
 ]
