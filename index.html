@@ -1622,6 +1622,11 @@
         }
         .viagens-cell-view { white-space: pre-wrap; line-height: 1.5; }
         .viagens-table tbody tr:nth-child(even) td { background: #f1f5f9; }
+        /* Viagens Trimestrais: azul-céu (mesma cor da legenda no calendário) */
+        .viagens-trimestrais { border-color: #e0f2fe; }
+        .viagens-trimestrais .viagens-table th { background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%); }
+        .viagens-trimestrais .viagens-table td { border-color: #e0f2fe; }
+        .viagens-trimestrais .viagens-table tbody tr:nth-child(even) td { background: #f0f9ff; }
 
         .viagens-subtabs { display: flex; gap: 8px; margin-bottom: 20px; }
         .viagens-subtab-btn {
@@ -9857,7 +9862,7 @@
                             <button type="button" class="btn-editar" onclick="_viagensAbrirForm(${n},null)">${n === 2 ? '➕ Nova Viagem' : '➕ Novo Evento'}</button>
                             <span id="viagens-seed-${n}"></span>
                         </div>` : ''}
-                        <div class="viagens-table-wrap">
+                        <div class="viagens-table-wrap${n === 2 ? ' viagens-trimestrais' : ''}">
                             <table class="viagens-table">
                                 <thead><tr>${ths}</tr></thead>
                                 <tbody id="viagens-lista-tbody-${n}"><tr><td colspan="${cols.length + 1}" style="text-align:center;color:#94a3b8;padding:18px">⏳ Carregando...</td></tr></tbody>
