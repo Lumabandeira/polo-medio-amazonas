@@ -9854,7 +9854,7 @@
                         <div id="viagens-lista-filtro-${n}" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;"></div>
                         ${n === 2 ? '<div id="viagens-lista-cidade" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;"></div>' : ''}
                         ${isAdmin ? `<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                            <button type="button" class="btn-editar" onclick="_viagensAbrirForm(${n},null)">➕ Novo Evento</button>
+                            <button type="button" class="btn-editar" onclick="_viagensAbrirForm(${n},null)">${n === 2 ? '➕ Nova Viagem' : '➕ Novo Evento'}</button>
                             <span id="viagens-seed-${n}"></span>
                         </div>` : ''}
                         <div class="viagens-table-wrap">
@@ -10138,7 +10138,7 @@
             if (id) {
                 const ev = (_viagensEventos[tabela] || []).find(e => e.id === id);
                 if (ev) {
-                    document.getElementById('viagens-form-titulo').textContent = '✏️ Editar Evento';
+                    document.getElementById('viagens-form-titulo').textContent = tabela === 2 ? '✏️ Editar Viagem Trimestral' : '✏️ Editar Evento';
                     document.getElementById('viagens-form-id').value      = id;
                     document.getElementById('viagens-form-inicio').value  = ev.data_inicio || '';
                     document.getElementById('viagens-form-fim').value     = ev.data_fim || '';
@@ -10157,7 +10157,7 @@
                     }
                 }
             } else {
-                document.getElementById('viagens-form-titulo').textContent = '➕ Novo Evento';
+                document.getElementById('viagens-form-titulo').textContent = tabela === 2 ? '➕ Nova Viagem Trimestral' : '➕ Novo Evento';
                 if (ano && mes && dia) {
                     const dateStr = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
                     document.getElementById('viagens-form-inicio').value = dateStr;
