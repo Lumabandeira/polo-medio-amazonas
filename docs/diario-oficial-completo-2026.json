@@ -6286,5 +6286,27 @@
         "resumo": "Autoriza deslocamento do Defensor Enio Jorge Lima Barbalho Junior de Itacoatiara a São Sebastião do Uatumã para inspeção carcerária e atendimentos prisionais de 07 a 09 de outubro de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2747,
+    "data": "2026-10-07",
+    "data_formatada": "07/10/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/10/Edicao_2747-2026__publicada_em_07_outubro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1853/2026-GDPG/DPE/AM",
+        "sei": "26.0.000013822-2",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "AUTORIZAR o deslocamento de Emilly Bianca Ferreira dos Santos, Defensora Pública de 3ª classe, no trecho Itacoatiara/Urucará/Itacoatiara, no período de 19 a 23 de outubro de 2026, a fim de realizar atendimento presencial à população e inspeção carcerária na Comarca de Urucará/AM"
+        ],
+        "resumo": "Autoriza deslocamento de Defensora Pública em Itacoatiara/Urucará para atendimento presencial e inspeção carcerária de 19 a 23 de outubro de 2026"
+      }
+    ]
   }
 ]
