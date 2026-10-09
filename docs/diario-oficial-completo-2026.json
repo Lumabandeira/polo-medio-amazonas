@@ -6308,5 +6308,126 @@
         "resumo": "Autoriza deslocamento de Defensora Pública em Itacoatiara/Urucará para atendimento presencial e inspeção carcerária de 19 a 23 de outubro de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2748,
+    "data": "2026-10-08",
+    "data_formatada": "08/10/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/10/Edicao_2748-2026__publicada_em_08_outubro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1011/2026-GSPG/DPE/AM",
+        "sei": "26.0.000013064-7",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "substituicao",
+          "plantao"
+        ],
+        "trechos": [
+          "XVII - AUTORIZAR a substituição da servidora Luma Karolyne Pantoja Bandeira, designada para a semana 02 do Plantão do Polo do Médio Amazonas, pelo período de 05/10 a 11/10, por Larice Bruce Pereira",
+          "Polo do Médio Amazonas | Plantão Cível e de Família | Eliaquim Antunes de Souza Santos (R) | Pedro Henrique Pereira Paiva (R) | Emilly Bianca Ferreira dos Santos (R) | Enio Jorge Lima Barbalhο Júnior (F)",
+          "Polo do Médio Amazonas | Plantão Criminal e de Custódia | Eliaquim Antunes de Souza Santos | Pedro Henrique Pereira Paiva | Emilly Bianca Ferreira dos Santos | Enio Jorge Lima Barbalhο Júnior",
+          "Polo do Médio Amazonas | Assessoria | Fábio Bastos de Souza | Larice Bruce Pereira | Luma Karolyne Pantoja Bandeira | Fábio Bastos de Souza",
+          "Escala de substituição | Polo do Rio Negro-Solimões | Polo do Médio Amazonas"
+        ],
+        "resumo": "Estabelece escala de plantão do 4º trimestre de 2026 para o interior, incluindo designações e substituições do Polo do Médio Amazonas (defensores Eliaquim Antunes, Pedro Henrique Pereira Paiva, Emilly Bianca Ferreira dos Santos, Enio Jorge Lima Barbalhο Júnior) e autoriza substituição de servidor"
+      },
+      {
+        "numero": "Portaria Nº 1038/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "substituicao",
+          "plantao"
+        ],
+        "trechos": [
+          "ANEXO I da Portaria 1011/2026-GSPG/DPE/AM (1ª Alteração da Portaria 1011/2026-GSPG/DPE/AM)",
+          "Polo do Médio Amazonas | Plantão Cível e de Família | Eliaquim Antunes de Souza (R) | Miguel Eduardo de Azevedο Martins Filho (R) | Enio Jorge Lima Barbalhο Junior (R) | Emilly Bianca Ferreira dos Santos (R)",
+          "Polo do Médio Amazonas | Plantão Criminal e de Custódia | Eliaquim Antunes de Souza | Miguel Eduardo de Azevedο Martins Filho | Enio Jorge Lima Barbalhο Junior | Emilly Bianca Ferreira dos Santos",
+          "Assessoria | Fábio Bastos de Souza | Larice Bruce Pereira | Luma Karolyne Pantoja Bandeira | Fábio Bastos de Souza"
+        ],
+        "resumo": "Primeira alteração da Portaria 1011/2026-GSPG/DPE/AM ajustando a escala de plantão do Polo do Médio Amazonas com novos defensores"
+      },
+      {
+        "numero": "Portaria Nº 1079/2026-GSPG/DPE/AM",
+        "sei": "26.0.000014232-7",
+        "sgi": "2600435, 2600387, 2600481",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 1ª Defensoria Pública do Polo do Médio Amazonas, nos períodos de 09 a 19 de novembro de 2026 e 23 a 27 de novembro de 2026",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 2ª Defensoria Pública do Polo do Médio Amazonas, nos períodos de 09 a 19 de novembro de 2026 e 23 a 27 de novembro de 2026",
+          "III - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 3ª Defensoria Pública do Polo do Médio Amazonas, no período de 09 a 18 de dezembro de 2026",
+          "IV - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Pedro Henrique Pereira Paiva para atuar na 7ª Defensoria Pública do Polo Médio Amazonas (São Sebastião do Uatumã), no período de 09 a 19 de novembro de 2026",
+          "V - DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Emilly Bianca Ferreira dos Santos para atuar na 7ª Defensoria Pública do Polo Médio Amazonas (São Sebastião do Uatumã), no período de 23 a 27 de novembro de 2026"
+        ],
+        "resumo": "Designa cumulativamente defensores Eliaquim Antunes de Souza Santos (1ª, 2ª e 3ª Defensoria do Polo Médio Amazonas), Pedro Henrique Pereira Paiva e Emilly Bianca Ferreira dos Santos (7ª Defensoria em São Sebastião do Uatumã) para períodos em nov-dez/2026"
+      }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-09-28",
+        "data_fim": "2026-10-04",
+        "defensor": "Eliaquim Antunes de Souza Santos (R)",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-10-05",
+        "data_fim": "2026-10-11",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-10-12",
+        "data_fim": "2026-10-18",
+        "defensor": "Emilly Bianca Ferreira dos Santos (R)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-10-19",
+        "data_fim": "2026-10-25",
+        "defensor": "Enio Jorge Lima Barbalho Júnior (F)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-11-23",
+        "data_fim": "2026-11-29",
+        "defensor": "Eliaquim Antunes de Souza (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-11-30",
+        "data_fim": "2026-12-06",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-12-07",
+        "data_fim": "2026-12-13",
+        "defensor": "Enio Jorge Lima Barbalho Junior (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-12-14",
+        "data_fim": "2026-12-19",
+        "defensor": "Emilly Bianca Ferreira dos Santos (R)",
+        "assessoria": ""
+      }
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 1038/2026-GSPG/DPE/AM",
+      "texto": "ESTABELECER a escala de plantão da Defensoria Pública do Estado do Amazonas para o 4º trimestre de 2026, do interior, que compreende o período de 28/09/2026 a 19/12/2026, conforme anexos I a III desta portaria"
+    }
   }
 ]
