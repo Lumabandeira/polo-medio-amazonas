@@ -57,6 +57,16 @@ docs/
 
 ---
 
+## Estado atual (sessão 48 — 13/10/2026)
+
+**Implementado nesta sessão:** no formulário "Editar/Novo Período de Plantão" saíram os 2 campos
+"Rótulo (opcional)" (override manual do rótulo da portaria do período e da alteração), a pedido
+da usuária. O link na coluna "Portaria" é sempre o "Edição NNNN" extraído da URL
+(`_rotuloEdicaoDiario()`), igual a Viagens e Eventos; `salvarPlantaoFirestore()` grava
+`portaria_numero`/`alteracao_numero` vazios, então um override antigo some quando o período é
+salvo de novo. Verificado no navegador (servidor local, sem login): modal abre sem os campos e
+com os links preenchidos. Ver `docs/site/estrutura-html.md` (seção "Plantão").
+
 ## Estado atual (sessão 47 — 01/10/2026)
 
 **Implementado nesta sessão (Prestação de Contas → modal de Anexos):** (1) slots de

@@ -4,6 +4,13 @@
 
 ---
 
+## Sessão 48 — 13/10/2026
+
+- **Plantão → formulário de período:** removidos os 2 campos "Rótulo (opcional)" (portaria do
+  período e alteração). O link mostra sempre "Edição NNNN" extraído da URL;
+  `salvarPlantaoFirestore()` grava `portaria_numero`/`alteracao_numero` vazios (override antigo
+  some ao salvar o período). Commit `c956327`.
+
 ## Sessão 47 — 01/10/2026
 
 - **Prestação de Contas → Anexos:** Justificativa e Atesto aceitam .docx (aviso "sem

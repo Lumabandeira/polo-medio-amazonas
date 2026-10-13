@@ -182,9 +182,9 @@ data_fim:     "YYYY-MM-DD"
 defensor:     "Eliaquim Antunes de Souza Santos"   ← texto livre, nem sempre um dos 6 titulares
 assessoria:   "Larice Bruce Pereira"                ← texto livre
 lote_nome:         ""   ← opcional. Nome da leva de períodos (ex: "3º Trimestre 2026") — agrupa a tabela
-portaria_numero:   ""   ← opcional. Override manual do rótulo do link (padrão: "Edição NNNN", extraído da URL)
+portaria_numero:   ""   ← legado. Antigo override do rótulo; desde a sessão 48 o form grava sempre vazio (rótulo = "Edição NNNN" da URL)
 portaria_url:      ""   ← opcional. Link da portaria própria do período (vazio = usa a geral de plantao_info)
-alteracao_numero:  ""   ← opcional. Override manual do rótulo do link de alteração (idem)
+alteracao_numero:  ""   ← legado (idem, para o link de alteração)
 alteracao_url:     ""   ← opcional. Só preenchido se este período foi alterado por portaria pontual
 alteracao_obs:     ""   ← opcional. Texto curto livre — vira tooltip do badge de alteração
 criado_por:   "email@..."
