@@ -191,9 +191,10 @@ era regravado por cima, duplicando registros. Corrigido em duas camadas:
 `index.html:4862`, coluna "Diário Oficial"): `_rotuloEdicaoDiario(url)` (função
 genérica, sem prefixo de seção — também usada por Viagens e Eventos, ver abaixo)
 extrai o número da edição do link (`.../Edicao_NNNN...`) e mostra "Edição NNNN"; sem
-padrão reconhecível, cai em "Abrir PDF". O campo `..._numero` do formulário
-(opcional) só serve como *override* manual do rótulo — útil quando o link não segue
-esse padrão de nome de arquivo; a maioria dos casos não precisa preenchê-lo.
+padrão reconhecível, cai em "Abrir PDF". Os campos de override manual
+(`portaria_numero`/`alteracao_numero`, "Rótulo (opcional)") saíram do formulário em
+13/10/2026 a pedido da usuária — `salvarPlantaoFirestore()` grava os dois vazios, então o
+rótulo é sempre o extraído da URL (igual Viagens e Eventos).
 `alteracao_obs` (texto livre) vira `title` (tooltip) do badge de alteração.
 
 **Nota de segurança:** todos os campos de texto livre desses 5 campos passam por

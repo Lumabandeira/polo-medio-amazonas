@@ -3978,11 +3978,7 @@
                             <p style="margin:0 0 8px;font-size:0.82em;color:var(--text-secondary)">
                                 Portaria deste período <em>(opcional — se vazio, usa a portaria geral exibida no topo da página)</em>
                             </p>
-                            <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;">
-                                <div class="form-group">
-                                    <label>RÓTULO (opcional)</label>
-                                    <input type="text" id="plantao-form-portaria-numero" placeholder="auto: Edição NNNN, extraído do link" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
-                                </div>
+                            <div style="display:grid;grid-template-columns:1fr;gap:12px;">
                                 <div class="form-group">
                                     <label>LINK (PDF / DIÁRIO OFICIAL)</label>
                                     <input type="url" id="plantao-form-portaria-url" placeholder="https://..." style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
@@ -3994,11 +3990,7 @@
                             <p style="margin:0 0 8px;font-size:0.82em;color:var(--text-secondary)">
                                 Este período foi alterado por outra portaria? <em>(opcional — preencha só se uma portaria pontual mudou esta escala depois de publicada)</em>
                             </p>
-                            <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;">
-                                <div class="form-group">
-                                    <label>RÓTULO (opcional)</label>
-                                    <input type="text" id="plantao-form-alteracao-numero" placeholder="auto: Edição NNNN, extraído do link" style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
-                                </div>
+                            <div style="display:grid;grid-template-columns:1fr;gap:12px;">
                                 <div class="form-group">
                                     <label>LINK DA ALTERAÇÃO</label>
                                     <input type="url" id="plantao-form-alteracao-url" placeholder="https://..." style="width:100%;padding:9px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:0.95em;">
@@ -9447,9 +9439,7 @@
                 document.getElementById('plantao-form-defensor').value   = reg.defensor    || '';
                 document.getElementById('plantao-form-assessoria').value = reg.assessoria  || '';
                 document.getElementById('plantao-form-lote').value             = reg.lote_nome        || '';
-                document.getElementById('plantao-form-portaria-numero').value  = reg.portaria_numero  || '';
                 document.getElementById('plantao-form-portaria-url').value     = reg.portaria_url     || '';
-                document.getElementById('plantao-form-alteracao-numero').value = reg.alteracao_numero || '';
                 document.getElementById('plantao-form-alteracao-url').value    = reg.alteracao_url    || '';
                 document.getElementById('plantao-form-alteracao-obs').value    = reg.alteracao_obs    || '';
             } else {
@@ -9478,10 +9468,8 @@
                 const defensor   = document.getElementById('plantao-form-defensor').value.trim();
                 const assessoria = document.getElementById('plantao-form-assessoria').value.trim();
                 const lote            = document.getElementById('plantao-form-lote').value.trim();
-                const portariaNumero  = document.getElementById('plantao-form-portaria-numero').value.trim();
                 const portariaUrl     = document.getElementById('plantao-form-portaria-url').value.trim();
-                const alteracaoNumero = document.getElementById('plantao-form-alteracao-numero').value.trim();
-                const alteracaoUrl    = document.getElementById('plantao-form-alteracao-url').value.trim();
+                const alteracaoUrl   = document.getElementById('plantao-form-alteracao-url').value.trim();
                 const alteracaoObs    = document.getElementById('plantao-form-alteracao-obs').value.trim();
 
                 if (!inicio)      throw new Error('Informe a data de início.');
@@ -9493,9 +9481,11 @@
                 const dados = {
                     data_inicio: inicio, data_fim: fim, defensor, assessoria,
                     lote_nome: lote,
-                    portaria_numero:  portariaNumero,
+                    // Rótulo do link é sempre o "Edição NNNN" extraído da URL — o override
+                    // manual saiu do formulário; zerado aqui para não ficar preso a um antigo.
+                    portaria_numero:  '',
                     portaria_url:     portariaUrl,
-                    alteracao_numero: alteracaoNumero,
+                    alteracao_numero: '',
                     alteracao_url:    alteracaoUrl,
                     alteracao_obs:    alteracaoObs,
                     atualizado_por: firebase.auth().currentUser?.email || '',
