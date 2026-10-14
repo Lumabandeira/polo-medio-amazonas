@@ -57,6 +57,18 @@ docs/
 
 ---
 
+## Estado atual (sessão 49 — 14/10/2026)
+
+**Implementado nesta sessão:** bugfix — os afastamentos do Pedro Paiva (férias 23/11–02/12, folga
+03–04/12, férias 09–11/12) foram gravados com `designacoes_dp: []` e o popup do dia mostrava "—"
+nas DPs. Causa: em `titulares_admin` a 6ª e a 8ª DP têm o titular como texto livre "Pedro
+Henrique Pereira Paiva", e `getDPsDoDefensor()` (formulário de afastamento) compara pela chave
+`pedro`. `loadTitularesFirestore()` agora passa cada `historico_titulares[].defensor` por
+`_resolverDefensor()` ao carregar, convertendo em memória nomes livres que batem com o dicionário
+(conserta também as outras telas que comparam por chave). Testado no navegador com
+`db.collection` stubado: Pedro passa a ter 6ª e 8ª DP no período. **Pendente (usuária):**
+reeditar os 3 afastamentos pelo site para escolher os substitutos. Ver `docs/firebase.md`.
+
 ## Estado atual (sessão 48 — 13/10/2026)
 
 **Implementado nesta sessão:** no formulário "Editar/Novo Período de Plantão" saíram os 2 campos

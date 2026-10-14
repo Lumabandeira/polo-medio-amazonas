@@ -4,6 +4,14 @@
 
 ---
 
+## Sessão 49 — 14/10/2026
+
+- **Bugfix:** afastamentos do Pedro Paiva saíam sem DP afetada ("—" no popup do dia). Causa:
+  `titulares_admin` da 6ª/8ª DP com o nome livre "Pedro Henrique Pereira Paiva" em vez da chave
+  `pedro`, e `getDPsDoDefensor()` compara por chave. `loadTitularesFirestore()` agora normaliza os
+  nomes com `_resolverDefensor()` ao carregar. Os 3 afastamentos já gravados precisam ser
+  reeditados pelo site para preencher as DPs/substitutos.
+
 ## Sessão 48 — 13/10/2026
 
 - **Plantão → formulário de período:** removidos os 2 campos "Rótulo (opcional)" (portaria do

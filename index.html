@@ -4975,7 +4975,10 @@
                 snapshot.forEach(doc => {
                     const dpKey = doc.id;
                     if (jsonDesignacoes.defensorias[dpKey]) {
-                        jsonDesignacoes.defensorias[dpKey].historico_titulares = doc.data().historico_titulares;
+                        // Nome gravado como texto livre (ex.: "Pedro Henrique Pereira Paiva") vira a chave
+                        // do dicionário quando bate com um defensor conhecido — o resto do site compara por chave
+                        jsonDesignacoes.defensorias[dpKey].historico_titulares = (doc.data().historico_titulares || [])
+                            .map(h => ({ ...h, defensor: _resolverDefensor(h.defensor) }));
                     }
                 });
                 _atualizarNomesVaga();

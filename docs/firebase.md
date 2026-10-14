@@ -123,6 +123,12 @@ atualizado_em:  timestamp
   `isOrphan: true` em `index.html`), mesmo mostrando o nome certo. Sintoma: card sem a caixinha de
   status ao lado do nome. Correção: reabrir "Titulares por DP" na(s) DP(s) afetada(s) e reescrever
   o nome exatamente igual ao do dicionário (com o navegador já com o JSON atualizado em cache).
+  **Desde a sessão 49**, `loadTitularesFirestore()` também passa cada `historico_titulares[].defensor`
+  por `_resolverDefensor()` ao carregar — um nome livre que bate com o dicionário vira a chave em
+  memória (o Firestore continua com o texto). Sem isso, funções que comparam por chave
+  (`getDPsDoDefensor()` do formulário de afastamento, Designações etc.) não achavam a DP: caso real
+  do Pedro Paiva (6ª/8ª DP gravadas como "Pedro Henrique Pereira Paiva"), cujos afastamentos
+  saíram com `designacoes_dp: []`.
 - Documento só existe quando um admin altera o status pelo site (dropdown 🟢 Membro / ⚪ Ex-membro na
   seção Defensores Públicos). Ausência do doc = usa o campo `ativo` do JSON estático como padrão.
 - Marcar como ex-membro **não** remove o defensor de nenhuma DP — isso continua sendo feito
