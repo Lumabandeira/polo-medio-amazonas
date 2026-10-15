@@ -84,3 +84,5 @@ Um arquivo por defensor. Contém status, DPs titulares, grupo de alternância e 
 | `diario-oficial-categorias.md` | Regras de categorização de portarias para o Claude | Referência para a automação |
 | `diario-oficial-polo-medio-2026.md` | Transcrição bruta legada (formato antigo) | ⚠️ Legado — não usar |
 | `diario-oficial-polo-medio-2026.json` | JSON legado (substituído pelo completo-2026.json) | ⚠️ Legado — não usar |
+| `logo-fichas.png` | Logo da DPE das Fichas do Dia (extraído do modelo `Fichas_de_atendimento_1a100.docx`) | ✅ Ativo — lido por `baixarFichasPDF()` |
+| `gavel.png` | Ícone do botão Adote (header-nav) | ✅ Ativo |

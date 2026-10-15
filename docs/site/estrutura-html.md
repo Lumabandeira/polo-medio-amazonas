@@ -661,6 +661,17 @@ Aberto a todos os usuários logados; não grava nada no Firestore.
 - Prévia na tela: uma ficha da manhã (1) e uma da tarde (26), em HTML (`.fichas-ficha`).
 - Estado: `_fichasData` (Date escolhida), `_fichasLogoUrl` (logo em dataURL, carregado uma vez).
 - Cor do botão: `.btn-fichas` (gradiente roxo), no header-nav e na landing, depois do Diário Oficial.
+- **Modelo de origem:** `OneDrive - DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS\DPE - computador
+  profissional\MODELOS\Fichas_de_atendimento_1a100.docx` (24 fichas por folha, 4 × 6, sem data
+  nem turno). O logo saiu de `word/media/image1.png` desse .docx, reduzido para 300 px. Para
+  trocar o logo, basta substituir `docs/logo-fichas.png` (mantendo a proporção ~300 × 281, usada
+  em `LOGO_H`).
+- **Decisões da usuária (sessão 50):** 25 por folha (manhã e tarde em folhas separadas); fim de
+  semana avisa e sugere a segunda; acesso para todos os logados; turno e data juntos no topo.
+- **Como conferir o PDF sem baixar:** no navegador de teste, trocar `window.jspdf.jsPDF` por um
+  wrapper cujo `save()` guarda `output('datauristring')`, chamar `baixarFichasPDF()` e mandar o
+  texto para um receptor local (`http.server` de uma requisição só) que grava o .pdf; depois
+  renderizar as páginas com `pdfplumber`. Foi assim que o PDF de 16/10/26 foi validado.
 
 ## Viagens e Eventos (`#viagens-eventos`)
 

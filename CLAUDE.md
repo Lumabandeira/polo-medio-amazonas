@@ -49,6 +49,8 @@ docs/
 ├── automacao.md                      ← Projeto 2 (Projeto 1 removido na sessão 50), backfill
 ├── arquitetura.md                    ← decisões, padrão de cache, arquiteturas internas
 ├── historico-sessoes.md              ← log do que foi implementado por sessão
+├── logo-fichas.png                   ← logo da DPE usado nas Fichas do Dia (300 px, do modelo .docx)
+├── gavel.png                         ← ícone do botão Adote
 ├── defensores/                       ← um arquivo por defensor (ativos e ex-membros)
 ├── defensorias/                      ← lista-completa.md · grupos-alternancia.md
 ├── regras/                           ← alternancia.md · ausencias.md · destaques-cores.md

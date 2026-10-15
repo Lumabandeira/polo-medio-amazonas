@@ -18,7 +18,7 @@
 - **Remoção do Projeto 1 e dos 3 sinos de notificação** (código morto desde a sessão 30), sem
   alterar nenhum dado do Firestore.
 - Commits: `4b97da4`, `1b0ce8a`, `d8a9181`, `7c75ae5`, `536d18c`, `8897f2e`, `47786f8`,
-  `e51e779`, `aa0a380`.
+  `e51e779`, `aa0a380`, `2a80253` (Fichas do Dia).
 
 ## Sessão 49 — 14/10/2026
 
