@@ -13,6 +13,8 @@
   publicações de outros polos removidas (Portaria 78/2026 e Edital 5/2026-ESUDPAM).
 - **Site:** botão "Designações" renomeado para "Designações, Férias e Folgas"; abas internas em
   cartões com ícone, título e descrição.
+- **Nova seção "🎫 Fichas do Dia":** PDF com as 50 fichas de atendimento (25 manhã + 25 tarde,
+  uma folha A4 cada) com a data de hoje ou de amanhã; fim de semana bloqueia e sugere a segunda.
 - **Remoção do Projeto 1 e dos 3 sinos de notificação** (código morto desde a sessão 30), sem
   alterar nenhum dado do Firestore.
 - Commits: `4b97da4`, `1b0ce8a`, `d8a9181`, `7c75ae5`, `536d18c`, `8897f2e`, `47786f8`,

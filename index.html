@@ -1121,6 +1121,69 @@
             color: white;
         }
 
+        .btn-fichas {
+            background: linear-gradient(135deg, #6d28d9 0%, #c084fc 100%);
+            color: white;
+        }
+
+        /* ─── Fichas do Dia ──────────────────────────────────────── */
+        .fichas-datas { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+        .fichas-data-btn {
+            flex: 1 1 200px;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            padding: 14px 12px;
+            background: white;
+            border: 2px solid #ddd6fe;
+            border-radius: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            color: #4c1d95;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .fichas-data-btn:hover { border-color: #8b5cf6; }
+        .fichas-data-btn .fd-rotulo { font-size: 0.85em; font-weight: 600; color: #7c3aed; }
+        .fichas-data-btn .fd-data   { font-size: 1.35em; font-weight: 700; }
+        .fichas-data-btn .fd-dia    { font-size: 0.85em; }
+        .fichas-data-btn.ativo {
+            background: linear-gradient(135deg, #6d28d9 0%, #a855f7 100%);
+            border-color: #6d28d9;
+            color: white;
+            box-shadow: 0 6px 16px rgba(109, 40, 217, 0.3);
+        }
+        .fichas-data-btn.ativo .fd-rotulo { color: #ede9fe; }
+        .fichas-aviso {
+            background: #fef3c7; color: #92400e;
+            border: 1px solid #fcd34d; border-radius: 10px;
+            padding: 12px 16px; margin-bottom: 16px;
+        }
+        .fichas-aviso button { margin-top: 8px; }
+        .fichas-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #6d28d9 0%, #a855f7 100%);
+            color: white; border: none; border-radius: 10px;
+            font-family: inherit; font-weight: 600; cursor: pointer;
+        }
+        .fichas-btn:hover { box-shadow: 0 4px 12px rgba(109, 40, 217, 0.35); }
+        .fichas-btn:disabled { background: #d1d5db; color: #6b7280; cursor: not-allowed; box-shadow: none; }
+        .fichas-btn-grande { padding: 14px 26px; font-size: 1.05em; }
+        .fichas-previa { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0 20px; }
+        .fichas-ficha {
+            width: 175px; height: 175px;
+            border: 1.5px solid #111;
+            display: flex; flex-direction: column;
+            background: white; color: #111;
+        }
+        .fichas-ficha .ff-topo {
+            font-weight: 700; font-size: 0.85em; text-align: center;
+            padding: 8px 4px 6px; margin: 0 8px;
+            border-bottom: 1px solid #111;
+        }
+        .fichas-ficha .ff-corpo {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .fichas-ficha .ff-num { font-family: 'Times New Roman', serif; font-size: 3em; }
+        .fichas-ficha img { width: 58px; height: auto; }
+
         /* ─── Prestação de Contas ────────────────────────────────── */
         .pc-lista-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -3294,6 +3357,7 @@
                 <a class="header-nav-btn btn-viagens" href="?s=viagens-eventos" onclick="showSection('viagens-eventos');return false;">🧳 Viagens e Eventos</a>
                 <a class="header-nav-btn btn-plantao" href="?s=plantao" onclick="showSection('plantao');return false;">🚨 Plantão</a>
                 <a class="header-nav-btn btn-diario" href="?s=diario-oficial" onclick="showSection('diario-oficial');return false;">📰 Diário Oficial</a>
+                <a class="header-nav-btn btn-fichas" href="?s=fichas" onclick="showSection('fichas');return false;">🎫 Fichas do Dia</a>
                 <a id="header-btn-prestacao-contas" class="header-nav-btn btn-prestacao-contas" href="?s=prestacao-contas" onclick="showSection('prestacao-contas');return false;" style="display:none">💰 Prestação de Contas</a>
             </div>
         </header>
@@ -3344,6 +3408,11 @@
                     <span class="landing-btn-icon">📰</span>
                     <span class="landing-btn-title">Diário Oficial</span>
                     <span class="landing-btn-desc">Portarias e atos que mencionam o Polo Médio Amazonas — jan a abr/2026</span>
+                </button>
+                <button class="landing-btn btn-fichas" onclick="showSection('fichas')">
+                    <span class="landing-btn-icon">🎫</span>
+                    <span class="landing-btn-title">Fichas do Dia</span>
+                    <span class="landing-btn-desc">Gera as 50 fichas de atendimento (manhã e tarde) com a data, em PDF</span>
                 </button>
                 <button id="btn-prestacao-contas" class="landing-btn btn-prestacao-contas" style="display:none" onclick="showSection('prestacao-contas')">
                     <span class="landing-btn-icon">💰</span>
@@ -3651,6 +3720,13 @@
                     <br>
                     <p>33. Urucará</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Seção: Fichas do Dia -->
+        <div id="fichas" class="tab-content">
+            <div class="card">
+                <div id="fichas-content"></div>
             </div>
         </div>
 
@@ -7393,6 +7469,10 @@
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('escala-semanal').classList.add('active');
                 renderEscalaSemanal();
+            } else if (tabName === 'fichas') {
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('fichas').classList.add('active');
+                renderFichas();
             } else if (tabName === 'viagens-eventos') {
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('viagens-eventos').classList.add('active');
@@ -10991,6 +11071,154 @@
         }
 
         // ── Toast ──────────────────────────────────────────────────────────
+        // =====================================================================
+        // Fichas do Dia — 50 fichas de atendimento em PDF (1–25 manhã, 26–50 tarde),
+        // 25 por folha A4 (5 × 5), no modelo "Fichas_de_atendimento" (número + logo).
+        // Data: hoje ou amanhã; sábado/domingo mostram aviso e sugerem a segunda.
+        // =====================================================================
+        const FICHAS_DIAS_SEMANA = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira',
+            'quinta-feira', 'sexta-feira', 'sábado'];
+        let _fichasData = null;      // Date escolhida (meia-noite local)
+        let _fichasLogoUrl = null;   // logo em dataURL, carregado uma vez
+
+        function _fichasHoje() {
+            const d = new Date();
+            return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        }
+        function _fichasSomaDias(d, n) {
+            return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+        }
+        function _fichasFmt(d) {   // dd/mm/aa
+            const p = n => String(n).padStart(2, '0');
+            return p(d.getDate()) + '/' + p(d.getMonth() + 1) + '/' + String(d.getFullYear()).slice(-2);
+        }
+        function _fichasMesmoDia(a, b) {
+            return a && b && a.getTime() === b.getTime();
+        }
+        function _fichasFimDeSemana(d) {
+            return d.getDay() === 0 || d.getDay() === 6;
+        }
+        function _fichasProximaSegunda(d) {
+            return _fichasSomaDias(d, d.getDay() === 6 ? 2 : 1);
+        }
+
+        function renderFichas() {
+            const hoje = _fichasHoje();
+            const amanha = _fichasSomaDias(hoje, 1);
+            if (!_fichasData || _fichasData < hoje) _fichasData = hoje;
+
+            const btnData = (rotulo, d) => {
+                const ativo = _fichasMesmoDia(_fichasData, d) ? ' ativo' : '';
+                return `<button class="fichas-data-btn${ativo}" onclick="_fichasEscolher(${d.getTime()})">`
+                    + `<span class="fd-rotulo">${rotulo}</span>`
+                    + `<span class="fd-data">${_fichasFmt(d)}</span>`
+                    + `<span class="fd-dia">${FICHAS_DIAS_SEMANA[d.getDay()]}</span></button>`;
+            };
+            let datas = btnData('Hoje', hoje) + btnData('Amanhã', amanha);
+            // Data sugerida (segunda-feira) que não é hoje nem amanhã
+            if (!_fichasMesmoDia(_fichasData, hoje) && !_fichasMesmoDia(_fichasData, amanha)) {
+                datas += btnData('Escolhida', _fichasData);
+            }
+
+            const d = _fichasData;
+            let aviso = '';
+            if (_fichasFimDeSemana(d)) {
+                const seg = _fichasProximaSegunda(d);
+                aviso = `<div class="fichas-aviso">⚠️ <strong>${_fichasFmt(d)} é ${FICHAS_DIAS_SEMANA[d.getDay()]}</strong>`
+                    + ` — não há atendimento.<br>`
+                    + `<button class="fichas-btn" onclick="_fichasEscolher(${seg.getTime()})">`
+                    + `Gerar para segunda-feira ${_fichasFmt(seg)}</button></div>`;
+            }
+
+            const ficha = (turno, n) => `<div class="fichas-ficha">`
+                + `<div class="ff-topo">${turno} · ${_fichasFmt(d)}</div>`
+                + `<div class="ff-corpo"><span class="ff-num">${n}</span>`
+                + `<img src="docs/logo-fichas.png" alt=""></div></div>`;
+
+            document.getElementById('fichas-content').innerHTML = `
+                <h2>🎫 Fichas do Dia</h2>
+                <p style="color:var(--text-secondary)">50 fichas de atendimento em 2 folhas A4:
+                    fichas 1 a 25 com <strong>MANHÃ</strong> e 26 a 50 com <strong>TARDE</strong>.
+                    Escolha a data:</p>
+                <div class="fichas-datas">${datas}</div>
+                ${aviso}
+                <p style="font-weight:600;margin-bottom:4px">Prévia</p>
+                <div class="fichas-previa">${ficha('MANHÃ', 1)}${ficha('TARDE', 26)}</div>
+                <button class="fichas-btn fichas-btn-grande" id="fichas-btn-pdf" onclick="baixarFichasPDF()"
+                    ${_fichasFimDeSemana(d) ? 'disabled title="Escolha um dia útil"' : ''}>
+                    📥 Baixar PDF das fichas de ${_fichasFmt(d)}</button>`;
+        }
+
+        function _fichasEscolher(ms) {
+            _fichasData = new Date(ms);
+            renderFichas();
+        }
+
+        async function _fichasCarregarLogo() {
+            if (_fichasLogoUrl) return _fichasLogoUrl;
+            const blob = await (await fetch('docs/logo-fichas.png')).blob();
+            _fichasLogoUrl = await new Promise((ok, erro) => {
+                const r = new FileReader();
+                r.onload = () => ok(r.result);
+                r.onerror = erro;
+                r.readAsDataURL(blob);
+            });
+            return _fichasLogoUrl;
+        }
+
+        async function baixarFichasPDF() {
+            const d = _fichasData;
+            if (!d || _fichasFimDeSemana(d)) {
+                mostrarToast('⚠️ Escolha um dia útil para gerar as fichas.', true);
+                return;
+            }
+            const btn = document.getElementById('fichas-btn-pdf');
+            if (btn) btn.disabled = true;
+            try {
+                const logo = await _fichasCarregarLogo();
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+                const M = 10, COLS = 5, ROWS = 5;
+                const W = (210 - 2 * M) / COLS;   // 38 mm
+                const H = (297 - 2 * M) / ROWS;   // 55,4 mm
+                const LOGO_W = 15, LOGO_H = 15 * 281 / 300;
+                const data = _fichasFmt(d);
+
+                for (let folha = 0; folha < 2; folha++) {
+                    if (folha > 0) doc.addPage();
+                    const turno = folha === 0 ? 'MANHÃ' : 'TARDE';
+                    doc.setDrawColor(0);
+                    doc.setTextColor(0);
+                    for (let i = 0; i < COLS * ROWS; i++) {
+                        const n = folha * 25 + i + 1;
+                        const x = M + (i % COLS) * W;
+                        const y = M + Math.floor(i / COLS) * H;
+                        doc.setLineWidth(0.3);
+                        doc.rect(x, y, W, H);
+                        // Faixa de cima: turno · data
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(11);
+                        doc.text(`${turno} · ${data}`, x + W / 2, y + 7, { align: 'center' });
+                        doc.setLineWidth(0.2);
+                        doc.line(x + 3, y + 10, x + W - 3, y + 10);
+                        // Número + logo, como no modelo
+                        const meio = y + 10 + (H - 10) / 2;
+                        doc.setFont('times', 'normal');
+                        doc.setFontSize(n < 10 ? 46 : 40);
+                        doc.text(String(n), x + 11, meio + 5, { align: 'center' });
+                        doc.addImage(logo, 'PNG', x + 20.5, meio - LOGO_H / 2, LOGO_W, LOGO_H);
+                    }
+                }
+                const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')
+                    + '-' + String(d.getDate()).padStart(2, '0');
+                doc.save(`fichas-atendimento-${iso}.pdf`);
+            } catch (e) {
+                mostrarToast('❌ Erro ao gerar o PDF: ' + e.message, true);
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
         function mostrarToast(msg, erro = false) {
             const t = document.getElementById('toast');
             t.textContent       = msg;

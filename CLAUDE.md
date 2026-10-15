@@ -30,6 +30,7 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 | Mexer na seção Prestação de Contas (prontos pagamentos) | `docs/site/estrutura-html.md` (seção "Prestação de Contas") · `docs/firebase.md` (schema `prestacoes_contas`) |
 | Mexer na seção Plantão (escala de plantão do interior) | `docs/site/estrutura-html.md` (seção "Plantão") · `docs/firebase.md` (schema `plantao_admin`/`plantao_info`) |
 | Mexer na seção Viagens e Eventos (tabelas de viagens/eventos da equipe) | `docs/site/estrutura-html.md` (seção "Viagens e Eventos") · `docs/firebase.md` (schema `viagens_tabela1`/`viagens_tabela2`) |
+| Mexer em Fichas do Dia (PDF das fichas de atendimento) | `docs/site/estrutura-html.md` (seção "Fichas do Dia") |
 | Mexer na seção Escala Semanal (atendimento/audiência/plantão por semana) | `docs/site/estrutura-html.md` (seção "Escala Semanal") — somente leitura, sem Firestore próprio |
 
 ---
@@ -91,6 +92,12 @@ docs/
   Firestore foi tocado** (`afastamentos_admin`, `remocoes_admin`, `designacoes_cumulativas_admin`,
   `automacao_config/estado_diario` continuam lá; regras do `firestore.rules` mantidas).
   Afastamentos, remoções e designações agora são cadastrados só à mão.
+
+- **Nova seção "🎫 Fichas do Dia"** (`#fichas`, todos os logados): gera em PDF (jsPDF) as 50
+  fichas de atendimento — 25 por folha A4, 1–25 "MANHÃ · dd/mm/aa" e 26–50 "TARDE · dd/mm/aa",
+  número + logo como no modelo `Fichas_de_atendimento_1a100.docx` (`docs/logo-fichas.png`). Data
+  hoje/amanhã; sábado/domingo bloqueiam e sugerem a segunda. PDF conferido página a página. Ver
+  `docs/site/estrutura-html.md` (seção "Fichas do Dia").
 
 **Pendente (usuária, opcional):** apagar o secret `FIREBASE_SERVICE_ACCOUNT` no GitHub (sem uso
 desde a remoção do Projeto 1). **Não** apagar `ANTHROPIC_API_KEY` (fallback do Projeto 2).

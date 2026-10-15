@@ -24,6 +24,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 | 🧳 Viagens e Eventos | `#viagens-eventos` | `showSection('viagens-eventos')` → `renderViagensEventos()` |
 | 🚨 Plantão | `#plantao` | `showSection('plantao')` → `renderPlantao()` |
 | 📰 Diário Oficial | `#diario` | `showSection('diario')` |
+| 🎫 Fichas do Dia | `#fichas` | `showSection('fichas')` → `renderFichas()` (sessão 50) |
 | 💰 Prestação de Contas | `#prestacao-contas` | `showSection('prestacao-contas')` — **admin-only**. Tem botão tanto na landing (`#btn-prestacao-contas`) quanto no header-nav (`#header-btn-prestacao-contas`, ao lado de Diário Oficial, largura reduzida com texto em 2 linhas pra caber na barra); ambos ficam `display:none` para viewers e são mostrados/ocultados juntos na mesma checagem de admin. |
 
 ## Abas dentro da seção Designações (`#designacoes`)
@@ -642,6 +643,24 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
     "Modelo de documentos" (`fd-modelo-servico` → `modelo_servico`, opções = serviços da
     categoria do pronto pagamento) só aparecem e só são gravados para `PC_IA_EMAIL`
     (`_fdPrepararCamposIa()`); outros admins salvam a despesa sem apagar esses campos.
+
+## Fichas do Dia (`#fichas`)
+
+Gera em PDF as 50 fichas de atendimento do dia, a partir do modelo
+`Fichas_de_atendimento_1a100.docx` (número grande + logo da DPE, `docs/logo-fichas.png`).
+Aberto a todos os usuários logados; não grava nada no Firestore.
+
+- **Data:** botões "Hoje" e "Amanhã" (`dd/mm/aa`, com o dia da semana). Sábado ou domingo →
+  aviso amarelo, botão "📥 Baixar PDF" desativado e botão "Gerar para segunda-feira dd/mm/aa"
+  (`_fichasProximaSegunda()`); a segunda escolhida aparece como 3º botão "Escolhida".
+  Não considera feriados.
+- **PDF** (`baixarFichasPDF()`, jsPDF): A4 retrato, margem 10 mm, grade 5 × 5 (células de
+  38 × 55,4 mm). Folha 1 = fichas 1–25 com "MANHÃ · dd/mm/aa" no topo; folha 2 = 26–50 com
+  "TARDE · dd/mm/aa". Embaixo da faixa, número em Times (46 pt para 1 dígito, 40 pt para 2) e
+  o logo (15 mm). Arquivo `fichas-atendimento-AAAA-MM-DD.pdf`.
+- Prévia na tela: uma ficha da manhã (1) e uma da tarde (26), em HTML (`.fichas-ficha`).
+- Estado: `_fichasData` (Date escolhida), `_fichasLogoUrl` (logo em dataURL, carregado uma vez).
+- Cor do botão: `.btn-fichas` (gradiente roxo), no header-nav e na landing, depois do Diário Oficial.
 
 ## Viagens e Eventos (`#viagens-eventos`)
 
