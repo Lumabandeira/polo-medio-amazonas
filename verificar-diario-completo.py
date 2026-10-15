@@ -790,7 +790,8 @@ Categorias disponíveis (use quantas se aplicarem):
 - "plantao": escala de plantão (fins de semana, feriados)
 - "coordenacao": ato de coordenação regional do polo
 - "designacoes": designação de atuação cumulativa
-- "estagio": envolve estágio ou estagiários (seleção, edital, fiscais de prova, designação ou desligamento de estagiário)
+- "estagio": envolve estágio ou estagiários (seleção, edital, fiscais de prova, designação ou desligamento de estagiário) — não usar para "estágio probatório" de defensor/servidor nem para Residência Jurídica
+- "residencia_juridica": Programa de Residência Jurídica (edital, inscrições, resultado, fiscais, convocação, designação ou desligamento de residente jurídico)
 - "meta_trimestral": resolução do Conselho Superior (CSDPEAM) que estabelece metas, critérios de elegibilidade ou bonificação de produtividade/desempenho para um trimestre
 
 Retorne SOMENTE um JSON válido com esta estrutura:
@@ -859,8 +860,14 @@ _RE_ATO_DE_LOTACAO = re.compile(
 # viravam botões de filtro sem rótulo no site; agora são normalizadas ou descartadas.
 CATEGORIAS_VALIDAS = {
     "polo_medio", "defensor", "servidor", "substituicao", "nomeacao_diretoria", "comarca",
-    "projeto", "plantao", "coordenacao", "designacoes", "estagio", "meta_trimestral",
+    "projeto", "plantao", "coordenacao", "designacoes", "estagio", "residencia_juridica",
+    "meta_trimestral",
 }
+
+# Categorias garantidas pelo texto, mesmo que a IA esqueça de marcar (sessão 50):
+# estágio de estudante (não "estágio probatório") e Residência Jurídica.
+_RE_CAT_ESTAGIO = re.compile(r"\best[áa]gi(?:o|os|[áa]ri[oa]s?)\b(?!\s+probat[óo]rio)", re.IGNORECASE)
+_RE_CAT_RESIDENCIA = re.compile(r"\bResid[êe]ncia\s+Jur[íi]dica\b|\bResidentes?\s+Jur[íi]dic[oa]s?\b", re.IGNORECASE)
 
 
 def normalizar_categorias(cats: list) -> list:
@@ -971,6 +978,12 @@ def filtrar_portarias_fora_do_polo(portarias: list, termos_extra: list | None = 
             log.info(f"  - Descartada (viagem fora do polo): {p.get('numero')}")
             continue
         cats = normalizar_categorias(p.get("categorias"))
+        texto_cat = texto + " " + (p.get("resumo") or "")
+        if _RE_CAT_RESIDENCIA.search(texto_cat):
+            if "residencia_juridica" not in cats:
+                cats.append("residencia_juridica")
+        elif _RE_CAT_ESTAGIO.search(texto_cat) and "estagio" not in cats:
+            cats.append("estagio")
         p["categorias"] = cats
         if "comarca" in cats and not menciona_cidade:
             p["categorias"] = [c for c in cats if c != "comarca"]

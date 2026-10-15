@@ -70,7 +70,11 @@ Na sequência: categoria oficial `estagio` ("🎓 Estágio") — a IA tinha inve
 Portaria 426/2026 (Edição 2658), que aparecia como botão sem rótulo; o JSON foi migrado. E
 `normalizar_categorias()` (dentro de `filtrar_portarias_fora_do_polo()`) tira acento e descarta
 categoria fora de `CATEGORIAS_VALIDAS` — que precisa ficar igual à lista do prompt e a
-`CAT_LABELS` no `index.html`.
+`CAT_LABELS` no `index.html`. Depois: categoria `residencia_juridica` ("⚖️ Residência Jurídica"),
+marcada também por regex no texto (`_RE_CAT_RESIDENCIA`/`_RE_CAT_ESTAGIO`, sem "estágio
+probatório"); histórico: 18 publicações de estágio e 6 de Residência (a da Edição 2568 era só
+texto legado — criado o registro estruturado do Edital 1/2026-ESUDPAM). Portaria 78/2026-ESUDPAM
+(Pauini, Polo Purus) removida a pedido da usuária.
 
 ## Estado atual (sessão 49 — 14/10/2026)
 

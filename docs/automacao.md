@@ -165,7 +165,10 @@ o polo) — essas duas passariam pelo filtro atual, porque o nome dele hoje é t
 `normalizar_categorias()`, chamada em `filtrar_portarias_fora_do_polo()`, tira acento/maiúsculas
 ("estágio" → `estagio`) e descarta qualquer categoria fora de `CATEGORIAS_VALIDAS` (com log).
 Motivo: a IA inventou "estágio" na Portaria 426/2026 (Edição 2658), que virou botão de filtro sem
-rótulo no site. **Ao criar categoria nova, atualizar os três lugares:** `CATEGORIAS_VALIDAS`, a
+rótulo no site. Além disso, `estagio` e `residencia_juridica` são garantidas pelo texto
+(número + trechos + resumo), mesmo que a IA esqueça: `_RE_CAT_RESIDENCIA` ("Residência Jurídica",
+"Residente Jurídico") tem prioridade; `_RE_CAT_ESTAGIO` casa estágio/estagiário mas não
+"estágio probatório" (e não casa "Presidente"). **Ao criar categoria nova, atualizar os três lugares:** `CATEGORIAS_VALIDAS`, a
 lista do prompt e `CAT_LABELS` + `.cat-<nome>` no `index.html` (e `docs/diario-oficial-categorias.md`).
 
 ### Escala de plantão do Polo → CSV (sessão 44)

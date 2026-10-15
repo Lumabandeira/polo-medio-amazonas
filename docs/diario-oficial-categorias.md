@@ -86,6 +86,16 @@ designação ou desligamento de estagiário. No site: filtro "🎓 Estágio".
 
 ---
 
+### `residencia_juridica`
+**O que é:** Programa de Residência Jurídica do polo — edital, inscrições, resultados, fiscais,
+convocação, designação ou desligamento de residente. No site: filtro "⚖️ Residência Jurídica".
+Não confundir com `estagio` (estagiário de graduação/nível médio).
+
+**Exemplos:** Edital nº 1/2026-ESUDPAM (resultado final, Edição 2568); Edital nº 67/2026 (vaga em
+Silves, Edição 2663); Edital nº 75/2026 (vaga em Urucurituba, Edição 2681)
+
+---
+
 ### `meta_trimestral`
 **O que é:** resolução do Conselho Superior (CSDPEAM) que estabelece as metas e os critérios de
 elegibilidade de um trimestre (meritocracia — promoção, prêmio de produtividade, adicional de
