@@ -102,39 +102,53 @@
         .header-nav-btn.btn-diario      { background: linear-gradient(135deg, #065f46 0%, #10b981 100%); }
 
 
+        /* Abas de "Designações, Férias e Folgas" em forma de cartão (ícone, título, descrição) */
         .tabs {
             display: flex;
+            gap: 12px;
+            padding: 18px 20px;
             background: var(--bg-color);
             border-bottom: 2px solid var(--border-color);
             overflow-x: auto;
         }
 
         .tab-button {
-            flex: 1;
-            padding: 20px;
-            background: none;
-            border: none;
+            flex: 1 1 0;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 14px 10px;
+            background: white;
+            border: 2px solid #bfdbfe;
+            border-radius: 14px;
             cursor: pointer;
-            font-size: 1.1em;
-            font-weight: 600;
-            color: var(--text-secondary);
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
-            white-space: nowrap;
+            font-family: inherit;
+            color: #1e3a8a;
+            text-align: center;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.15s, border-color 0.15s;
+            box-shadow: 0 2px 6px rgba(30, 58, 138, 0.08);
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
         }
+        .tab-button .tab-ico  { font-size: 1.7em; line-height: 1.1; }
+        .tab-button .tab-tit  { font-size: 1em; font-weight: 700; line-height: 1.25; }
+        .tab-button .tab-desc { font-size: 0.8em; font-weight: 500; color: #2563eb; line-height: 1.3; }
 
         .tab-button:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--secondary-color);
+            transform: translateY(-2px);
+            border-color: #3b82f6;
+            box-shadow: 0 6px 14px rgba(30, 58, 138, 0.15);
         }
 
         .tab-button.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-            background: white;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border-color: #1e3a8a;
+            color: white;
+            box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
         }
+        .tab-button.active .tab-desc { color: #dbeafe; }
 
         .month-filter-btn {
             padding: 12px 24px;
@@ -715,19 +729,17 @@
                 display: none;
             }
 
-            .tab-button {
-                flex: 0 0 auto;
-                padding: 15px 12px;
-                font-size: 0.85em;
-                white-space: nowrap;
-                border-bottom: 3px solid transparent;
-                border-left: none;
-                min-width: fit-content;
+            .tabs {
+                gap: 8px;
+                padding: 12px;
             }
 
-            .tab-button.active {
-                border-left: none;
-                border-bottom-color: var(--primary-color);
+            .tab-button {
+                flex: 0 0 auto;
+                width: 132px;
+                min-width: 0;
+                padding: 10px 8px;
+                font-size: 0.85em;
             }
 
             .tab-content {
@@ -968,7 +980,8 @@
             }
 
             .tab-button {
-                padding: 12px 10px;
+                width: 118px;
+                padding: 9px 6px;
                 font-size: 0.8em;
             }
 
@@ -3530,21 +3543,21 @@
         </div>
 
         <div class="tabs">
-            <button class="tab-button active" onclick="showTab('designacoes')">📋 Defensorias</button>
+            <button class="tab-button active" onclick="showTab('designacoes')"><span class="tab-ico">📋</span><span class="tab-tit">Defensorias</span><span class="tab-desc">Titulares e designações de cada DP</span></button>
             <button id="btn-sino-remocao" class="btn-sino-remocao" style="display:none" onclick="abrirPainelRemocao()" title="Notificações de Alterações de Titularidade">
                 🔔<span id="badge-sino-remocao" class="badge-sino" style="display:none">0</span>
             </button>
             <button id="btn-sino-designacao" class="btn-sino-designacao" style="display:none" onclick="abrirPainelDesignacao()" title="Notificações de Designações Cumulativas">
                 🔔<span id="badge-sino-designacao" class="badge-sino" style="display:none">0</span>
             </button>
-            <button class="tab-button" onclick="showTab('calendario')">📅 Calendários de afastamentos</button>
-            <button class="tab-button" onclick="showTab('lista-substituicoes')">📋 Lista de Substituições</button>
+            <button class="tab-button" onclick="showTab('calendario')"><span class="tab-ico">📅</span><span class="tab-tit">Calendários de afastamentos</span><span class="tab-desc">Férias, folgas e licenças no mês</span></button>
+            <button class="tab-button" onclick="showTab('lista-substituicoes')"><span class="tab-ico">🔄</span><span class="tab-tit">Lista de Substituições</span><span class="tab-desc">Quem substitui quem</span></button>
             <button id="btn-sino" class="btn-sino" style="display:none" onclick="abrirPainelNotificacoes()" title="Notificações da automação">
                 🔔<span id="badge-sino" class="badge-sino" style="display:none">0</span>
             </button>
-            <button class="tab-button" onclick="showTab('detalhes')">📊 Resumo de Afastamentos</button>
-            <button class="tab-button" onclick="showTab('designacoes-periodo')">📅 Designações diárias</button>
-            <button id="tab-btn-diario" class="tab-button" onclick="showTab('diario-oficial')">📰 Diário Oficial</button>
+            <button class="tab-button" onclick="showTab('detalhes')"><span class="tab-ico">📊</span><span class="tab-tit">Resumo de Afastamentos</span><span class="tab-desc">Totais por defensor</span></button>
+            <button class="tab-button" onclick="showTab('designacoes-periodo')"><span class="tab-ico">🗓️</span><span class="tab-tit">Designações diárias</span><span class="tab-desc">Quem atende cada DP, dia a dia</span></button>
+            <button id="tab-btn-diario" class="tab-button" onclick="showTab('diario-oficial')"><span class="tab-ico">📰</span><span class="tab-tit">Diário Oficial</span><span class="tab-desc">Portarias do polo</span></button>
         </div>
 
         <!-- Tab: Defensorias -->
@@ -6219,7 +6232,8 @@
             buttons.forEach(btn => btn.classList.remove('active'));
 
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+            const btnAtivo = event.target.closest('.tab-button');
+            if (btnAtivo) btnAtivo.classList.add('active');
 
 
             if (tabName === 'calendario') {

@@ -75,6 +75,11 @@ marcada também por regex no texto (`_RE_CAT_RESIDENCIA`/`_RE_CAT_ESTAGIO`, sem 
 probatório"); histórico: 18 publicações de estágio e 6 de Residência (a da Edição 2568 era só
 texto legado — criado o registro estruturado do Edital 1/2026-ESUDPAM). Portaria 78/2026-ESUDPAM
 (Pauini, Polo Purus) removida a pedido da usuária.
+Site: botão do topo/cartão inicial "Designações" → "Designações, Férias e Folgas"; as abas
+internas (`.tabs`/`.tab-button`) viraram cartões com ícone, título e descrição
+(`.tab-ico`/`.tab-tit`/`.tab-desc`); ativa = gradiente azul. `showTab()` usa
+`event.target.closest('.tab-button')` porque o clique pode cair num `<span>` interno. No celular os
+cartões têm largura fixa e rolam na horizontal.
 
 ## Estado atual (sessão 49 — 14/10/2026)
 
