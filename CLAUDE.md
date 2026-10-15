@@ -57,6 +57,16 @@ docs/
 
 ---
 
+## Estado atual (sessão 50 — 15/10/2026)
+
+**Implementado nesta sessão:** a Resolução nº 40/2026-CSDPEAM (metas e critérios de
+elegibilidade do 4º trimestre — meritocracia, Edição 2742 de 30/09/2026) não entrou no Diário
+Oficial do site: o texto chegava ao Claude, mas o prompt só pedia portarias ligadas ao polo. Agora
+é o 5º ato de interesse geral (`TERMOS_RELEVANCIA_GERAL` + item (e) do prompt, categoria
+`meta_trimestral`), e o site tem o filtro "🎯 Meritocracia". Edição 2742 incluída à mão no JSON.
+Testado: filtro pós-Claude aceita a resolução e continua descartando atos de outros polos; botão
+do filtro conferido no navegador. Ver `docs/automacao.md`.
+
 ## Estado atual (sessão 49 — 14/10/2026)
 
 **Implementado nesta sessão:** bugfix — os afastamentos do Pedro Paiva (férias 23/11–02/12, folga

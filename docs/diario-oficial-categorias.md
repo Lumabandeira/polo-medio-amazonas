@@ -78,6 +78,15 @@ Cada ato pode ter **uma ou mais** categorias. A ordem sugerida é da mais espec�
 
 ---
 
+### `meta_trimestral`
+**O que é:** resolução do Conselho Superior (CSDPEAM) que estabelece as metas e os critérios de
+elegibilidade de um trimestre (meritocracia — promoção, prêmio de produtividade, adicional de
+desempenho). Entra mesmo sem citar o polo. No site: filtro "🎯 Meritocracia".
+
+**Exemplo:** "Resolução nº 40/2026-CSDPEAM — Estabelece as metas para o 4º trimestre do ano de 2026" (Edição 2742)
+
+---
+
 ### `nomeacao_diretoria`
 **O que é:** nomeações, exonerações e delegações de cargos de direção e gestão da DPE/AM que têm impacto indireto no Polo Médio Amazonas (ex: mudança de Subdefensor Público Geral que assina as portarias do polo, nomeação de Diretor-Geral).
 

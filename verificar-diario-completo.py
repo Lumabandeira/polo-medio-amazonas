@@ -281,7 +281,6 @@ def inicializar_termos():
 
     # Atos de interesse geral (alta administração, ordenador de despesas, projetos)
     termos.extend(TERMOS_RELEVANCIA_GERAL)
-    termos.append(r"metas?\s+(?:para\s+o\s+)?\d+[ºo°]\s+trimestre")
 
     # Cidades do polo
     termos.extend(CIDADES_POLO)
@@ -770,7 +769,7 @@ def parse_portarias(text: str, state: dict) -> dict:
             "role": "user",
             "content": f"""Analise este texto do Diário Oficial da Defensoria Pública do Estado do Amazonas.
 
-Identifique TODAS as portarias que mencionam o Polo Médio Amazonas ou qualquer de seus integrantes (defensores, servidores, estagiários) ou cidades do polo (Itacoatiara, São Sebastião do Uatumã, Itapiranga, Urucurituba, Urucará, Silves).
+Identifique TODAS as portarias (e resoluções) que mencionam o Polo Médio Amazonas ou qualquer de seus integrantes (defensores, servidores, estagiários) ou cidades do polo (Itacoatiara, São Sebastião do Uatumã, Itapiranga, Urucurituba, Urucará, Silves).
 
 Para cada portaria relevante, extraia:
 - "numero": número completo da portaria (ex: "Portaria Nº 123/2026-GSPG/DPE/AM")
@@ -817,7 +816,7 @@ REGRAS:
 - O resumo deve ser conciso e informativo (quem, o quê, quando)
 - Se não identificar o número SEI/SGI, use null (não use string vazia)
 - Inclua apenas portarias genuinamente relacionadas ao polo ou seus integrantes
-- Inclua TAMBÉM, mesmo sem citar o polo: (a) nomeação ou exoneração de Defensor(a) Público(a) Geral ou Subdefensor(a) Público(a) Geral; (b) designação ou delegação da função de Ordenador(a) de Despesas; (c) atos que designem, prorroguem ou encerrem um ciclo inteiro do Projeto "Adote uma Comarca" (não a troca pontual de um servidor em comarca de outro polo); (d) qualquer ato do Projeto "Expandir Presença" (faz as audiências do polo). NÃO inclua nomeações para diretorias, assessorias ou coordenação de outros polos
+- Inclua TAMBÉM, mesmo sem citar o polo: (a) nomeação ou exoneração de Defensor(a) Público(a) Geral ou Subdefensor(a) Público(a) Geral; (b) designação ou delegação da função de Ordenador(a) de Despesas; (c) atos que designem, prorroguem ou encerrem um ciclo inteiro do Projeto "Adote uma Comarca" (não a troca pontual de um servidor em comarca de outro polo); (d) qualquer ato do Projeto "Expandir Presença" (faz as audiências do polo); (e) resolução do Conselho Superior (CSDPEAM) que estabelece as metas e os critérios de elegibilidade de um trimestre (meritocracia) — use "numero" no formato "Resolução nº 40/2026-CSDPEAM", categoria "meta_trimestral" e, nos "trechos", a ementa ("Estabelece as metas para o Xº trimestre…") e o Art. 1º. NÃO inclua nomeações para diretorias, assessorias ou coordenação de outros polos
 - NÃO inclua portarias que só autorizam deslocamento, transporte ou diárias de um integrante do polo para trabalhar FORA do polo (ex.: trecho Manacapuru/Novo Airão, em outro polo) — o nome do integrante sozinho não torna o ato relevante. Designações, substituições, férias e afastamentos de integrantes continuam relevantes mesmo que o destino seja outro polo
 - Polo do Médio Solimões, Polo do Médio Madeira, Polo Baixo Amazonas, Polo do Alto Solimões, Polo do Rio Negro-Solimões, Polo do Juruá, Polo do Purus etc. são OUTROS polos — NÃO são o Polo Médio Amazonas; nunca marque "polo_medio" por causa deles
 - O texto do PDF tem duas colunas e às vezes mistura linhas de portarias vizinhas ou de uma tabela ao lado; não junte incisos de portarias diferentes numa só
@@ -860,6 +859,8 @@ _RE_ATO_DE_LOTACAO = re.compile(
 #   2. designação/delegação de Ordenador(a) de Despesas
 #   3. atos do ciclo inteiro do "Adote uma Comarca" (designar/prorrogar/encerrar — não
 #      a troca pontual de um servidor em outra comarca) e qualquer ato do "Expandir Presença"
+#   5. resolução trimestral de metas/critérios de elegibilidade do CSDPEAM (meritocracia) —
+#      sessão 50; caso real: Resolução 40/2026-CSDPEAM, Edição 2742 (30/09/2026), perdida
 TERMOS_RELEVANCIA_GERAL = [
     r"(?:NOMEAR|EXONERAR|nomea[çc][ãa]o|exonera[çc][ãa]o)[^.;]{0,200}?(?:Sub)?defensor[a]?\s+P[úu]blic[oa]\s*[-–]?\s*Geral",
     r"Ordenador[a]?\s+de\s+Despesas?",
@@ -868,6 +869,10 @@ TERMOS_RELEVANCIA_GERAL = [
     # 4. escala de substituição entre polos (a Portaria 493/2024-GDPG fixava essa escala)
     r"escala\s+de\s+substitui[çc][ãa]o\s+entre\s+(?:os\s+)?Polos",
     r"Portaria\s+n?[º°.o]*\s*493/2024",
+    # 5. metas trimestrais (meritocracia) — ementa "Estabelece as metas para o 4º trimestre"
+    #    ou Art. 1º "critérios de elegibilidade e as metas … para o 4º trimestre"
+    r"metas?\s+(?:e\s+(?:os\s+)?crit[ée]rios\s+de\s+elegibilidade\s+)?(?:para\s+o\s+)?\d+[ºo°]\s+trimestre",
+    r"crit[ée]rios\s+de\s+elegibilidade\s+e\s+(?:as\s+)?metas",
 ]
 _RE_RELEVANCIA_GERAL = [re.compile(t, re.IGNORECASE) for t in TERMOS_RELEVANCIA_GERAL]
 

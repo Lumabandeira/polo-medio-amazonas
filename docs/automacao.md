@@ -136,7 +136,11 @@ polo no texto. Correção em duas camadas:
    **Exceções (atos de interesse geral, `TERMOS_RELEVANCIA_GERAL`, definidas pela usuária):**
    nomeação/exoneração de Defensor(a)/Subdefensor(a) Público(a) Geral; designação/delegação de
    Ordenador(a) de Despesas; atos do ciclo inteiro do "Adote uma Comarca"; qualquer ato do
-   "Expandir Presença". Também entram como termo-gatilho no pré-filtro e no prompt.
+   "Expandir Presença"; escala de substituição entre polos; resolução trimestral de metas e
+   critérios de elegibilidade do CSDPEAM (meritocracia — sessão 50, caso real: Resolução
+   40/2026-CSDPEAM, Edição 2742, que o prompt antigo ignorava por não ser portaria nem citar o
+   polo; vai com a categoria `meta_trimestral`, filtro "🎯 Meritocracia" no site). Também entram
+   como termo-gatilho no pré-filtro e no prompt.
    `termos_integrantes_na_data(data)` acrescenta quem era titular na data da edição (ex.: Elton
    até 02/05/2026) — usado no fluxo diário e na revisão do histórico.
 
