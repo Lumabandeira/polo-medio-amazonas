@@ -78,6 +78,14 @@ Cada ato pode ter **uma ou mais** categorias. A ordem sugerida é da mais espec�
 
 ---
 
+### `estagio`
+**O que é:** atos sobre estágio ou estagiários do polo — seleção/edital, fiscais de prova,
+designação ou desligamento de estagiário. No site: filtro "🎓 Estágio".
+
+**Exemplo:** "Portaria nº 426/2026-GSPG — divulga fiscais da seleção de estágio de graduação em Silves" (Edição 2658)
+
+---
+
 ### `meta_trimestral`
 **O que é:** resolução do Conselho Superior (CSDPEAM) que estabelece as metas e os critérios de
 elegibilidade de um trimestre (meritocracia — promoção, prêmio de produtividade, adicional de

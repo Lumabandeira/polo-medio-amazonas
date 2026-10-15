@@ -160,6 +160,14 @@ incisos de portarias vizinhas. Histórico: removidas mais 23 portarias só de ou
 conferida pela usuária), incluindo 571 e 779 (Pedro Henrique no Médio Solimões antes de vir para
 o polo) — essas duas passariam pelo filtro atual, porque o nome dele hoje é termo-gatilho.
 
+### Categorias só da lista (sessão 50)
+
+`normalizar_categorias()`, chamada em `filtrar_portarias_fora_do_polo()`, tira acento/maiúsculas
+("estágio" → `estagio`) e descarta qualquer categoria fora de `CATEGORIAS_VALIDAS` (com log).
+Motivo: a IA inventou "estágio" na Portaria 426/2026 (Edição 2658), que virou botão de filtro sem
+rótulo no site. **Ao criar categoria nova, atualizar os três lugares:** `CATEGORIAS_VALIDAS`, a
+lista do prompt e `CAT_LABELS` + `.cat-<nome>` no `index.html` (e `docs/diario-oficial-categorias.md`).
+
 ### Escala de plantão do Polo → CSV (sessão 44)
 
 `extrair_escala_plantao_polo(pdf_bytes, data_pub)` lê, **sem Claude** (determinístico, custo

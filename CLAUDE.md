@@ -66,6 +66,11 @@ Oficial do site: o texto chegava ao Claude, mas o prompt só pedia portarias lig
 `meta_trimestral`), e o site tem o filtro "🎯 Meritocracia". Edição 2742 incluída à mão no JSON.
 Testado: filtro pós-Claude aceita a resolução e continua descartando atos de outros polos; botão
 do filtro conferido no navegador. Ver `docs/automacao.md`.
+Na sequência: categoria oficial `estagio` ("🎓 Estágio") — a IA tinha inventado "estágio" na
+Portaria 426/2026 (Edição 2658), que aparecia como botão sem rótulo; o JSON foi migrado. E
+`normalizar_categorias()` (dentro de `filtrar_portarias_fora_do_polo()`) tira acento e descarta
+categoria fora de `CATEGORIAS_VALIDAS` — que precisa ficar igual à lista do prompt e a
+`CAT_LABELS` no `index.html`.
 
 ## Estado atual (sessão 49 — 14/10/2026)
 

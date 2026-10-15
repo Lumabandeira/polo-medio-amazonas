@@ -775,7 +775,7 @@ Para cada portaria relevante, extraia:
 - "numero": número completo da portaria (ex: "Portaria Nº 123/2026-GSPG/DPE/AM")
 - "sei": número SEI no formato XX.X.XXXXXXX-X, ou null se ausente
 - "sgi": número SGI, ou null se ausente
-- "categorias": lista com todas as categorias aplicáveis (ver abaixo)
+- "categorias": lista com todas as categorias aplicáveis (ver abaixo) — use SOMENTE os nomes da lista, exatamente como escritos; não crie categorias novas
 - "trechos": lista com os incisos/parágrafos relevantes, em texto exato (não parafraseie)
 - "resumo": frase curta (1-2 linhas) descrevendo o ato em linguagem simples
 
@@ -790,6 +790,7 @@ Categorias disponíveis (use quantas se aplicarem):
 - "plantao": escala de plantão (fins de semana, feriados)
 - "coordenacao": ato de coordenação regional do polo
 - "designacoes": designação de atuação cumulativa
+- "estagio": envolve estágio ou estagiários (seleção, edital, fiscais de prova, designação ou desligamento de estagiário)
 - "meta_trimestral": resolução do Conselho Superior (CSDPEAM) que estabelece metas, critérios de elegibilidade ou bonificação de produtividade/desempenho para um trimestre
 
 Retorne SOMENTE um JSON válido com esta estrutura:
@@ -852,6 +853,28 @@ _RE_ATO_DE_LOTACAO = re.compile(
     r"designa|substitu|f[ée]rias|afast|remo[çc][ãa]o|remov|licen[çc]a|folga|plant[ãa]o|lota[çc][ãa]o",
     re.IGNORECASE,
 )
+
+# Categorias aceitas no JSON — as mesmas da lista do prompt e de CAT_LABELS no index.html.
+# A IA às vezes inventa outras (caso real: "estágio", Portaria 426/2026, Edição 2658), que
+# viravam botões de filtro sem rótulo no site; agora são normalizadas ou descartadas.
+CATEGORIAS_VALIDAS = {
+    "polo_medio", "defensor", "servidor", "substituicao", "nomeacao_diretoria", "comarca",
+    "projeto", "plantao", "coordenacao", "designacoes", "estagio", "meta_trimestral",
+}
+
+
+def normalizar_categorias(cats: list) -> list:
+    """Sem acento/minúsculas ("estágio" → "estagio"); descarta o que não está na lista."""
+    resultado = []
+    for c in cats or []:
+        chave = _sem_acento(str(c)).strip().lower().replace(" ", "_")
+        if chave in CATEGORIAS_VALIDAS:
+            if chave not in resultado:
+                resultado.append(chave)
+        else:
+            log.info(f"  - Categoria fora da lista descartada: {c!r}")
+    return resultado
+
 
 # Atos de interesse geral para o polo mesmo sem citá-lo (padrões definidos pela
 # usuária na sessão 44, ao conferir o histórico):
@@ -947,7 +970,8 @@ def filtrar_portarias_fora_do_polo(portarias: list, termos_extra: list | None = 
         ):
             log.info(f"  - Descartada (viagem fora do polo): {p.get('numero')}")
             continue
-        cats = p.get("categorias") or []
+        cats = normalizar_categorias(p.get("categorias"))
+        p["categorias"] = cats
         if "comarca" in cats and not menciona_cidade:
             p["categorias"] = [c for c in cats if c != "comarca"]
         resultado.append(p)
