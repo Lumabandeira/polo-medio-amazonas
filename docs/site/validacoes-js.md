@@ -17,7 +17,6 @@ Firebase onAuthStateChanged()   ← detecta login/logout
        └→ loadTitularesFirestore()
        └→ loadAfastamentosFirestore()
        └→ loadEquipeFirestore()
-       └→ carregarNotificacoesAutomacao()
 ```
 
 ## Resolução de titular por data
@@ -87,18 +86,6 @@ Firebase onAuthStateChanged()   ← detecta login/logout
 | `_rteMountTabelaHandlers()` | **Função compartilhada** — conecta botões usando `_rteTargetEl` |
 | `_rteUnmount()` | Oculta toolbar, move para `document.body` |
 | `_rteSaveRange()` / `_rteRestoreRange()` | Preserva seleção ao clicar na toolbar |
-
-## Notificações (sinos)
-
-| Função | Sino |
-|--------|------|
-| `carregarNotificacoesAutomacao()` | Carrega as 3 coleções (try/catch independentes) |
-| `_atualizarBadgeSino()` | Badge azul — `afastamentos_admin` |
-| `_atualizarBadgeSinoRemocao()` | Badge âmbar — `remocoes_admin` |
-| `_atualizarBadgeSinoDesignacao()` | Badge verde — `designacoes_cumulativas_admin` |
-| `dispensarNotificacao(id)` | Grava `lido: true` em `afastamentos_admin` |
-| `dispensarRemocao(id)` | Grava `lido: true` em `remocoes_admin` |
-| `dispensarDesignacao(id)` | Grava `lido: true` em `designacoes_cumulativas_admin` |
 
 ## Validações antigas (ainda presentes, uso limitado)
 

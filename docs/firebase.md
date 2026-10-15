@@ -158,8 +158,8 @@ designacoes_dp: [
   }
 ]
 criado_por:     "automacao@github-actions" | "email@..."
-origem:         "automacao-diario-oficial"   ← só na automação
-lido:           false   ← false = aparece no sino azul
+origem:         "automacao-diario-oficial"   ← só nos registros gravados pelo antigo Projeto 1
+lido:           false   ← era usado pelo sino azul (removido na sessão 50)
 precisa_revisao: true   ← quando data_fim vazia
 ```
 > **`tipo: "trabalho_remoto"`** (exibido na UI como "💻 Trabalho em Trânsito") é especial: **não é
@@ -211,7 +211,7 @@ atualizado_por / atualizado_em   ← só em edições
   extraídos da Portaria nº 764/2026-GSPG/DPE/AM — importados uma única vez via
   botão que só aparece enquanto a coleção está vazia.
 
-### `remocoes_admin/{id}` — alterações de titularidade (automação)
+### `remocoes_admin/{id}` — alterações de titularidade (automação — legado, sem uso desde a sessão 50)
 ```
 tipo:              "cessacao_designacao"   ← ausente = concurso de remoção
 portaria_numero:   "Portaria nº 602/2026-GDPG/DPE/AM"
@@ -222,12 +222,12 @@ data_vigencia:     "2026-05-02"
 saindo:  [{ dp: "1", defensor: "Nome completo" }]
 chegando: [{ dp: "1", defensor: "Nome completo" }]
 origem:   "automacao-diario-oficial"
-lido:     false   ← false = aparece no sino âmbar
+lido:     false   ← era usado pelo sino âmbar (removido)
 edicao_do: "2640"
 data_publicacao: "2026-04-15"
 ```
 
-### `designacoes_cumulativas_admin/{id}` — designações cumulativas sem data fim
+### `designacoes_cumulativas_admin/{id}` — designações cumulativas sem data fim (legado, sem uso desde a sessão 50)
 ```
 defensor_nome:    "Eliaquim Antunes de Souza Santos"
 defensor_abrev:   "eliaquim"
@@ -237,7 +237,7 @@ portaria_numero:  "Portaria nº .../2026-..."
 portaria_url:     "https://..."
 processo_sei:     "..."
 origem:           "automacao-diario-oficial"
-lido:             false   ← false = aparece no sino verde
+lido:             false   ← era usado pelo sino verde (removido)
 edicao_do:        "2650"
 data_publicacao_do: "2026-05-06"
 ```
@@ -320,7 +320,7 @@ atualizado_por / atualizado_em
 - Criada pelo próprio site (botão "🔑 Chave da API"), depois que o `firestore.rules` for publicado.
 - `config_privada/signatarios` — `{ lista: [{nome, cargo, matricula}] }`, signatários do atesto do "Gerar com Claude"; mesma regra (só a Luma).
 
-### `automacao_config/estado_diario` — estado da automação (Projeto 1)
+### `automacao_config/estado_diario` — estado da automação (Projeto 1 — legado, removido na sessão 50)
 ```
 ultima_edicao:       2680   ← número da última edição processada
 edicoes_processadas: [2640, 2641, ...]
@@ -400,7 +400,6 @@ config fica só no bucket do Google Cloud, não em nenhum arquivo `.rules`).
 | `loadPlantaoFirestore()` | Carrega `plantao_admin`, ordena por `data_inicio` |
 | `salvarPlantaoFirestore()` / `confirmarDeletarPlantao()` | CRUD de 1 período via formulário modal |
 | `_plantaoParseCSV()` / `_plantaoConfirmarImportacaoCsv()` | Importação em lote via texto CSV colado (parsing 100% local, sem IA) |
-| `carregarNotificacoesAutomacao()` | Carrega as 3 coleções de notificações (try/catch independentes) |
 | `get_firestore_client()` | Python — inicializa Firebase Admin SDK |
 | `renderPrestacoesContas()` | Carrega `prestacoes_contas` e renderiza a lista de cards (admin-only) |
 | `salvarPrestacao()` / `_validarCategoriaDisponivel()` | Cria/edita um pronto pagamento, validando o limite de 2 abertos por tomador |

@@ -43,7 +43,7 @@ log = logging.getLogger("backup-firestore")
 
 
 def inicializar_firestore():
-    """Mesma lógica de credenciais usada em verificar-diario-oficial.py:
+    """Mesma lógica de credenciais do antigo verificar-diario-oficial.py:
     var de ambiente FIREBASE_SERVICE_ACCOUNT (JSON) ou arquivo local
     firebase-service-account.json na raiz do projeto."""
     if not firebase_admin._apps:

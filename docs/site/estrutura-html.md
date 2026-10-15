@@ -56,13 +56,10 @@ selecionado — meses sem registro exibem uma mensagem em vez de sumir da navega
   quando o filtro "Filtrar por DP" muda (o dropdown já existente, `filtroListaDP`) —
   trocar de DP não volta pro mês padrão.
 
-## Sinos de Notificação (admin only, barra de abas)
+## Abas de "Designações, Férias e Folgas"
 
-| ID do botão | Coleção Firestore | Painel |
-|-------------|-------------------|--------|
-| `#btn-sino` | `afastamentos_admin` (automação) | `#notif-overlay` — azul |
-| `#btn-sino-remocao` | `remocoes_admin` | `#notif-remocao-overlay` — âmbar |
-| `#btn-sino-designacao` | `designacoes_cumulativas_admin` | painel verde |
+Cartões `.tab-button` (`.tab-ico`/`.tab-tit`/`.tab-desc`) na barra `.tabs`. Os 3 sinos de
+notificação que ficavam entre eles foram removidos na sessão 50 (ver `docs/automacao.md`).
 
 ## Fontes de Dados no JavaScript
 

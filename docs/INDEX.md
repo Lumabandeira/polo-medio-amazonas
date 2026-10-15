@@ -9,7 +9,7 @@
 | Arquivo | Conteúdo |
 |---------|---------|
 | `firebase.md` | Schema do Firestore, autenticação, regras de segurança, funções JS do Firebase |
-| `automacao.md` | Projeto 1 (afastamentos), Projeto 2 (diário completo), backfill, secrets |
+| `automacao.md` | Projeto 2 (diário completo), nota do Projeto 1 removido, backfill, secrets |
 | `arquitetura.md` | Decisões de design, padrão de cache localStorage, arquiteturas internas |
 | `historico-sessoes.md` | Log cronológico do que foi implementado por sessão |
 | `diario-oficial-completo-2026.json` | Saída do Projeto 2, atualizado automaticamente |
@@ -71,7 +71,7 @@ Um arquivo por defensor. Contém status, DPs titulares, grupo de alternância e 
 |---------|---------|
 | `estrutura-html.md` | Seções, abas, IDs, fontes de dados JS, cache localStorage |
 | `padroes-codigo.md` | HTML das tabelas, abreviações dos defensores, formato de datas |
-| `validacoes-js.md` | Funções JS principais: inicialização, calendário, RTE, sinos |
+| `validacoes-js.md` | Funções JS principais: inicialização, calendário, RTE |
 | `processo-atualizacao.md` | Como atualizar afastamentos, titulares e seções editáveis via admin UI |
 
 ## raiz de docs/

@@ -38,14 +38,13 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 ```
 index.html                            ← site completo (único arquivo do site)
 CLAUDE.md                             ← este índice
-verificar-diario-oficial.py           ← Projeto 1: afastamentos → Firestore (06:00 Manaus)
 verificar-diario-completo.py          ← Projeto 2: todas portarias → JSON (04:00 Manaus)
 backfill-calendario-do-estruturado.py ← backfill histórico do DO
 limpar-backfill.py                    ← limpeza de registros duplicados do backfill
 docs/
 ├── INDEX.md                          ← índice de todos os arquivos docs/
 ├── firebase.md                       ← schema Firestore, auth, funções JS
-├── automacao.md                      ← Projeto 1, Projeto 2, backfill
+├── automacao.md                      ← Projeto 2 (Projeto 1 removido na sessão 50), backfill
 ├── arquitetura.md                    ← decisões, padrão de cache, arquiteturas internas
 ├── historico-sessoes.md              ← log do que foi implementado por sessão
 ├── defensores/                       ← um arquivo por defensor (ativos e ex-membros)
@@ -80,6 +79,12 @@ internas (`.tabs`/`.tab-button`) viraram cartões com ícone, título e descriç
 (`.tab-ico`/`.tab-tit`/`.tab-desc`); ativa = gradiente azul. `showTab()` usa
 `event.target.closest('.tab-button')` porque o clique pode cair num `<span>` interno. No celular os
 cartões têm largura fixa e rolam na horizontal.
+**Sinos e Projeto 1 removidos** (pendência da sessão 30): saíram os 3 sinos da barra de abas,
+painéis, CSS e funções JS (`carregarNotificacoesAutomacao()` etc.), `verificar-diario-oficial.py`,
+`verificar-diario.yml` e `criar-tarefa-agendada.ps1`. Nenhum dado do Firestore foi tocado
+(`afastamentos_admin`, `remocoes_admin`, `designacoes_cumulativas_admin` e
+`automacao_config/estado_diario` continuam lá; regras do `firestore.rules` mantidas). Ver
+`docs/automacao.md`.
 
 ## Estado atual (sessão 49 — 14/10/2026)
 
@@ -840,8 +845,6 @@ Console. Tudo testado e validado com dados reais.
 **O que falta implementar:**
 - Cadastrar os outros 36 usuários restantes no Firebase (1 admin + 35 viewers)
 - Dados privados da equipe (WhatsApp, contatos internos)
-- Remoção futura dos sinos de notificação/automação de PDF (afastamentos/remoções/designações
-  cumulativas) — decisão da sessão 30, não têm se mostrado confiáveis na prática
 - **Bugfix pendente:** escape de HTML no campo "Editar link" do topo do Plantão
   (`_plantaoCarregarInfo()`, `linkEl.innerHTML = ...` em `index.html`, perto de
   `index.html:9057-9064`) — `nome` e `url` de `secoes/plantao_info` entram direto no HTML sem

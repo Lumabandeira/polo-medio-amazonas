@@ -1,82 +1,17 @@
 # Automação do Diário Oficial
 
-## Projeto 1 — Afastamentos de Titulares (`verificar-diario-oficial.py`)
+## Projeto 1 — removido (sessão 50, 15/10/2026)
 
-**Objetivo:** detectar afastamentos dos defensores titulares do polo e gravar em `afastamentos_admin` no Firestore.
-
-**Quando roda:** diariamente às **06:00 de Manaus** (10:00 UTC) via `.github/workflows/verificar-diario.yml`.
-
-**API key:** `ANTHROPIC_API_KEY` (limite mensal: $2,00)
-
-**Modelo:** `claude-sonnet-4-5-20251001`
-
-### Fluxo
-
-1. Scrape da página pública do Diário Oficial da DPE/AM
-2. Comparação com `automacao_config/estado_diario` no Firestore (+ arquivo local `.estado-diario.json` em cache do Actions como acelerador)
-3. Para cada edição nova: baixa PDF → extrai texto com `pdfplumber`
-4. **Pré-filtro por termos-gatilho** — busca `"Polo (do) Médio Amazonas"` + primeiro+segundo nome de cada titular vigente. Se nenhum termo aparece, pula (custo zero). Carregados dinamicamente de `designacoes-2026.json` + `titulares_admin` via `inicializar_defensores_e_termos()`.
-5. Extrai janelas de ±1500 chars em volta de cada menção → envia ao Claude com prompt JSON
-6. Claude retorna 3 arrays: `afastamentos`, `cessacoes`, `designacoes_cumulativas`
-7. Grava em Firestore:
-   - `afastamentos_admin` via `salvar_afastamentos_firestore()`
-   - `remocoes_admin` (cessações) via `salvar_cessacoes_firestore()`
-   - `designacoes_cumulativas_admin` via `salvar_designacoes_cumulativas_firestore()`
-8. Atualiza `automacao_config/estado_diario` via `save_state()`
-
-### Dedup
-
-- **Afastamentos:** por `(defensor, data_inicio, data_fim, tipo)`
-- **Cessações:** por `(tipo, portaria_cessada)`
-- **Designações cumulativas:** por `(defensor_abrev, dp_designada, data_inicio)`
-
-### Mapeamento de substitutos
-
-- Nome bate com titular do polo → `substituto: "abrev"`, `substituto_nome_externo: ""`
-- Não bate → `substituto: "_outro"`, `substituto_nome_externo: "Nome completo"`
-
-### Designação cumulativa com período definido (commit de 19/05, aplicado em 28/09)
-
-"DESIGNAR, cumulativamente, … de 18 a 31/05" é cobertura de ausência → vai para `afastamentos`
-(não `designacoes_cumulativas`, que é só sem data fim). Como a portaria muitas vezes não nomeia o
-ausente, `defensor_ausente` vinha vazio e o registro era descartado sem aviso. Correção: exemplo
-concreto no prompt (Portaria 516/2026, Emilly/Miguel) e fallback em
-`salvar_afastamentos_firestore()` que infere o ausente pelo titular vigente (`DEFENSORES_POLO`) da
-DP citada na designação. O commit ficou esquecido no branch `claude/practical-hamilton-ea51c1`
-desde 19/05 e só entrou no `main` na sessão 44.
-
-### Persistência de estado (corrigido na sessão 24)
-
-O estado (`ultima_edicao`) é salvo em dois lugares:
-- **Arquivo local** `docs/.estado-diario.json` — cacheado no GitHub Actions (expira após 7 dias)
-- **Firestore** `automacao_config/estado_diario` — backup permanente, usado quando o cache expira
-
-### Sinos no site
-
-| Coleção | Sino | Cor do painel |
-|---------|------|--------------|
-| `afastamentos_admin` (automação) | `#btn-sino` | Azul |
-| `remocoes_admin` | `#btn-sino-remocao` | Âmbar |
-| `designacoes_cumulativas_admin` | `#btn-sino-designacao` | Verde |
-
-### Secrets necessários (GitHub)
-
-| Secret | Obrigatório | Uso |
-|--------|------------|-----|
-| `ANTHROPIC_API_KEY` | ✅ | Chamadas ao Claude |
-| `FIREBASE_SERVICE_ACCOUNT` | ✅ | Escrita no Firestore |
-| `SMTP_REMETENTE` | ⬜ | E-mail de resumo |
-| `SMTP_SENHA_APP` | ⬜ | E-mail de resumo |
-| `SMTP_DESTINATARIO` | ⬜ | E-mail de resumo |
-
-### Rodar localmente
-
-```bash
-py -m pip install firebase-admin requests pdfplumber beautifulsoup4 anthropic
-set ANTHROPIC_API_KEY=sk-ant-...
-py verificar-diario-oficial.py
-```
-Requer `firebase-service-account.json` na raiz (gitignored).
+O antigo `verificar-diario-oficial.py` (workflow `verificar-diario.yml`, 06:00 Manaus) lia o DO,
+gravava afastamentos em `afastamentos_admin` e avisos em `remocoes_admin` e
+`designacoes_cumulativas_admin` (campo `origem: "automacao-diario-oficial"`), exibidos nos 3
+sinos da barra de abas de Designações. Removido a pedido da usuária: os sinos não eram usados
+(decisão anterior das sessões 26/30: pouco confiáveis). Script, workflow, `criar-tarefa-agendada.ps1`,
+sinos, painéis e funções JS saíram; **os dados no Firestore foram preservados** (os 2
+afastamentos gravados pela automação continuam no calendário como qualquer outro). Afastamentos,
+remoções e designações agora são cadastrados só à mão; o Projeto 2 continua mostrando as
+portarias no Diário Oficial do site. Secret `FIREBASE_SERVICE_ACCOUNT` ficou sem uso no GitHub;
+`ANTHROPIC_API_KEY` continua (fallback do Projeto 2).
 
 ---
 
@@ -86,11 +21,11 @@ Requer `firebase-service-account.json` na raiz (gitignored).
 
 **Quando roda:** diariamente às **04:00 de Manaus** (08:00 UTC) via `.github/workflows/verificar-diario-completo.yml`.
 
-**API key:** `ANTHROPIC_API_KEY_COMPLETO` (limite mensal: $5,00) — separado do Projeto 1 para rastrear custos independentemente.
+**API key:** `ANTHROPIC_API_KEY_COMPLETO` (limite mensal: $5,00) (cai em `ANTHROPIC_API_KEY` se a dedicada não existir).
 
 **Não precisa de `FIREBASE_SERVICE_ACCOUNT`** — sem escrita no Firestore.
 
-### Termos-gatilho (mais amplos que o Projeto 1)
+### Termos-gatilho
 
 1. `"Polo\s+(?:do\s+)?Médio\s+Amazonas"`
 2. Cidades: Itacoatiara, São Sebastião do Uatumã, Itapiranga, Urucurituba, Urucará, Silves
@@ -234,12 +169,9 @@ py limpar-backfill.py --commit                     # limpa fragmentações após
 
 | Arquivo | Descrição |
 |---------|----------|
-| `verificar-diario-oficial.py` | Projeto 1 — afastamentos → Firestore |
 | `verificar-diario-completo.py` | Projeto 2 — todas portarias → JSON |
 | `backfill-calendario-do-estruturado.py` | Backfill histórico do DO |
 | `limpar-backfill.py` | Limpeza de registros duplicados/fragmentados |
-| `.github/workflows/verificar-diario.yml` | Workflow do Projeto 1 (06:00 Manaus) |
 | `.github/workflows/verificar-diario-completo.yml` | Workflow do Projeto 2 (04:00 Manaus) |
-| `docs/.estado-diario.json` | Estado do Projeto 1 (gitignored, cache do Actions) |
 | `docs/.estado-diario-completo.json` | Estado do Projeto 2 (gitignored, cache do Actions) |
 | `docs/diario-oficial-completo-2026.json` | Saída do Projeto 2 (commitado) |

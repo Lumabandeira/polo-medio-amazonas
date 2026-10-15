@@ -5,10 +5,11 @@ Detecta TODAS as portarias relevantes ao Polo Médio Amazonas (defensores,
 servidores, cidades) e atualiza docs/diario-oficial-completo-2026.json.
 Executa diariamente via GitHub Actions às 04:00 de Manaus (08:00 UTC).
 
-Diferente do Projeto 1 (verificar-diario-oficial.py), este script:
-  - Tem escopo amplo: defensores + servidores + cidades do polo
-  - Grava em docs/diario-oficial-completo-2026.json (não no Firestore)
-  - Usa prompt Claude diferente: categoriza portarias, não extrai afastamentos
+Escopo amplo (defensores + servidores + cidades do polo); grava em
+docs/diario-oficial-completo-2026.json (não no Firestore) e só categoriza as
+portarias — não extrai afastamentos. (O antigo Projeto 1, verificar-diario-oficial.py,
+que gravava afastamentos/remoções no Firestore e alimentava os sinos do site, foi
+removido em 15/10/2026 — sessão 50.)
 """
 
 import os
@@ -37,7 +38,7 @@ DIARIO_URL   = "https://diario.defensoria.am.def.br/"
 JSON_PATH    = PROJECT_DIR / "docs" / "diario-oficial-completo-2026.json"
 DESIGNACOES_JSON = PROJECT_DIR / "docs" / "designacoes-2026.json"
 
-LIMITE_CUSTO_USD = 5.00  # Limite mensal independente do Projeto 1
+LIMITE_CUSTO_USD = 5.00  # Limite mensal de gasto com a API
 
 PRECO_ENTRADA_POR_TOKEN = 1.00 / 1_000_000
 PRECO_SAIDA_POR_TOKEN   = 5.00 / 1_000_000
