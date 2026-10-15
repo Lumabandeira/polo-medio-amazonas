@@ -24,6 +24,7 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 | Consultar ausências de um defensor específico | `docs/defensores/[nome].md` |
 | Entender o Firestore (schema, auth, funções JS) | `docs/firebase.md` |
 | Entender ou modificar a automação do Diário Oficial | `docs/automacao.md` |
+| Criar ou mudar uma categoria/filtro do Diário Oficial | `docs/diario-oficial-categorias.md` · `docs/automacao.md` (seção "Categorias só da lista") · `docs/site/estrutura-html.md` (seção "Diário Oficial — filtros por categoria") |
 | Entender decisões de arquitetura ou padrão de cache | `docs/arquitetura.md` |
 | Ver o que foi implementado em sessões anteriores | `docs/historico-sessoes.md` |
 | Mexer na seção Prestação de Contas (prontos pagamentos) | `docs/site/estrutura-html.md` (seção "Prestação de Contas") · `docs/firebase.md` (schema `prestacoes_contas`) |
@@ -58,33 +59,45 @@ docs/
 
 ## Estado atual (sessão 50 — 15/10/2026)
 
-**Implementado nesta sessão:** a Resolução nº 40/2026-CSDPEAM (metas e critérios de
-elegibilidade do 4º trimestre — meritocracia, Edição 2742 de 30/09/2026) não entrou no Diário
-Oficial do site: o texto chegava ao Claude, mas o prompt só pedia portarias ligadas ao polo. Agora
-é o 5º ato de interesse geral (`TERMOS_RELEVANCIA_GERAL` + item (e) do prompt, categoria
-`meta_trimestral`), e o site tem o filtro "🎯 Meritocracia". Edição 2742 incluída à mão no JSON.
-Testado: filtro pós-Claude aceita a resolução e continua descartando atos de outros polos; botão
-do filtro conferido no navegador. Ver `docs/automacao.md`.
-Na sequência: categoria oficial `estagio` ("🎓 Estágio") — a IA tinha inventado "estágio" na
-Portaria 426/2026 (Edição 2658), que aparecia como botão sem rótulo; o JSON foi migrado. E
-`normalizar_categorias()` (dentro de `filtrar_portarias_fora_do_polo()`) tira acento e descarta
-categoria fora de `CATEGORIAS_VALIDAS` — que precisa ficar igual à lista do prompt e a
-`CAT_LABELS` no `index.html`. Depois: categoria `residencia_juridica` ("⚖️ Residência Jurídica"),
-marcada também por regex no texto (`_RE_CAT_RESIDENCIA`/`_RE_CAT_ESTAGIO`, sem "estágio
-probatório"); histórico: 18 publicações de estágio e 6 de Residência (a da Edição 2568 era só
-texto legado — criado o registro estruturado do Edital 1/2026-ESUDPAM). Portaria 78/2026-ESUDPAM
-(Pauini, Polo Purus) removida a pedido da usuária.
-Site: botão do topo/cartão inicial "Designações" → "Designações, Férias e Folgas"; as abas
-internas (`.tabs`/`.tab-button`) viraram cartões com ícone, título e descrição
-(`.tab-ico`/`.tab-tit`/`.tab-desc`); ativa = gradiente azul. `showTab()` usa
-`event.target.closest('.tab-button')` porque o clique pode cair num `<span>` interno. No celular os
-cartões têm largura fixa e rolam na horizontal.
-**Sinos e Projeto 1 removidos** (pendência da sessão 30): saíram os 3 sinos da barra de abas,
-painéis, CSS e funções JS (`carregarNotificacoesAutomacao()` etc.), `verificar-diario-oficial.py`,
-`verificar-diario.yml` e `criar-tarefa-agendada.ps1`. Nenhum dado do Firestore foi tocado
-(`afastamentos_admin`, `remocoes_admin`, `designacoes_cumulativas_admin` e
-`automacao_config/estado_diario` continuam lá; regras do `firestore.rules` mantidas). Ver
-`docs/automacao.md`.
+**Implementado nesta sessão** (tudo testado no navegador local e enviado ao `main`):
+
+- **Diário Oficial → Meritocracia:** a Resolução nº 40/2026-CSDPEAM (metas e critérios de
+  elegibilidade do 4º trimestre, Edição 2742 de 30/09/2026) não entrava: o texto chegava ao
+  Claude, mas o prompt só pedia portarias ligadas ao polo. Agora é o 5º ato de interesse geral
+  (`TERMOS_RELEVANCIA_GERAL` + item (e) do prompt), categoria `meta_trimestral`, filtro
+  "🎯 Meritocracia". Edição 2742 incluída à mão no JSON.
+- **Diário Oficial → categorias só da lista:** a IA tinha inventado "estágio" (Portaria
+  426/2026, Edição 2658), que virava botão de filtro sem rótulo. `normalizar_categorias()`
+  (dentro de `filtrar_portarias_fora_do_polo()`) tira acento e descarta o que não estiver em
+  `CATEGORIAS_VALIDAS`. **Categoria nova = atualizar 3 lugares:** `CATEGORIAS_VALIDAS`, lista do
+  prompt e `CAT_LABELS` + `.cat-<nome>` no `index.html` (e `docs/diario-oficial-categorias.md`).
+- **Diário Oficial → Estágio e Residência Jurídica:** categorias oficiais `estagio`
+  ("🎓 Estágio") e `residencia_juridica` ("⚖️ Residência Jurídica"), também garantidas por regex
+  no texto (`_RE_CAT_ESTAGIO` — ignora "estágio probatório" e "Presidente"; `_RE_CAT_RESIDENCIA`,
+  com prioridade). Histórico migrado: 16 publicações de estágio e 6 de Residência (a da Edição
+  2568 só existia como texto legado — criado o registro do Edital 1/2026-ESUDPAM).
+- **Diário Oficial → limpeza (conferida pela usuária):** removidas a Portaria 78/2026-ESUDPAM
+  (Edição 2711, estágio em Pauini — Polo Purus) e o Edital 5/2026-ESUDPAM (Edição 2576, estágio
+  voluntário em Presidente Figueiredo).
+- **Site → nome do botão:** "Designações" → "📋 Designações, Férias e Folgas" (header-nav e
+  cartão da landing).
+- **Site → abas em cartões:** as 5 abas internas de Designações viraram cartões com ícone, título
+  e descrição (`.tab-ico`/`.tab-tit`/`.tab-desc`); ativa = gradiente azul. `showTab()` usa
+  `event.target.closest('.tab-button')` (o clique pode cair num `<span>`). No celular, cartões de
+  largura fixa com rolagem horizontal. Ícones: Lista de Substituições 🔄, Designações diárias 🗓️.
+- **Sinos e Projeto 1 removidos** (pendência da sessão 30): saíram os 3 sinos da barra de abas,
+  painéis, CSS e funções JS (`carregarNotificacoesAutomacao()` etc.), `verificar-diario-oficial.py`,
+  `.github/workflows/verificar-diario.yml` e `criar-tarefa-agendada.ps1`. **Nenhum dado do
+  Firestore foi tocado** (`afastamentos_admin`, `remocoes_admin`, `designacoes_cumulativas_admin`,
+  `automacao_config/estado_diario` continuam lá; regras do `firestore.rules` mantidas).
+  Afastamentos, remoções e designações agora são cadastrados só à mão.
+
+**Pendente (usuária, opcional):** apagar o secret `FIREBASE_SERVICE_ACCOUNT` no GitHub (sem uso
+desde a remoção do Projeto 1). **Não** apagar `ANTHROPIC_API_KEY` (fallback do Projeto 2).
+
+**Observação de ambiente:** nesta máquina o `.cache/ca-bundle.pem` não resolve a inspeção SSL da
+rede (gRPC do Firestore falha com "self signed certificate"); para consultar o Firestore foi usado
+o backup em `backups/firestore/`.
 
 ## Estado atual (sessão 49 — 14/10/2026)
 

@@ -4,6 +4,20 @@
 
 ---
 
+## Sessão 50 — 15/10/2026
+
+- **Diário Oficial (Projeto 2):** resoluções trimestrais de metas do CSDPEAM (meritocracia) passam
+  a entrar (`meta_trimestral`, filtro "🎯 Meritocracia"; Resolução 40/2026, Edição 2742, incluída).
+  Categorias novas `estagio` (🎓) e `residencia_juridica` (⚖️), garantidas também por regex;
+  `normalizar_categorias()` descarta categorias inventadas pela IA. Histórico migrado e duas
+  publicações de outros polos removidas (Portaria 78/2026 e Edital 5/2026-ESUDPAM).
+- **Site:** botão "Designações" renomeado para "Designações, Férias e Folgas"; abas internas em
+  cartões com ícone, título e descrição.
+- **Remoção do Projeto 1 e dos 3 sinos de notificação** (código morto desde a sessão 30), sem
+  alterar nenhum dado do Firestore.
+- Commits: `4b97da4`, `1b0ce8a`, `d8a9181`, `7c75ae5`, `536d18c`, `8897f2e`, `47786f8`,
+  `e51e779`, `aa0a380`.
+
 ## Sessão 49 — 14/10/2026
 
 - **Bugfix:** afastamentos do Pedro Paiva saíam sem DP afetada ("—" no popup do dia). Causa:

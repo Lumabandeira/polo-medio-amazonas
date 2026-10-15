@@ -16,6 +16,11 @@ Só inclua um ato se ele **afeta diretamente o Polo Médio Amazonas** — seus d
 
 Cada ato pode ter **uma ou mais** categorias. A ordem sugerida é da mais específica para a mais geral.
 
+> **Só valem as categorias desta lista** (sessão 50). A automação descarta qualquer outra
+> (`CATEGORIAS_VALIDAS` em `verificar-diario-completo.py`) e garante `estagio` /
+> `residencia_juridica` pelo texto. Para criar uma categoria nova, atualizar também a lista do
+> prompt e `CAT_LABELS` + `.cat-<nome>` no `index.html` — ver `docs/automacao.md`.
+
 ---
 
 ### `designacoes`
@@ -196,7 +201,10 @@ desempenho). Entra mesmo sem citar o polo. No site: filtro "🎯 Meritocracia".
 | Nomeação de Subdefensor Geral ou Diretor DPE | `nomeacao_diretoria` |
 | Defensor do polo nomeado Diretor na sede | `nomeacao_diretoria` + `defensor` |
 | Deslocamento para município | `comarca` + `defensor` (+ `servidor` se aplicável) |
-| Processo seletivo de estágio para o polo | `polo_medio` + `defensor` + `comarca` (se citar município) |
+| Processo seletivo de estágio para o polo | `estagio` + `polo_medio` (+ `comarca` se citar município) |
+| Processo seletivo / resultado de Residência Jurídica do polo | `residencia_juridica` + `polo_medio` (+ `comarca` se citar município) |
+| Resolução trimestral de metas do CSDPEAM (meritocracia) | `meta_trimestral` (entra mesmo sem citar o polo) |
+| Estágio ou Residência de **outro polo** (ex.: Pauini, Presidente Figueiredo) | **Não incluir** |
 | Projeto institucional com o polo | `projeto` + `polo_medio` + `defensor` |
 
 ---

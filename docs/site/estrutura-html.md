@@ -18,7 +18,7 @@ Ao carregar, um overlay cobre toda a tela até o login. Após autenticar:
 |-----------------|-------------|----------|
 | ⚖️ Atribuições | `#atribuicoes` | `showSection('atribuicoes')` |
 | 📋 Escala Semanal | `#escala-semanal` | `showSection('escala-semanal')` → `renderEscalaSemanal()` |
-| 📋 Designações | `#designacoes` | `showSection('designacoes')` |
+| 📋 Designações, Férias e Folgas (nome desde a sessão 50) | `#designacoes` | `showSection('designacoes')` |
 | ⛱️ Férias Equipe | `#equipe` | `showSection('equipe')` |
 | 🏘️ Adote | `#adote` | `showSection('adote')` |
 | 🧳 Viagens e Eventos | `#viagens-eventos` | `showSection('viagens-eventos')` → `renderViagensEventos()` |
@@ -32,11 +32,11 @@ Ordem na barra (sessão 32): Defensorias · Calendários de afastamentos · List
 
 | ID da aba | Nome | Função de render |
 |-----------|------|-----------------|
-| `defensorias` | 📋 Defensorias | `renderDefensorias()` |
-| `calendario` | 📅 Calendários de afastamentos | `renderCalendar()` |
-| `lista-substituicoes` | 📋 Lista de Substituições | `renderListaSubstituicoes()` — tem filtro por mês próprio (ver abaixo) |
-| `detalhes` | 📊 Resumo de Afastamentos | `renderDetalhesAfastamentos()` |
-| `designacoes-periodo` | 📅 Designações diárias | `renderDesignacoes()` — nome do id no código não mudou (só o rótulo visível), continua `designacoes-periodo` |
+| `defensorias` | 📋 Defensorias — "Titulares e designações de cada DP" | `renderDefensorias()` |
+| `calendario` | 📅 Calendários de afastamentos — "Férias, folgas e licenças no mês" | `renderCalendar()` |
+| `lista-substituicoes` | 🔄 Lista de Substituições — "Quem substitui quem" | `renderListaSubstituicoes()` — tem filtro por mês próprio (ver abaixo) |
+| `detalhes` | 📊 Resumo de Afastamentos — "Totais por defensor" | `renderDetalhesAfastamentos()` |
+| `designacoes-periodo` | 🗓️ Designações diárias — "Quem atende cada DP, dia a dia" | `renderDesignacoes()` — nome do id no código não mudou (só o rótulo visível), continua `designacoes-periodo` |
 
 > ⚠️ A aba "Tabela Completa" foi **removida** em sessão anterior. O Calendário Visual é a aba principal de ausências.
 
@@ -58,8 +58,25 @@ selecionado — meses sem registro exibem uma mensagem em vez de sumir da navega
 
 ## Abas de "Designações, Férias e Folgas"
 
-Cartões `.tab-button` (`.tab-ico`/`.tab-tit`/`.tab-desc`) na barra `.tabs`. Os 3 sinos de
-notificação que ficavam entre eles foram removidos na sessão 50 (ver `docs/automacao.md`).
+Desde a sessão 50 cada aba é um cartão `.tab-button` com três `<span>`: `.tab-ico` (emoji),
+`.tab-tit` (nome) e `.tab-desc` (descrição curta, tabela acima). Inativa = fundo branco e borda
+azul-clara; ativa = gradiente azul (mesmo do botão do topo); hover sobe 2px. No celular
+(≤768px) os cartões têm largura fixa (132px / 118px) e a barra rola na horizontal.
+
+- `showTab()` marca a aba com `event.target.closest('.tab-button')` — o clique pode cair num
+  `<span>` interno, e `event.target` sozinho não pintaria o cartão.
+- `showSection()` reativa a aba pelo `onclick` do botão, sem depender do texto.
+- O botão `#tab-btn-diario` (📰 Diário Oficial) continua no HTML, mas fica oculto nessa barra.
+- Os 3 sinos de notificação que ficavam entre os cartões foram removidos na sessão 50 (ver
+  `docs/automacao.md`).
+
+## Diário Oficial — filtros por categoria
+
+Os botões de filtro são montados a partir das categorias presentes no JSON; rótulo em
+`CAT_LABELS` e cor em `.cat-<categoria>`. Categoria sem rótulo apareceria com o nome cru — por
+isso a automação só aceita as da lista (`CATEGORIAS_VALIDAS`, ver `docs/automacao.md`). Rótulos
+adicionados na sessão 50: `meta_trimestral` → 🎯 Meritocracia, `estagio` → 🎓 Estágio,
+`residencia_juridica` → ⚖️ Residência Jurídica. Definições em `docs/diario-oficial-categorias.md`.
 
 ## Fontes de Dados no JavaScript
 
