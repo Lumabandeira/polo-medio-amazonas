@@ -14721,7 +14721,7 @@ Regras obrigatórias:
                 const cnt = audiencias.filter(a => a.dp === dp).length;
                 const ativo = dp === audDpAtiva ? 'ativo' : '';
                 h += `<button class="aud-dp-btn ${ativo}" onclick="_audMudarDp('${dp}')">
-                    ${dp}ª — ${esc(info.abrev)}
+                    ${dp}ª DP
                     <span style="font-size:0.8em;opacity:0.75;margin-left:4px">(${cnt})</span>
                 </button>`;
             }
