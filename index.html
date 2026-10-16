@@ -14561,19 +14561,34 @@ Regras obrigatórias:
                 // Nomes limpos de uma seção (autores ou réus).
                 // Inclui: linhas de coluna esquerda e parte esquerda de linhas com \t.
                 // Exclui: linhas de coluna direita (\x02), cabeçalhos/rodapés, campos auxiliares.
+                // Separador: espaço se a linha anterior termina em preposição (continuação do
+                // mesmo nome), " / " caso contrário (nova pessoa na lista).
+                const PREPS_PT = /\b(DE|DA|DO|DOS|DAS|E|OU)$/i;
                 const limpar = raw => {
-                    return raw.split('\n').map(l => {
+                    const partes = raw.split('\n').map(l => {
                         const t = l.trim();
-                        if (!t) return '';
-                        if (t.startsWith('\x02')) return '';      // coluna direita: advogado
-                        if (_audLinhaIgnorada(t)) return '';
-                        if (/^(Juiz:|Classe Processual:)/i.test(t)) return '';
+                        if (!t) return null;
+                        if (t.startsWith('\x02')) return null;
+                        if (_audLinhaIgnorada(t)) return null;
+                        if (/^(Juiz:|Classe Processual:)/i.test(t)) return null;
                         if (/Advogado\(s\):/i.test(t)) {
-                            return t.replace(/\s*Advogado\(s\):[\s\S]*/i, '').trim();
+                            const antes = t.replace(/\s*Advogado\(s\):[\s\S]*/i, '').trim();
+                            return antes || null;
                         }
-                        if (t.includes('\t')) return t.split('\t')[0].trim(); // só coluna esquerda
+                        if (t.includes('\t')) return t.split('\t')[0].trim() || null;
                         return t;
-                    }).filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+                    }).filter(Boolean);
+
+                    if (!partes.length) return '';
+                    let resultado = partes[0];
+                    for (let k = 1; k < partes.length; k++) {
+                        const ultimaPalavra = (resultado.match(/(\S+)\s*$/) || [])[1] || '';
+                        // Preposição no fim → continuação do mesmo nome
+                        resultado += PREPS_PT.test(ultimaPalavra)
+                            ? ' ' + partes[k]
+                            : ' / ' + partes[k];
+                    }
+                    return resultado.replace(/\s+/g, ' ').trim();
                 };
 
                 audiencias.push({
