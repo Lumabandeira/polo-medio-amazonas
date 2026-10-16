@@ -14474,6 +14474,12 @@ Regras obrigatórias:
                 const dhStr  = (bloco.match(/Data\/hora Audi[eê]ncia:\s*([^\n]+)/) || [])[1]?.trim() || '';
                 const tipo   = (bloco.match(/Tipo da Audi[eê]ncia:\s*([^\n]+)/) || [])[1]?.trim() || '';
 
+                // Classe Processual: PDF duplica cada caractere — pegar posições pares
+                const classeRaw = (bloco.match(/Classe Processual:\s*([^\n]+)/) || [])[1]?.trim() || '';
+                const classe = classeRaw
+                    ? [...classeRaw].filter((_, i) => i % 2 === 0).join('').trim()
+                    : '';
+
                 let data = '', hora = '';
                 const dhm = dhStr.match(/(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2})/);
                 if (dhm) { data = dhm[1]; hora = dhm[2]; }
@@ -14503,6 +14509,7 @@ Regras obrigatórias:
                     data,
                     hora,
                     tipo,
+                    classe,
                     status,
                     vara,
                     area,
@@ -14752,6 +14759,8 @@ Regras obrigatórias:
                     <thead><tr>
                         <th>Processo</th>
                         <th>Data / Hora</th>
+                        <th>Vara</th>
+                        <th>Classe Processual</th>
                         <th>Tipo de Audiência</th>
                         <th>Autor(es)</th>
                         <th>Réu(s)</th>
@@ -14778,6 +14787,8 @@ Regras obrigatórias:
                 h += `<tr class="${rowCls}">
                     <td><span class="aud-processo">${esc(a.processo)}</span>${badge}</td>
                     <td><strong>${esc(a.data)}</strong><br><span style="font-size:0.9em">${esc(a.hora)}</span></td>
+                    <td style="font-size:0.85em">${esc(a.vara || '—')}</td>
+                    <td style="font-size:0.85em">${esc(a.classe || '—')}</td>
                     <td>${esc(a.tipo)}</td>
                     <td>${_parteHtml(a.autores, a.advAutor)}</td>
                     <td>${_parteHtml(a.reus, a.advReu)}</td>
