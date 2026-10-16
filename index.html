@@ -14563,32 +14563,47 @@ Regras obrigatórias:
                 // Nomes limpos de uma seção (autores ou réus).
                 // Inclui: linhas de coluna esquerda e parte esquerda de linhas com \t.
                 // Exclui: linhas de coluna direita (\x02), cabeçalhos/rodapés, campos auxiliares.
-                // Separador: espaço se a linha anterior termina em preposição (continuação do
-                // mesmo nome), " / " caso contrário (nova pessoa na lista).
+                //
+                // Regras de separação entre pessoas:
+                //   1. Linha com "Advogado(s):" → fim de uma entrada de parte; próxima linha sem
+                //      "Advogado(s):" é continuação desse mesmo nome (overflow de coluna no PDF).
+                //   2. Linha sem "Advogado(s):" após outra sem "Advogado(s):" → nova pessoa
+                //      se a linha anterior não terminar em preposição; caso contrário, continuação.
                 const PREPS_PT = /\b(DE|DA|DO|DOS|DAS|E|OU)$/i;
                 const limpar = raw => {
-                    const partes = raw.split('\n').map(l => {
+                    let resultado = '';
+                    let prevLineHadAdv = false;
+                    for (const l of raw.split('\n')) {
                         const t = l.trim();
-                        if (!t) return null;
-                        if (t.startsWith('\x02')) return null;
-                        if (_audLinhaIgnorada(t) || _audEhLinhaDeVara(t)) return null;
-                        if (/^(Juiz:|Classe Processual:)/i.test(t)) return null;
-                        if (/Advogado\(s\):/i.test(t)) {
-                            const antes = t.replace(/\s*Advogado\(s\):[\s\S]*/i, '').trim();
-                            return antes || null;
-                        }
-                        if (t.includes('\t')) return t.split('\t')[0].trim() || null;
-                        return t;
-                    }).filter(Boolean);
+                        if (!t) continue;
+                        if (t.startsWith('\x02')) { prevLineHadAdv = false; continue; }
+                        if (_audLinhaIgnorada(t) || _audEhLinhaDeVara(t)) continue;
+                        if (/^(Juiz:|Classe Processual:)/i.test(t)) continue;
 
-                    if (!partes.length) return '';
-                    let resultado = partes[0];
-                    for (let k = 1; k < partes.length; k++) {
-                        const ultimaPalavra = (resultado.match(/(\S+)\s*$/) || [])[1] || '';
-                        // Preposição no fim → continuação do mesmo nome
-                        resultado += PREPS_PT.test(ultimaPalavra)
-                            ? ' ' + partes[k]
-                            : ' / ' + partes[k];
+                        const temAdv = /Advogado\(s\):/i.test(t);
+                        let texto;
+                        if (temAdv) {
+                            texto = t.replace(/\s*Advogado\(s\):[\s\S]*/i, '').trim();
+                            if (texto.includes('\t')) texto = texto.split('\t')[0].trim();
+                        } else if (t.includes('\t')) {
+                            texto = t.split('\t')[0].trim();
+                        } else {
+                            texto = t;
+                        }
+
+                        if (!texto) { prevLineHadAdv = temAdv; continue; }
+
+                        if (!resultado) {
+                            resultado = texto;
+                        } else if (prevLineHadAdv && !temAdv) {
+                            // Logo após uma linha com "Advogado(s):", sem Adv próprio →
+                            // continuação do nome da parte anterior (overflow de coluna no PDF)
+                            resultado += ' ' + texto;
+                        } else {
+                            const ultima = (resultado.match(/(\S+)\s*$/) || [])[1] || '';
+                            resultado += PREPS_PT.test(ultima) ? ' ' + texto : ' / ' + texto;
+                        }
+                        prevLineHadAdv = temAdv;
                     }
                     return resultado.replace(/\s+/g, ' ').trim();
                 };
