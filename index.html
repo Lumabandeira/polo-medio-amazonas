@@ -14840,7 +14840,7 @@ Regras obrigatórias:
             h += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">`;
             for (const dp of ['1','2','3','4','5','6']) {
                 const info = AUD_DP_INFO[dp];
-                const cnt = audiencias.filter(a => a.dp === dp).length;
+                const cnt = audiencias.filter(a => a.dp === dp && !/garantias/i.test(a.vara || '')).length;
                 const ativo = dp === audDpAtiva ? 'ativo' : '';
                 h += `<button class="aud-dp-btn ${ativo}" onclick="_audMudarDp('${dp}')">
                     ${dp}ª DP
@@ -14856,7 +14856,8 @@ Regras obrigatórias:
                 &nbsp;·&nbsp;<span style="color:var(--text-secondary);font-size:0.9em">${esc(dpInfo.area)}</span>
             </div>`;
 
-            const dpAuds = audiencias.filter(a => a.dp === audDpAtiva);
+            const _ehGarantias = a => /garantias/i.test(a.vara || '');
+            const dpAuds = audiencias.filter(a => a.dp === audDpAtiva && !_ehGarantias(a));
             if (dpAuds.length === 0) {
                 h += `<p style="text-align:center;padding:30px;color:var(--text-secondary)">
                     Nenhuma audiência para esta defensoria nesta semana.</p>`;
