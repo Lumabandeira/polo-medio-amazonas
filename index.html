@@ -14600,7 +14600,7 @@ Regras obrigatórias:
 
                             if (prevLineHadAdv) {
                                 nomeAtual += ' ' + texto;
-                                prevLineHadAdv = false;
+                                // não reseta: pode haver mais adv (\x02) e mais overflow depois
                             } else if (nomeAtual) {
                                 const ultima = (nomeAtual.match(/(\S+)\s*$/) || [])[1] || '';
                                 if (PREPS_PT.test(ultima)) {
