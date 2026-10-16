@@ -14443,16 +14443,22 @@ Regras obrigatórias:
                 const lines = [];
                 for (const y of sortedYs) {
                     const row = byY.get(y).sort((a, b) => a.transform[4] - b.transform[4]);
-                    // Inserir espaço entre itens com gap horizontal grande (layout 2 colunas)
+                    // Linha de coluna direita: todos os itens com x ≥ 320 (advogados, etc.)
+                    const todosNaDireita = row.every(item => item.transform[4] >= 320);
                     let line = '';
                     let prevRight = null;
                     for (const item of row) {
                         const x = item.transform[4];
-                        if (prevRight !== null && (x - prevRight) > 8) line += ' ';
+                        if (prevRight !== null) {
+                            const gap = x - prevRight;
+                            if (gap > 60) line += '\t';      // separador de coluna (layout 2 colunas)
+                            else if (gap > 8) line += ' ';   // separador de palavra
+                        }
                         line += item.str;
                         prevRight = x + (item.width || item.str.length * 5);
                     }
-                    lines.push(line.trim());
+                    const lineText = line.trim();
+                    if (lineText) lines.push(todosNaDireita ? '\x02' + lineText : lineText);
                 }
                 fullText += lines.join('\n') + '\n';
             }
@@ -14460,6 +14466,19 @@ Regras obrigatórias:
         }
 
         // ─── Parser de blocos de audiência ───────────────────────────────
+
+        // Detecta linhas de cabeçalho/rodapé de página do Projudi que não devem
+        // aparecer em campos de nomes de partes ou advogados.
+        function _audLinhaIgnorada(l) {
+            return /Página\s+\d+\s+de\s+\d+/i.test(l) ||
+                   /\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}/.test(l) ||
+                   /TRIBUNAL DE JUSTI[ÇC]A/i.test(l) ||
+                   /PODER JUDICI[ÁA]RIO/i.test(l) ||
+                   /Edital de Audi[eê]ncias/i.test(l) ||
+                   /^Data Inicial:/i.test(l) ||
+                   /^AM$/.test(l);
+        }
+
         function _audDetectarVara(texto) {
             const m = texto.match(/PODER JUDICI[AÁ]RIO\s*\n([^\n]+)/i);
             return m ? m[1].trim() : '';
@@ -14516,32 +14535,43 @@ Regras obrigatórias:
                 // Seção de réus (entre "Réu(s):" e próximo campo maior)
                 const reuSec  = (bloco.match(/R[eé]u\(s\):([\s\S]*?)(?=V[íi]tima\(s\):|Testemunha|Juiz:|Processo:|$)/i) || [])[1] || '';
 
-                // Advogado de cada seção — captura TODAS as linhas após "Advogado(s):"
-                // até o fim da seção (que já termina antes do próximo campo principal)
+                // Advogado de cada seção.
+                // Inclui: texto inline após "Advogado(s):", linhas de coluna direita (\x02)
+                // e parte direita de linhas com separador de coluna (\t).
+                // Exclui: linhas de coluna esquerda após o rótulo (são continuações do nome da parte).
                 const _advDeSec = sec => {
                     const m = sec.match(/Advogado\(s\):([\s\S]+)/i);
                     if (!m) return '';
-                    return m[1].split('\n')
-                        .map(l => l.trim())
-                        .filter(Boolean)
-                        .join(' / ')
-                        .trim();
+                    return m[1].split('\n').flatMap((l, i) => {
+                        const t = l.trim();
+                        if (!t) return [];
+                        const isDireita = t.startsWith('\x02');
+                        const clean = isDireita ? t.slice(1) : t;
+                        if (_audLinhaIgnorada(clean)) return [];
+                        if (i === 0) return [clean]; // inline com o rótulo
+                        if (isDireita) return [clean]; // coluna direita = advogado
+                        if (clean.includes('\t')) {    // linha mista: parte direita = advogado
+                            const dir = clean.split('\t').slice(1).join(' ').trim();
+                            return dir ? [dir] : [];
+                        }
+                        return []; // coluna esquerda = continuação do nome da parte, ignorar aqui
+                    }).filter(Boolean).join(' / ');
                 };
 
-                // Nomes limpos: ignora "Advogado(s):" onde quer que apareça na linha
-                // e todas as linhas seguintes do bloco de advogado
+                // Nomes limpos de uma seção (autores ou réus).
+                // Inclui: linhas de coluna esquerda e parte esquerda de linhas com \t.
+                // Exclui: linhas de coluna direita (\x02), cabeçalhos/rodapés, campos auxiliares.
                 const limpar = raw => {
-                    let inAdv = false;
                     return raw.split('\n').map(l => {
                         const t = l.trim();
                         if (!t) return '';
+                        if (t.startsWith('\x02')) return '';      // coluna direita: advogado
+                        if (_audLinhaIgnorada(t)) return '';
                         if (/^(Juiz:|Classe Processual:)/i.test(t)) return '';
-                        if (inAdv) return '';
                         if (/Advogado\(s\):/i.test(t)) {
-                            inAdv = true;
-                            // Manter só o texto antes do "Advogado(s):"
                             return t.replace(/\s*Advogado\(s\):[\s\S]*/i, '').trim();
                         }
+                        if (t.includes('\t')) return t.split('\t')[0].trim(); // só coluna esquerda
                         return t;
                     }).filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
                 };
