@@ -14474,11 +14474,29 @@ Regras obrigatórias:
                 const dhStr  = (bloco.match(/Data\/hora Audi[eê]ncia:\s*([^\n]+)/) || [])[1]?.trim() || '';
                 const tipo   = (bloco.match(/Tipo da Audi[eê]ncia:\s*([^\n]+)/) || [])[1]?.trim() || '';
 
-                // Classe Processual: PDF duplica cada caractere — pegar posições pares
+                // Classe Processual: alguns PDFs duplicam cada char (PPrroocceeddiimmeennttoo),
+                // outros repetem a string inteira (IqéioPlcaIqéioPlca),
+                // e alguns já vêm corretos (Ação Penal - Procedimento Ordinário).
                 const classeRaw = (bloco.match(/Classe Processual:\s*([^\n]+)/) || [])[1]?.trim() || '';
-                const classe = classeRaw
-                    ? [...classeRaw].filter((_, i) => i % 2 === 0).join('').trim()
-                    : '';
+                let classe = classeRaw;
+                if (classeRaw.length > 0) {
+                    const chars = [...classeRaw];
+                    // Detectar char-doubling: todos os pares consecutivos são iguais
+                    const charDoubled = chars.length % 2 === 0 &&
+                        chars.every((c, i) => i % 2 === 0 || c === chars[i - 1]);
+                    if (charDoubled) {
+                        classe = chars.filter((_, i) => i % 2 === 0).join('').trim();
+                    } else {
+                        // Detectar string-doubling: primeira metade = segunda metade
+                        const half = Math.floor(chars.length / 2);
+                        const firstHalf  = chars.slice(0, half).join('');
+                        const secondHalf = chars.slice(chars.length - half).join('');
+                        if (firstHalf === secondHalf) {
+                            classe = firstHalf.trim();
+                        }
+                        // Caso contrário: texto já está correto, usar como está
+                    }
+                }
 
                 let data = '', hora = '';
                 const dhm = dhStr.match(/(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2})/);
