@@ -14539,6 +14539,8 @@ Regras obrigatórias:
                 // Inclui: texto inline após "Advogado(s):", linhas de coluna direita (\x02)
                 // e parte direita de linhas com separador de coluna (\t).
                 // Exclui: linhas de coluna esquerda após o rótulo (são continuações do nome da parte).
+                const _audEhLinhaDeVara = l => vara && l === vara;
+
                 const _advDeSec = sec => {
                     const m = sec.match(/Advogado\(s\):([\s\S]+)/i);
                     if (!m) return '';
@@ -14547,7 +14549,7 @@ Regras obrigatórias:
                         if (!t) return [];
                         const isDireita = t.startsWith('\x02');
                         const clean = isDireita ? t.slice(1) : t;
-                        if (_audLinhaIgnorada(clean)) return [];
+                        if (_audLinhaIgnorada(clean) || _audEhLinhaDeVara(clean)) return [];
                         if (i === 0) return [clean]; // inline com o rótulo
                         if (isDireita) return [clean]; // coluna direita = advogado
                         if (clean.includes('\t')) {    // linha mista: parte direita = advogado
@@ -14569,7 +14571,7 @@ Regras obrigatórias:
                         const t = l.trim();
                         if (!t) return null;
                         if (t.startsWith('\x02')) return null;
-                        if (_audLinhaIgnorada(t)) return null;
+                        if (_audLinhaIgnorada(t) || _audEhLinhaDeVara(t)) return null;
                         if (/^(Juiz:|Classe Processual:)/i.test(t)) return null;
                         if (/Advogado\(s\):/i.test(t)) {
                             const antes = t.replace(/\s*Advogado\(s\):[\s\S]*/i, '').trim();
