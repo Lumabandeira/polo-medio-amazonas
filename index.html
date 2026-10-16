@@ -14541,71 +14541,75 @@ Regras obrigatórias:
                 // Exclui: linhas de coluna esquerda após o rótulo (são continuações do nome da parte).
                 const _audEhLinhaDeVara = l => vara && l === vara;
 
-                const _advDeSec = sec => {
-                    const m = sec.match(/Advogado\(s\):([\s\S]+)/i);
-                    if (!m) return '';
-                    return m[1].split('\n').flatMap((l, i) => {
-                        const t = l.trim();
-                        if (!t) return [];
-                        const isDireita = t.startsWith('\x02');
-                        const clean = isDireita ? t.slice(1) : t;
-                        if (_audLinhaIgnorada(clean) || _audEhLinhaDeVara(clean)) return [];
-                        if (i === 0) return [clean]; // inline com o rótulo
-                        if (isDireita) return [clean]; // coluna direita = advogado
-                        if (clean.includes('\t')) {    // linha mista: parte direita = advogado
-                            const dir = clean.split('\t').slice(1).join(' ').trim();
-                            return dir ? [dir] : [];
-                        }
-                        return []; // coluna esquerda = continuação do nome da parte, ignorar aqui
-                    }).filter(Boolean).join(' / ');
-                };
-
-                // Nomes limpos de uma seção (autores ou réus).
-                // Inclui: linhas de coluna esquerda e parte esquerda de linhas com \t.
-                // Exclui: linhas de coluna direita (\x02), cabeçalhos/rodapés, campos auxiliares.
-                //
-                // Regras de separação entre pessoas:
-                //   1. Linha com "Advogado(s):" → fim de uma entrada de parte; próxima linha sem
-                //      "Advogado(s):" é continuação desse mesmo nome (overflow de coluna no PDF).
-                //   2. Linha sem "Advogado(s):" após outra sem "Advogado(s):" → nova pessoa
-                //      se a linha anterior não terminar em preposição; caso contrário, continuação.
+                // Parseia uma seção (autorSec ou reuSec) e retorna [{nome, adv}] —
+                // um objeto por pessoa, com seu advogado associado.
                 const PREPS_PT = /\b(DE|DA|DO|DOS|DAS|E|OU)$/i;
-                const limpar = raw => {
-                    let resultado = '';
+                const _parsearPartes = sec => {
+                    const entradas = [];
+                    let nomeAtual = '', advAtual = '';
                     let prevLineHadAdv = false;
-                    for (const l of raw.split('\n')) {
+
+                    const salvar = () => {
+                        if (nomeAtual.trim()) entradas.push({
+                            nome: nomeAtual.replace(/\s+/g, ' ').trim(),
+                            adv:  advAtual.trim(),
+                        });
+                        nomeAtual = ''; advAtual = '';
+                    };
+
+                    for (const l of sec.split('\n')) {
                         const t = l.trim();
                         if (!t) continue;
-                        if (t.startsWith('\x02')) { prevLineHadAdv = false; continue; }
+
+                        if (t.startsWith('\x02')) {
+                            const clean = t.slice(1);
+                            if (_audLinhaIgnorada(clean) || _audEhLinhaDeVara(clean)) continue;
+                            advAtual = advAtual ? advAtual + ' / ' + clean : clean;
+                            prevLineHadAdv = false;
+                            continue;
+                        }
+
                         if (_audLinhaIgnorada(t) || _audEhLinhaDeVara(t)) continue;
                         if (/^(Juiz:|Classe Processual:)/i.test(t)) continue;
 
                         const temAdv = /Advogado\(s\):/i.test(t);
-                        let texto;
+
                         if (temAdv) {
-                            texto = t.replace(/\s*Advogado\(s\):[\s\S]*/i, '').trim();
-                            if (texto.includes('\t')) texto = texto.split('\t')[0].trim();
-                        } else if (t.includes('\t')) {
-                            texto = t.split('\t')[0].trim();
-                        } else {
-                            texto = t;
-                        }
+                            let nomeParte = t.replace(/\s*Advogado\(s\):[\s\S]*/i, '').trim();
+                            if (nomeParte.includes('\t')) nomeParte = nomeParte.split('\t')[0].trim();
+                            const advParte = t.replace(/[\s\S]*?Advogado\(s\):\s*/i, '').trim();
 
-                        if (!texto) { prevLineHadAdv = temAdv; continue; }
-
-                        if (!resultado) {
-                            resultado = texto;
-                        } else if (prevLineHadAdv && !temAdv) {
-                            // Logo após uma linha com "Advogado(s):", sem Adv próprio →
-                            // continuação do nome da parte anterior (overflow de coluna no PDF)
-                            resultado += ' ' + texto;
+                            if (nomeParte) {
+                                salvar();
+                                nomeAtual = nomeParte;
+                                advAtual  = advParte;
+                            } else {
+                                advAtual = advAtual ? advAtual + ' / ' + advParte : advParte;
+                            }
+                            prevLineHadAdv = true;
                         } else {
-                            const ultima = (resultado.match(/(\S+)\s*$/) || [])[1] || '';
-                            resultado += PREPS_PT.test(ultima) ? ' ' + texto : ' / ' + texto;
+                            let texto = t.includes('\t') ? t.split('\t')[0].trim() : t;
+                            if (!texto) { prevLineHadAdv = false; continue; }
+
+                            if (prevLineHadAdv) {
+                                nomeAtual += ' ' + texto;
+                                prevLineHadAdv = false;
+                            } else if (nomeAtual) {
+                                const ultima = (nomeAtual.match(/(\S+)\s*$/) || [])[1] || '';
+                                if (PREPS_PT.test(ultima)) {
+                                    nomeAtual += ' ' + texto;
+                                } else {
+                                    salvar();
+                                    nomeAtual = texto;
+                                }
+                            } else {
+                                nomeAtual = texto;
+                            }
                         }
-                        prevLineHadAdv = temAdv;
                     }
-                    return resultado.replace(/\s+/g, ' ').trim();
+
+                    salvar();
+                    return entradas;
                 };
 
                 audiencias.push({
@@ -14618,10 +14622,8 @@ Regras obrigatórias:
                     status,
                     vara,
                     area,
-                    autores:  limpar(autorSec),
-                    advAutor: _advDeSec(autorSec),
-                    reus:     limpar(reuSec),
-                    advReu:   _advDeSec(reuSec),
+                    autores: _parsearPartes(autorSec),
+                    reus:    _parsearPartes(reuSec),
                 });
             }
 
@@ -14872,10 +14874,20 @@ Regras obrigatórias:
                     </tr></thead>
                     <tbody>`;
 
-            const _parteHtml = (nome, adv) => {
-                let h = esc(nome || '—');
-                if (adv) h += `<br><span style="font-size:0.82em;color:#6b7280">⚖️ Adv: ${esc(adv)}</span>`;
-                return h;
+            // Aceita [{nome, adv}] (novo formato) ou string (dados legados do Firestore).
+            const _partesHtml = (partes, advLegacy) => {
+                if (!partes) return '—';
+                if (typeof partes === 'string') {
+                    let h = esc(partes) || '—';
+                    if (advLegacy) h += `<br><span style="font-size:0.82em;color:#6b7280">⚖️ Adv: ${esc(advLegacy)}</span>`;
+                    return h;
+                }
+                if (!partes.length) return '—';
+                return partes.map(p => {
+                    let h = esc(p.nome || '—');
+                    if (p.adv) h += `<br><span style="font-size:0.82em;color:#6b7280">⚖️ Adv: ${esc(p.adv)}</span>`;
+                    return h;
+                }).join('<hr style="margin:3px 0;border:none;border-top:1px solid #e5e7eb">');
             };
 
             for (const a of auds) {
@@ -14895,8 +14907,8 @@ Regras obrigatórias:
                     <td style="font-size:0.85em">${esc(a.vara || '—')}</td>
                     <td style="font-size:0.85em">${esc(a.classe || '—')}</td>
                     <td>${esc(a.tipo)}</td>
-                    <td>${_parteHtml(a.autores, a.advAutor)}</td>
-                    <td>${_parteHtml(a.reus, a.advReu)}</td>
+                    <td>${_partesHtml(a.autores, a.advAutor)}</td>
+                    <td>${_partesHtml(a.reus, a.advReu)}</td>
                 </tr>`;
             }
 
