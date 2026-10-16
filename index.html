@@ -95,11 +95,12 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.35);
         }
 
-        .header-nav-btn.btn-atribuicoes { background: linear-gradient(135deg, #3730a3 0%, #818cf8 100%); }
-        .header-nav-btn.btn-designacoes { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
-        .header-nav-btn.btn-adote       { background: linear-gradient(135deg, #0f766e 0%, #2dd4bf 100%); }
-        .header-nav-btn.btn-equipe      { background: linear-gradient(135deg, #0369a1 0%, #38bdf8 100%); }
-        .header-nav-btn.btn-diario      { background: linear-gradient(135deg, #065f46 0%, #10b981 100%); }
+        .header-nav-btn.btn-atribuicoes  { background: linear-gradient(135deg, #3730a3 0%, #818cf8 100%); }
+        .header-nav-btn.btn-designacoes  { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+        .header-nav-btn.btn-adote        { background: linear-gradient(135deg, #0f766e 0%, #2dd4bf 100%); }
+        .header-nav-btn.btn-equipe       { background: linear-gradient(135deg, #0369a1 0%, #38bdf8 100%); }
+        .header-nav-btn.btn-diario       { background: linear-gradient(135deg, #065f46 0%, #10b981 100%); }
+        .header-nav-btn.btn-audiencias   { background: linear-gradient(135deg, #9f1239 0%, #fb7185 100%); }
 
 
         /* Abas de "Designações, Férias e Folgas" em forma de cartão (ícone, título, descrição) */
@@ -1125,6 +1126,50 @@
             background: linear-gradient(135deg, #6d28d9 0%, #c084fc 100%);
             color: white;
         }
+
+        .btn-audiencias {
+            background: linear-gradient(135deg, #9f1239 0%, #fb7185 100%);
+            color: white;
+        }
+
+        /* ─── Audiências ─────────────────────────────────────────── */
+        .aud-dp-btn {
+            padding: 8px 16px;
+            border: 2px solid #bfdbfe;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.9em;
+            background: white;
+            color: #1e3a8a;
+            transition: all 0.15s;
+        }
+        .aud-dp-btn.ativo {
+            background: linear-gradient(135deg, #9f1239, #fb7185);
+            border-color: #9f1239;
+            color: white;
+        }
+        .aud-dp-btn:hover:not(.ativo) { border-color: #fb7185; }
+
+        .aud-table { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+        .aud-table th { background: linear-gradient(135deg, #9f1239, #fb7185); color: white; padding: 10px 12px; text-align: left; }
+        .aud-table td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        .aud-table tr:nth-child(even) td { background: #fdf2f8; }
+        .aud-cancelada td { color: #9ca3af; text-decoration: line-through; background: #f9fafb !important; }
+        .aud-redesignada td { background: #fff7ed !important; }
+        .aud-badge {
+            display: inline-block;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 0.75em;
+            font-weight: 700;
+            margin-left: 4px;
+            text-decoration: none;
+        }
+        .aud-badge-cancelada { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+        .aud-badge-redesignada { background: #fff7ed; color: #ea580c; border: 1px solid #fdba74; }
+        .aud-processo { font-family: monospace; font-size: 0.85em; }
 
         /* ─── Fichas do Dia ──────────────────────────────────────── */
         .fichas-datas { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
@@ -3358,6 +3403,7 @@
                 <a class="header-nav-btn btn-plantao" href="?s=plantao" onclick="showSection('plantao');return false;">🚨 Plantão</a>
                 <a class="header-nav-btn btn-diario" href="?s=diario-oficial" onclick="showSection('diario-oficial');return false;">📰 Diário Oficial</a>
                 <a class="header-nav-btn btn-fichas" href="?s=fichas" onclick="showSection('fichas');return false;">🎫 Fichas do Dia</a>
+                <a class="header-nav-btn btn-audiencias" href="?s=audiencias" onclick="showSection('audiencias');return false;">⚖️ Audiências</a>
                 <a id="header-btn-prestacao-contas" class="header-nav-btn btn-prestacao-contas" href="?s=prestacao-contas" onclick="showSection('prestacao-contas');return false;" style="display:none">💰 Prestação de Contas</a>
             </div>
         </header>
@@ -3413,6 +3459,11 @@
                     <span class="landing-btn-icon">🎫</span>
                     <span class="landing-btn-title">Fichas do Dia</span>
                     <span class="landing-btn-desc">Gera as 50 fichas de atendimento (manhã e tarde) com a data, em PDF</span>
+                </button>
+                <button class="landing-btn btn-audiencias" onclick="showSection('audiencias')">
+                    <span class="landing-btn-icon">⚖️</span>
+                    <span class="landing-btn-title">Audiências</span>
+                    <span class="landing-btn-desc">Pauta de audiências semanal organizada por Defensoria — 1ª a 6ª DP</span>
                 </button>
                 <button id="btn-prestacao-contas" class="landing-btn btn-prestacao-contas" style="display:none" onclick="showSection('prestacao-contas')">
                     <span class="landing-btn-icon">💰</span>
@@ -3727,6 +3778,15 @@
         <div id="fichas" class="tab-content">
             <div class="card">
                 <div id="fichas-content"></div>
+            </div>
+        </div>
+
+        <!-- Seção: Audiências -->
+        <div id="audiencias" class="tab-content">
+            <div class="card">
+                <div id="audiencias-content">
+                    <p style="text-align:center;padding:30px;color:var(--text-secondary);">⏳ Carregando...</p>
+                </div>
             </div>
         </div>
 
@@ -7473,6 +7533,10 @@
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('fichas').classList.add('active');
                 renderFichas();
+            } else if (tabName === 'audiencias') {
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('audiencias').classList.add('active');
+                renderAudiencias();
             } else if (tabName === 'viagens-eventos') {
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('viagens-eventos').classList.add('active');
@@ -14269,6 +14333,498 @@ Regras obrigatórias:
             } catch (e) {
                 console.error('Erro ao remover documento:', e);
                 mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // AUDIÊNCIAS
+        // ═══════════════════════════════════════════════════════════════
+
+        // ─── CDN e libs (carregadas sob demanda) ────────────────────────
+        const AUD_PDFJS_SRC    = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
+        const AUD_PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        const AUD_JSZIP_SRC    = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+
+        // ─── Mapeamento vara → área de atuação ──────────────────────────
+        const AUD_AREA_KEYWORDS = [
+            { keywords: ['família', 'familia', 'sucessão', 'sucessoes', 'sucessõ'], area: 'familia' },
+            { keywords: ['criminal', 'júri', 'juri', 'dignidade', 'garantias', 'inquérit', 'inquerit', 'custódia', 'custodia'], area: 'criminal' },
+            { keywords: ['cível', 'civel', 'fazenda', 'infância', 'infancia', 'previdenciário', 'previdenciario', 'registros', 'juventude'], area: 'civel' },
+        ];
+
+        // ─── Mapeamento área → DP por paridade ──────────────────────────
+        const AUD_DP_POR_AREA = {
+            familia:  { par: '1', impar: '2' },
+            civel:    { par: '4', impar: '3' },
+            criminal: { par: '5', impar: '6' },
+        };
+
+        // ─── Info das DPs para exibição ─────────────────────────────────
+        const AUD_DP_INFO = {
+            '1': { defensor: 'Ênio Barbalho',    abrev: 'Ênio',     area: 'Família e Sucessões' },
+            '2': { defensor: 'Ênio Barbalho',    abrev: 'Ênio',     area: 'Família e Sucessões' },
+            '3': { defensor: 'Miguel Martins',   abrev: 'Miguel',   area: 'Cível / Infância / Registros / Prev.' },
+            '4': { defensor: 'Eliaquim Antunes', abrev: 'Eliaquim', area: 'Cível / Infância / Registros / Prev.' },
+            '5': { defensor: 'Emilly Santos',    abrev: 'Emilly',   area: 'Criminal e Med. Socioeducativas' },
+            '6': { defensor: 'Pedro Paiva',      abrev: 'Pedro',    area: 'Criminal e Med. Socioeducativas' },
+        };
+
+        // ─── Estado global ───────────────────────────────────────────────
+        let audSemanaAtual  = null;
+        let audSemanasDisp  = [];
+        let audDadosAtual   = null;
+        let audDpAtiva      = '5';
+
+        // ─── Utilitários de parsing ──────────────────────────────────────
+        function _audDigitoAntes(processo) {
+            const partes = (processo || '').split('-');
+            if (!partes[0]) return null;
+            return parseInt(partes[0].slice(-1));
+        }
+
+        function _audDetectarArea(varaText) {
+            const lower = (varaText || '').toLowerCase()
+                .normalize('NFD').replace(/[̀-ͯ]/g, '');
+            for (const rule of AUD_AREA_KEYWORDS) {
+                const keys = rule.keywords.map(k =>
+                    k.normalize('NFD').replace(/[̀-ͯ]/g, ''));
+                if (keys.some(k => lower.includes(k))) return rule.area;
+            }
+            return null;
+        }
+
+        function _audAtribuirDP(processo, area) {
+            const d = _audDigitoAntes(processo);
+            if (d === null || !area || !AUD_DP_POR_AREA[area]) return null;
+            return AUD_DP_POR_AREA[area][d % 2 === 0 ? 'par' : 'impar'];
+        }
+
+        function _audChaveDedup(a) {
+            return `${a.processo}|${a.data}|${a.hora}`;
+        }
+
+        // ─── PDF.js: extração de texto ───────────────────────────────────
+        async function _audCarregarPdfJs() {
+            if (window.pdfjsLib) return;
+            await _pcCarregarScript(AUD_PDFJS_SRC);
+            pdfjsLib.GlobalWorkerOptions.workerSrc = AUD_PDFJS_WORKER;
+        }
+
+        async function _audExtrairTextoPdf(arrayBuffer) {
+            await _audCarregarPdfJs();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let fullText = '';
+
+            for (let p = 1; p <= pdf.numPages; p++) {
+                const page = await pdf.getPage(p);
+                const content = await page.getTextContent();
+
+                // Agrupar items por posição Y (top-to-bottom)
+                const byY = new Map();
+                for (const item of content.items) {
+                    if (!item.str) continue;
+                    const y = Math.round(item.transform[5] * 2) / 2;
+                    if (!byY.has(y)) byY.set(y, []);
+                    byY.get(y).push(item);
+                }
+                // Ordenar Y decrescente (topo para baixo em coord. PDF)
+                const sortedYs = [...byY.keys()].sort((a, b) => b - a);
+                const lines = [];
+                for (const y of sortedYs) {
+                    const row = byY.get(y).sort((a, b) => a.transform[4] - b.transform[4]);
+                    lines.push(row.map(i => i.str).join(''));
+                }
+                fullText += lines.join('\n') + '\n';
+            }
+            return fullText;
+        }
+
+        // ─── Parser de blocos de audiência ───────────────────────────────
+        function _audDetectarVara(texto) {
+            const m = texto.match(/PODER JUDICI[AÁ]RIO\s*\n([^\n]+)/i);
+            return m ? m[1].trim() : '';
+        }
+
+        function _audParsearTexto(texto) {
+            const vara = _audDetectarVara(texto);
+            const area = _audDetectarArea(vara);
+            const audiencias = [];
+
+            // Dividir por bloco: cada audiência começa em "Processo:"
+            const blocos = texto.split(/\nProcesso:/);
+
+            for (let i = 1; i < blocos.length; i++) {
+                const bloco = 'Processo:' + blocos[i];
+
+                const processo = (bloco.match(/Processo:\s*(\S+)/) || [])[1]?.trim();
+                if (!processo || !/\d{7}-\d{2}/.test(processo)) continue;
+
+                const status = (bloco.match(/Status da Audi[eê]ncia:\s*([^\n]+)/) || [])[1]?.trim() || 'DESIGNADA';
+                const dhStr  = (bloco.match(/Data\/hora Audi[eê]ncia:\s*([^\n]+)/) || [])[1]?.trim() || '';
+                const tipo   = (bloco.match(/Tipo da Audi[eê]ncia:\s*([^\n]+)/) || [])[1]?.trim() || '';
+
+                let data = '', hora = '';
+                const dhm = dhStr.match(/(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2})/);
+                if (dhm) { data = dhm[1]; hora = dhm[2]; }
+
+                // Seção de autores (entre "Autor(es):" e "Réu(s):")
+                const autorSec = (bloco.match(/Autor\(es\):([\s\S]*?)(?=R[eé]u\(s\):)/i) || [])[1] || '';
+                // Seção de réus (entre "Réu(s):" e próximo campo maior)
+                const reuSec  = (bloco.match(/R[eé]u\(s\):([\s\S]*?)(?=V[íi]tima\(s\):|Testemunha|Juiz:|Processo:|$)/i) || [])[1] || '';
+
+                // Todos os advogados do bloco
+                const advs = [...bloco.matchAll(/Advogado\(s\):\s*([^\n]+)/gi)]
+                    .map(m => m[1].trim())
+                    .filter(Boolean);
+
+                // Nomes limpos (remove labels de advogado, junta linhas)
+                const limpar = raw => raw
+                    .replace(/Advogado\(s\):[^\n]*/gi, '')
+                    .split('\n')
+                    .map(l => l.trim())
+                    .filter(l => l && !/^(Juiz:|Classe Processual:)/.test(l))
+                    .join(' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                audiencias.push({
+                    dp: _audAtribuirDP(processo, area),
+                    processo,
+                    data,
+                    hora,
+                    tipo,
+                    status,
+                    vara,
+                    area,
+                    autores:    limpar(autorSec),
+                    reus:       limpar(reuSec),
+                    advogados:  advs,
+                });
+            }
+
+            return { vara, area, audiencias };
+        }
+
+        // ─── Processamento do ZIP ─────────────────────────────────────────
+        async function _audProcessarZip(file) {
+            if (!window.JSZip) await _pcCarregarScript(AUD_JSZIP_SRC);
+
+            const zip = await JSZip.loadAsync(file);
+            const todasAuds = [];
+            const vistas = new Set();
+            let periodo = '';
+
+            const entries = [];
+            zip.forEach((path, entry) => {
+                if (!entry.dir && path.toLowerCase().endsWith('.pdf'))
+                    entries.push({ path, entry });
+            });
+
+            for (const { path, entry } of entries) {
+                try {
+                    const buf = await entry.async('arraybuffer');
+                    const texto = await _audExtrairTextoPdf(buf);
+
+                    if (!periodo) {
+                        const m = texto.match(/Data Inicial:\s*(\d{2}\/\d{2}\/\d{4})[^\n]*Data Final:\s*(\d{2}\/\d{2}\/\d{4})/);
+                        if (m) periodo = `${m[1]} a ${m[2]}`;
+                    }
+
+                    const { audiencias } = _audParsearTexto(texto);
+                    for (const a of audiencias) {
+                        const k = _audChaveDedup(a);
+                        if (!vistas.has(k)) { vistas.add(k); todasAuds.push(a); }
+                    }
+                } catch (e) {
+                    console.warn('[AUD] Erro ao processar PDF:', path, e);
+                }
+            }
+
+            // Ordenar cronologicamente
+            todasAuds.sort((a, b) => {
+                const fa = (a.data || '').split('/').reverse().join('') + (a.hora || '').replace(':', '');
+                const fb = (b.data || '').split('/').reverse().join('') + (b.hora || '').replace(':', '');
+                return fa.localeCompare(fb);
+            });
+
+            return { periodo, audiencias: todasAuds };
+        }
+
+        // ─── Semana ISO ───────────────────────────────────────────────────
+        function _audSemanaISO(date = new Date()) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const day = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - day);
+            const y0 = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const wk = Math.ceil((((d - y0) / 86400000) + 1) / 7);
+            return `${d.getUTCFullYear()}-W${String(wk).padStart(2, '0')}`;
+        }
+
+        function _audSemanaDeDataBR(dataBR) {
+            const [dd, mm, yyyy] = dataBR.split('/').map(Number);
+            return _audSemanaISO(new Date(yyyy, mm - 1, dd));
+        }
+
+        // ─── Firestore ────────────────────────────────────────────────────
+        async function _audSalvar(semanaKey, periodo, audiencias) {
+            await db.collection('audiencias_semanas').doc(semanaKey).set({
+                semana: semanaKey, periodo,
+                importado_em: firebase.firestore.FieldValue.serverTimestamp(),
+                audiencias,
+            });
+        }
+
+        async function _audListarSemanas() {
+            if (!db) return [];
+            const snap = await db.collection('audiencias_semanas')
+                .orderBy('semana', 'desc').limit(20).get();
+            return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        }
+
+        async function _audCarregarSemana(key) {
+            if (!db) return null;
+            const doc = await db.collection('audiencias_semanas').doc(key).get();
+            return doc.exists ? doc.data() : null;
+        }
+
+        // ─── Render principal ─────────────────────────────────────────────
+        function renderAudiencias() {
+            const el = document.getElementById('audiencias-content');
+            if (!el) return;
+            el.innerHTML = '<p style="text-align:center;padding:30px;color:var(--text-secondary)">⏳ Carregando audiências...</p>';
+            _audListarSemanas().then(sems => {
+                audSemanasDisp = sems;
+                if (!audSemanaAtual && sems.length > 0) audSemanaAtual = sems[0].id;
+                if (audSemanaAtual) {
+                    _audCarregarSemana(audSemanaAtual).then(dados => {
+                        audDadosAtual = dados;
+                        _audRenderConteudo(el);
+                    }).catch(() => _audRenderConteudo(el));
+                } else {
+                    _audRenderConteudo(el);
+                }
+            }).catch(() => _audRenderConteudo(el));
+        }
+
+        function _audRenderConteudo(el) {
+            const isAdmin = userRole === 'admin';
+            let h = `<div style="padding:24px">`;
+
+            // ── Cabeçalho ──
+            h += `<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:20px">
+                <h2 style="margin:0;color:#9f1239;font-size:1.4em">⚖️ Pauta de Audiências</h2>`;
+
+            if (audSemanasDisp.length > 0) {
+                h += `<select onchange="_audTrocarSemana(this.value)"
+                    style="padding:6px 12px;border:1.5px solid var(--border-color);border-radius:8px;font-size:0.95em;font-family:inherit;background:white;cursor:pointer">`;
+                for (const s of audSemanasDisp) {
+                    const lbl = s.periodo || s.id;
+                    const sel = s.id === audSemanaAtual ? 'selected' : '';
+                    h += `<option value="${esc(s.id)}" ${sel}>${esc(lbl)}</option>`;
+                }
+                h += `</select>`;
+            }
+
+            if (isAdmin) {
+                h += `<button onclick="_audAbrirImport()"
+                    style="margin-left:auto;background:linear-gradient(135deg,#9f1239,#fb7185);color:white;padding:8px 18px;
+                    border-radius:8px;border:none;cursor:pointer;font-weight:600;font-family:inherit;font-size:0.95em">
+                    📥 Importar Pauta (ZIP)
+                </button>`;
+            }
+            h += `</div>`;
+
+            if (!audDadosAtual) {
+                h += isAdmin
+                    ? `<div style="text-align:center;padding:60px;color:var(--text-secondary)">
+                        <p style="font-size:1.1em;margin-bottom:8px">Nenhuma pauta importada ainda.</p>
+                        <p>Clique em <strong>📥 Importar Pauta (ZIP)</strong> para começar.</p>
+                       </div>`
+                    : `<p style="text-align:center;padding:40px;color:var(--text-secondary)">Nenhuma pauta disponível.</p>`;
+                h += `</div>`;
+                el.innerHTML = h;
+                return;
+            }
+
+            const { audiencias, periodo } = audDadosAtual;
+            if (periodo) {
+                h += `<p style="color:var(--text-secondary);font-size:0.9em;margin-bottom:16px">
+                    📅 Período: <strong>${esc(periodo)}</strong></p>`;
+            }
+
+            // ── Abas de DP ──
+            h += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">`;
+            for (const dp of ['1','2','3','4','5','6']) {
+                const info = AUD_DP_INFO[dp];
+                const cnt = audiencias.filter(a => a.dp === dp).length;
+                const ativo = dp === audDpAtiva ? 'ativo' : '';
+                h += `<button class="aud-dp-btn ${ativo}" onclick="_audMudarDp('${dp}')">
+                    ${dp}ª — ${esc(info.abrev)}
+                    <span style="font-size:0.8em;opacity:0.75;margin-left:4px">(${cnt})</span>
+                </button>`;
+            }
+            h += `</div>`;
+
+            // ── Info da DP ──
+            const dpInfo = AUD_DP_INFO[audDpAtiva];
+            h += `<div style="background:#fff1f2;border-left:4px solid #fb7185;padding:10px 16px;border-radius:0 8px 8px 0;margin-bottom:16px">
+                <strong>${audDpAtiva}ª Defensoria Pública</strong> — ${esc(dpInfo.defensor)}
+                &nbsp;·&nbsp;<span style="color:var(--text-secondary);font-size:0.9em">${esc(dpInfo.area)}</span>
+            </div>`;
+
+            const dpAuds = audiencias.filter(a => a.dp === audDpAtiva);
+            if (dpAuds.length === 0) {
+                h += `<p style="text-align:center;padding:30px;color:var(--text-secondary)">
+                    Nenhuma audiência para esta defensoria nesta semana.</p>`;
+            } else {
+                h += _audRenderTabela(dpAuds);
+            }
+
+            h += `</div>`;
+            el.innerHTML = h;
+        }
+
+        function _audRenderTabela(auds) {
+            let h = `<div style="overflow-x:auto">
+                <table class="aud-table">
+                    <thead><tr>
+                        <th>Processo</th>
+                        <th>Data / Hora</th>
+                        <th>Tipo de Audiência</th>
+                        <th>Autor(es)</th>
+                        <th>Réu(s)</th>
+                        <th>Advogado(s)</th>
+                    </tr></thead>
+                    <tbody>`;
+
+            for (const a of auds) {
+                const cancelada   = a.status === 'CANCELADA';
+                const redesignada = a.status === 'REDESIGNADA';
+                const rowCls = cancelada ? 'aud-cancelada' : redesignada ? 'aud-redesignada' : '';
+
+                const badge = cancelada
+                    ? `<span class="aud-badge aud-badge-cancelada">CANCELADA</span>`
+                    : redesignada
+                        ? `<span class="aud-badge aud-badge-redesignada">REDESIGNADA</span>`
+                        : '';
+
+                const advHtml = a.advogados.length
+                    ? a.advogados.map(v => esc(v)).join('<br>')
+                    : '<span style="color:#94a3b8">—</span>';
+
+                h += `<tr class="${rowCls}">
+                    <td><span class="aud-processo">${esc(a.processo)}</span>${badge}</td>
+                    <td><strong>${esc(a.data)}</strong><br><span style="font-size:0.9em">${esc(a.hora)}</span></td>
+                    <td>${esc(a.tipo)}</td>
+                    <td>${esc(a.autores || '—')}</td>
+                    <td>${esc(a.reus || '—')}</td>
+                    <td>${advHtml}</td>
+                </tr>`;
+            }
+
+            h += `</tbody></table></div>`;
+            return h;
+        }
+
+        function _audMudarDp(dp) {
+            audDpAtiva = dp;
+            const el = document.getElementById('audiencias-content');
+            if (el) _audRenderConteudo(el);
+        }
+
+        async function _audTrocarSemana(key) {
+            audSemanaAtual = key;
+            audDadosAtual  = await _audCarregarSemana(key).catch(() => null);
+            const el = document.getElementById('audiencias-content');
+            if (el) _audRenderConteudo(el);
+        }
+
+        // ─── Modal de importação ──────────────────────────────────────────
+        function _audAbrirImport() {
+            if (document.getElementById('aud-import-overlay')) {
+                document.getElementById('aud-import-overlay').style.display = 'flex';
+                return;
+            }
+            const div = document.createElement('div');
+            div.id = 'aud-import-overlay';
+            div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+            div.innerHTML = `
+              <div style="background:white;border-radius:16px;padding:32px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+                <h3 style="margin:0 0 8px;color:#9f1239">📥 Importar Pauta de Audiências</h3>
+                <p style="color:var(--text-secondary);font-size:.9em;margin-bottom:20px">
+                  Selecione o arquivo ZIP com os PDFs exportados do Projudi.</p>
+                <label for="aud-zip-input" id="aud-drop-label"
+                  style="display:block;border:2px dashed #fda4af;border-radius:12px;padding:30px;text-align:center;
+                         cursor:pointer;transition:border-color .2s;color:#9f1239;font-weight:600">
+                  📂 Clique para selecionar o ZIP<br>
+                  <span style="font-size:.85em;font-weight:400;color:var(--text-secondary)">ou arraste e solte aqui</span>
+                </label>
+                <input type="file" id="aud-zip-input" accept=".zip" style="display:none"
+                  onchange="_audZipSelecionado(this.files[0])">
+                <div id="aud-import-status" style="display:none;margin-top:14px"></div>
+                <div style="display:flex;gap:12px;margin-top:20px;justify-content:flex-end">
+                  <button onclick="_audFecharImport()"
+                    style="padding:8px 20px;border-radius:8px;border:1.5px solid var(--border-color);background:white;
+                           cursor:pointer;font-family:inherit;font-weight:600">Cancelar</button>
+                </div>
+              </div>`;
+
+            const label = div.querySelector('#aud-drop-label');
+            label.addEventListener('dragover',  e => { e.preventDefault(); label.style.borderColor = '#9f1239'; });
+            label.addEventListener('dragleave', () => { label.style.borderColor = '#fda4af'; });
+            label.addEventListener('drop', e => {
+                e.preventDefault();
+                label.style.borderColor = '#fda4af';
+                const f = e.dataTransfer.files[0];
+                if (f) _audZipSelecionado(f);
+            });
+            document.body.appendChild(div);
+        }
+
+        function _audFecharImport() {
+            const o = document.getElementById('aud-import-overlay');
+            if (o) o.style.display = 'none';
+        }
+
+        function _audSetStatus(msg, tipo = 'info') {
+            const el = document.getElementById('aud-import-status');
+            if (!el) return;
+            const bg  = { info: '#eff6ff', success: '#f0fdf4', error: '#fef2f2' };
+            const cor = { info: '#1e3a8a', success: '#065f46', error: '#dc2626' };
+            el.style.cssText = `display:block;padding:12px 16px;border-radius:8px;background:${bg[tipo]};color:${cor[tipo]};font-size:.9em`;
+            el.innerHTML = msg;
+        }
+
+        async function _audZipSelecionado(file) {
+            if (!file) return;
+            _audSetStatus('⏳ Lendo ZIP e extraindo texto dos PDFs...');
+            try {
+                const { periodo, audiencias } = await _audProcessarZip(file);
+                if (!audiencias.length) {
+                    _audSetStatus('⚠️ Nenhuma audiência encontrada. Verifique o arquivo ZIP.', 'error');
+                    return;
+                }
+                const primData = audiencias.find(a => a.data)?.data;
+                const semKey = primData ? _audSemanaDeDataBR(primData) : _audSemanaISO();
+                _audSetStatus(`⏳ Salvando ${audiencias.length} audiência(s)...`);
+                await _audSalvar(semKey, periodo, audiencias);
+
+                audSemanaAtual = semKey;
+                audSemanasDisp = await _audListarSemanas();
+                audDadosAtual  = { semana: semKey, periodo, audiencias };
+
+                _audFecharImport();
+
+                const por = {};
+                for (const a of audiencias) if (a.dp) por[a.dp] = (por[a.dp] || 0) + 1;
+                const res = Object.entries(por).sort().map(([d,n]) => `${d}ª DP: ${n}`).join(' · ');
+                mostrarToast(`✅ ${audiencias.length} audiências importadas! ${res}`);
+
+                const el = document.getElementById('audiencias-content');
+                if (el) _audRenderConteudo(el);
+            } catch(e) {
+                console.error('[AUD] Erro ao importar:', e);
+                _audSetStatus(`❌ Erro: ${esc(e.message)}`, 'error');
             }
         }
 

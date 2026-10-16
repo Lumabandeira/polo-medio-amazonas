@@ -61,6 +61,10 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /audiencias_semanas/{id} {
+      allow write: if isAdmin();
+    }
+
     // Prestação de Contas: dados financeiros/pessoais sensíveis (CPF, dados bancários)
     // — leitura e escrita restritas a admin, diferente do padrão de leitura aberta acima.
     match /prestacoes_contas/{id} {
