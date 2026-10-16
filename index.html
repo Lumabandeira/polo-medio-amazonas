@@ -14507,19 +14507,31 @@ Regras obrigatórias:
                 // Seção de réus (entre "Réu(s):" e próximo campo maior)
                 const reuSec  = (bloco.match(/R[eé]u\(s\):([\s\S]*?)(?=V[íi]tima\(s\):|Testemunha|Juiz:|Processo:|$)/i) || [])[1] || '';
 
-                // Advogado de cada seção (quem aparece logo após o nome da parte)
-                const _advDeSec = sec =>
-                    (sec.match(/Advogado\(s\):\s*([^\n]+)/i) || [])[1]?.trim() || '';
+                // Advogado de cada seção — captura TODAS as linhas após "Advogado(s):"
+                // até o fim da seção (que já termina antes do próximo campo principal)
+                const _advDeSec = sec => {
+                    const m = sec.match(/Advogado\(s\):([\s\S]+)/i);
+                    if (!m) return '';
+                    return m[1].split('\n')
+                        .map(l => l.trim())
+                        .filter(Boolean)
+                        .join(' / ')
+                        .trim();
+                };
 
-                // Nomes limpos (remove labels de advogado, junta linhas)
-                const limpar = raw => raw
-                    .replace(/Advogado\(s\):[^\n]*/gi, '')
-                    .split('\n')
-                    .map(l => l.trim())
-                    .filter(l => l && !/^(Juiz:|Classe Processual:)/.test(l))
-                    .join(' ')
-                    .replace(/\s+/g, ' ')
-                    .trim();
+                // Nomes limpos: ignora "Advogado(s):" e todas as linhas seguintes
+                // que pertencem ao bloco de advogado (antes do próximo campo principal)
+                const limpar = raw => {
+                    let inAdv = false;
+                    return raw.split('\n').filter(l => {
+                        const t = l.trim();
+                        if (!t) return false;
+                        if (/^Advogado\(s\):/i.test(t)) { inAdv = true; return false; }
+                        if (/^(Juiz:|Classe Processual:)/i.test(t)) return false;
+                        if (inAdv) return false;
+                        return true;
+                    }).map(l => l.trim()).join(' ').replace(/\s+/g, ' ').trim();
+                };
 
                 audiencias.push({
                     dp: _audAtribuirDP(processo, area),
