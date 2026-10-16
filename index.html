@@ -1170,6 +1170,17 @@
         .aud-badge-cancelada { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
         .aud-badge-redesignada { background: #fff7ed; color: #ea580c; border: 1px solid #fdba74; }
         .aud-processo { font-family: monospace; font-size: 0.85em; }
+        @keyframes audFloat { 0%{transform:translateY(0)} 100%{transform:translateY(-10px)} }
+        #aud-global-drop-overlay {
+            position: fixed; inset: 0; z-index: 99999; display: none;
+            background: rgba(159,18,57,0.88); backdrop-filter: blur(6px);
+            align-items: center; justify-content: center; flex-direction: column;
+            gap: 14px; pointer-events: none;
+        }
+        #aud-global-drop-overlay.visivel { display: flex; }
+        #aud-global-drop-overlay .aud-drop-icon { font-size: 4em; animation: audFloat 0.55s ease-in-out infinite alternate; }
+        #aud-global-drop-overlay .aud-drop-titulo { color: white; font-size: 1.8em; font-weight: 700; letter-spacing: -0.3px; }
+        #aud-global-drop-overlay .aud-drop-sub { color: rgba(255,255,255,0.75); font-size: 0.95em; }
 
         /* ─── Fichas do Dia ──────────────────────────────────────── */
         .fichas-datas { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
@@ -14587,8 +14598,59 @@ Regras obrigatórias:
             return doc.exists ? doc.data() : null;
         }
 
+        // ─── Drop global (arrastar ZIP direto para o site) ───────────────
+        let _audDropGlobalIniciado = false;
+        function _audIniciarDropGlobal() {
+            if (_audDropGlobalIniciado) return;
+            _audDropGlobalIniciado = true;
+
+            const overlay = document.createElement('div');
+            overlay.id = 'aud-global-drop-overlay';
+            overlay.innerHTML = `
+                <div class="aud-drop-icon">📦</div>
+                <div class="aud-drop-titulo">Solte o ZIP aqui</div>
+                <div class="aud-drop-sub">Pauta de audiências do Projudi</div>`;
+            document.body.appendChild(overlay);
+
+            let dragCounter = 0;
+
+            document.addEventListener('dragenter', e => {
+                if (userRole !== 'admin') return;
+                const hasFiles = e.dataTransfer && [...e.dataTransfer.items].some(i => i.kind === 'file');
+                if (!hasFiles) return;
+                dragCounter++;
+                overlay.classList.add('visivel');
+            });
+
+            document.addEventListener('dragleave', () => {
+                dragCounter = Math.max(0, dragCounter - 1);
+                if (dragCounter === 0) overlay.classList.remove('visivel');
+            });
+
+            document.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+            });
+
+            document.addEventListener('drop', e => {
+                e.preventDefault();
+                dragCounter = 0;
+                overlay.classList.remove('visivel');
+                if (userRole !== 'admin') return;
+                const file = e.dataTransfer.files[0];
+                if (!file) return;
+                if (!file.name.toLowerCase().endsWith('.zip')) {
+                    mostrarToast('⚠️ Apenas arquivos .zip são suportados.');
+                    return;
+                }
+                showSection('audiencias');
+                setTimeout(() => _audZipSelecionado(file), 150);
+            });
+        }
+
         // ─── Render principal ─────────────────────────────────────────────
         function renderAudiencias() {
+            if (userRole === 'admin') _audIniciarDropGlobal();
             const el = document.getElementById('audiencias-content');
             if (!el) return;
             el.innerHTML = '<p style="text-align:center;padding:30px;color:var(--text-secondary)">⏳ Carregando audiências...</p>';
