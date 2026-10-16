@@ -14483,10 +14483,9 @@ Regras obrigatórias:
                 // Seção de réus (entre "Réu(s):" e próximo campo maior)
                 const reuSec  = (bloco.match(/R[eé]u\(s\):([\s\S]*?)(?=V[íi]tima\(s\):|Testemunha|Juiz:|Processo:|$)/i) || [])[1] || '';
 
-                // Todos os advogados do bloco
-                const advs = [...bloco.matchAll(/Advogado\(s\):\s*([^\n]+)/gi)]
-                    .map(m => m[1].trim())
-                    .filter(Boolean);
+                // Advogado de cada seção (quem aparece logo após o nome da parte)
+                const _advDeSec = sec =>
+                    (sec.match(/Advogado\(s\):\s*([^\n]+)/i) || [])[1]?.trim() || '';
 
                 // Nomes limpos (remove labels de advogado, junta linhas)
                 const limpar = raw => raw
@@ -14507,9 +14506,10 @@ Regras obrigatórias:
                     status,
                     vara,
                     area,
-                    autores:    limpar(autorSec),
-                    reus:       limpar(reuSec),
-                    advogados:  advs,
+                    autores:  limpar(autorSec),
+                    advAutor: _advDeSec(autorSec),
+                    reus:     limpar(reuSec),
+                    advReu:   _advDeSec(reuSec),
                 });
             }
 
@@ -14755,9 +14755,14 @@ Regras obrigatórias:
                         <th>Tipo de Audiência</th>
                         <th>Autor(es)</th>
                         <th>Réu(s)</th>
-                        <th>Advogado(s)</th>
                     </tr></thead>
                     <tbody>`;
+
+            const _parteHtml = (nome, adv) => {
+                let h = esc(nome || '—');
+                if (adv) h += `<br><span style="font-size:0.82em;color:#6b7280">⚖️ ${esc(adv)}</span>`;
+                return h;
+            };
 
             for (const a of auds) {
                 const cancelada   = a.status === 'CANCELADA';
@@ -14770,17 +14775,12 @@ Regras obrigatórias:
                         ? `<span class="aud-badge aud-badge-redesignada">REDESIGNADA</span>`
                         : '';
 
-                const advHtml = a.advogados.length
-                    ? a.advogados.map(v => esc(v)).join('<br>')
-                    : '<span style="color:#94a3b8">—</span>';
-
                 h += `<tr class="${rowCls}">
                     <td><span class="aud-processo">${esc(a.processo)}</span>${badge}</td>
                     <td><strong>${esc(a.data)}</strong><br><span style="font-size:0.9em">${esc(a.hora)}</span></td>
                     <td>${esc(a.tipo)}</td>
-                    <td>${esc(a.autores || '—')}</td>
-                    <td>${esc(a.reus || '—')}</td>
-                    <td>${advHtml}</td>
+                    <td>${_parteHtml(a.autores, a.advAutor)}</td>
+                    <td>${_parteHtml(a.reus, a.advReu)}</td>
                 </tr>`;
             }
 
