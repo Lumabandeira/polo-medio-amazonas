@@ -14564,8 +14564,15 @@ Regras obrigatórias:
                         if (t.startsWith('\x02')) {
                             const clean = t.slice(1);
                             if (_audLinhaIgnorada(clean) || _audEhLinhaDeVara(clean)) continue;
-                            advAtual = advAtual ? advAtual + ' / ' + clean : clean;
-                            prevLineHadAdv = false;
+                            if (/Advogado\(s\):/i.test(clean)) {
+                                // linha direita que já traz o rótulo "Advogado(s):"
+                                const advParte = clean.replace(/[\s\S]*?Advogado\(s\):\s*/i, '').trim();
+                                if (advParte) advAtual = advAtual ? advAtual + ' / ' + advParte : advParte;
+                                prevLineHadAdv = true;
+                            } else {
+                                advAtual = advAtual ? advAtual + ' / ' + clean : clean;
+                                // prevLineHadAdv não muda: linha de adv não encerra a janela de overflow
+                            }
                             continue;
                         }
 
