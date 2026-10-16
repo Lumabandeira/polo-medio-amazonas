@@ -14443,7 +14443,16 @@ Regras obrigatórias:
                 const lines = [];
                 for (const y of sortedYs) {
                     const row = byY.get(y).sort((a, b) => a.transform[4] - b.transform[4]);
-                    lines.push(row.map(i => i.str).join(''));
+                    // Inserir espaço entre itens com gap horizontal grande (layout 2 colunas)
+                    let line = '';
+                    let prevRight = null;
+                    for (const item of row) {
+                        const x = item.transform[4];
+                        if (prevRight !== null && (x - prevRight) > 8) line += ' ';
+                        line += item.str;
+                        prevRight = x + (item.width || item.str.length * 5);
+                    }
+                    lines.push(line.trim());
                 }
                 fullText += lines.join('\n') + '\n';
             }
@@ -14519,18 +14528,22 @@ Regras obrigatórias:
                         .trim();
                 };
 
-                // Nomes limpos: ignora "Advogado(s):" e todas as linhas seguintes
-                // que pertencem ao bloco de advogado (antes do próximo campo principal)
+                // Nomes limpos: ignora "Advogado(s):" onde quer que apareça na linha
+                // e todas as linhas seguintes do bloco de advogado
                 const limpar = raw => {
                     let inAdv = false;
-                    return raw.split('\n').filter(l => {
+                    return raw.split('\n').map(l => {
                         const t = l.trim();
-                        if (!t) return false;
-                        if (/^Advogado\(s\):/i.test(t)) { inAdv = true; return false; }
-                        if (/^(Juiz:|Classe Processual:)/i.test(t)) return false;
-                        if (inAdv) return false;
-                        return true;
-                    }).map(l => l.trim()).join(' ').replace(/\s+/g, ' ').trim();
+                        if (!t) return '';
+                        if (/^(Juiz:|Classe Processual:)/i.test(t)) return '';
+                        if (inAdv) return '';
+                        if (/Advogado\(s\):/i.test(t)) {
+                            inAdv = true;
+                            // Manter só o texto antes do "Advogado(s):"
+                            return t.replace(/\s*Advogado\(s\):[\s\S]*/i, '').trim();
+                        }
+                        return t;
+                    }).filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
                 };
 
                 audiencias.push({
