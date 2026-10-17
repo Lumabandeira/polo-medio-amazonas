@@ -6460,5 +6460,101 @@
       "numero": "PORTARIA Nº 1038/2026-GSPG/DPE/AM",
       "texto": "ESTABELECER a escala de plantão da Defensoria Pública do Estado do Amazonas para o 4º trimestre de 2026, do interior, que compreende o período de 28/09/2026 a 19/12/2026, conforme anexos I a III desta portaria"
     }
+  },
+  {
+    "edicao": 2753,
+    "data": "2026-10-16",
+    "data_formatada": "16/10/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/10/Edicao_2753-2026__publicada_em_16_outubro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1011/2026-GSPG/DPE/AM",
+        "sei": "26.0.000013064-7",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "servidor",
+          "substituicao",
+          "plantao"
+        ],
+        "trechos": [
+          "III - AUTORIZAR a permuta entre servidores Fábio Bastos de Souza e Larice Bruce Pereira, designados, respectivamente, para as semanas 05 e 06 do Plantão do Polo Médio Amazonas, correspondentes aos períodos de 26/10 a 01/11 e 02/11 a 08/11",
+          "Polo do Médio Amazonas | Plantão Cível e de Família | Eliaqui m Antunes de Souza Santos (R) | Pedro Henriqu e Pereira Paiva (R) | Emilly Bianca Ferreira dos Santos (R) | Enio Jorge Lima Barbalh o Júnior (F)",
+          "Polo do Médio Amazonas | Plantão Crimina l e de Custódi a | Eliaqui m Antunes de Souza Santos | Pedro Henriqu e Pereira Paiva | Emilly Bianca Ferreira dos Santos | Enio Jorge Lima Barbalh o Júnior",
+          "Polo do Médio Amazonas | Assess oria | Fábio Bastos de Souza | Larice Bruce Pereira | Larice Bruce Pereira | Larice Bruce Pereira"
+        ],
+        "resumo": "Autoriza permuta entre servidores Fábio Bastos de Souza e Larice Bruce Pereira nas semanas 05 e 06 do Plantão do Polo Médio Amazonas (26/10 a 08/11/2026)"
+      },
+      {
+        "numero": "Portaria Nº 1102/2026-GSPG/DPE/AM",
+        "sei": "26.0.000014592-0",
+        "sgi": "2966",
+        "categorias": [
+          "comarca",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Pedro Henrique Pereira Paiva, Defensor Público de 3ª classe, no trecho Itacoatiara/Itapiranga/Itacoatiara, no período de 16 a 19 de novembro de 2026, a fim de realizar atendimentos população, inspeção carcerária e atendimentos prisionais no referido município",
+          "II - AUTORIZAR o deslocamento de Larice Bruce Pereira, Assistente Defensorial DPE-1, no trecho Itacoatiara/Itapiranga/Itacoatiara, no período de 16 a 19 de novembro de 2026, a fim de auxiliar o Defensor Pedro Henrique Pereira Paiva, durante os atendimentos população, inspeção carcerária e atendimentos prisionais no referido município"
+        ],
+        "resumo": "Autoriza deslocamento do Defensor Pedro Henrique Pereira Paiva e da servidora Larice Bruce Pereira para Itacoatiara/Itapiranga em 16-19/11/2026 para atendimentos à população e inspeção carcerária"
+      }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-09-28",
+        "data_fim": "2026-10-04",
+        "defensor": "Eliaquim Antunes de Souza Santos (R)",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-10-05",
+        "data_fim": "2026-10-11",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-10-12",
+        "data_fim": "2026-10-18",
+        "defensor": "Emilly Bianca Ferreira dos Santos (R)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-10-19",
+        "data_fim": "2026-10-25",
+        "defensor": "Enio Jorge Lima Barbalho Júnior (F)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-10-26",
+        "data_fim": "2026-11-01",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": "Larice Bruce Pereira"
+      },
+      {
+        "data_inicio": "2026-11-02",
+        "data_fim": "2026-11-08",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": "Fábio Bastos de Souza"
+      },
+      {
+        "data_inicio": "2026-11-09",
+        "data_fim": "2026-11-15",
+        "defensor": "Eliaquim Antunes de Souza (R)",
+        "assessoria": "Luma Karolayne Pantoja Bandeira"
+      },
+      {
+        "data_inicio": "2026-11-16",
+        "data_fim": "2026-11-22",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho (R)",
+        "assessoria": "Fábio Bastos de Souza"
+      }
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 1093/2026-GSPG/DPE/AM",
+      "texto": "ALTERAR a Portaria 1011/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.739, pág. 5, em 25 de Setembro de 2026, nos seguintes termos"
+    }
   }
 ]
