@@ -14899,12 +14899,12 @@ Regras obrigatórias:
                     let maxLinhas = 1;
                     vals.forEach((v, i) => {
                         const chars = String(v || '').length;
-                        // ~1,08 chars cabem por unidade de largura (Calibri 10pt vs unidade padrão 11pt)
-                        const cpl = Math.max(4, Math.floor(cdefs[i].w * 1.08));
+                        // 0,75 compensa que palavras não quebram no meio da linha
+                        const cpl = Math.max(4, Math.floor(cdefs[i].w * 0.75));
                         const linhas = Math.ceil(chars / cpl) || 1;
                         if (linhas > maxLinhas) maxLinhas = linhas;
                     });
-                    return Math.max(15, Math.round(maxLinhas * 13.5) + 3);
+                    return Math.max(16, Math.round(maxLinhas * 16) + 4);
                 };
 
                 // Linhas de dados
