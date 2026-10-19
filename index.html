@@ -14491,16 +14491,8 @@ Regras obrigatórias:
         }
 
         function _audDetectarVara(texto) {
-            const m = texto.match(/PODER JUDICI[AÁ]RIO[ \t]*\n([\s\S]{0,300})/i);
-            if (!m) return '';
-            const linhas = m[1].split('\n').map(l => l.trim()).filter(Boolean);
-            let vara = '';
-            for (const l of linhas) {
-                // Se a linha atual termina com preposição/conjunção, o nome continua
-                if (vara && !/\b(e|de|da|do|dos|das|em|para|por|com)[ ,]*$/i.test(vara)) break;
-                vara = vara ? vara + ' ' + l : l;
-            }
-            return vara;
+            const m = texto.match(/PODER JUDICI[AÁ]RIO\s*\n([^\n]+)/i);
+            return m ? m[1].trim() : '';
         }
 
         function _audParsearTexto(texto) {
