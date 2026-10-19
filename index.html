@@ -14371,6 +14371,12 @@ Regras obrigatórias:
         };
 
         // ─── Info das DPs para exibição ─────────────────────────────────
+        const AUD_PRESETS = {
+            familia:  { label: 'Família',  dps: ['1','2'] },
+            civel:    { label: 'Cível',    dps: ['3','4'] },
+            criminal: { label: 'Criminal', dps: ['5','6'] },
+        };
+
         const AUD_DP_INFO = {
             '1': { defensor: 'Ênio Barbalho',    abrev: 'Ênio',     area: 'Família e Sucessões' },
             '2': { defensor: 'Ênio Barbalho',    abrev: 'Ênio',     area: 'Família e Sucessões' },
@@ -14388,6 +14394,7 @@ Regras obrigatórias:
         let audGarantiasExpandido = false;
         let audModoCompat         = false;
         let audDpsCompat          = new Set(['5']);
+        let audPresetAtivo        = null; // 'familia' | 'civel' | 'criminal' | null
 
         // ─── Utilitários de parsing ──────────────────────────────────────
         function _audDigitoAntes(processo) {
@@ -14840,7 +14847,24 @@ Regras obrigatórias:
 
             const _ehGarantias = a => /garantias/i.test(a.vara || '');
 
-            // ── Abas de DP ──
+            // ── Presets de área ──
+            h += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">`;
+            for (const [key, p] of Object.entries(AUD_PRESETS)) {
+                const cntPreset = audiencias.filter(a => p.dps.includes(a.dp) && !_ehGarantias(a)).length;
+                const isAtivo = audPresetAtivo === key;
+                const presetStyle = isAtivo
+                    ? 'background:#9f1239;color:white;border-color:#9f1239;'
+                    : 'background:white;color:#9f1239;border-color:#fb7185;';
+                h += `<button onclick="_audSelecionarPreset('${key}')"
+                    style="${presetStyle}padding:6px 16px;border:1.5px solid;border-radius:8px;
+                           cursor:pointer;font-weight:700;font-family:inherit;font-size:0.95em">
+                    ${esc(p.label)}
+                    <span style="font-size:0.8em;font-weight:400;opacity:0.8;margin-left:4px">(${cntPreset})</span>
+                </button>`;
+            }
+            h += `</div>`;
+
+            // ── Abas de DP individuais ──
             h += `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:18px">`;
             for (const dp of ['1','2','3','4','5','6']) {
                 const cnt = audiencias.filter(a => a.dp === dp && !_ehGarantias(a)).length;
@@ -14865,20 +14889,25 @@ Regras obrigatórias:
                 // ── Modo Compatibilizar: tabela unificada de N DPs ──
                 const dpsOrdenadas = [...audDpsCompat].map(Number).sort((a,b)=>a-b).map(String);
                 const labelDps = dpsOrdenadas.map(dp => `${dp}ª`).join(' + ');
+                const preset = audPresetAtivo ? AUD_PRESETS[audPresetAtivo] : null;
+                const mostrarDp = !preset && dpsOrdenadas.length > 1;
+                const bannerLabel = preset
+                    ? `${preset.label} (${labelDps} DP)`
+                    : `DP ${labelDps}`;
                 const mergedAuds = audiencias
                     .filter(a => audDpsCompat.has(a.dp) && !_ehGarantias(a))
                     .sort((a, b) => _audSortKey(a).localeCompare(_audSortKey(b)));
 
                 h += `<div style="background:#fff1f2;border-left:4px solid #fb7185;padding:10px 16px;border-radius:0 8px 8px 0;margin-bottom:16px">
-                    <strong>DP ${labelDps}</strong>
+                    <strong>${esc(bannerLabel)}</strong>
                     &nbsp;·&nbsp;<span style="color:var(--text-secondary);font-size:0.9em">${mergedAuds.length} audiência${mergedAuds.length !== 1 ? 's' : ''}</span>
-                    ${dpsOrdenadas.length > 1 ? `<span style="font-size:0.82em;color:#9f1239;margin-left:8px">· ordenadas por data/hora — empate: DP de número menor primeiro</span>` : ''}
+                    ${mostrarDp ? `<span style="font-size:0.82em;color:#9f1239;margin-left:8px">· ordenadas por data/hora — empate: DP de número menor primeiro</span>` : ''}
                 </div>`;
 
                 if (mergedAuds.length === 0) {
                     h += `<p style="text-align:center;padding:30px;color:var(--text-secondary)">Nenhuma audiência para as DPs selecionadas nesta semana.</p>`;
                 } else {
-                    h += _audRenderTabela(mergedAuds, dpsOrdenadas.length > 1);
+                    h += _audRenderTabela(mergedAuds, mostrarDp);
                 }
 
                 const garantiasAuds = audiencias
@@ -14902,7 +14931,7 @@ Regras obrigatórias:
                         </div>`;
                     if (audGarantiasExpandido) {
                         h += `<div style="border:1px solid #d1d5db;border-top:none;border-radius:0 0 10px 10px;overflow:hidden">
-                            ${_audRenderTabela(garantiasAuds, dpsOrdenadas.length > 1)}
+                            ${_audRenderTabela(garantiasAuds, mostrarDp)}
                         </div>`;
                     }
                     h += `</div>`;
@@ -15019,17 +15048,27 @@ Regras obrigatórias:
 
         function _audToggleModoCompat() {
             audModoCompat = !audModoCompat;
+            audPresetAtivo = null;
             if (audModoCompat) audDpsCompat = new Set([audDpAtiva]);
             const el = document.getElementById('audiencias-content');
             if (el) _audRenderConteudo(el);
         }
 
         function _audMudarDpCompat(dp) {
+            audPresetAtivo = null; // seleção manual desfaz o preset
             if (audDpsCompat.has(dp)) {
                 if (audDpsCompat.size > 1) audDpsCompat.delete(dp);
             } else {
                 audDpsCompat.add(dp);
             }
+            const el = document.getElementById('audiencias-content');
+            if (el) _audRenderConteudo(el);
+        }
+
+        function _audSelecionarPreset(key) {
+            audPresetAtivo = key;
+            audModoCompat = true;
+            audDpsCompat = new Set(AUD_PRESETS[key].dps);
             const el = document.getElementById('audiencias-content');
             if (el) _audRenderConteudo(el);
         }
