@@ -14952,7 +14952,7 @@ Regras obrigatórias:
                     h += _audRenderTabela(dpAuds);
                 }
 
-                const garantiasAuds = audiencias.filter(a => _ehGarantias(a));
+                const garantiasAuds = audiencias.filter(a => a.dp === audDpAtiva && _ehGarantias(a));
                 if (garantiasAuds.length > 0) {
                     const icone = audGarantiasExpandido ? '▲' : '▼';
                     const varaLabel = garantiasAuds[0].vara || 'Vara de Garantias';
