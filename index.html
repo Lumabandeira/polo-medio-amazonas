@@ -14355,7 +14355,7 @@ Regras obrigatórias:
         const AUD_PDFJS_SRC    = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
         const AUD_PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         const AUD_JSZIP_SRC    = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
-        const AUD_XLSX_SRC     = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+        const AUD_EXCELJS_SRC  = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
 
         // ─── Mapeamento vara → área de atuação ──────────────────────────
         const AUD_AREA_KEYWORDS = [
@@ -14825,55 +14825,121 @@ Regras obrigatórias:
         async function _audBaixarXlsx() {
             const dados = _audGetDadosExport();
             if (!dados) return mostrarToast('Nenhuma pauta carregada.', true);
-            if (!window.XLSX) await _pcCarregarScript(AUD_XLSX_SRC);
+            if (!window.ExcelJS) await _pcCarregarScript(AUD_EXCELJS_SRC);
             const { auds, garantiasAuds, bannerLabel, periodo, nomeSemana, titulo, mostrarDp } = dados;
 
-            const colsBase = ['Processo','Data','Hora','Vara','Classe Processual','Tipo de Audiência','Autor(es)','Réu(s)','Status'];
-            const cols = mostrarDp ? ['DP', ...colsBase] : colsBase;
+            const VERM   = 'FF9F1239';
+            const BRANCO = 'FFFFFFFF';
 
-            const toRow = a => {
-                const r = mostrarDp ? [a.dp + 'ª'] : [];
-                r.push(a.processo, a.data, a.hora, a.vara || '', a.classe || '', a.tipo || '',
-                       _audPartesTexto(a.autores, a.advAutor),
-                       _audPartesTexto(a.reus, a.advReu),
-                       a.status || '');
-                return r;
+            const preencherAba = (ws, rows, label, inclDp) => {
+                const colDefs = inclDp
+                    ? [{h:'DP',w:6},{h:'Processo',w:32},{h:'Data',w:12},{h:'Hora',w:8},
+                       {h:'Vara',w:28},{h:'Classe Processual',w:22},{h:'Tipo de Audiência',w:20},
+                       {h:'Autor(es)',w:30},{h:'Réu(s)',w:30},{h:'Status',w:14}]
+                    : [{h:'Processo',w:32},{h:'Data',w:12},{h:'Hora',w:8},
+                       {h:'Vara',w:28},{h:'Classe Processual',w:22},{h:'Tipo de Audiência',w:20},
+                       {h:'Autor(es)',w:30},{h:'Réu(s)',w:30},{h:'Status',w:14}];
+                const n = colDefs.length;
+                ws.columns = colDefs.map(c => ({ width: c.w }));
+
+                // Linha 1 — título
+                ws.mergeCells(1, 1, 1, n);
+                const c1 = ws.getCell(1, 1);
+                c1.value = 'Pauta de Audiências';
+                c1.font      = { name:'Calibri', size:18, bold:true, color:{argb:VERM} };
+                c1.alignment = { horizontal:'center', vertical:'middle' };
+                ws.getRow(1).height = 30;
+
+                // Linha 2 — subtítulo
+                ws.mergeCells(2, 1, 2, n);
+                const c2 = ws.getCell(2, 1);
+                c2.value = label;
+                c2.font      = { name:'Calibri', size:13, bold:true, color:{argb:'FF374151'} };
+                c2.alignment = { horizontal:'center', vertical:'middle' };
+                ws.getRow(2).height = 22;
+
+                // Linha 3 — período
+                ws.mergeCells(3, 1, 3, n);
+                const c3 = ws.getCell(3, 1);
+                c3.value = `Período: ${periodo}`;
+                c3.font      = { name:'Calibri', size:11, color:{argb:'FF6B7280'} };
+                c3.alignment = { horizontal:'center', vertical:'middle' };
+                ws.getRow(3).height = 18;
+
+                // Linha 4 — espaçador
+                ws.getRow(4).height = 8;
+
+                // Linha 5 — cabeçalho da tabela
+                const hdr = ws.getRow(5);
+                hdr.height = 22;
+                const bordaHdr = {
+                    top:   {style:'thin',color:{argb:'FFB91C45'}},
+                    left:  {style:'thin',color:{argb:'FFB91C45'}},
+                    bottom:{style:'thin',color:{argb:'FFB91C45'}},
+                    right: {style:'thin',color:{argb:'FFB91C45'}},
+                };
+                colDefs.forEach((c, i) => {
+                    const cell = hdr.getCell(i + 1);
+                    cell.value = c.h;
+                    cell.font      = { name:'Calibri', size:10, bold:true, color:{argb:BRANCO} };
+                    cell.fill      = { type:'pattern', pattern:'solid', fgColor:{argb:VERM} };
+                    cell.alignment = { horizontal:'center', vertical:'middle' };
+                    cell.border    = bordaHdr;
+                });
+
+                ws.autoFilter = { from:{row:5,column:1}, to:{row:5,column:n} };
+                ws.views = [{ state:'frozen', ySplit:5 }];
+
+                // Linhas de dados
+                const bordaDado = {
+                    top:   {style:'thin',color:{argb:'FFD1D5DB'}},
+                    left:  {style:'thin',color:{argb:'FFD1D5DB'}},
+                    bottom:{style:'thin',color:{argb:'FFD1D5DB'}},
+                    right: {style:'thin',color:{argb:'FFD1D5DB'}},
+                };
+                rows.forEach((a, idx) => {
+                    const vals = inclDp
+                        ? [a.dp+'ª', a.processo, a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
+                           _audPartesTexto(a.autores, a.advAutor), _audPartesTexto(a.reus, a.advReu), a.status||'']
+                        : [a.processo, a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
+                           _audPartesTexto(a.autores, a.advAutor), _audPartesTexto(a.reus, a.advReu), a.status||''];
+                    const bg = a.status === 'CANCELADA'   ? 'FFFEE2E2'
+                             : a.status === 'REDESIGNADA' ? 'FFFFF3C7'
+                             : idx % 2 === 1              ? 'FFF9FAFB'
+                             : 'FFFFFFFF';
+                    const dr = ws.getRow(6 + idx);
+                    dr.height = 15;
+                    vals.forEach((v, ci) => {
+                        const cell = dr.getCell(ci + 1);
+                        cell.value     = v;
+                        cell.font      = { name:'Calibri', size:10 };
+                        cell.fill      = { type:'pattern', pattern:'solid', fgColor:{argb:bg} };
+                        cell.border    = bordaDado;
+                        cell.alignment = { vertical:'top', wrapText:true };
+                    });
+                });
             };
 
-            const wb = XLSX.utils.book_new();
-            const wsData = [
-                [`Pauta de Audiências — ${bannerLabel}`],
-                [`Período: ${periodo}`],
-                [],
-                cols,
-                ...auds.map(toRow),
-            ];
-            const ws = XLSX.utils.aoa_to_sheet(wsData);
-            ws['!merges'] = [
-                { s:{r:0,c:0}, e:{r:0,c:cols.length-1} },
-                { s:{r:1,c:0}, e:{r:1,c:cols.length-1} },
-            ];
-            XLSX.utils.book_append_sheet(wb, ws, 'Audiências');
+            const wb = new ExcelJS.Workbook();
+            wb.creator = 'Polo Médio Amazonas';
+            wb.created = new Date();
 
+            preencherAba(wb.addWorksheet('Audiências'), auds, bannerLabel, mostrarDp);
             if (garantiasAuds.length > 0) {
-                const gc = ['Processo','Data','Hora','Vara','Classe Processual','Tipo de Audiência','Autor(es)','Réu(s)','Status'];
-                const wsG = XLSX.utils.aoa_to_sheet([
-                    [`Vara de Garantias — ${bannerLabel}`],
-                    [`Período: ${periodo}`],
-                    [],
-                    gc,
-                    ...garantiasAuds.map(a => [
-                        a.processo, a.data, a.hora, a.vara || '', a.classe || '', a.tipo || '',
-                        _audPartesTexto(a.autores, a.advAutor),
-                        _audPartesTexto(a.reus, a.advReu),
-                        a.status || '',
-                    ]),
-                ]);
-                wsG['!merges'] = [{ s:{r:0,c:0}, e:{r:0,c:8} }, { s:{r:1,c:0}, e:{r:1,c:8} }];
-                XLSX.utils.book_append_sheet(wb, wsG, 'Garantias');
+                const garLabel = garantiasAuds[0]?.vara || 'Vara de Garantias';
+                preencherAba(wb.addWorksheet('Garantias'), garantiasAuds, garLabel, false);
             }
 
-            XLSX.writeFile(wb, `pauta-audiencias-${nomeSemana}-${titulo}.xlsx`);
+            const buffer = await wb.xlsx.writeBuffer();
+            const blob   = new Blob([buffer], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+            const url    = URL.createObjectURL(blob);
+            const link   = document.createElement('a');
+            link.href     = url;
+            link.download = `pauta-audiencias-${nomeSemana}-${titulo}.xlsx`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
             mostrarToast('Planilha gerada com sucesso.');
         }
 
