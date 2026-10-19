@@ -14832,13 +14832,16 @@ Regras obrigatórias:
             const BRANCO = 'FFFFFFFF';
 
             const preencherAba = (ws, rows, label, inclDp) => {
+                // Larguras em unidades Excel (1 unit ≈ 0,185 cm para Calibri 11pt)
+                // Processo 4,5cm→24 | Vara 4,60cm→25 | Classe 3,92cm→21
+                // Autor/Réu 6,5cm→35 | Status 2,35cm→13
                 const colDefs = inclDp
-                    ? [{h:'DP',w:6},{h:'Processo',w:40},{h:'Data',w:13},{h:'Hora',w:8},
-                       {h:'Vara',w:52},{h:'Classe Processual',w:36},{h:'Tipo de Audiência',w:28},
-                       {h:'Autor(es)',w:52},{h:'Réu(s)',w:52},{h:'Status',w:15}]
-                    : [{h:'Processo',w:40},{h:'Data',w:13},{h:'Hora',w:8},
-                       {h:'Vara',w:52},{h:'Classe Processual',w:36},{h:'Tipo de Audiência',w:28},
-                       {h:'Autor(es)',w:52},{h:'Réu(s)',w:52},{h:'Status',w:15}];
+                    ? [{h:'DP',w:6},{h:'Processo',w:24},{h:'Data',w:13},{h:'Hora',w:8},
+                       {h:'Vara',w:25},{h:'Classe Processual',w:21},{h:'Tipo de Audiência',w:24},
+                       {h:'Autor(es)',w:35},{h:'Réu(s)',w:35},{h:'Status',w:13}]
+                    : [{h:'Processo',w:24},{h:'Data',w:13},{h:'Hora',w:8},
+                       {h:'Vara',w:25},{h:'Classe Processual',w:21},{h:'Tipo de Audiência',w:24},
+                       {h:'Autor(es)',w:35},{h:'Réu(s)',w:35},{h:'Status',w:13}];
                 const n = colDefs.length;
                 ws.columns = colDefs.map(c => ({ width: c.w }));
 
