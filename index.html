@@ -14833,12 +14833,12 @@ Regras obrigatórias:
 
             const preencherAba = (ws, rows, label, inclDp) => {
                 const colDefs = inclDp
-                    ? [{h:'DP',w:6},{h:'Processo',w:32},{h:'Data',w:12},{h:'Hora',w:8},
-                       {h:'Vara',w:28},{h:'Classe Processual',w:22},{h:'Tipo de Audiência',w:20},
-                       {h:'Autor(es)',w:30},{h:'Réu(s)',w:30},{h:'Status',w:14}]
-                    : [{h:'Processo',w:32},{h:'Data',w:12},{h:'Hora',w:8},
-                       {h:'Vara',w:28},{h:'Classe Processual',w:22},{h:'Tipo de Audiência',w:20},
-                       {h:'Autor(es)',w:30},{h:'Réu(s)',w:30},{h:'Status',w:14}];
+                    ? [{h:'DP',w:6},{h:'Processo',w:40},{h:'Data',w:13},{h:'Hora',w:8},
+                       {h:'Vara',w:52},{h:'Classe Processual',w:36},{h:'Tipo de Audiência',w:28},
+                       {h:'Autor(es)',w:52},{h:'Réu(s)',w:52},{h:'Status',w:15}]
+                    : [{h:'Processo',w:40},{h:'Data',w:13},{h:'Hora',w:8},
+                       {h:'Vara',w:52},{h:'Classe Processual',w:36},{h:'Tipo de Audiência',w:28},
+                       {h:'Autor(es)',w:52},{h:'Réu(s)',w:52},{h:'Status',w:15}];
                 const n = colDefs.length;
                 ws.columns = colDefs.map(c => ({ width: c.w }));
 
@@ -14908,7 +14908,6 @@ Regras obrigatórias:
                              : idx % 2 === 1              ? 'FFF9FAFB'
                              : 'FFFFFFFF';
                     const dr = ws.getRow(6 + idx);
-                    dr.height = 15;
                     vals.forEach((v, ci) => {
                         const cell = dr.getCell(ci + 1);
                         cell.value     = v;
