@@ -15151,15 +15151,15 @@ Regras obrigatórias:
 
             h += `<div style="margin-left:auto;display:flex;gap:8px;align-items:center">`;
             if (audDadosAtual) {
-                h += `<button onclick="_audBaixarXlsx()"
-                    style="background:white;color:#059669;border:1.5px solid #059669;padding:6px 14px;
-                    border-radius:8px;cursor:pointer;font-weight:600;font-family:inherit;font-size:0.9em">
-                    ⬇️ XLSX
-                </button>`;
                 h += `<button onclick="_audBaixarDocx()"
                     style="background:white;color:#2563eb;border:1.5px solid #2563eb;padding:6px 14px;
                     border-radius:8px;cursor:pointer;font-weight:600;font-family:inherit;font-size:0.9em">
                     ⬇️ DOCX
+                </button>`;
+                h += `<button onclick="_audBaixarXlsx()"
+                    style="background:white;color:#059669;border:1.5px solid #059669;padding:6px 14px;
+                    border-radius:8px;cursor:pointer;font-weight:600;font-family:inherit;font-size:0.9em">
+                    ⬇️ XLSX
                 </button>`;
             }
             if (isAdmin) {
