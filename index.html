@@ -14893,6 +14893,20 @@ Regras obrigatórias:
                 ws.autoFilter = { from:{row:5,column:1}, to:{row:5,column:n} };
                 ws.views = [{ state:'frozen', ySplit:5 }];
 
+                // Estima linhas necessárias para definir altura de linha
+                // (LibreOffice não auto-ajusta altura ao abrir XLSX com wrapText)
+                const estimarAltura = (vals, cdefs) => {
+                    let maxLinhas = 1;
+                    vals.forEach((v, i) => {
+                        const chars = String(v || '').length;
+                        // ~1,08 chars cabem por unidade de largura (Calibri 10pt vs unidade padrão 11pt)
+                        const cpl = Math.max(4, Math.floor(cdefs[i].w * 1.08));
+                        const linhas = Math.ceil(chars / cpl) || 1;
+                        if (linhas > maxLinhas) maxLinhas = linhas;
+                    });
+                    return Math.max(15, Math.round(maxLinhas * 13.5) + 3);
+                };
+
                 // Linhas de dados
                 const bordaDado = {
                     top:   {style:'thin',color:{argb:'FFD1D5DB'}},
@@ -14911,6 +14925,7 @@ Regras obrigatórias:
                              : idx % 2 === 1              ? 'FFF9FAFB'
                              : 'FFFFFFFF';
                     const dr = ws.getRow(6 + idx);
+                    dr.height = estimarAltura(vals, colDefs);
                     vals.forEach((v, ci) => {
                         const cell = dr.getCell(ci + 1);
                         cell.value     = v;
