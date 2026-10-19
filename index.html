@@ -14899,8 +14899,7 @@ Regras obrigatórias:
                     let maxLinhas = 1;
                     vals.forEach((v, i) => {
                         const chars = String(v || '').length;
-                        // 1,00: dá margem extra para varas com nome longo
-                        const cpl = Math.max(4, Math.floor(cdefs[i].w * 1.00));
+                        const cpl = Math.max(4, Math.floor(cdefs[i].w * 1.25));
                         const linhas = Math.ceil(chars / cpl) || 1;
                         if (linhas > maxLinhas) maxLinhas = linhas;
                     });
