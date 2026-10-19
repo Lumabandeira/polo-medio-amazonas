@@ -14355,6 +14355,7 @@ Regras obrigatórias:
         const AUD_PDFJS_SRC    = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
         const AUD_PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         const AUD_JSZIP_SRC    = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+        const AUD_XLSX_SRC     = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
 
         // ─── Mapeamento vara → área de atuação ──────────────────────────
         const AUD_AREA_KEYWORDS = [
@@ -14780,6 +14781,251 @@ Regras obrigatórias:
         }
 
         // ─── Render principal ─────────────────────────────────────────────
+        // ─── Exportação da pauta ────────────────────────────────────────────
+        function _audGetDadosExport() {
+            if (!audDadosAtual) return null;
+            const { audiencias, periodo } = audDadosAtual;
+            const isGar = a => /garantias/i.test(a.vara || '');
+            const nomeSemana = (audSemanaAtual || 'pauta').replace(/[/\\:]/g, '-');
+            if (audModoCompat) {
+                const preset = audPresetAtivo ? AUD_PRESETS[audPresetAtivo] : null;
+                const dpsOrd = [...audDpsCompat].map(Number).sort((a, b) => a - b).map(String);
+                return {
+                    titulo:        preset ? preset.label.toLowerCase() : dpsOrd.join('-') + 'dp',
+                    bannerLabel:   preset
+                        ? `${preset.label} (${dpsOrd.map(d => d + 'ª').join(' + ')} DP)`
+                        : `DP ${dpsOrd.map(d => d + 'ª').join(' + ')}`,
+                    auds:          audiencias.filter(a => audDpsCompat.has(a.dp) && !isGar(a))
+                                       .sort((a, b) => _audSortKey(a).localeCompare(_audSortKey(b))),
+                    garantiasAuds: audiencias.filter(a => audDpsCompat.has(a.dp) && isGar(a))
+                                       .sort((a, b) => _audSortKey(a).localeCompare(_audSortKey(b))),
+                    mostrarDp:     !preset && dpsOrd.length > 1,
+                    periodo, nomeSemana,
+                };
+            }
+            const dpInfo = AUD_DP_INFO[audDpAtiva];
+            return {
+                titulo:        audDpAtiva + 'dp',
+                bannerLabel:   `${audDpAtiva}ª Defensoria Pública — ${dpInfo ? dpInfo.area : ''}`,
+                auds:          audiencias.filter(a => a.dp === audDpAtiva && !isGar(a)),
+                garantiasAuds: audiencias.filter(a => a.dp === audDpAtiva && isGar(a)),
+                mostrarDp:     false,
+                periodo, nomeSemana,
+            };
+        }
+
+        function _audPartesTexto(partes, advLegacy) {
+            if (!partes) return '';
+            if (typeof partes === 'string') return partes + (advLegacy ? ` (Adv: ${advLegacy})` : '');
+            return partes.filter(p => p && p.nome)
+                         .map(p => p.nome + (p.adv ? ` (Adv: ${p.adv})` : ''))
+                         .join(' / ');
+        }
+
+        async function _audBaixarXlsx() {
+            const dados = _audGetDadosExport();
+            if (!dados) return mostrarToast('Nenhuma pauta carregada.', true);
+            if (!window.XLSX) await _pcCarregarScript(AUD_XLSX_SRC);
+            const { auds, garantiasAuds, bannerLabel, periodo, nomeSemana, titulo, mostrarDp } = dados;
+
+            const colsBase = ['Processo','Data','Hora','Vara','Classe Processual','Tipo de Audiência','Autor(es)','Réu(s)','Status'];
+            const cols = mostrarDp ? ['DP', ...colsBase] : colsBase;
+
+            const toRow = a => {
+                const r = mostrarDp ? [a.dp + 'ª'] : [];
+                r.push(a.processo, a.data, a.hora, a.vara || '', a.classe || '', a.tipo || '',
+                       _audPartesTexto(a.autores, a.advAutor),
+                       _audPartesTexto(a.reus, a.advReu),
+                       a.status || '');
+                return r;
+            };
+
+            const wb = XLSX.utils.book_new();
+            const wsData = [
+                [`Pauta de Audiências — ${bannerLabel}`],
+                [`Período: ${periodo}`],
+                [],
+                cols,
+                ...auds.map(toRow),
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            ws['!merges'] = [
+                { s:{r:0,c:0}, e:{r:0,c:cols.length-1} },
+                { s:{r:1,c:0}, e:{r:1,c:cols.length-1} },
+            ];
+            XLSX.utils.book_append_sheet(wb, ws, 'Audiências');
+
+            if (garantiasAuds.length > 0) {
+                const gc = ['Processo','Data','Hora','Vara','Classe Processual','Tipo de Audiência','Autor(es)','Réu(s)','Status'];
+                const wsG = XLSX.utils.aoa_to_sheet([
+                    [`Vara de Garantias — ${bannerLabel}`],
+                    [`Período: ${periodo}`],
+                    [],
+                    gc,
+                    ...garantiasAuds.map(a => [
+                        a.processo, a.data, a.hora, a.vara || '', a.classe || '', a.tipo || '',
+                        _audPartesTexto(a.autores, a.advAutor),
+                        _audPartesTexto(a.reus, a.advReu),
+                        a.status || '',
+                    ]),
+                ]);
+                wsG['!merges'] = [{ s:{r:0,c:0}, e:{r:0,c:8} }, { s:{r:1,c:0}, e:{r:1,c:8} }];
+                XLSX.utils.book_append_sheet(wb, wsG, 'Garantias');
+            }
+
+            XLSX.writeFile(wb, `pauta-audiencias-${nomeSemana}-${titulo}.xlsx`);
+            mostrarToast('Planilha gerada com sucesso.');
+        }
+
+        async function _audBaixarDocx() {
+            const dados = _audGetDadosExport();
+            if (!dados) return mostrarToast('Nenhuma pauta carregada.', true);
+            if (!window.JSZip) await _pcCarregarScript(AUD_JSZIP_SRC);
+            const { auds, garantiasAuds, bannerLabel, periodo, nomeSemana, titulo, mostrarDp } = dados;
+
+            const xe = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+            // Colunas em twips. A4 paisagem (16838), margens 720×2 → 15398 utilizáveis.
+            const COLS = mostrarDp
+                ? [{l:'DP',w:600},{l:'Processo',w:2300},{l:'Data',w:1000},{l:'Hora',w:700},
+                   {l:'Vara',w:2100},{l:'Classe Processual',w:1900},{l:'Tipo de Audiência',w:1500},
+                   {l:'Autor(es)',w:2500},{l:'Réu(s)',w:2798}]
+                : [{l:'Processo',w:2500},{l:'Data',w:1100},{l:'Hora',w:800},
+                   {l:'Vara',w:2200},{l:'Classe Processual',w:2000},{l:'Tipo de Audiência',w:1600},
+                   {l:'Autor(es)',w:2600},{l:'Réu(s)',w:2598}];
+            const GAR_COLS = [{l:'Processo',w:2500},{l:'Data',w:1100},{l:'Hora',w:800},
+                              {l:'Vara',w:2200},{l:'Classe Processual',w:2000},{l:'Tipo de Audiência',w:1600},
+                              {l:'Autor(es)',w:2600},{l:'Réu(s)',w:2598}];
+
+            const toVals = (a, inclDp) => {
+                const r = inclDp ? [a.dp + 'ª'] : [];
+                const proc = a.processo + (a.status ? ` (${a.status})` : '');
+                r.push(proc, a.data, a.hora, a.vara || '—', a.classe || '—', a.tipo || '—',
+                       _audPartesTexto(a.autores, a.advAutor) || '—',
+                       _audPartesTexto(a.reus, a.advReu) || '—');
+                return r;
+            };
+
+            const borders = '<w:tblBorders>'
+                + '<w:top w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
+                + '<w:left w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
+                + '<w:bottom w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
+                + '<w:right w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
+                + '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
+                + '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="auto"/>'
+                + '</w:tblBorders>';
+            const cellMar = '<w:tblCellMar>'
+                + '<w:top w:w="60" w:type="dxa"/><w:left w:w="80" w:type="dxa"/>'
+                + '<w:bottom w:w="60" w:type="dxa"/><w:right w:w="80" w:type="dxa"/>'
+                + '</w:tblCellMar>';
+
+            const mkCell = (text, w, isHdr, fill) => {
+                const shd = isHdr ? '<w:shd w:val="clear" w:color="auto" w:fill="9F1239"/>'
+                          : fill  ? `<w:shd w:val="clear" w:color="auto" w:fill="${fill}"/>` : '';
+                const rpr = (isHdr ? '<w:b/><w:color w:val="FFFFFF"/>' : '')
+                          + '<w:sz w:val="18"/><w:szCs w:val="18"/>';
+                return `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${shd}</w:tcPr>`
+                     + `<w:p><w:pPr><w:spacing w:before="60" w:after="60"/></w:pPr>`
+                     + `<w:r><w:rPr>${rpr}</w:rPr>`
+                     + `<w:t xml:space="preserve">${xe(text)}</w:t></w:r></w:p></w:tc>`;
+            };
+
+            const buildTable = (rows, tcols, inclDp) => {
+                const tw   = tcols.reduce((s, c) => s + c.w, 0);
+                const grid = tcols.map(c => `<w:gridCol w:w="${c.w}"/>`).join('');
+                const hdr  = `<w:tr><w:trPr><w:tblHeader/><w:trHeight w:val="380" w:hRule="atLeast"/></w:trPr>`
+                           + tcols.map(c => mkCell(c.l, c.w, true, '')).join('') + '</w:tr>';
+                const body = rows.map(a => {
+                    const fill = a.status === 'CANCELADA' ? 'FEE2E2'
+                               : a.status === 'REDESIGNADA' ? 'FEF3C7' : '';
+                    return `<w:tr>${tcols.map((c, i) => mkCell(toVals(a, inclDp)[i] || '—', c.w, false, fill)).join('')}</w:tr>`;
+                }).join('');
+                return `<w:tbl><w:tblPr><w:tblW w:w="${tw}" w:type="dxa"/>${borders}${cellMar}</w:tblPr>`
+                     + `<w:tblGrid>${grid}</w:tblGrid>${hdr}${body}</w:tbl>`;
+            };
+
+            const parag = (text, sz, bold, center, color) => {
+                const jc  = center ? '<w:jc w:val="center"/>' : '';
+                const rpr = (bold  ? '<w:b/>' : '')
+                          + (color ? `<w:color w:val="${color}"/>` : '')
+                          + `<w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/>`;
+                return `<w:p><w:pPr><w:spacing w:before="80" w:after="40"/>${jc}</w:pPr>`
+                     + `<w:r><w:rPr>${rpr}</w:rPr><w:t>${xe(text)}</w:t></w:r></w:p>`;
+            };
+            const emptyP = '<w:p><w:pPr><w:spacing w:before="60" w:after="40"/></w:pPr></w:p>';
+
+            let body = '';
+            body += parag('Pauta de Audiências', 32, true,  true,  '9F1239');
+            body += parag(bannerLabel,            24, true,  true,  '');
+            body += parag(`Período: ${periodo}`,  20, false, true,  '6B7280');
+            body += emptyP;
+            body += auds.length === 0
+                ? parag('Nenhuma audiência para esta defensoria nesta semana.', 20, false, true, '6B7280')
+                : buildTable(auds, COLS, mostrarDp);
+            if (garantiasAuds.length > 0) {
+                const garLabel = garantiasAuds[0]?.vara || 'Vara de Garantias';
+                body += emptyP;
+                body += parag(garLabel, 22, true, false, '374151');
+                body += buildTable(garantiasAuds, GAR_COLS, false);
+            }
+
+            const documentXml =
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+              + '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
+              + ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+              + '<w:body>' + body
+              + '<w:sectPr>'
+              + '<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/>'
+              + '<w:pgMar w:top="720" w:right="720" w:bottom="720" w:left="720" w:header="708" w:footer="708" w:gutter="0"/>'
+              + '</w:sectPr></w:body></w:document>';
+
+            const stylesXml =
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+              + '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">'
+              + '<w:docDefaults><w:rPrDefault><w:rPr>'
+              + '<w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/>'
+              + '<w:sz w:val="18"/><w:szCs w:val="18"/><w:lang w:val="pt-BR"/>'
+              + '</w:rPr></w:rPrDefault>'
+              + '<w:pPrDefault><w:pPr><w:spacing w:after="0"/></w:pPr></w:pPrDefault>'
+              + '</w:docDefaults></w:styles>';
+
+            const zip = new JSZip();
+            zip.file('[Content_Types].xml',
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+              + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+              + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+              + '<Default Extension="xml" ContentType="application/xml"/>'
+              + '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
+              + '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
+              + '</Types>');
+            zip.file('_rels/.rels',
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+              + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+              + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>'
+              + '</Relationships>');
+            zip.file('word/_rels/document.xml.rels',
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+              + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+              + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'
+              + '</Relationships>');
+            zip.file('word/document.xml', documentXml);
+            zip.file('word/styles.xml', stylesXml);
+
+            const blob = await zip.generateAsync({
+                type: 'blob',
+                mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            });
+            const url = URL.createObjectURL(blob);
+            const a   = document.createElement('a');
+            a.href     = url;
+            a.download = `pauta-audiencias-${nomeSemana}-${titulo}.docx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+            mostrarToast('Documento gerado com sucesso.');
+        }
+
         function renderAudiencias() {
             if (userRole === 'admin') _audIniciarDropGlobal();
             const el = document.getElementById('audiencias-content');
@@ -14818,13 +15064,27 @@ Regras obrigatórias:
                 h += `</select>`;
             }
 
+            h += `<div style="margin-left:auto;display:flex;gap:8px;align-items:center">`;
+            if (audDadosAtual) {
+                h += `<button onclick="_audBaixarXlsx()"
+                    style="background:white;color:#059669;border:1.5px solid #059669;padding:6px 14px;
+                    border-radius:8px;cursor:pointer;font-weight:600;font-family:inherit;font-size:0.9em">
+                    ⬇️ XLSX
+                </button>`;
+                h += `<button onclick="_audBaixarDocx()"
+                    style="background:white;color:#2563eb;border:1.5px solid #2563eb;padding:6px 14px;
+                    border-radius:8px;cursor:pointer;font-weight:600;font-family:inherit;font-size:0.9em">
+                    ⬇️ DOCX
+                </button>`;
+            }
             if (isAdmin) {
                 h += `<button onclick="_audAbrirImport()"
-                    style="margin-left:auto;background:linear-gradient(135deg,#9f1239,#fb7185);color:white;padding:8px 18px;
+                    style="background:linear-gradient(135deg,#9f1239,#fb7185);color:white;padding:8px 18px;
                     border-radius:8px;border:none;cursor:pointer;font-weight:600;font-family:inherit;font-size:0.95em">
                     📥 Importar Pauta (ZIP)
                 </button>`;
             }
+            h += `</div>`;
             h += `</div>`;
 
             if (!audDadosAtual) {
