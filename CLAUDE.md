@@ -31,6 +31,7 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 | Mexer na seção Plantão (escala de plantão do interior) | `docs/site/estrutura-html.md` (seção "Plantão") · `docs/firebase.md` (schema `plantao_admin`/`plantao_info`) |
 | Mexer na seção Viagens e Eventos (tabelas de viagens/eventos da equipe) | `docs/site/estrutura-html.md` (seção "Viagens e Eventos") · `docs/firebase.md` (schema `viagens_tabela1`/`viagens_tabela2`) |
 | Mexer em Fichas do Dia (PDF das fichas de atendimento) | `docs/site/estrutura-html.md` (seção "Fichas do Dia") |
+| Mexer na seção Audiências (pauta Projudi/SEEU por DP) | `docs/site/estrutura-html.md` (seção "Audiências") · `docs/firebase.md` (schema `audiencias_semanas`) |
 | Mexer na seção Escala Semanal (atendimento/audiência/plantão por semana) | `docs/site/estrutura-html.md` (seção "Escala Semanal") — somente leitura, sem Firestore próprio |
 
 ---
@@ -59,6 +60,18 @@ docs/
 ```
 
 ---
+
+## Estado atual (sessão 51 — 20/10/2026)
+
+**Implementado nesta sessão:** Audiências passa a importar também as pautas do **SEEU** (VEP de
+Itacoatiara, sempre criminal → 5ª/6ª DP pela paridade do dígito, inclusive processos `.4701`).
+Mesmo botão/arrastar ZIP; a origem é detectada por PDF (`_audEhSeeu()`). Cabeçalho repetido das
+páginas removido, nomes quebrados juntados (`_juntarPartes`), período tirado do nome do ZIP.
+Campo novo `origem` (`projudi`/`seeu`) e `_audSalvar()` passa a mesclar: reimportar uma origem
+troca só as audiências dela. Selo "SEEU" na tabela. Testado: 8 audiências do SEEU de 19–25/10
+conferidas; 40 do Projudi idênticas ao parser anterior; no navegador com `db.collection` stubado,
+Projudi→SEEU→reimportações = 38 + 8 sem perda, inclusive com dados antigos sem `origem`. Ver
+`docs/site/estrutura-html.md` (seção "Audiências").
 
 ## Estado atual (sessão 50 — 15/10/2026)
 

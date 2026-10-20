@@ -4,6 +4,16 @@
 
 ---
 
+## Sessão 51 — 20/10/2026
+
+- **Audiências → pautas do SEEU:** a seção passa a aceitar o ZIP de pautas do SEEU (VEP de
+  Itacoatiara — Regime Fechado/Semiaberto e Regime Aberto), sempre criminal (5ª/6ª DP pela
+  paridade do dígito). Parser reconhece o cabeçalho do SEEU, tira o cabeçalho repetido das
+  páginas, junta nomes quebrados e tira o período do nome do ZIP. Campo novo `origem` nas
+  audiências; reimportar uma origem não apaga a outra. Selo "SEEU" na tabela. Testado com a pauta
+  real de 19–25/10 (8 audiências SEEU conferidas campo a campo; 40 do Projudi idênticas ao parser
+  anterior; importações cruzadas com Firestore simulado).
+
 ## Sessão 50 — 15/10/2026
 
 - **Diário Oficial (Projeto 2):** resoluções trimestrais de metas do CSDPEAM (meritocracia) passam

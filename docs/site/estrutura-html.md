@@ -803,6 +803,31 @@ isAdmin()` em `firestore.rules` (leitura já coberta pela regra genérica de qua
 Precisa de `firebase deploy --only firestore:rules` pra valer em produção — mesma pegadinha já
 documentada na sessão do Plantão (commitar a regra sozinho não publica).
 
+## Audiências (`#audiencias`)
+
+Pauta semanal de audiências por DP (1ª–6ª de Itacoatiara), importada de um ZIP de PDFs (admin:
+botão "📥 Importar Pauta (ZIP)" ou arrastar o ZIP em qualquer lugar do site). Texto extraído no
+navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTexto()`.
+
+- **Duas origens, mesmo botão:** ZIP do **Projudi** (varas de Itacoatiara, cabeçalho
+  "PODER JUDICIÁRIO" + nome da vara) e ZIP do **SEEU** (execução penal — VEP, cabeçalho
+  "TJAM - VEP de Itacoatiara - Regime …"). A origem é detectada PDF a PDF (`_audEhSeeu()`), não
+  pelo nome do arquivo.
+- **DP:** área pela vara (`AUD_AREA_KEYWORDS`) + paridade do dígito antes do 1º "-" do processo
+  (`AUD_DP_POR_AREA`). O SEEU é sempre `criminal` (par → 5ª DP, ímpar → 6ª DP), qualquer que seja
+  o sufixo do processo (`.4700`/`.4701`).
+- **Particularidades do SEEU** (sessão 51): o cabeçalho de página se repete no meio dos blocos e
+  é removido antes do parsing (senão gruda no nome do réu); nomes de réu/autor quebrados em
+  várias linhas são juntados numa pessoa só (`_juntarPartes`, execução penal tem uma parte de
+  cada lado); sem linha "Data Inicial/Data Final", o período vem do nome do ZIP
+  (`…_19-10-2026_a_25-10-2026.zip`).
+- **Gravação por origem:** `_audSalvar()` lê o documento da semana e substitui só as audiências
+  da mesma origem do ZIP importado, mantendo as da outra (reimportar o Projudi não apaga o SEEU e
+  vice-versa). Sem `origem` = Projudi (dados antigos).
+- **Tela:** selo "SEEU" (`.aud-badge-seeu`) ao lado do processo; coluna Vara mostra
+  "VEP de Itacoatiara - Regime Aberto" etc. As audiências do SEEU entram nos filtros por DP e no
+  preset "Criminal", e nas exportações DOCX/XLSX, em ordem de data/hora (`_audOrdenar()`).
+
 ## Cache localStorage (elimina flash de dados)
 
 | Chave | Conteúdo |

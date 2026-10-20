@@ -320,6 +320,17 @@ atualizado_por / atualizado_em
 - Criada pelo próprio site (botão "🔑 Chave da API"), depois que o `firestore.rules` for publicado.
 - `config_privada/signatarios` — `{ lista: [{nome, cargo, matricula}] }`, signatários do atesto do "Gerar com Claude"; mesma regra (só a Luma).
 
+### `audiencias_semanas/{semana ISO}` — pauta de audiências (ex.: `2026-W43`)
+```
+semana:       "2026-W43"
+periodo:      "19/10/2026 a 25/10/2026"
+importado_em: timestamp
+audiencias: [{ dp, processo, data, hora, tipo, classe, status, vara, area,
+               origem: "projudi" | "seeu",          ← sessão 51; ausente = projudi
+               autores: [{nome, adv}], reus: [{nome, adv}] }]
+```
+- Escrita só admin. Cada importação troca só as audiências da origem importada (`_audSalvar()`).
+
 ### `automacao_config/estado_diario` — estado da automação (Projeto 1 — legado, removido na sessão 50)
 ```
 ultima_edicao:       2680   ← número da última edição processada

@@ -1169,6 +1169,7 @@
         }
         .aud-badge-cancelada { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
         .aud-badge-redesignada { background: #fff7ed; color: #ea580c; border: 1px solid #fdba74; }
+        .aud-badge-seeu { background: #eef2ff; color: #4338ca; border: 1px solid #a5b4fc; }
         .aud-processo { font-family: monospace; font-size: 0.85em; }
         @keyframes audFloat { 0%{transform:translateY(0)} 100%{transform:translateY(-10px)} }
         #aud-global-drop-overlay {
@@ -14556,9 +14557,23 @@ Regras obrigatórias:
             return m ? m[1].trim() : '';
         }
 
+        // Pauta do SEEU (execução penal): o cabeçalho traz "TJAM - VEP de Itacoatiara - Regime …"
+        // no lugar de "PODER JUDICIÁRIO\n<vara>". É sempre criminal.
+        const AUD_SEEU_RE = /^\x02?TJAM - (VEP[^\n]*)$/m;
+
+        function _audEhSeeu(texto) {
+            return AUD_SEEU_RE.test(texto);
+        }
+
         function _audParsearTexto(texto) {
-            const vara = _audDetectarVara(texto);
-            const area = _audDetectarArea(vara);
+            const seeu = _audEhSeeu(texto);
+            const vara = seeu ? texto.match(AUD_SEEU_RE)[1].trim() : _audDetectarVara(texto);
+            const area = seeu ? 'criminal' : _audDetectarArea(vara);
+            if (seeu) {
+                // Remove o cabeçalho de cada página, que se repete no meio dos blocos
+                // e grudaria no nome do réu na virada de página.
+                texto = texto.replace(/^\x02?TRIBUNAL DE JUSTI[ÇC]A DO ESTADO DO AMAZONAS\n\x02?TJAM - [^\n]*\n\x02?ESTADO DO AMAZONAS\n/gm, '');
+            }
             const audiencias = [];
 
             // Dividir por bloco: cada audiência começa em "Processo:"
@@ -14691,6 +14706,16 @@ Regras obrigatórias:
                     return entradas;
                 };
 
+                // No SEEU cada parte é uma só (apenado / Estado ou MP): as linhas quebradas
+                // do nome viram uma pessoa, em vez de uma por linha.
+                const _juntarPartes = entradas => {
+                    if (entradas.length <= 1) return entradas;
+                    const advs = [...new Set(entradas.map(e => e.adv).filter(Boolean))];
+                    return [{ nome: entradas.map(e => e.nome).join(' '), adv: advs.join(' / ') }];
+                };
+                const autores = _parsearPartes(autorSec);
+                const reus    = _parsearPartes(reuSec);
+
                 audiencias.push({
                     dp: _audAtribuirDP(processo, area),
                     processo,
@@ -14701,12 +14726,13 @@ Regras obrigatórias:
                     status,
                     vara,
                     area,
-                    autores: _parsearPartes(autorSec),
-                    reus:    _parsearPartes(reuSec),
+                    origem:  seeu ? 'seeu' : 'projudi',
+                    autores: seeu ? _juntarPartes(autores) : autores,
+                    reus:    seeu ? _juntarPartes(reus)    : reus,
                 });
             }
 
-            return { vara, area, audiencias };
+            return { vara, area, origem: seeu ? 'seeu' : 'projudi', audiencias };
         }
 
         // ─── Processamento do ZIP ─────────────────────────────────────────
@@ -14744,14 +14770,20 @@ Regras obrigatórias:
                 }
             }
 
-            // Ordenar cronologicamente
-            todasAuds.sort((a, b) => {
-                const fa = (a.data || '').split('/').reverse().join('') + (a.hora || '').replace(':', '');
-                const fb = (b.data || '').split('/').reverse().join('') + (b.hora || '').replace(':', '');
-                return fa.localeCompare(fb);
-            });
+            // O SEEU não traz "Data Inicial/Data Final": usa o período do nome do ZIP
+            // (ex.: Pauta_SEEU_Itacoatiara_19-10-2026_a_25-10-2026.zip).
+            if (!periodo) {
+                const m = (file.name || '').match(/(\d{2})-(\d{2})-(\d{4})_a_(\d{2})-(\d{2})-(\d{4})/);
+                if (m) periodo = `${m[1]}/${m[2]}/${m[3]} a ${m[4]}/${m[5]}/${m[6]}`;
+            }
 
+            _audOrdenar(todasAuds);
             return { periodo, audiencias: todasAuds };
+        }
+
+        function _audOrdenar(auds) {
+            const k = a => (a.data || '').split('/').reverse().join('') + (a.hora || '').replace(':', '');
+            return auds.sort((a, b) => k(a).localeCompare(k(b)));
         }
 
         // ─── Semana ISO ───────────────────────────────────────────────────
@@ -14770,12 +14802,30 @@ Regras obrigatórias:
         }
 
         // ─── Firestore ────────────────────────────────────────────────────
+        // Projudi e SEEU chegam em ZIPs separados para a mesma semana: reimportar uma
+        // origem troca só as audiências dela e mantém as da outra. Audiências gravadas
+        // antes do campo `origem` existir contam como Projudi.
         async function _audSalvar(semanaKey, periodo, audiencias) {
-            await db.collection('audiencias_semanas').doc(semanaKey).set({
-                semana: semanaKey, periodo,
+            const ref = db.collection('audiencias_semanas').doc(semanaKey);
+            const doc = await ref.get();
+            const antigo = doc.exists ? doc.data() : null;
+            const origensNovas = new Set(audiencias.map(a => a.origem || 'projudi'));
+            const mantidas = (antigo?.audiencias || [])
+                .filter(a => !origensNovas.has(a.origem || 'projudi'));
+
+            const vistas = new Set(audiencias.map(_audChaveDedup));
+            const todas = _audOrdenar([
+                ...audiencias,
+                ...mantidas.filter(a => !vistas.has(_audChaveDedup(a))),
+            ]);
+            const periodoFinal = periodo || antigo?.periodo || '';
+
+            await ref.set({
+                semana: semanaKey, periodo: periodoFinal,
                 importado_em: firebase.firestore.FieldValue.serverTimestamp(),
-                audiencias,
+                audiencias: todas,
             });
+            return { semana: semanaKey, periodo: periodoFinal, audiencias: todas };
         }
 
         async function _audListarSemanas() {
@@ -14802,7 +14852,7 @@ Regras obrigatórias:
             overlay.innerHTML = `
                 <div class="aud-drop-icon">📦</div>
                 <div class="aud-drop-titulo">Solte o ZIP aqui</div>
-                <div class="aud-drop-sub">Pauta de audiências do Projudi</div>`;
+                <div class="aud-drop-sub">Pauta de audiências do Projudi ou do SEEU</div>`;
             document.body.appendChild(overlay);
 
             let dragCounter = 0;
@@ -15429,10 +15479,11 @@ Regras obrigatórias:
                     : redesignada
                         ? `<span class="aud-badge aud-badge-redesignada">REDESIGNADA</span>`
                         : '';
+                const badgeSeeu = a.origem === 'seeu' ? `<span class="aud-badge aud-badge-seeu">SEEU</span>` : '';
 
                 h += `<tr class="${rowCls}">
                     ${mostrarDp ? `<td style="white-space:nowrap;font-weight:700;color:#9f1239">${esc(a.dp)}ª</td>` : ''}
-                    <td><span class="aud-processo">${esc(a.processo)}</span>${badge}</td>
+                    <td><span class="aud-processo">${esc(a.processo)}</span>${badgeSeeu}${badge}</td>
                     <td><strong>${esc(a.data)}</strong><br><span style="font-size:0.9em">${esc(a.hora)}</span></td>
                     <td style="font-size:0.85em">${esc(a.vara || '—')}</td>
                     <td style="font-size:0.85em">${esc(a.classe || '—')}</td>
@@ -15510,7 +15561,8 @@ Regras obrigatórias:
               <div style="background:white;border-radius:16px;padding:32px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
                 <h3 style="margin:0 0 8px;color:#9f1239">📥 Importar Pauta de Audiências</h3>
                 <p style="color:var(--text-secondary);font-size:.9em;margin-bottom:20px">
-                  Selecione o arquivo ZIP com os PDFs exportados do Projudi.</p>
+                  Selecione o arquivo ZIP com os PDFs exportados do Projudi ou do SEEU.
+                  Os dois podem ser importados para a mesma semana, um de cada vez.</p>
                 <label for="aud-zip-input" id="aud-drop-label"
                   style="display:block;border:2px dashed #fda4af;border-radius:12px;padding:30px;text-align:center;
                          cursor:pointer;transition:border-color .2s;color:#9f1239;font-weight:600">
@@ -15565,18 +15617,17 @@ Regras obrigatórias:
                 const primData = audiencias.find(a => a.data)?.data;
                 const semKey = primData ? _audSemanaDeDataBR(primData) : _audSemanaISO();
                 _audSetStatus(`⏳ Salvando ${audiencias.length} audiência(s)...`);
-                await _audSalvar(semKey, periodo, audiencias);
-
+                audDadosAtual  = await _audSalvar(semKey, periodo, audiencias);
                 audSemanaAtual = semKey;
                 audSemanasDisp = await _audListarSemanas();
-                audDadosAtual  = { semana: semKey, periodo, audiencias };
 
                 _audFecharImport();
 
                 const por = {};
                 for (const a of audiencias) if (a.dp) por[a.dp] = (por[a.dp] || 0) + 1;
                 const res = Object.entries(por).sort().map(([d,n]) => `${d}ª DP: ${n}`).join(' · ');
-                mostrarToast(`✅ ${audiencias.length} audiências importadas! ${res}`);
+                const origens = [...new Set(audiencias.map(a => a.origem === 'seeu' ? 'SEEU' : 'Projudi'))].join(' + ');
+                mostrarToast(`✅ ${audiencias.length} audiências do ${origens} importadas! ${res}`);
 
                 const el = document.getElementById('audiencias-content');
                 if (el) _audRenderConteudo(el);
