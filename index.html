@@ -1259,6 +1259,35 @@
         .pc-tomador-grupo { margin-bottom: 26px; }
         .pc-tomador-nome { color: var(--secondary-color); margin-bottom: 12px; font-size: 1.15em; }
         .pc-cards-row { display: flex; flex-wrap: wrap; gap: 16px; }
+        .pc-concluidos-section {
+            margin-top: 10px; border: 1px solid #d1d5db; border-radius: 12px;
+            background: #f3f4f6; overflow: hidden;
+        }
+        .pc-concluidos-section > summary {
+            list-style: none; cursor: pointer; padding: 12px 18px;
+            font-weight: 600; font-size: 1em; color: #374151;
+            background: #e5e7eb; border-radius: 12px; user-select: none;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .pc-concluidos-section > summary::-webkit-details-marker { display: none; }
+        .pc-concluidos-section > summary::before { content: '▶'; font-size: 0.7em; transition: transform 0.2s; }
+        .pc-concluidos-section[open] > summary { border-radius: 12px 12px 0 0; }
+        .pc-concluidos-section[open] > summary::before { transform: rotate(90deg); }
+        .pc-concluidos-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 16px; }
+        .pc-tomador-concluido {
+            border: 1px solid #d1d5db; border-radius: 8px; background: #f9fafb; overflow: hidden;
+        }
+        .pc-tomador-concluido > summary {
+            list-style: none; cursor: pointer; padding: 9px 14px;
+            font-weight: 600; font-size: 1em; color: var(--secondary-color);
+            background: #f3f4f6; user-select: none;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .pc-tomador-concluido > summary::-webkit-details-marker { display: none; }
+        .pc-tomador-concluido > summary::before { content: '▶'; font-size: 0.7em; transition: transform 0.2s; }
+        .pc-tomador-concluido[open] > summary { border-radius: 8px 8px 0 0; }
+        .pc-tomador-concluido[open] > summary::before { transform: rotate(90deg); }
+        .pc-tomador-concluido > .pc-cards-row { padding: 14px; }
         .pc-card {
             background: white; border: 1px solid var(--border-color); border-radius: 12px;
             padding: 16px 18px; min-width: 260px; max-width: 320px; flex: 1 1 260px;
@@ -11426,41 +11455,73 @@
                 return;
             }
 
-            const porTomador = {};
-            prestacoesContas.forEach(p => {
-                const key = (p.tomador || '—').trim();
-                if (!porTomador[key]) porTomador[key] = [];
-                porTomador[key].push(p);
-            });
+            const abertos = prestacoesContas.filter(p => p.status !== 'concluido');
+            const concluidos = prestacoesContas.filter(p => p.status === 'concluido');
 
-            let html = '';
-            Object.keys(porTomador).sort().forEach(tomador => {
-                html += `<div class="pc-tomador-grupo">
-                    <h3 class="pc-tomador-nome">👤 ${esc(tomador)}</h3>
-                    <div class="pc-cards-row">`;
-                porTomador[tomador].forEach(p => {
-                    const despesas = p.despesas || [];
-                    const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
-                    const saldo = _pcValorConcedido(p) - totalDespesas;
-                    const statusLabel = p.status === 'concluido' ? '🟢 Concluído' : '🟡 Aberto';
-                    const statusClass = p.status === 'concluido' ? 'pc-status-concluido' : 'pc-status-aberto';
-                    html += `<div class="pc-card" onclick="abrirDetalhePrestacao('${p.id}')">
-                        <div class="pc-card-top">
-                            <span class="pc-badge-categoria">${PC_CATEGORIA_LABELS[p.categoria] || p.categoria || '—'}</span>
-                            <span class="pc-badge-status ${statusClass}">${statusLabel}</span>
-                        </div>
-                        <div class="pc-card-sei">${p.processo_sei ? 'SEI ' + esc(p.processo_sei) : 'Sem processo SEI'}</div>
-                        <div class="pc-card-linha${_pcAplicacaoVencida(p) ? ' pc-aplic-vencida' : ''}"><span>Aplicação:</span> <strong>${(_pcDataRecebimento(p) || p.data_fim_aplicacao) ? formatarData(_pcDataRecebimento(p)) + ' a ' + formatarData(p.data_fim_aplicacao) : '—'}</strong>${_pcAplicacaoVencida(p) ? ' <span class="pc-aplic-tag">⚠ prazo encerrado</span>' : ''}</div>
-                        <div class="pc-card-valores">
-                            <div><span>Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
-                            <div><span>Despesas</span><strong>${formatarMoeda(totalDespesas)}</strong></div>
-                            <div><span>Saldo</span><strong>${formatarMoeda(saldo)}</strong></div>
-                        </div>
-                        <div class="pc-card-linha" style="margin-top:10px;margin-bottom:0"><span>Órgão / CNPJ (Unidade Gestora Concedente):</span> <strong>${p.unidade_gestora_cnpj ? esc(p.unidade_gestora_cnpj) : '—'}</strong></div>
-                    </div>`;
+            function _cardHtml(p) {
+                const despesas = p.despesas || [];
+                const totalDespesas = despesas.reduce((s, d) => s + (Number(d.valor_total) || 0), 0);
+                const saldo = _pcValorConcedido(p) - totalDespesas;
+                const statusLabel = p.status === 'concluido' ? '🟢 Concluído' : '🟡 Aberto';
+                const statusClass = p.status === 'concluido' ? 'pc-status-concluido' : 'pc-status-aberto';
+                return `<div class="pc-card" onclick="abrirDetalhePrestacao('${p.id}')">
+                    <div class="pc-card-top">
+                        <span class="pc-badge-categoria">${PC_CATEGORIA_LABELS[p.categoria] || p.categoria || '—'}</span>
+                        <span class="pc-badge-status ${statusClass}">${statusLabel}</span>
+                    </div>
+                    <div class="pc-card-sei">${p.processo_sei ? 'SEI ' + esc(p.processo_sei) : 'Sem processo SEI'}</div>
+                    <div class="pc-card-linha${_pcAplicacaoVencida(p) ? ' pc-aplic-vencida' : ''}"><span>Aplicação:</span> <strong>${(_pcDataRecebimento(p) || p.data_fim_aplicacao) ? formatarData(_pcDataRecebimento(p)) + ' a ' + formatarData(p.data_fim_aplicacao) : '—'}</strong>${_pcAplicacaoVencida(p) ? ' <span class="pc-aplic-tag">⚠ prazo encerrado</span>' : ''}</div>
+                    <div class="pc-card-valores">
+                        <div><span>Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
+                        <div><span>Despesas</span><strong>${formatarMoeda(totalDespesas)}</strong></div>
+                        <div><span>Saldo</span><strong>${formatarMoeda(saldo)}</strong></div>
+                    </div>
+                    <div class="pc-card-linha" style="margin-top:10px;margin-bottom:0"><span>Órgão / CNPJ (Unidade Gestora Concedente):</span> <strong>${p.unidade_gestora_cnpj ? esc(p.unidade_gestora_cnpj) : '—'}</strong></div>
+                </div>`;
+            }
+
+            function _grupoTomadorHtml(lista) {
+                const porTomador = {};
+                lista.forEach(p => {
+                    const key = (p.tomador || '—').trim();
+                    if (!porTomador[key]) porTomador[key] = [];
+                    porTomador[key].push(p);
                 });
-                html += `</div></div>`;
-            });
+                let html = '';
+                Object.keys(porTomador).sort().forEach(tomador => {
+                    html += `<div class="pc-tomador-grupo">
+                        <h3 class="pc-tomador-nome">👤 ${esc(tomador)}</h3>
+                        <div class="pc-cards-row">`;
+                    porTomador[tomador].forEach(p => { html += _cardHtml(p); });
+                    html += `</div></div>`;
+                });
+                return html;
+            }
+
+            let html = _grupoTomadorHtml(abertos);
+
+            if (concluidos.length > 0) {
+                const porTomadorConc = {};
+                concluidos.forEach(p => {
+                    const key = (p.tomador || '—').trim();
+                    if (!porTomadorConc[key]) porTomadorConc[key] = [];
+                    porTomadorConc[key].push(p);
+                });
+                let concHtml = '<div class="pc-concluidos-body">';
+                Object.keys(porTomadorConc).sort().forEach(tomador => {
+                    concHtml += `<details class="pc-tomador-concluido">
+                        <summary>👤 ${esc(tomador)}</summary>
+                        <div class="pc-cards-row">`;
+                    porTomadorConc[tomador].forEach(p => { concHtml += _cardHtml(p); });
+                    concHtml += `</div></details>`;
+                });
+                concHtml += '</div>';
+                html += `<details class="pc-concluidos-section">
+                    <summary>Concluídos (${concluidos.length})</summary>
+                    ${concHtml}
+                </details>`;
+            }
+
             cont.innerHTML = html;
         }
 
