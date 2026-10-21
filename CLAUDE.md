@@ -44,6 +44,7 @@ CLAUDE.md                             ← este índice
 verificar-diario-completo.py          ← Projeto 2: todas portarias → JSON (04:00 Manaus)
 backfill-calendario-do-estruturado.py ← backfill histórico do DO
 limpar-backfill.py                    ← limpeza de registros duplicados do backfill
+limpar-copias-audiencias.py           ← apaga cópias integrais de audiências de semanas passadas (segunda 00:10)
 docs/
 ├── INDEX.md                          ← índice de todos os arquivos docs/
 ├── firebase.md                       ← schema Firestore, auth, funções JS
@@ -60,6 +61,22 @@ docs/
 ```
 
 ---
+
+## Estado atual (sessão 52 — 21/10/2026)
+
+**Implementado nesta sessão:** Audiências passa a importar, pelo mesmo botão/arrastar e vários de
+uma vez, (1) o ZIP de **cópias integrais** (`Copia_Integral_<processo>.pdf`, pode vir em partes) e
+(2) o **CSV de classificação** (`processo;DPE;observações`, DPE = SIM/NÃO/POSSÍVEL). Cópias vão
+para o Storage (`audiencias-copias/{semana}/{processo}.pdf`) e aparecem como botão "📄 Cópia
+integral" para todos os logados **só na semana da audiência**; na segunda seguinte são apagadas
+pelo site (`_audLimparCopiasAntigas()`, admin) e pelo workflow `limpar-copias-audiencias.yml`
+(`limpar-copias-audiencias.py`). Selo DPE com observações, filtro "🟢 Só DPE", coluna "DPE" no
+DOCX/XLSX. Bugfix: pauta de um dia só (`…_22-10-2026_a_22-10-2026.zip`) apagava os outros dias da
+semana — agora só troca o período do ZIP. Testado no navegador com Firestore/Storage simulados e
+os arquivos reais de 22/10 (5 audiências, 5 classificações, 2 cópias de 25/38 MB). Ver
+`docs/site/estrutura-html.md` (seção "Audiências") e `docs/firebase.md`.
+**Pendente (usuária):** publicar `storage.rules` (`firebase deploy --only storage`) — sem isso o
+envio de cópias é recusado. **Não apagar** o secret `FIREBASE_SERVICE_ACCOUNT` (o workflow usa).
 
 ## Estado atual (sessão 51 — 20/10/2026)
 
@@ -114,8 +131,8 @@ Projudi→SEEU→reimportações = 38 + 8 sem perda, inclusive com dados antigos
   hoje/amanhã; sábado/domingo bloqueiam e sugerem a segunda. PDF conferido página a página. Ver
   `docs/site/estrutura-html.md` (seção "Fichas do Dia").
 
-**Pendente (usuária, opcional):** apagar o secret `FIREBASE_SERVICE_ACCOUNT` no GitHub (sem uso
-desde a remoção do Projeto 1). **Não** apagar `ANTHROPIC_API_KEY` (fallback do Projeto 2).
+**Pendente (usuária, opcional):** ~~apagar o secret `FIREBASE_SERVICE_ACCOUNT`~~ — voltou a ser
+usado na sessão 52 (limpeza das cópias de audiências). **Não** apagar `ANTHROPIC_API_KEY` (fallback do Projeto 2).
 
 **Observação de ambiente:** nesta máquina o `.cache/ca-bundle.pem` não resolve a inspeção SSL da
 rede (gRPC do Firestore falha com "self signed certificate"); para consultar o Firestore foi usado

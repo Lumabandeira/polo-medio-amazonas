@@ -4,6 +4,16 @@
 
 ---
 
+## Sessão 52 — 21/10/2026
+
+- **Audiências → cópias integrais e classificação DPE:** o botão "📥 Importar" reconhece 3 tipos
+  de arquivo (pauta, ZIP de cópias integrais `Copia_Integral_<processo>.pdf`, CSV
+  `processo;DPE;observações`), vários de uma vez. Cópias vão para o Firebase Storage e ficam para
+  download (todos os logados) só na semana da audiência; na segunda seguinte são apagadas pelo site
+  e pelo workflow `limpar-copias-audiencias.yml`. Selo DPE com observações, filtro "Só DPE" e
+  coluna "DPE" no DOCX/XLSX. Bugfix: ZIP de pauta de um dia só apagava os outros dias da semana.
+  Testado no navegador com Firestore/Storage simulados e os arquivos reais de 22/10.
+
 ## Sessão 51 — 20/10/2026
 
 - **Audiências → pautas do SEEU:** a seção passa a aceitar o ZIP de pautas do SEEU (VEP de

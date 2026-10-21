@@ -1171,6 +1171,23 @@
         .aud-badge-redesignada { background: #fff7ed; color: #ea580c; border: 1px solid #fdba74; }
         .aud-badge-seeu { background: #eef2ff; color: #4338ca; border: 1px solid #a5b4fc; }
         .aud-processo { font-family: monospace; font-size: 0.85em; }
+        .aud-dpe { margin-top: 4px; }
+        .aud-dpe summary { list-style: none; cursor: pointer; }
+        .aud-dpe summary::-webkit-details-marker { display: none; }
+        .aud-dpe-selo { display: inline-block; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; font-weight: 700; }
+        details.aud-dpe .aud-dpe-selo::after { content: ' ▾'; font-weight: 400; }
+        details.aud-dpe[open] .aud-dpe-selo::after { content: ' ▴'; }
+        .aud-dpe-sim { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .aud-dpe-nao { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+        .aud-dpe-possivel { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+        .aud-dpe-obs { margin-top: 4px; font-size: 0.8em; color: #4b5563; max-width: 280px; white-space: normal; text-decoration: none; }
+        .aud-copia-btn {
+            display: block; margin-top: 6px; padding: 3px 8px; border-radius: 6px; cursor: pointer;
+            border: 1.5px solid #2563eb; background: white; color: #2563eb;
+            font-family: inherit; font-size: 0.78em; font-weight: 600; white-space: nowrap;
+        }
+        .aud-copia-btn:hover { background: #eff6ff; }
+        .aud-copia-btn:disabled { opacity: 0.6; cursor: wait; }
         @keyframes audFloat { 0%{transform:translateY(0)} 100%{transform:translateY(-10px)} }
         #aud-global-drop-overlay {
             position: fixed; inset: 0; z-index: 99999; display: none;
@@ -14458,6 +14475,7 @@ Regras obrigatórias:
         let audModoCompat         = false;
         let audDpsCompat          = new Set(['5']);
         let audPresetAtivo        = null; // 'familia' | 'civel' | 'criminal' | null
+        let audSoDpe              = false; // filtro "Só DPE" (SIM + POSSÍVEL da classificação)
 
         // ─── Utilitários de parsing ──────────────────────────────────────
         function _audDigitoAntes(processo) {
@@ -14736,17 +14754,17 @@ Regras obrigatórias:
         }
 
         // ─── Processamento do ZIP ─────────────────────────────────────────
-        async function _audProcessarZip(file) {
+        async function _audProcessarZip(file, zip) {
             if (!window.JSZip) await _pcCarregarScript(AUD_JSZIP_SRC);
 
-            const zip = await JSZip.loadAsync(file);
+            zip = zip || await JSZip.loadAsync(file);
             const todasAuds = [];
             const vistas = new Set();
             let periodo = '';
 
             const entries = [];
             zip.forEach((path, entry) => {
-                if (!entry.dir && path.toLowerCase().endsWith('.pdf'))
+                if (!entry.dir && path.toLowerCase().endsWith('.pdf') && !_audEhCopia(path))
                     entries.push({ path, entry });
             });
 
@@ -14805,27 +14823,247 @@ Regras obrigatórias:
         // Projudi e SEEU chegam em ZIPs separados para a mesma semana: reimportar uma
         // origem troca só as audiências dela e mantém as da outra. Audiências gravadas
         // antes do campo `origem` existir contam como Projudi.
+        // ZIP de um período menor que a semana (ex.: pauta só de 22/10) troca só as
+        // audiências dessa origem dentro do período e mantém os outros dias.
+        // `merge: true` preserva `classificacao` e `copias` do documento.
         async function _audSalvar(semanaKey, periodo, audiencias) {
             const ref = db.collection('audiencias_semanas').doc(semanaKey);
             const doc = await ref.get();
             const antigo = doc.exists ? doc.data() : null;
             const origensNovas = new Set(audiencias.map(a => a.origem || 'projudi'));
+            const intervalo = _audIntervalo(periodo);
+            const noPeriodo = a => {
+                if (!intervalo) return true;
+                const d = _audDataNum(a.data);
+                return !d || (d >= intervalo[0] && d <= intervalo[1]);
+            };
             const mantidas = (antigo?.audiencias || [])
-                .filter(a => !origensNovas.has(a.origem || 'projudi'));
+                .filter(a => !origensNovas.has(a.origem || 'projudi') || !noPeriodo(a));
 
             const vistas = new Set(audiencias.map(_audChaveDedup));
             const todas = _audOrdenar([
                 ...audiencias,
                 ...mantidas.filter(a => !vistas.has(_audChaveDedup(a))),
             ]);
-            const periodoFinal = periodo || antigo?.periodo || '';
+            const periodoFinal = _audUnirPeriodos(antigo?.periodo, periodo);
 
             await ref.set({
                 semana: semanaKey, periodo: periodoFinal,
                 importado_em: firebase.firestore.FieldValue.serverTimestamp(),
                 audiencias: todas,
-            });
-            return { semana: semanaKey, periodo: periodoFinal, audiencias: todas };
+            }, { merge: true });
+            return { ...(antigo || {}), semana: semanaKey, periodo: periodoFinal, audiencias: todas };
+        }
+
+        // "dd/mm/aaaa" → 20261022 (número comparável); vazio/ inválido → 0
+        function _audDataNum(dataBR) {
+            const m = String(dataBR || '').match(/(\d{2})\/(\d{2})\/(\d{4})/);
+            return m ? Number(m[3] + m[2] + m[1]) : 0;
+        }
+
+        // "19/10/2026 a 25/10/2026" → [20261019, 20261025]
+        function _audIntervalo(periodo) {
+            const m = String(periodo || '').match(/(\d{2}\/\d{2}\/\d{4})\s*a\s*(\d{2}\/\d{2}\/\d{4})/);
+            return m ? [_audDataNum(m[1]), _audDataNum(m[2])] : null;
+        }
+
+        function _audUnirPeriodos(p1, p2) {
+            const a = _audIntervalo(p1), b = _audIntervalo(p2);
+            if (!a || !b) return p2 || p1 || '';
+            const fmt = n => { const s = String(n); return `${s.slice(6)}/${s.slice(4, 6)}/${s.slice(0, 4)}`; };
+            return `${fmt(Math.min(a[0], b[0]))} a ${fmt(Math.max(a[1], b[1]))}`;
+        }
+
+        // ─── Classificação DPE (CSV "processo;DPE;observações") ─────────────
+        const AUD_DPE_VALORES = { 'SIM': 'SIM', 'NAO': 'NÃO', 'POSSIVEL': 'POSSÍVEL' };
+
+        function _audNormDpe(v) {
+            const k = String(v || '').normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toUpperCase();
+            return AUD_DPE_VALORES[k] || '';
+        }
+
+        // Linhas separadas por ";" com campos entre aspas (podem conter ";" e quebras de linha)
+        function _audLerCsv(texto) {
+            const linhas = [];
+            let campo = '', linha = [], aspas = false;
+            for (let i = 0; i < texto.length; i++) {
+                const c = texto[i];
+                if (aspas) {
+                    if (c === '"' && texto[i + 1] === '"') { campo += '"'; i++; }
+                    else if (c === '"') aspas = false;
+                    else campo += c;
+                } else if (c === '"') aspas = true;
+                else if (c === ';') { linha.push(campo); campo = ''; }
+                else if (c === '\n' || c === '\r') {
+                    if (c === '\r' && texto[i + 1] === '\n') i++;
+                    linha.push(campo); campo = '';
+                    if (linha.some(x => x.trim())) linhas.push(linha);
+                    linha = [];
+                } else campo += c;
+            }
+            linha.push(campo);
+            if (linha.some(x => x.trim())) linhas.push(linha);
+            return linhas;
+        }
+
+        async function _audTextoCsv(file) {
+            const buf = await file.arrayBuffer();
+            let txt = new TextDecoder('utf-8').decode(buf);
+            if (txt.includes('�')) txt = new TextDecoder('windows-1252').decode(buf);
+            return txt.replace(/^﻿/, '');
+        }
+
+        function _audEhCsvClassificacao(texto) {
+            const cab = (texto.split(/\r?\n/)[0] || '').toLowerCase();
+            return cab.includes('processo') && cab.includes('dpe');
+        }
+
+        // → { "<processo>": { dpe, obs } }
+        function _audParsearClassificacao(texto) {
+            const linhas = _audLerCsv(texto);
+            const cab = (linhas.shift() || []).map(c => c.trim().toLowerCase()
+                .normalize('NFD').replace(/[̀-ͯ]/g, ''));
+            const iProc = cab.findIndex(c => c.startsWith('processo'));
+            const iDpe  = cab.findIndex(c => c === 'dpe');
+            const iObs  = cab.findIndex(c => c.startsWith('observ'));
+            const mapa = {};
+            for (const l of linhas) {
+                const proc = _audExtrairProcesso(l[iProc]);
+                const dpe = _audNormDpe(l[iDpe]);
+                if (!proc || !dpe) continue;
+                mapa[proc] = { dpe, obs: iObs >= 0 ? (l[iObs] || '').trim() : '' };
+            }
+            return mapa;
+        }
+
+        function _audExtrairProcesso(s) {
+            const m = String(s || '').match(/\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/);
+            return m ? m[0] : '';
+        }
+
+        // Semana mais recente (entre as listadas) cuja pauta tem o processo
+        function _audSemanaDoProcesso(proc) {
+            const s = audSemanasDisp.find(s => (s.audiencias || []).some(a => a.processo === proc));
+            return s ? s.id : null;
+        }
+
+        async function _audImportarClassificacao(file) {
+            const mapa = _audParsearClassificacao(await _audTextoCsv(file));
+            const procs = Object.keys(mapa);
+            if (!procs.length) throw new Error(`${file.name}: nenhuma linha válida (processo;DPE;observações).`);
+            const porSemana = {}, foraDaPauta = [];
+            for (const p of procs) {
+                let sem = _audSemanaDoProcesso(p);
+                if (!sem) { foraDaPauta.push(p); sem = audSemanaAtual || _audSemanaISO(); }
+                (porSemana[sem] = porSemana[sem] || {})[p] = mapa[p];
+            }
+            for (const [sem, novos] of Object.entries(porSemana)) {
+                const ref = db.collection('audiencias_semanas').doc(sem);
+                const doc = await ref.get();
+                const classificacao = { ...(doc.exists ? doc.data().classificacao || {} : {}), ...novos };
+                await ref.set(doc.exists ? { classificacao } : { semana: sem, classificacao },
+                              doc.exists ? { mergeFields: ['classificacao'] } : { merge: true });
+            }
+            return { total: procs.length, foraDaPauta };
+        }
+
+        // ─── Cópias integrais (Firebase Storage, só na semana da audiência) ──
+        // Caminho: audiencias-copias/{semana ISO}/{processo}.pdf. Lista em
+        // audiencias_semanas/{semana}.copias = { "<processo>": {path, tamanho, enviado_em} }.
+        // Passada a semana, _audLimparCopiasAntigas() (site, admin) e o workflow
+        // limpar-copias-audiencias.yml (toda segunda) apagam os PDFs.
+        const AUD_COPIAS_PASTA = 'audiencias-copias';
+
+        function _audEhCopia(path) {
+            return /(^|\/)Copia_Integral_[^/]*\.pdf$/i.test(path);
+        }
+
+        function _audCopiaDisponivel(semana) {
+            return !!semana && semana >= _audSemanaISO();
+        }
+
+        function _audFmtTamanho(bytes) {
+            return bytes >= 1048576 ? `${Math.round(bytes / 1048576)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
+        }
+
+        async function _audImportarCopias(file, zip, entradas, progresso) {
+            const m = (file.name || '').match(/(\d{2})-(\d{2})-(\d{4})_a_/);
+            const semZip = m ? _audSemanaDeDataBR(`${m[1]}/${m[2]}/${m[3]}`) : null;
+            const enviadas = {}, avisos = [];
+            const storage = firebase.storage();
+            for (let i = 0; i < entradas.length; i++) {
+                const { path, entry } = entradas[i];
+                const nomeArq = path.split('/').pop();
+                const proc = _audExtrairProcesso(nomeArq);
+                if (!proc) { avisos.push(`${nomeArq}: número do processo não encontrado no nome`); continue; }
+                const sem = semZip || _audSemanaDoProcesso(proc);
+                if (!sem) { avisos.push(`${proc}: semana não identificada`); continue; }
+                if (!_audCopiaDisponivel(sem)) { avisos.push(`${proc}: semana ${sem} já passou — cópia não enviada`); continue; }
+
+                const blob = await entry.async('blob');
+                const caminho = `${AUD_COPIAS_PASTA}/${sem}/${proc}.pdf`;
+                const task = storage.ref(caminho).put(blob, {
+                    contentType: 'application/pdf',
+                    contentDisposition: `attachment; filename="Copia_Integral_${proc}.pdf"`,
+                });
+                await new Promise((res, rej) => task.on('state_changed',
+                    s => progresso(`⏳ Enviando cópia ${i + 1}/${entradas.length} (${proc}) — `
+                                 + `${Math.round(100 * s.bytesTransferred / (s.totalBytes || 1))}% de ${_audFmtTamanho(blob.size)}`),
+                    rej, res));
+                (enviadas[sem] = enviadas[sem] || {})[proc] = { path: caminho, tamanho: blob.size, enviado_em: Date.now() };
+            }
+            let total = 0;
+            for (const [sem, novas] of Object.entries(enviadas)) {
+                const ref = db.collection('audiencias_semanas').doc(sem);
+                const doc = await ref.get();
+                const copias = { ...(doc.exists ? doc.data().copias || {} : {}), ...novas };
+                await ref.set(doc.exists ? { copias } : { semana: sem, copias },
+                              doc.exists ? { mergeFields: ['copias'] } : { merge: true });
+                total += Object.keys(novas).length;
+                for (const p of Object.keys(novas))
+                    if (!(audSemanasDisp.find(s => s.id === sem)?.audiencias || []).some(a => a.processo === p))
+                        avisos.push(`${p}: cópia enviada, mas o processo não está na pauta da semana ${sem}`);
+            }
+            return { total, avisos };
+        }
+
+        async function _audBaixarCopia(btn, semana, proc) {
+            const info = audDadosAtual?.copias?.[proc];
+            if (!info || !_audCopiaDisponivel(semana)) return mostrarToast('Cópia não disponível.', true);
+            const txt = btn.textContent;
+            btn.disabled = true; btn.textContent = '⏳ Abrindo...';
+            try {
+                const url = await firebase.storage().ref(info.path).getDownloadURL();
+                const a = document.createElement('a');
+                a.href = url; a.target = '_blank'; a.rel = 'noopener';
+                document.body.appendChild(a); a.click(); a.remove();
+            } catch (e) {
+                console.error('[AUD] Erro ao baixar cópia:', e);
+                mostrarToast('❌ Não foi possível baixar a cópia integral.', true);
+            } finally {
+                btn.disabled = false; btn.textContent = txt;
+            }
+        }
+
+        // Apaga do Storage as cópias de semanas anteriores à atual e tira a lista do
+        // Firestore. Roda uma vez por sessão, quando um admin abre Audiências.
+        let _audLimpezaFeita = false;
+        async function _audLimparCopiasAntigas() {
+            if (_audLimpezaFeita || userRole !== 'admin' || !db) return;
+            _audLimpezaFeita = true;
+            const atual = _audSemanaISO();
+            try {
+                const raiz = await firebase.storage().ref(AUD_COPIAS_PASTA).listAll();
+                for (const pasta of raiz.prefixes.filter(p => p.name < atual)) {
+                    const itens = await pasta.listAll();
+                    await Promise.all(itens.items.map(it => it.delete()));
+                }
+                const snap = await db.collection('audiencias_semanas').where('semana', '<', atual).get();
+                for (const d of snap.docs)
+                    if (d.data().copias) await d.ref.update({ copias: firebase.firestore.FieldValue.delete() });
+            } catch (e) {
+                console.warn('[AUD] Limpeza de cópias antigas falhou:', e);
+            }
         }
 
         async function _audListarSemanas() {
@@ -14851,8 +15089,8 @@ Regras obrigatórias:
             overlay.id = 'aud-global-drop-overlay';
             overlay.innerHTML = `
                 <div class="aud-drop-icon">📦</div>
-                <div class="aud-drop-titulo">Solte o ZIP aqui</div>
-                <div class="aud-drop-sub">Pauta de audiências do Projudi ou do SEEU</div>`;
+                <div class="aud-drop-titulo">Solte os arquivos aqui</div>
+                <div class="aud-drop-sub">Pauta (Projudi/SEEU), cópias integrais (ZIP) ou classificação DPE (CSV)</div>`;
             document.body.appendChild(overlay);
 
             let dragCounter = 0;
@@ -14880,14 +15118,14 @@ Regras obrigatórias:
                 dragCounter = 0;
                 overlay.classList.remove('visivel');
                 if (userRole !== 'admin') return;
-                const file = e.dataTransfer.files[0];
-                if (!file) return;
-                if (!file.name.toLowerCase().endsWith('.zip')) {
-                    mostrarToast('⚠️ Apenas arquivos .zip são suportados.');
+                const files = [...e.dataTransfer.files];
+                if (!files.length) return;
+                if (!files.some(f => /\.(zip|csv)$/i.test(f.name))) {
+                    mostrarToast('⚠️ Apenas arquivos .zip e .csv são suportados.');
                     return;
                 }
                 showSection('audiencias');
-                setTimeout(() => _audZipSelecionado(file), 150);
+                setTimeout(() => _audArquivosSelecionados(files), 150);
             });
         }
 
@@ -14895,7 +15133,8 @@ Regras obrigatórias:
         // ─── Exportação da pauta ────────────────────────────────────────────
         function _audGetDadosExport() {
             if (!audDadosAtual) return null;
-            const { audiencias, periodo } = audDadosAtual;
+            const { periodo } = audDadosAtual;
+            const audiencias = _audFiltrarDpe(audDadosAtual.audiencias || []);
             const isGar = a => /garantias/i.test(a.vara || '');
             const nomeSemana = (audSemanaAtual || 'pauta').replace(/[/\\:]/g, '-');
             if (audModoCompat) {
@@ -14947,10 +15186,10 @@ Regras obrigatórias:
                 // Processo 4,5cm→24 | Vara 4,60cm→25 | Classe 3,92cm→21
                 // Autor/Réu 6,5cm→35 | Status 2,35cm→13
                 const colDefs = inclDp
-                    ? [{h:'DP',w:6},{h:'Processo',w:24},{h:'Data',w:13},{h:'Hora',w:8},
+                    ? [{h:'DP',w:6},{h:'Processo',w:24},{h:'DPE',w:11},{h:'Data',w:13},{h:'Hora',w:8},
                        {h:'Vara',w:25},{h:'Classe Processual',w:21},{h:'Tipo de Audiência',w:24},
                        {h:'Autor(es)',w:35},{h:'Réu(s)',w:35},{h:'Status',w:13}]
-                    : [{h:'Processo',w:24},{h:'Data',w:13},{h:'Hora',w:8},
+                    : [{h:'Processo',w:24},{h:'DPE',w:11},{h:'Data',w:13},{h:'Hora',w:8},
                        {h:'Vara',w:25},{h:'Classe Processual',w:21},{h:'Tipo de Audiência',w:24},
                        {h:'Autor(es)',w:35},{h:'Réu(s)',w:35},{h:'Status',w:13}];
                 const n = colDefs.length;
@@ -15026,9 +15265,9 @@ Regras obrigatórias:
                 };
                 rows.forEach((a, idx) => {
                     const vals = inclDp
-                        ? [a.dp+'ª', a.processo, a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
+                        ? [a.dp+'ª', a.processo, _audDpeDe(a)?.dpe||'', a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
                            _audPartesTexto(a.autores, a.advAutor), _audPartesTexto(a.reus, a.advReu), a.status||'']
-                        : [a.processo, a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
+                        : [a.processo, _audDpeDe(a)?.dpe||'', a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
                            _audPartesTexto(a.autores, a.advAutor), _audPartesTexto(a.reus, a.advReu), a.status||''];
                     const bg = a.status === 'CANCELADA'   ? 'FFFEE2E2'
                              : a.status === 'REDESIGNADA' ? 'FFFFF3C7'
@@ -15083,20 +15322,20 @@ Regras obrigatórias:
 
             // Colunas em twips. A4 paisagem (16838), margens 720×2 → 15398 utilizáveis.
             const COLS = mostrarDp
-                ? [{l:'DP',w:600},{l:'Processo',w:2300},{l:'Data',w:1000},{l:'Hora',w:700},
+                ? [{l:'DP',w:600},{l:'Processo',w:2300},{l:'DPE',w:1000},{l:'Data',w:1000},{l:'Hora',w:700},
                    {l:'Vara',w:2100},{l:'Classe Processual',w:1900},{l:'Tipo de Audiência',w:1500},
-                   {l:'Autor(es)',w:2500},{l:'Réu(s)',w:2798}]
-                : [{l:'Processo',w:2500},{l:'Data',w:1100},{l:'Hora',w:800},
+                   {l:'Autor(es)',w:2000},{l:'Réu(s)',w:2298}]
+                : [{l:'Processo',w:2500},{l:'DPE',w:1000},{l:'Data',w:1100},{l:'Hora',w:800},
                    {l:'Vara',w:2200},{l:'Classe Processual',w:2000},{l:'Tipo de Audiência',w:1600},
-                   {l:'Autor(es)',w:2600},{l:'Réu(s)',w:2598}];
-            const GAR_COLS = [{l:'Processo',w:2500},{l:'Data',w:1100},{l:'Hora',w:800},
+                   {l:'Autor(es)',w:2100},{l:'Réu(s)',w:2098}];
+            const GAR_COLS = [{l:'Processo',w:2500},{l:'DPE',w:1000},{l:'Data',w:1100},{l:'Hora',w:800},
                               {l:'Vara',w:2200},{l:'Classe Processual',w:2000},{l:'Tipo de Audiência',w:1600},
-                              {l:'Autor(es)',w:2600},{l:'Réu(s)',w:2598}];
+                              {l:'Autor(es)',w:2100},{l:'Réu(s)',w:2098}];
 
             const toVals = (a, inclDp) => {
                 const r = inclDp ? [a.dp + 'ª'] : [];
                 const proc = a.processo + (a.status ? ` (${a.status})` : '');
-                r.push(proc, a.data, a.hora, a.vara || '—', a.classe || '—', a.tipo || '—',
+                r.push(proc, _audDpeDe(a)?.dpe || '—', a.data, a.hora, a.vara || '—', a.classe || '—', a.tipo || '—',
                        _audPartesTexto(a.autores, a.advAutor) || '—',
                        _audPartesTexto(a.reus, a.advReu) || '—');
                 return r;
@@ -15223,7 +15462,7 @@ Regras obrigatórias:
         }
 
         function renderAudiencias() {
-            if (userRole === 'admin') _audIniciarDropGlobal();
+            if (userRole === 'admin') { _audIniciarDropGlobal(); _audLimparCopiasAntigas(); }
             const el = document.getElementById('audiencias-content');
             if (!el) return;
             el.innerHTML = '<p style="text-align:center;padding:30px;color:var(--text-secondary)">⏳ Carregando audiências...</p>';
@@ -15277,7 +15516,7 @@ Regras obrigatórias:
                 h += `<button onclick="_audAbrirImport()"
                     style="background:linear-gradient(135deg,#9f1239,#fb7185);color:white;padding:8px 18px;
                     border-radius:8px;border:none;cursor:pointer;font-weight:600;font-family:inherit;font-size:0.95em">
-                    📥 Importar Pauta (ZIP)
+                    📥 Importar
                 </button>`;
             }
             h += `</div>`;
@@ -15287,7 +15526,7 @@ Regras obrigatórias:
                 h += isAdmin
                     ? `<div style="text-align:center;padding:60px;color:var(--text-secondary)">
                         <p style="font-size:1.1em;margin-bottom:8px">Nenhuma pauta importada ainda.</p>
-                        <p>Clique em <strong>📥 Importar Pauta (ZIP)</strong> para começar.</p>
+                        <p>Clique em <strong>📥 Importar</strong> para começar.</p>
                        </div>`
                     : `<p style="text-align:center;padding:40px;color:var(--text-secondary)">Nenhuma pauta disponível.</p>`;
                 h += `</div>`;
@@ -15295,7 +15534,8 @@ Regras obrigatórias:
                 return;
             }
 
-            const { audiencias, periodo } = audDadosAtual;
+            const { periodo } = audDadosAtual;
+            const audiencias = _audFiltrarDpe(audDadosAtual.audiencias || []);
             if (periodo) {
                 h += `<p style="color:var(--text-secondary);font-size:0.9em;margin-bottom:16px">
                     📅 Período: <strong>${esc(periodo)}</strong></p>`;
@@ -15305,6 +15545,16 @@ Regras obrigatórias:
 
             // ── Presets de área ──
             h += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">`;
+            if (Object.keys(audDadosAtual.classificacao || {}).length) {
+                const soDpeStyle = audSoDpe
+                    ? 'background:#166534;color:white;border-color:#166534;'
+                    : 'background:white;color:#166534;border-color:#86efac;';
+                h += `<button onclick="_audToggleSoDpe()" title="Mostra só as audiências classificadas como SIM ou POSSÍVEL"
+                    style="${soDpeStyle}padding:6px 16px;border:1.5px solid;border-radius:8px;
+                           cursor:pointer;font-weight:700;font-family:inherit;font-size:0.95em">
+                    ${audSoDpe ? '✖ Todas' : '🟢 Só DPE'}
+                </button>`;
+            }
             for (const [key, p] of Object.entries(AUD_PRESETS)) {
                 const cntPreset = audiencias.filter(a => p.dps.includes(a.dp) && !_ehGarantias(a)).length;
                 const isAtivo = audPresetAtivo === key;
@@ -15481,9 +15731,22 @@ Regras obrigatórias:
                         : '';
                 const badgeSeeu = a.origem === 'seeu' ? `<span class="aud-badge aud-badge-seeu">SEEU</span>` : '';
 
+                const cls = _audDpeDe(a);
+                const dpeCls = { 'SIM': 'sim', 'NÃO': 'nao', 'POSSÍVEL': 'possivel' }[cls?.dpe];
+                const dpeHtml = !dpeCls ? ''
+                    : cls.obs
+                        ? `<details class="aud-dpe"><summary class="aud-dpe-selo aud-dpe-${dpeCls}" title="${_escAttr(cls.obs)}">DPE: ${esc(cls.dpe)}</summary>
+                               <div class="aud-dpe-obs">${esc(cls.obs)}</div></details>`
+                        : `<div class="aud-dpe"><span class="aud-dpe-selo aud-dpe-${dpeCls}">DPE: ${esc(cls.dpe)}</span></div>`;
+                const copia = audDadosAtual?.copias?.[a.processo];
+                const copiaHtml = copia && _audCopiaDisponivel(audSemanaAtual)
+                    ? `<button class="aud-copia-btn" onclick="_audBaixarCopia(this, '${_escAttr(audSemanaAtual)}', '${_escAttr(a.processo)}')"
+                           title="Disponível até o fim desta semana">📄 Cópia integral · ${_audFmtTamanho(copia.tamanho || 0)}</button>`
+                    : '';
+
                 h += `<tr class="${rowCls}">
                     ${mostrarDp ? `<td style="white-space:nowrap;font-weight:700;color:#9f1239">${esc(a.dp)}ª</td>` : ''}
-                    <td><span class="aud-processo">${esc(a.processo)}</span>${badgeSeeu}${badge}</td>
+                    <td><span class="aud-processo">${esc(a.processo)}</span>${badgeSeeu}${badge}${dpeHtml}${copiaHtml}</td>
                     <td><strong>${esc(a.data)}</strong><br><span style="font-size:0.9em">${esc(a.hora)}</span></td>
                     <td style="font-size:0.85em">${esc(a.vara || '—')}</td>
                     <td style="font-size:0.85em">${esc(a.classe || '—')}</td>
@@ -15495,6 +15758,21 @@ Regras obrigatórias:
 
             h += `</tbody></table></div>`;
             return h;
+        }
+
+        // Classificação DPE da audiência na semana carregada ({dpe, obs} ou null)
+        function _audDpeDe(a) {
+            return audDadosAtual?.classificacao?.[a.processo] || null;
+        }
+
+        function _audFiltrarDpe(auds) {
+            return audSoDpe ? auds.filter(a => ['SIM', 'POSSÍVEL'].includes(_audDpeDe(a)?.dpe)) : auds;
+        }
+
+        function _audToggleSoDpe() {
+            audSoDpe = !audSoDpe;
+            const el = document.getElementById('audiencias-content');
+            if (el) _audRenderConteudo(el);
         }
 
         function _audMudarDp(dp) {
@@ -15559,18 +15837,21 @@ Regras obrigatórias:
             div.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
             div.innerHTML = `
               <div style="background:white;border-radius:16px;padding:32px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-                <h3 style="margin:0 0 8px;color:#9f1239">📥 Importar Pauta de Audiências</h3>
+                <h3 style="margin:0 0 8px;color:#9f1239">📥 Importar Audiências</h3>
                 <p style="color:var(--text-secondary);font-size:.9em;margin-bottom:20px">
-                  Selecione o arquivo ZIP com os PDFs exportados do Projudi ou do SEEU.
-                  Os dois podem ser importados para a mesma semana, um de cada vez.</p>
+                  Selecione um ou mais arquivos — o tipo é reconhecido sozinho:<br>
+                  • <strong>ZIP da pauta</strong> (PDFs do Projudi ou do SEEU)<br>
+                  • <strong>ZIP das cópias integrais</strong> (<code>Copia_Integral_&lt;processo&gt;.pdf</code>,
+                    ficam para download só na semana da audiência)<br>
+                  • <strong>CSV da classificação</strong> (<code>processo;DPE;observações</code>)</p>
                 <label for="aud-zip-input" id="aud-drop-label"
                   style="display:block;border:2px dashed #fda4af;border-radius:12px;padding:30px;text-align:center;
                          cursor:pointer;transition:border-color .2s;color:#9f1239;font-weight:600">
-                  📂 Clique para selecionar o ZIP<br>
+                  📂 Clique para selecionar os arquivos<br>
                   <span style="font-size:.85em;font-weight:400;color:var(--text-secondary)">ou arraste e solte aqui</span>
                 </label>
-                <input type="file" id="aud-zip-input" accept=".zip" style="display:none"
-                  onchange="_audZipSelecionado(this.files[0])">
+                <input type="file" id="aud-zip-input" accept=".zip,.csv" multiple style="display:none"
+                  onchange="_audArquivosSelecionados([...this.files]); this.value = ''">
                 <div id="aud-import-status" style="display:none;margin-top:14px"></div>
                 <div style="display:flex;gap:12px;margin-top:20px;justify-content:flex-end">
                   <button onclick="_audFecharImport()"
@@ -15585,8 +15866,9 @@ Regras obrigatórias:
             label.addEventListener('drop', e => {
                 e.preventDefault();
                 label.style.borderColor = '#fda4af';
-                const f = e.dataTransfer.files[0];
-                if (f) _audZipSelecionado(f);
+                e.stopPropagation();
+                const fs = [...e.dataTransfer.files];
+                if (fs.length) _audArquivosSelecionados(fs);
             });
             document.body.appendChild(div);
         }
@@ -15605,35 +15887,94 @@ Regras obrigatórias:
             el.innerHTML = msg;
         }
 
-        async function _audZipSelecionado(file) {
-            if (!file) return;
-            _audSetStatus('⏳ Lendo ZIP e extraindo texto dos PDFs...');
+        // Um ou mais arquivos (botão ou arrastar). Tipo reconhecido pelo conteúdo:
+        // ZIP com Copia_Integral_*.pdf → cópias; outro ZIP → pauta; CSV "processo;DPE" →
+        // classificação. Ordem: pautas, depois CSVs, depois cópias (que precisam da semana).
+        let _audImportando = false;
+        async function _audArquivosSelecionados(files) {
+            files = (files || []).filter(Boolean);
+            if (!files.length) return;
+            if (_audImportando) return mostrarToast('⏳ Aguarde a importação em andamento terminar.', true);
+            _audImportando = true;
+            _audAbrirImport();
+            const sairAviso = e => { e.preventDefault(); e.returnValue = ''; };
+            window.addEventListener('beforeunload', sairAviso);
+
+            const resumo = [], avisos = [];
             try {
-                const { periodo, audiencias } = await _audProcessarZip(file);
-                if (!audiencias.length) {
-                    _audSetStatus('⚠️ Nenhuma audiência encontrada. Verifique o arquivo ZIP.', 'error');
-                    return;
+                if (!window.JSZip) await _pcCarregarScript(AUD_JSZIP_SRC);
+                const pautas = [], csvs = [], copias = [];
+                for (const f of files) {
+                    if (/\.csv$/i.test(f.name)) {
+                        const txt = await _audTextoCsv(f);
+                        if (_audEhCsvClassificacao(txt)) csvs.push(f);
+                        else avisos.push(`${f.name}: CSV sem as colunas "processo;DPE"`);
+                    } else if (/\.zip$/i.test(f.name)) {
+                        _audSetStatus(`⏳ Abrindo ${esc(f.name)}...`);
+                        const zip = await JSZip.loadAsync(f);
+                        const pdfs = [];
+                        zip.forEach((path, entry) => {
+                            if (!entry.dir && path.toLowerCase().endsWith('.pdf')) pdfs.push({ path, entry });
+                        });
+                        const cps = pdfs.filter(p => _audEhCopia(p.path));
+                        if (cps.length) copias.push({ file: f, zip, entradas: cps });
+                        if (pdfs.length > cps.length) pautas.push({ file: f, zip });
+                        if (!pdfs.length) avisos.push(`${f.name}: nenhum PDF dentro do ZIP`);
+                    } else {
+                        avisos.push(`${f.name}: tipo não suportado (use .zip ou .csv)`);
+                    }
                 }
-                const primData = audiencias.find(a => a.data)?.data;
-                const semKey = primData ? _audSemanaDeDataBR(primData) : _audSemanaISO();
-                _audSetStatus(`⏳ Salvando ${audiencias.length} audiência(s)...`);
-                audDadosAtual  = await _audSalvar(semKey, periodo, audiencias);
-                audSemanaAtual = semKey;
+
+                for (const { file, zip } of pautas) {
+                    _audSetStatus(`⏳ Lendo a pauta ${esc(file.name)}...`);
+                    const { periodo, audiencias } = await _audProcessarZip(file, zip);
+                    if (!audiencias.length) { avisos.push(`${file.name}: nenhuma audiência encontrada`); continue; }
+                    const primData = audiencias.find(a => a.data)?.data;
+                    const semKey = primData ? _audSemanaDeDataBR(primData) : _audSemanaISO();
+                    _audSetStatus(`⏳ Salvando ${audiencias.length} audiência(s)...`);
+                    audDadosAtual  = await _audSalvar(semKey, periodo, audiencias);
+                    audSemanaAtual = semKey;
+                    audSemanasDisp = await _audListarSemanas();
+                    const por = {};
+                    for (const a of audiencias) if (a.dp) por[a.dp] = (por[a.dp] || 0) + 1;
+                    const res = Object.entries(por).sort().map(([d, n]) => `${d}ª DP: ${n}`).join(' · ');
+                    const origens = [...new Set(audiencias.map(a => a.origem === 'seeu' ? 'SEEU' : 'Projudi'))].join(' + ');
+                    resumo.push(`${audiencias.length} audiência(s) do ${origens} (${res})`);
+                }
+
+                for (const f of csvs) {
+                    _audSetStatus(`⏳ Lendo a classificação ${esc(f.name)}...`);
+                    const { total, foraDaPauta } = await _audImportarClassificacao(f);
+                    resumo.push(`${total} classificação(ões) DPE`);
+                    if (foraDaPauta.length)
+                        avisos.push(`Classificação de processo fora da pauta: ${foraDaPauta.join(', ')}`);
+                }
+
+                for (const { file, zip, entradas } of copias) {
+                    const { total, avisos: av } = await _audImportarCopias(file, zip, entradas, msg => _audSetStatus(msg));
+                    if (total) resumo.push(`${total} cópia(s) integral(is)`);
+                    avisos.push(...av);
+                }
+
+                if (audSemanaAtual) audDadosAtual = await _audCarregarSemana(audSemanaAtual);
                 audSemanasDisp = await _audListarSemanas();
-
-                _audFecharImport();
-
-                const por = {};
-                for (const a of audiencias) if (a.dp) por[a.dp] = (por[a.dp] || 0) + 1;
-                const res = Object.entries(por).sort().map(([d,n]) => `${d}ª DP: ${n}`).join(' · ');
-                const origens = [...new Set(audiencias.map(a => a.origem === 'seeu' ? 'SEEU' : 'Projudi'))].join(' + ');
-                mostrarToast(`✅ ${audiencias.length} audiências do ${origens} importadas! ${res}`);
-
                 const el = document.getElementById('audiencias-content');
                 if (el) _audRenderConteudo(el);
-            } catch(e) {
+
+                if (!resumo.length) {
+                    _audSetStatus(`⚠️ Nada foi importado.<br>${avisos.map(esc).join('<br>')}`, 'error');
+                } else if (avisos.length) {
+                    _audSetStatus(`✅ Importado: ${esc(resumo.join(' · '))}<br><br>⚠️ Avisos:<br>${avisos.map(esc).join('<br>')}`, 'success');
+                } else {
+                    _audFecharImport();
+                    mostrarToast(`✅ Importado: ${resumo.join(' · ')}`);
+                }
+            } catch (e) {
                 console.error('[AUD] Erro ao importar:', e);
-                _audSetStatus(`❌ Erro: ${esc(e.message)}`, 'error');
+                _audSetStatus(`❌ Erro: ${esc(e.message)}${resumo.length ? `<br>Já importado: ${esc(resumo.join(' · '))}` : ''}`, 'error');
+            } finally {
+                _audImportando = false;
+                window.removeEventListener('beforeunload', sairAviso);
             }
         }
 

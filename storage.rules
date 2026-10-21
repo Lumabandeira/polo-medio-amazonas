@@ -16,6 +16,18 @@ service firebase.storage {
       allow read, write: if isAdmin();
     }
 
+    // Cópias integrais dos processos da pauta de Audiências: qualquer usuário logado baixa;
+    // só admin envia (PDF até 300 MB) ou apaga. Ficam só durante a semana da audiência —
+    // depois o site e o workflow limpar-copias-audiencias.yml apagam.
+    // ({allPaths=**} para o listAll() da limpeza também casar com as pastas.)
+    match /audiencias-copias/{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow delete: if isAdmin();
+      allow create, update: if isAdmin()
+        && request.resource.size < 300 * 1024 * 1024
+        && request.resource.contentType == 'application/pdf';
+    }
+
     // Qualquer outro caminho: bloqueado por padrão
     match /{allPaths=**} {
       allow read, write: if false;

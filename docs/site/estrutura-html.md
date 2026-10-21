@@ -824,6 +824,23 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
 - **Gravação por origem:** `_audSalvar()` lê o documento da semana e substitui só as audiências
   da mesma origem do ZIP importado, mantendo as da outra (reimportar o Projudi não apaga o SEEU e
   vice-versa). Sem `origem` = Projudi (dados antigos).
+- **Um botão para tudo (sessão 52):** "📥 Importar" (ou arrastar) aceita vários arquivos de uma
+  vez e reconhece o tipo pelo conteúdo (`_audArquivosSelecionados()`): ZIP com
+  `Copia_Integral_<processo>.pdf` → cópias integrais; outro ZIP → pauta; CSV cujo cabeçalho tem
+  `processo` e `DPE` → classificação. Ordem de processamento: pautas → CSVs → cópias.
+- **Pauta parcial:** o ZIP pode ser de um dia só (`…_22-10-2026_a_22-10-2026.zip`); `_audSalvar()`
+  troca só as audiências da origem dentro desse período e o período da semana vira a união.
+- **Classificação DPE (CSV `processo;DPE;observações`, `;` e aspas, UTF-8 ou Windows-1252):**
+  gravada em `classificacao` da semana mais recente cuja pauta tem o processo
+  (`_audImportarClassificacao()`). Na tabela, selo `DPE: SIM/NÃO/POSSÍVEL` (`.aud-dpe-*`) que abre
+  as observações (`<details>`); botão "🟢 Só DPE" (`audSoDpe`, SIM + POSSÍVEL) filtra a tela e as
+  exportações. DOCX/XLSX ganham a coluna "DPE" depois de "Processo".
+- **Cópias integrais:** cada PDF vai para o Storage em `audiencias-copias/{semana}/{processo}.pdf`
+  (`_audImportarCopias()`, barra de progresso no modal, aviso ao fechar a aba durante o envio,
+  `contentDisposition: attachment`). Semana pela data do nome do ZIP; semana já passada é recusada.
+  Botão "📄 Cópia integral · NN MB" na linha (`_audBaixarCopia()`, `getDownloadURL()`), para todos
+  os logados, só enquanto a semana da audiência não terminou. Na segunda seguinte os PDFs são
+  apagados (site + GitHub Actions — ver `docs/firebase.md`).
 - **Tela:** selo "SEEU" (`.aud-badge-seeu`) ao lado do processo; coluna Vara mostra
   "VEP de Itacoatiara - Regime Aberto" etc. As audiências do SEEU entram nos filtros por DP e no
   preset "Criminal", e nas exportações DOCX/XLSX, em ordem de data/hora (`_audOrdenar()`).

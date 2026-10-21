@@ -328,8 +328,15 @@ importado_em: timestamp
 audiencias: [{ dp, processo, data, hora, tipo, classe, status, vara, area,
                origem: "projudi" | "seeu",          ← sessão 51; ausente = projudi
                autores: [{nome, adv}], reus: [{nome, adv}] }]
+classificacao: { "<processo>": { dpe: "SIM" | "NÃO" | "POSSÍVEL", obs } }   ← sessão 52, do CSV
+copias:        { "<processo>": { path, tamanho, enviado_em } }             ← sessão 52, só na semana vigente
 ```
-- Escrita só admin. Cada importação troca só as audiências da origem importada (`_audSalvar()`).
+- Escrita só admin. Cada importação troca só as audiências da origem importada **dentro do
+  período do ZIP** (`_audSalvar()`, sessão 52) — ZIP de um dia só não apaga os outros dias.
+  Grava com `merge: true`; `classificacao`/`copias` são gravados com `mergeFields`, então
+  reimportar a pauta não os apaga.
+- `copias` é removido (e os PDFs apagados do Storage) quando a semana passa — ver "Regras de
+  Segurança do Storage".
 
 ### `automacao_config/estado_diario` — estado da automação (Projeto 1 — legado, removido na sessão 50)
 ```
@@ -353,6 +360,12 @@ atualizado_em:       timestamp
 
 - Bucket `polo-medio-as.firebasestorage.app`, regras em `storage.rules`.
 - `prestacoes-contas/**`: leitura e escrita restritas a `isAdmin()` (checa `usuarios/{uid}.role` via `firestore.get()`).
+- `audiencias-copias/{semana ISO}/{processo}.pdf` (sessão 52): cópias integrais da pauta de
+  Audiências. Leitura para qualquer logado; envio (PDF < 300 MB) e exclusão só admin. Só valem na
+  semana da audiência: `_audLimparCopiasAntigas()` (site, quando admin abre Audiências) e
+  `limpar-copias-audiencias.py` (workflow `limpar-copias-audiencias.yml`, segunda 00:10 Manaus,
+  secret `FIREBASE_SERVICE_ACCOUNT`) apagam as pastas de semanas anteriores e o campo `copias`.
+  **A regra precisa ser publicada:** `firebase deploy --only storage`.
 - Qualquer outro caminho: bloqueado por padrão (`allow read, write: if false`).
 - **Importante:** a URL de download (`getDownloadURL()`, com `?alt=media&token=...`) funciona pra
   qualquer um que tenha o link, **independente** de `storage.rules` — o token na URL não passa
