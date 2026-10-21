@@ -327,6 +327,7 @@ periodo:      "19/10/2026 a 25/10/2026"
 importado_em: timestamp
 audiencias: [{ dp, processo, data, hora, tipo, classe, status, vara, area,
                origem: "projudi" | "seeu",          ← sessão 51; ausente = projudi
+               pauta: "1a_Vara_da_Comarca_de_Itacoatiara_-_Criminal",  ← sessão 53, PDF de origem
                autores: [{nome, adv}], reus: [{nome, adv}] }]
 classificacao: { "<processo>": { dpe: "SIM" | "NÃO" | "POSSÍVEL", obs } }   ← sessão 52, do CSV
 copias:        { "<processo>": { path, tamanho, enviado_em } }             ← sessão 52, só na semana vigente

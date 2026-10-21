@@ -14589,8 +14589,10 @@ Regras obrigatórias:
             const area = seeu ? 'criminal' : _audDetectarArea(vara);
             if (seeu) {
                 // Remove o cabeçalho de cada página, que se repete no meio dos blocos
-                // e grudaria no nome do réu na virada de página.
-                texto = texto.replace(/^\x02?TRIBUNAL DE JUSTI[ÇC]A DO ESTADO DO AMAZONAS\n\x02?TJAM - [^\n]*\n\x02?ESTADO DO AMAZONAS\n/gm, '');
+                // e grudaria no nome do réu na virada de página. Dois formatos já vistos:
+                // TRIBUNAL…/TJAM…/ESTADO DO AMAZONAS e TRIBUNAL…/PODER JUDICIÁRIO/TJAM…/
+                // Edital de/ESTADO DO AMAZONAS/Data Inicial… (pauta de 26/10/2026).
+                texto = texto.replace(/^\x02?TRIBUNAL DE JUSTI[ÇC]A DO ESTADO DO AMAZONAS\n(?:\x02?PODER JUDICI[ÁA]RIO\n)?\x02?TJAM - [^\n]*\n(?:\x02?Edital de[^\n]*\n)?\x02?ESTADO DO AMAZONAS\n(?:\x02?Data Inicial:[^\n]*\n)?/gm, '');
             }
             const audiencias = [];
 
@@ -14649,6 +14651,9 @@ Regras obrigatórias:
                 // Parseia uma seção (autorSec ou reuSec) e retorna [{nome, adv}] —
                 // um objeto por pessoa, com seu advogado associado.
                 const PREPS_PT = /\b(DE|DA|DO|DOS|DAS|E|OU)$/i;
+                // Linha que começa com preposição ("DE SOUZA") ou tem uma palavra só
+                // ("MONTEIRO") continua o nome da linha anterior, não é outra pessoa.
+                const CONTINUA_NOME = /^(DE|DA|DO|DOS|DAS|E)\s|^\S+$/i;
                 const _parsearPartes = sec => {
                     const entradas = [];
                     let nomeAtual = '', advAtual = '';
@@ -14708,7 +14713,7 @@ Regras obrigatórias:
                                 // não reseta: pode haver mais adv (\x02) e mais overflow depois
                             } else if (nomeAtual) {
                                 const ultima = (nomeAtual.match(/(\S+)\s*$/) || [])[1] || '';
-                                if (PREPS_PT.test(ultima)) {
+                                if (PREPS_PT.test(ultima) || CONTINUA_NOME.test(texto)) {
                                     nomeAtual += ' ' + texto;
                                 } else {
                                     salvar();
@@ -14760,6 +14765,7 @@ Regras obrigatórias:
             zip = zip || await JSZip.loadAsync(file);
             const todasAuds = [];
             const vistas = new Set();
+            const pautas = [];   // um item por PDF lido, mesmo sem audiências
             let periodo = '';
 
             const entries = [];
@@ -14778,10 +14784,12 @@ Regras obrigatórias:
                         if (m) periodo = `${m[1]} a ${m[2]}`;
                     }
 
-                    const { audiencias } = _audParsearTexto(texto);
+                    const { audiencias, vara } = _audParsearTexto(texto);
+                    const pauta = _audChavePauta(path);
+                    pautas.push({ pauta, vara });
                     for (const a of audiencias) {
                         const k = _audChaveDedup(a);
-                        if (!vistas.has(k)) { vistas.add(k); todasAuds.push(a); }
+                        if (!vistas.has(k)) { vistas.add(k); todasAuds.push({ ...a, pauta }); }
                     }
                 } catch (e) {
                     console.warn('[AUD] Erro ao processar PDF:', path, e);
@@ -14796,7 +14804,13 @@ Regras obrigatórias:
             }
 
             _audOrdenar(todasAuds);
-            return { periodo, audiencias: todasAuds };
+            return { periodo, audiencias: todasAuds, pautas };
+        }
+
+        // "…/Pautas/02_1a_Vara_da_Comarca_de_Itacoatiara_-_Criminal.pdf" → "1a_Vara_da_Comarca_de_Itacoatiara_-_Criminal"
+        // (sem o número de ordem, que muda conforme as varas que vieram no ZIP)
+        function _audChavePauta(path) {
+            return path.split('/').pop().replace(/\.pdf$/i, '').replace(/^\d+_/, '');
         }
 
         function _audOrdenar(auds) {
@@ -14823,10 +14837,11 @@ Regras obrigatórias:
         // Projudi e SEEU chegam em ZIPs separados para a mesma semana: reimportar uma
         // origem troca só as audiências dela e mantém as da outra. Audiências gravadas
         // antes do campo `origem` existir contam como Projudi.
-        // ZIP de um período menor que a semana (ex.: pauta só de 22/10) troca só as
-        // audiências dessa origem dentro do período e mantém os outros dias.
+        // Troca só as audiências que o ZIP cobre: mesma origem, dentro do período do ZIP
+        // (ex.: pauta só de 22/10) e da mesma pauta (PDF) — um ZIP só das varas criminais
+        // não apaga Família/Cível. Audiências gravadas antes do campo `pauta` casam pela vara.
         // `merge: true` preserva `classificacao` e `copias` do documento.
-        async function _audSalvar(semanaKey, periodo, audiencias) {
+        async function _audSalvar(semanaKey, periodo, audiencias, pautas) {
             const ref = db.collection('audiencias_semanas').doc(semanaKey);
             const doc = await ref.get();
             const antigo = doc.exists ? doc.data() : null;
@@ -14837,8 +14852,11 @@ Regras obrigatórias:
                 const d = _audDataNum(a.data);
                 return !d || (d >= intervalo[0] && d <= intervalo[1]);
             };
+            const pautasZip = pautas ? new Set(pautas.map(p => p.pauta)) : null;
+            const varasZip  = pautas ? new Set(pautas.map(p => p.vara).filter(Boolean)) : null;
+            const naPautaDoZip = a => !pautasZip || (a.pauta ? pautasZip.has(a.pauta) : varasZip.has(a.vara));
             const mantidas = (antigo?.audiencias || [])
-                .filter(a => !origensNovas.has(a.origem || 'projudi') || !noPeriodo(a));
+                .filter(a => !origensNovas.has(a.origem || 'projudi') || !noPeriodo(a) || !naPautaDoZip(a));
 
             const vistas = new Set(audiencias.map(_audChaveDedup));
             const todas = _audOrdenar([
@@ -15927,12 +15945,12 @@ Regras obrigatórias:
 
                 for (const { file, zip } of pautas) {
                     _audSetStatus(`⏳ Lendo a pauta ${esc(file.name)}...`);
-                    const { periodo, audiencias } = await _audProcessarZip(file, zip);
+                    const { periodo, audiencias, pautas } = await _audProcessarZip(file, zip);
                     if (!audiencias.length) { avisos.push(`${file.name}: nenhuma audiência encontrada`); continue; }
                     const primData = audiencias.find(a => a.data)?.data;
                     const semKey = primData ? _audSemanaDeDataBR(primData) : _audSemanaISO();
                     _audSetStatus(`⏳ Salvando ${audiencias.length} audiência(s)...`);
-                    audDadosAtual  = await _audSalvar(semKey, periodo, audiencias);
+                    audDadosAtual  = await _audSalvar(semKey, periodo, audiencias, pautas);
                     audSemanaAtual = semKey;
                     audSemanasDisp = await _audListarSemanas();
                     const por = {};

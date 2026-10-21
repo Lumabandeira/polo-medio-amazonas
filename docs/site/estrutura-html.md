@@ -817,7 +817,8 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
   (`AUD_DP_POR_AREA`). O SEEU é sempre `criminal` (par → 5ª DP, ímpar → 6ª DP), qualquer que seja
   o sufixo do processo (`.4700`/`.4701`).
 - **Particularidades do SEEU** (sessão 51): o cabeçalho de página se repete no meio dos blocos e
-  é removido antes do parsing (senão gruda no nome do réu); nomes de réu/autor quebrados em
+  é removido antes do parsing (sessão 53: também o formato com "PODER JUDICIÁRIO", "Edital de" e
+  "Data Inicial" entre as linhas, visto na pauta de 26/10/2026) (senão gruda no nome do réu); nomes de réu/autor quebrados em
   várias linhas são juntados numa pessoa só (`_juntarPartes`, execução penal tem uma parte de
   cada lado); sem linha "Data Inicial/Data Final", o período vem do nome do ZIP
   (`…_19-10-2026_a_25-10-2026.zip`).
@@ -828,8 +829,15 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
   vez e reconhece o tipo pelo conteúdo (`_audArquivosSelecionados()`): ZIP com
   `Copia_Integral_<processo>.pdf` → cópias integrais; outro ZIP → pauta; CSV cujo cabeçalho tem
   `processo` e `DPE` → classificação. Ordem de processamento: pautas → CSVs → cópias.
-- **Pauta parcial:** o ZIP pode ser de um dia só (`…_22-10-2026_a_22-10-2026.zip`); `_audSalvar()`
-  troca só as audiências da origem dentro desse período e o período da semana vira a união.
+- **Pauta parcial:** o ZIP pode ser de um dia só (`…_22-10-2026_a_22-10-2026.zip`) ou só de
+  algumas varas. `_audSalvar()` troca só as audiências da mesma origem, dentro do período do ZIP
+  **e da mesma pauta** (campo `pauta` = nome do PDF sem o número de ordem, `_audChavePauta()`,
+  sessão 53); audiências antigas sem `pauta` casam pela vara. Um ZIP só das varas criminais não
+  apaga Família/Cível; o período da semana vira a união. Arquivos que não são PDF dentro do ZIP
+  (`.md`, `.csv`, `Resumos/*.txt`) são ignorados — o CSV de classificação precisa ir separado.
+- **Nomes quebrados (sessão 53):** no Projudi, linha que começa com DE/DA/DO/DOS/DAS/E ou tem
+  uma palavra só continua o nome anterior (`CONTINUA_NOME` em `_parsearPartes`). Limitação: um
+  corréu de nome com uma palavra só seria juntado ao anterior.
 - **Classificação DPE (CSV `processo;DPE;observações`, `;` e aspas, UTF-8 ou Windows-1252):**
   gravada em `classificacao` da semana mais recente cuja pauta tem o processo
   (`_audImportarClassificacao()`). Na tabela, selo `DPE: SIM/NÃO/POSSÍVEL` (`.aud-dpe-*`) que abre

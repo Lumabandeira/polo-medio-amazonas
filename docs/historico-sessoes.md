@@ -4,6 +4,15 @@
 
 ---
 
+## Sessão 53 — 21/10/2026
+
+- **Audiências → importação por pauta:** cada audiência guarda a pauta (PDF) de origem; reimportar
+  troca só as pautas que vieram no ZIP (antes, um ZIP só das varas criminais apagava Família/Cível
+  da semana). Nomes de réus quebrados em duas linhas ("CARLOS AUGUSTO SARMENTO / DE SOUZA") voltam
+  a ser uma pessoa; cabeçalho de página do SEEU em formato novo não gruda mais no autor. Testado
+  com as pautas reais de 22/10 e 26/10–01/11 (só as 6 correções esperadas em relação ao parser
+  anterior) e com Firestore simulado.
+
 ## Sessão 52 — 21/10/2026
 
 - **Audiências → cópias integrais e classificação DPE:** o botão "📥 Importar" reconhece 3 tipos

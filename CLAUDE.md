@@ -62,6 +62,17 @@ docs/
 
 ---
 
+## Estado atual (sessão 53 — 21/10/2026)
+
+**Implementado nesta sessão (Audiências):** (1) importação por pauta — campo `pauta` (nome do PDF
+sem o número de ordem, `_audChavePauta()`); `_audSalvar()` troca só as audiências da mesma origem,
+período **e pauta** do ZIP (antigas sem `pauta` casam pela vara), então um ZIP só das varas
+criminais não apaga Família/Cível. (2) Nomes quebrados no Projudi: linha que começa com
+DE/DA/DO/DOS/DAS/E ou tem uma palavra só continua o nome (`CONTINUA_NOME`). (3) Cabeçalho do SEEU
+no formato com "PODER JUDICIÁRIO"/"Edital de"/"Data Inicial" removido. Testado com as pautas reais
+de 22/10 e 26/10–01/11: só as 6 correções esperadas em relação ao parser anterior; com Firestore
+simulado, Família/SEEU de outro PDF preservados e reimportação idempotente (24 = 16 + 5 + 3).
+
 ## Estado atual (sessão 52 — 21/10/2026)
 
 **Implementado nesta sessão:** Audiências passa a importar, pelo mesmo botão/arrastar e vários de
