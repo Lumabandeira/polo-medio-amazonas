@@ -6556,5 +6556,59 @@
       "numero": "PORTARIA Nº 1093/2026-GSPG/DPE/AM",
       "texto": "ALTERAR a Portaria 1011/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.739, pág. 5, em 25 de Setembro de 2026, nos seguintes termos"
     }
+  },
+  {
+    "edicao": 2755,
+    "data": "2026-10-20",
+    "data_formatada": "20/10/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/10/Edicao_2755-2026__publicada_em_20_outubro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1923/2026-GDPG/DPE/AM",
+        "sei": "26.0.000014817-1",
+        "sgi": "2602199",
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Inacio de Araujo Navarro, Defensor Público de 3ª Classe, no trecho Manaus/Urucurituba/Manaus, no período de 20 a 22 de outubro de 2026, a fim de realizar sessão do Tribunal do Júri na Comarca de Urucurituba-AM"
+        ],
+        "resumo": "Autoriza deslocamento de Inácio de Araújo Navarro para realizar sessão do Tribunal do Júri em Urucurituba de 20-22 de outubro de 2026"
+      },
+      {
+        "numero": "Portaria Nº 1119/2026-GSPG/DPE/AM",
+        "sei": "26.0.000014063-4",
+        "sgi": null,
+        "categorias": [
+          "defensor",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3ª Classe Inácio de Araújo Navarro, para atuar na Sessão de Julgamento do Tribunal do Júri da Vara da Comarca de Urucurituba, pautada para o dia 21 de outubro de 2026, nos autos de n.º 0600694-58.2022.8.04.7600"
+        ],
+        "resumo": "Designa Inácio de Araújo Navarro para atuar no Tribunal do Júri de Urucurituba em 21 de outubro de 2026"
+      },
+      {
+        "numero": "Portaria Nº 001/2026 – DPE/AM – POLO DO MÉDIO AMAZONAS",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "A DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS, por intermédio do Defensor Público signatário, lotado no Polo do Médio Amazonas (com sede em Itacoatiara/AM), no uso de suas atribuições constitucionais e legais",
+          "Objeto: Instauração de Procedimento Coletivo – PC, com o fim de apurar a falta de políticas públicas relacionadas à prevenção do vírus HIV e de outras infecções sexualmente transmissíveis no Município de Itacoatiara/AM",
+          "CONSIDERANDO que o Município de Itacoatiara/AM, segundo dados oficiais do Censo Demográfico do IBGE, conta com mais de 103.000 (cento e três mil) habitantes, consolidando-se como o segundo município mais populoso do Estado do Amazonas e o principal polo urbano e socioeconômico da Calha do Médio Amazonas",
+          "CONSIDERANDO que restou constatada a inexistência de oferta e disponibilização regular da Profilaxia Pré-Exposição (PrEP) na rede pública de saúde do Município de Itacoatiara/AM",
+          "b) Junte-se ao presente procedimento cópia do Ofício nº 420/2026 – DPE – POLO MÉDIO AMAZONAS"
+        ],
+        "resumo": "Instauração de Procedimento Coletivo pelo Defensor Público do Polo Médio Amazonas para apurar falta de políticas públicas de prevenção do HIV em Itacoatiara"
+      }
+    ]
   }
 ]
