@@ -6610,5 +6610,30 @@
         "resumo": "Instauração de Procedimento Coletivo pelo Defensor Público do Polo Médio Amazonas para apurar falta de políticas públicas de prevenção do HIV em Itacoatiara"
       }
     ]
+  },
+  {
+    "edicao": 2757,
+    "data": "2026-10-22",
+    "data_formatada": "22/10/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/10/Edicao_2757-2026__publicada_em_22_outubro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Recomendação Nº 01/2026-DPE-AM/POLO MÉDIO AMAZONAS",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "A DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS, por intermédio do Defensor Público signatário, lotado no Polo do Médio Amazonas (com sede em Itacoatiara/AM)",
+          "CONSIDERANDO que o Município de Itacoatiara/AM possui mais de 103.000 (cento e três mil) habitantes (Censo IBGE), configurando o segundo município mais populoso do Estado do Amazonas e o principal polo urbano e socioeconômico da Calha do Médio Amazonas",
+          "CONSIDERANDO que restou constatada, nos autos do Procedimento Coletivo instaurado pela Portaria nº 001/2026-DPE-AM, a inexistência de oferta e disponibilização regular da Profilaxia Pré-Exposição (PrEP) na rede pública municipal de saúde de Itacoatiara/AM"
+        ],
+        "resumo": "Recomendação do Defensor Público do Polo Médio Amazonas ao Município de Itacoatiara para implementação da Profilaxia Pré-Exposição (PrEP) ao HIV no prazo de 90 dias"
+      }
+    ]
   }
 ]
