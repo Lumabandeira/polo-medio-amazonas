@@ -6779,5 +6779,46 @@
       "numero": "PORTARIA Nº 1927/2026-GDPG/DPE/AM",
       "texto": "ALTERAR a Portaria 635/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.677, de 25 de junho de 2026, pág. 10-17, nos seguintes termos"
     }
+  },
+  {
+    "edicao": 2759,
+    "data": "2026-10-26",
+    "data_formatada": "26/10/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/10/Edicao_2759-2026__publicada_em_26_outubro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1129/2026-GSPG/DPE/AM",
+        "sei": "26.0.000014838-4",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 5ª Defensoria Pública do Polo do Médio Amazonas, nos dias 07, 08, 11, 12, 13, 14 e 15 de janeiro de 2027;",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 10ª Defensoria Pública do Polo do Médio Amazonas (Urucará), nos dias 07, 08, 11, 12, 13, 14 e 15 de janeiro de 2027;"
+        ],
+        "resumo": "Designa Eliaquim Antunes de Souza Santos para atuar cumulativamente nas 5ª e 10ª Defensorias do Polo Médio Amazonas (Urucará) de 07 a 15 de janeiro de 2027"
+      },
+      {
+        "numero": "Portaria Nº 1140/2026-GSPG/DPE/AM",
+        "sei": "26.0.000014442-7",
+        "sgi": "2600580",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes",
+          "comarca"
+        ],
+        "trechos": [
+          "I - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 3ª Defensoria Pública do Polo do Médio Amazonas, nos dias 03, 04 e 05 de novembro de 2026;",
+          "II - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 11ª Defensoria Pública do Polo do Médio Amazonas (Silves), nos dias 03, 04 e 05 de novembro de 2026;",
+          "III - DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Eliaquim Antunes de Souza Santos para atuar na 12ª Defensoria Pública do Polo do Médio Amazonas (Silves), nos dias 03, 04 e 05 de novembro de 2026;"
+        ],
+        "resumo": "Designa Eliaquim Antunes de Souza Santos para atuar cumulativamente nas 3ª, 11ª e 12ª Defensorias do Polo Médio Amazonas (Silves) de 03 a 05 de novembro de 2026"
+      }
+    ]
   }
 ]
