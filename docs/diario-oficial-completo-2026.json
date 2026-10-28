@@ -6820,5 +6820,43 @@
         "resumo": "Designa Eliaquim Antunes de Souza Santos para atuar cumulativamente nas 3ª, 11ª e 12ª Defensorias do Polo Médio Amazonas (Silves) de 03 a 05 de novembro de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2760,
+    "data": "2026-10-27",
+    "data_formatada": "27/10/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/10/Edicao_2760-2026__publicada_em_27_outubro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1147/2026-GSPG/DPE/AM",
+        "sei": "26.0.000015006-0",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "nomeacao_diretoria",
+          "substituicao"
+        ],
+        "trechos": [
+          "II - DESIGNAR, no período de 07 a 17 de janeiro de 2027, o Defensor Público Enio Jorge Lima Barbalho Júnior como Coordenador do Polo do Médio Amazonas, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019."
+        ],
+        "resumo": "Designa Enio Jorge Lima Barbalho Júnior como Coordenador do Polo do Médio Amazonas (FGD-6) de 07 a 17 de janeiro de 2027"
+      },
+      {
+        "numero": "Portaria Nº 1149/2026-GSPG/DPE/AM",
+        "sei": "26.0.000014790-6",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3.ª Classe Oswaldo Machado Neto, para atuar nas Sessões de Julgamento do Tribunal do Júri da Vara Única da Comarca de Itapiranga nos dias 01 e 02 de dezembro de 2026, às 08h30, nos autos de n.º 0600834-10.2023.8.04.4900 e 0600102-97.2021.8.04.4900, respectivamente."
+        ],
+        "resumo": "Designa Oswaldo Machado Neto para atuar em Sessões do Tribunal do Júri da Comarca de Itapiranga em 01 e 02 de dezembro de 2026"
+      }
+    ]
   }
 ]
