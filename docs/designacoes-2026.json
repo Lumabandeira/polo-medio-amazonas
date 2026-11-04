@@ -132,6 +132,15 @@
         { "defensor": "elton", "inicio": "2026-01-01", "fim": "2026-04-06" },
         { "defensor": null,    "inicio": "2026-04-06", "fim": null }
       ]
+    },
+    "coord": {
+      "nome": "Coordenação do Polo Médio Amazonas",
+      "area": "Coordenação administrativa do Polo",
+      "destaque": null,
+      "historico_titulares": [
+        { "defensor": "emilly", "inicio": "2026-04-29", "fim": null,
+          "portaria_entrada": "Portaria nº 426/2026-GSPG/DPE/AM" }
+      ]
     }
   },
 

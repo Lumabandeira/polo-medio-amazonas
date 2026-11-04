@@ -62,6 +62,18 @@ docs/
 
 ---
 
+## Estado atual (sessão 55 — 04/11/2026)
+
+**Implementado nesta sessão:** nova linha **Coordenação do Polo Médio Amazonas** em "Designações
+Atuais" (abaixo da 12ª DP), chave `coord` em `defensorias` do `docs/designacoes-2026.json`
+(titular Emilly desde 29/04/2026, Portaria nº 426/2026-GSPG/DPE/AM; área "Coordenação
+administrativa do Polo"). Reaproveita o mecanismo das DPs: ✏️ de titulares, card da Emilly,
+bloco de substituto no formulário de afastamento e exibição no popup do Calendário e na Lista de
+Substituições ("Coordenação do Polo"). Ordenação das chaves via `_dpCmp`/`_dpOrdem()` (coord
+sempre por último). Testado no navegador com afastamento simulado (coordenação dividida entre
+dois substitutos). **Pendente (usuária):** reeditar afastamentos já cadastrados da Emilly para
+indicar quem assumiu a coordenação. Ver `docs/site/estrutura-html.md` (seção "Coordenação do Polo").
+
 ## Estado atual (sessão 54 — 04/11/2026)
 
 **Implementado nesta sessão:** badge do Pedro Paiva no Calendário de afastamentos com cor fixa

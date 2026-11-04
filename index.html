@@ -4622,7 +4622,16 @@
             return result;
         }
 
+        // Coordenação do Polo: órgão não numerado em `defensorias` (chave 'coord'), com titular e
+        // substituições iguais às das DPs. Sempre ordenado depois da 12ª DP.
+        const DP_COORD = 'coord';
+        function _dpOrdem(dpKey) {
+            return String(dpKey) === DP_COORD ? 99 : parseInt(dpKey);
+        }
+        function _dpCmp(a, b) { return _dpOrdem(a) - _dpOrdem(b); }
+
         function dpDisplayLabel(dpKey) {
+            if (String(dpKey) === DP_COORD) return 'Coordenação do Polo';
             if (!jsonDesignacoes) return dpKey + 'ª DP';
             const dp = jsonDesignacoes.defensorias[String(dpKey)];
             if (!dp) return dpKey + 'ª DP';
@@ -4994,7 +5003,7 @@
             });
             Object.entries(dpsPorChave).forEach(([calKey, dps]) => {
                 if (defensorNames[calKey]) return;
-                const lista = [...dps].sort((a, b) => +a - +b);
+                const lista = [...dps].sort(_dpCmp);
                 defensorNames[calKey] = lista.length === 1
                     ? `${lista[0]}ª DP (vaga)`
                     : `DP ${lista.join('/')} (vaga)`;
@@ -5248,7 +5257,7 @@
             const start = new Date(dataInicio + 'T12:00:00');
             const end   = new Date(dataFim    + 'T12:00:00');
             const dps = [];
-            Object.keys(jsonDesignacoes.defensorias).sort((a,b) => +a - +b).forEach(dpKey => {
+            Object.keys(jsonDesignacoes.defensorias).sort(_dpCmp).forEach(dpKey => {
                 const dp = jsonDesignacoes.defensorias[dpKey];
                 for (const h of dp.historico_titulares) {
                     if (h.defensor !== defensor) continue;
@@ -5364,7 +5373,7 @@
                     <div class="dp-substitutos-container"></div>
                     <button type="button" class="btn-add-sub"
                         onclick="adicionarSubstitutoRow('${dpKey}','${defensorAusente}')">
-                        + Adicionar outro substituto para esta DP
+                        + Adicionar outro substituto para ${dpKey === DP_COORD ? 'a Coordenação' : 'esta DP'}
                     </button>
                 </div>`;
             const container = section.querySelector('.dp-substitutos-container');
@@ -10432,19 +10441,19 @@
             const allAtivos = [];
             internos.forEach(defKey => {
                 const defInfo = defensores[defKey];
-                const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
+                const dps = (defCurrentDPs[defKey] || []).sort(_dpCmp);
                 const futDps = (defFutureDPs[defKey] || []);
                 // Pular se já aparece via orphanCurrentMembros (nome completo no Firestore)
                 if (!dps.length && !futDps.length) {
                     if (orphanCurrentMembros.some(ok => ok === defInfo.nome || ok === defInfo.nome_curto)) return;
                 }
-                const minDp = dps.length ? Math.min(...dps.map(Number))
-                            : futDps.length ? Math.min(...futDps.map(f => parseInt(f.dpKey))) : 999;
+                const minDp = dps.length ? Math.min(...dps.map(_dpOrdem))
+                            : futDps.length ? Math.min(...futDps.map(f => _dpOrdem(f.dpKey))) : 999;
                 allAtivos.push({ key: defKey, nome: defInfo.nome, dps, futDps, minDp, isOrphan: false });
             });
             orphanCurrentMembros.forEach(defKey => {
-                const dps = (defCurrentDPs[defKey] || []).sort((a,b) => parseInt(a) - parseInt(b));
-                const minDp = dps.length ? Math.min(...dps.map(Number)) : 999;
+                const dps = (defCurrentDPs[defKey] || []).sort(_dpCmp);
+                const minDp = dps.length ? Math.min(...dps.map(_dpOrdem)) : 999;
                 allAtivos.push({ key: defKey, nome: defKey, dps, futDps: [], minDp, isOrphan: true });
             });
             allAtivos.sort((a, b) => a.minDp - b.minDp);
@@ -10464,7 +10473,7 @@
                 if (dps.length > 0) {
                     dps.forEach(dpKey => {
                         const dp = defensorias[dpKey];
-                        const label = dp.nome.includes('(')
+                        const label = (dp.nome.includes('(') || dpKey === DP_COORD)
                             ? esc(dp.nome)
                             : `${esc(dp.nome)} (${esc(dp.area)})`;
                         const hist = (defHistorico[defKey] || []).find(h => {
@@ -10496,9 +10505,9 @@
                         html += `<li style="line-height:1.8;">${label}${detalhe}</li>`;
                     });
                 } else if (futDps.length > 0) {
-                    futDps.sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey)).forEach(({ dpKey: fdpKey, inicio: finicio, portaria_entrada: fprt, do_entrada: fdo }) => {
+                    futDps.sort((a,b) => _dpCmp(a.dpKey, b.dpKey)).forEach(({ dpKey: fdpKey, inicio: finicio, portaria_entrada: fprt, do_entrada: fdo }) => {
                         const fdp = defensorias[fdpKey];
-                        const flabel = fdp.nome.includes('(') ? esc(fdp.nome) : `${esc(fdp.nome)} (${esc(fdp.area)})`;
+                        const flabel = (fdp.nome.includes('(') || fdpKey === DP_COORD) ? esc(fdp.nome) : `${esc(fdp.nome)} (${esc(fdp.area)})`;
                         const s = `color:var(--text-secondary);font-size:0.82em;`;
                         let detalhe = `<br><span style="${s}">A partir de ${fmtDate(finicio)}`;
                         if (fprt) {
@@ -10520,11 +10529,11 @@
                 .filter(defKey => !defensores[defKey] && !defCurrentDPs[defKey])
                 .sort();
             orphanFutureMembros.forEach(defKey => {
-                const futDps = defFutureDPs[defKey].sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
+                const futDps = defFutureDPs[defKey].sort((a,b) => _dpCmp(a.dpKey, b.dpKey));
                 html += `<div class="defensor-card" style="border-left:4px solid #f59e0b;opacity:0.9"><h4 style="color:#92400e;">${esc(defKey)} <span style="font-size:0.8em;font-weight:400;">(designação futura)</span></h4><ul>`;
                 futDps.forEach(({ dpKey: fdpKey, inicio: finicio, portaria_entrada: fprt, do_entrada: fdo }) => {
                     const fdp = defensorias[fdpKey];
-                    const flabel = fdp.nome.includes('(') ? esc(fdp.nome) : `${esc(fdp.nome)} (${esc(fdp.area)})`;
+                    const flabel = (fdp.nome.includes('(') || fdpKey === DP_COORD) ? esc(fdp.nome) : `${esc(fdp.nome)} (${esc(fdp.area)})`;
                     const s = `color:var(--text-secondary);font-size:0.82em;`;
                     let detalhe = `<br><span style="${s}">A partir de ${fmtDate(finicio)}`;
                     if (fprt) {
@@ -10556,7 +10565,7 @@
                         dpsHist.forEach(({ dpKey, inicio, fim, portaria_entrada, do_entrada, portaria_saida, do_saida }) => {
                             const dp = defensorias[dpKey];
                             if (!dp) return;
-                            const label = dp.nome.includes('(')
+                            const label = (dp.nome.includes('(') || dpKey === DP_COORD)
                                 ? esc(dp.nome)
                                 : `${esc(dp.nome)} (${esc(dp.area)})`;
                             const s = `color:var(--text-secondary);font-size:0.82em;`;
@@ -10588,13 +10597,13 @@
                 // Ex-membros do JSON (ativo: false)
                 exMembros.forEach(defKey => {
                     const nome = defensores[defKey].nome;
-                    const dpsHist = (defHistorico[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
+                    const dpsHist = (defHistorico[defKey] || []).sort((a,b) => _dpCmp(a.dpKey, b.dpKey));
                     html += renderExMembroCard(nome, dpsHist, defKey);
                 });
 
                 // Ex-membros "livres" — cadastrados via UI como texto, sem DP ativa
                 orphanExMembros.sort().forEach(defKey => {
-                    const dpsHist = (defHistorico[defKey] || []).sort((a,b) => parseInt(a.dpKey) - parseInt(b.dpKey));
+                    const dpsHist = (defHistorico[defKey] || []).sort((a,b) => _dpCmp(a.dpKey, b.dpKey));
                     html += renderExMembroCard(defKey, dpsHist, null);
                 });
 
@@ -10606,7 +10615,7 @@
             const isAdmin = isAdminDefensores;
             let tableHtml = `<h2>📍 Designações Atuais (2026)</h2>`
                           + `<div style="overflow-x:auto"><table style="min-width:600px"><thead><tr><th style="width:28%">Órgão de Atuação</th><th style="min-width:260px">Defensor Público</th><th style="width:28%">Área de Atuação</th>${isAdmin ? '<th style="width:44px;display:none" class="col-editar-dp"></th>' : ''}</tr></thead><tbody>`;
-            Object.keys(defensorias).sort((a,b) => parseInt(a)-parseInt(b)).forEach(dpKey => {
+            Object.keys(defensorias).sort(_dpCmp).forEach(dpKey => {
                 const dp  = defensorias[dpKey];
                 const tit = getCurrentTitular(dpKey);
                 const titNome = tit ? esc(defensores[tit]?.nome || tit) : '<em>(Vaga)</em>';

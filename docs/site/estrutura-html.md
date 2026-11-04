@@ -127,6 +127,21 @@ adicionados na sessão 50: `meta_trimestral` → 🎯 Meritocracia, `estagio` �
 | Férias Equipe | `afastamentos_equipe/{id}` | formulário modal |
 | Plantão (período/defensor/assessoria) | `plantao_admin/{id}` | formulário modal (1 período) **ou** colar CSV em lote — ver seção própria abaixo |
 
+## Coordenação do Polo (órgão não numerado em `defensorias`)
+
+Desde a sessão 55, `docs/designacoes-2026.json` tem em `defensorias` a chave **`coord`**
+("Coordenação do Polo Médio Amazonas", área "Coordenação administrativa do Polo"; titular `emilly`
+desde 29/04/2026 — Portaria nº 426/2026-GSPG/DPE/AM). Ela usa todo o mecanismo das DPs:
+linha da tabela "Designações Atuais" (sempre depois da 12ª), ✏️ (`titulares_admin/coord`),
+card do defensor em "Defensores Públicos", bloco de substitutos no formulário de afastamento
+(`getDPsDoDefensor()` → `designacoes_dp[].dp = 'coord'`), popup do Calendário e Lista de
+Substituições (rótulo "Coordenação do Polo" via `dpDisplayLabel()`).
+- **Ordenação:** chave não numérica — use `_dpCmp`/`_dpOrdem()` (coord = 99) em vez de
+  `parseInt(a) - parseInt(b)` ao ordenar chaves de `defensorias`. Constante `DP_COORD`.
+- **Fica de fora** (listas fixas de DPs): Escala Semanal, Audiências, Atribuições, alternância A/B.
+- Afastamentos gravados antes da sessão 55 não têm a coordenação em `designacoes_dp`; é preciso
+  reeditá-los para registrar quem assumiu.
+
 ## Trabalho em Trânsito (tipo especial dentro de Afastamentos)
 
 Exibido na interface como "💻 Trabalho em Trânsito" (é um tipo de trabalho remoto — o valor

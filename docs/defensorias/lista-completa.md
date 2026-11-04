@@ -31,6 +31,15 @@
 
 > As DPs 7–12 ficaram vagas após o Concurso de Remoção nº 1/2026. Os defensores que as ocupavam (José Antônio, Elton Dariva, Elaine Maria) saíram do polo.
 
+## Coordenação do Polo Médio Amazonas (não é DP, mas tem titular e substituições)
+
+| Órgão | Titular | Desde | Ato |
+|-------|---------|-------|-----|
+| Coordenação do Polo Médio Amazonas | Emilly Bianca Ferreira dos Santos | 29/04/2026 | Portaria nº 426/2026-GSPG/DPE/AM (DO de 29/04/2026) |
+
+> Chave `coord` em `defensorias` no `docs/designacoes-2026.json`. Nas férias/folgas/licenças da
+> coordenadora, outro membro do polo assume — registrado no formulário de afastamento como as DPs.
+
 ## Distribuição por Defensor (ativos)
 
 | Defensor | Chave JSON | DPs Titulares |
