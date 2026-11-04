@@ -4,7 +4,7 @@
 
 - **Status:** Ativo (a partir de 01/10/2026)
 - **Chave JSON:** `pedro`
-- **Cor do badge:** paleta dinâmica
+- **Cor do badge:** `#a7f3d0` (verde-claro, texto `#065f46` — fixado no CSS estático `BADGE_CSS_KNOWN`; contorno do Trabalho em Trânsito em `#059669`, `BADGE_COR_CONTORNO`)
 - **Ingresso no polo:** 01/10/2026 (7º Concurso de Remoção — Portaria nº 1708/2026-GDPG/DPE/AM, Edição 2734 de 18/09/2026)
 - **Origem:** 4ª Defensoria Pública do Polo do Médio Solimões
 

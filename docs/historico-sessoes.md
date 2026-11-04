@@ -4,6 +4,14 @@
 
 ---
 
+## Sessão 54 — 04/11/2026
+
+- **Calendário de afastamentos → cor do Pedro Paiva:** ele usava a paleta dinâmica e caía no mesmo
+  verde `#10b981` do Miguel. Agora tem cor fixa `#a7f3d0` com texto `#065f46` (opção escolhida pela
+  usuária entre 4 tons) e contorno `#059669` no badge de Trabalho em Trânsito. Índice inicial da
+  paleta fixado em 8 (`BADGE_PALETTE_INICIO`) para não mudar a cor da Thays e dos demais. Conferido
+  no navegador com afastamentos de dezembro simulados.
+
 ## Sessão 53 — 21/10/2026
 
 - **Audiências → importação por pauta:** cada audiência guarda a pauta (PDF) de origem; reimportar

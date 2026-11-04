@@ -552,6 +552,10 @@
         .defensor-badge.miguel {
             background: #10b981;
         }
+        .defensor-badge.pedro {
+            background: #a7f3d0;
+            color: #065f46;
+        }
         .defensor-badge.elaine {
             background: #a855f7;
         }
@@ -4486,18 +4490,25 @@
             '#84cc16','#0ea5e9'
         ];
         // Cores já definidas no CSS estático (não reinjetar)
-        const BADGE_CSS_KNOWN = { icaro:true, jose:true, elton:true, eliaquim:true, elaine:true, mariana:true, emilly:true, miguel:true };
+        const BADGE_CSS_KNOWN = { icaro:true, jose:true, elton:true, eliaquim:true, elaine:true, mariana:true, emilly:true, miguel:true, pedro:true };
         const BADGE_CSS_KNOWN_COLORS = {
             icaro:'#3b82f6', jose:'#10b981', elton:'#f59e0b', eliaquim:'#f97316',
-            elaine:'#a855f7', mariana:'#ff69b4', emilly:'#f43f5e', miguel:'#10b981'
+            elaine:'#a855f7', mariana:'#ff69b4', emilly:'#f43f5e', miguel:'#10b981',
+            pedro:'#a7f3d0'
         };
+        // Cor do contorno/texto do badge de Trabalho em Trânsito quando o fundo do badge normal é
+        // claro demais para servir de texto sobre branco
+        const BADGE_COR_CONTORNO = { pedro:'#059669' };
+        // Início fixo do índice da paleta: era Object.keys(BADGE_CSS_KNOWN).length (8) antes do
+        // Pedro ganhar cor fixa — mantido em 8 para não trocar a cor de quem usa a paleta (ex.: Thays)
+        const BADGE_PALETTE_INICIO = 8;
 
         function buildDefensorNames() {
             if (!jsonDesignacoes) return;
             defensorNames = {};
             defensorColors = { ...BADGE_CSS_KNOWN_COLORS };
             const extraStyles = [];
-            let paletteIdx = Object.keys(BADGE_CSS_KNOWN).length;
+            let paletteIdx = BADGE_PALETTE_INICIO;
 
             Object.entries(jsonDesignacoes.defensores).forEach(([key, info]) => {
                 const calKey = defensorCalKey(key);
@@ -6627,7 +6638,7 @@
 
                 if (remotoDia) {
                     remotoDia.forEach(defensor => {
-                        const cor = defensorColors[defensor] || '#0e7490';
+                        const cor = BADGE_COR_CONTORNO[defensor] || defensorColors[defensor] || '#0e7490';
                         const badge = document.createElement('div');
                         badge.className = `defensor-badge ${defensor}`;
                         badge.title = `${defensorNames[defensor] || defensor} — Trabalho em Trânsito`;

@@ -103,6 +103,12 @@ adicionados na sessão 50: `meta_trimestral` → 🎯 Meritocracia, `estagio` �
 | Eliaquim Antunes de Souza Santos | `eliaquim` | `#f97316` (laranja) |
 | Emilly Bianca Ferreira dos Santos | `emilly` | `#f43f5e` (vermelho-rosa) |
 | Miguel Eduardo de Azevedo Martins Filho | `miguel` | `#10b981` (verde-esmeralda) |
+| Pedro Henrique Pereira Paiva | `pedro` | `#a7f3d0` (verde-claro, texto `#065f46`) |
+
+> A paleta dinâmica começa sempre no índice 8 (`BADGE_PALETTE_INICIO`), mesmo com mais defensores
+> em `BADGE_CSS_KNOWN` — assim fixar a cor de alguém não troca a cor de quem usa a paleta (Thays, Ênio…).
+> `BADGE_COR_CONTORNO` dá uma cor mais escura para o badge tracejado de Trabalho em Trânsito quando
+> o fundo do badge normal é claro demais para servir de texto.
 
 ## Seções Editáveis pelo Admin (Firestore)
 

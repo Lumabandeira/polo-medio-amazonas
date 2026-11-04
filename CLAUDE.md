@@ -62,6 +62,13 @@ docs/
 
 ---
 
+## Estado atual (sessão 54 — 04/11/2026)
+
+**Implementado nesta sessão:** badge do Pedro Paiva no Calendário de afastamentos com cor fixa
+`#a7f3d0` (texto `#065f46`; contorno `#059669` no Trabalho em Trânsito, `BADGE_COR_CONTORNO`) — antes
+caía no mesmo verde do Miguel pela paleta dinâmica. `BADGE_PALETTE_INICIO = 8` mantém as cores de
+quem segue na paleta (Thays continua azul). Conferido no navegador com dados simulados.
+
 ## Estado atual (sessão 53 — 21/10/2026)
 
 **Implementado nesta sessão (Audiências):** (1) importação por pauta — campo `pauta` (nome do PDF
