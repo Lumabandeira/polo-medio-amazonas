@@ -7047,5 +7047,26 @@
       "numero": "PORTARIA Nº 1146/2026-GSPG/DPE/AM",
       "texto": "ALTERAR a Portaria 1011/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.739, pág. 5, em 25 de Setembro de 2026, nos seguintes termos"
     }
+  },
+  {
+    "edicao": 2765,
+    "data": "2026-11-04",
+    "data_formatada": "04/11/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/11/Edicao_2765-2026__publicada_em_04_novembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 2000/2026-GDPG/DPE/AM",
+        "sei": "26.0.000015494-5",
+        "sgi": "2602334",
+        "categorias": [
+          "comarca"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Fabio Honda Nascimento, Chefe da Assessoria Militar DPE-5, no trecho Manaus/Urucurituba/Manaus, no período de 22 a 23 de novembro de 2026, a fim de realizar apoio logístico e a segurança deste signatário e da comitiva da DPAM, que participará da solenidade de inauguração do Posto de Atendimento Avançado (PAV) em Urucurituba"
+        ],
+        "resumo": "Autoriza deslocamento de servidor para Urucurituba para apoiar inauguração do Posto de Atendimento Avançado"
+      }
+    ]
   }
 ]
