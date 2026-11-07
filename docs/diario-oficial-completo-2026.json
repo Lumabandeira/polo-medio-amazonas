@@ -7068,5 +7068,125 @@
         "resumo": "Autoriza deslocamento de servidor para Urucurituba para apoiar inauguração do Posto de Atendimento Avançado"
       }
     ]
+  },
+  {
+    "edicao": 2767,
+    "data": "2026-11-06",
+    "data_formatada": "06/11/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/11/Edicao_2767-2026__publicada_em_06_novembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1083/2026-GSPG/DPE/AM",
+        "sei": "26.0.000013655-6",
+        "sgi": "3189",
+        "categorias": [
+          "polo_medio",
+          "plantao",
+          "defensor",
+          "servidor"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público do Plantão do Polo Médio Solimões, correspondentes aos períodos de 23/11 a 29/11 e 30/11 a 06/12",
+          "V - DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas, definindo que a atuação com base nesta atribuição será considerada designação especial para fins de promoção: Escala de substituição | Polo do Rio Negro-Solimões | Polo do Médio Amazonas",
+          "Polo do Médio Amazonas | Plantão Cível e de Família | Eliaquim Antunes de Souza Santos (R) | Pedro Henrique Pereira Paiva (R) | Emilly Bianca Ferreira dos Santos (R) | Enio Jorge Lima Barbalho Júnior (F)",
+          "Polo do Médio Amazonas | Plantão Criminal e de Custódia | Eliaquim Antunes de Souza Santos | Pedro Henrique Pereira Paiva | Emilly Bianca Ferreira dos Santos | Enio Jorge Lima Barbalho Júnior",
+          "Polo do Médio Amazonas | Assessoria | Fábio Bastos de Souza | Larice Bruce Pereira | Larice Bruce Pereira | Larice Bruce Pereira"
+        ],
+        "resumo": "Designa defensores e servidores para plantão do Polo Médio Amazonas (semanas 23/11 a 29/11 e 30/11 a 06/12) e estabelece escala de substituição recíproca entre polos"
+      },
+      {
+        "numero": "Portaria Nº 1192/2026-GSPG/DPE/AM",
+        "sei": "26.0.000015420-1",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "substituicao"
+        ],
+        "trechos": [
+          "DESIGNAR, em caráter especial, a Defensora Pública Emilly Bianca Ferreira dos Santos, matrícula nº 000.831-7A, para exercer, cumulativamente, as funções de Defensora Pública de 2ª Classe do Polo Médio Amazonas e Chefe de Unidade, durante o período de afastamento da Defensora Pública Eliaquim Antunes de Souza Santos"
+        ],
+        "resumo": "Designa Emilly Bianca Ferreira dos Santos para substituir Eliaquim Antunes de Souza Santos nas funções de Defensora de 2ª Classe e Chefe de Unidade do Polo Médio Amazonas"
+      }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-09-28",
+        "data_fim": "2026-10-04",
+        "defensor": "Eliaquim Antunes de Souza Santos (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-10-05",
+        "data_fim": "2026-10-11",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-10-12",
+        "data_fim": "2026-10-18",
+        "defensor": "Emilly Bianca Ferreira dos Santos (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-10-19",
+        "data_fim": "2026-10-25",
+        "defensor": "Enio Jorge Lima Barbalho Júnior (F)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-10-26",
+        "data_fim": "2026-11-01",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-11-02",
+        "data_fim": "2026-11-08",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-11-09",
+        "data_fim": "2026-11-15",
+        "defensor": "Eliaquim Antunes de Souza (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-11-16",
+        "data_fim": "2026-11-22",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-11-23",
+        "data_fim": "2026-11-29",
+        "defensor": "Eliaquim Antunes de Souza (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-11-30",
+        "data_fim": "2026-12-06",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-12-07",
+        "data_fim": "2026-12-13",
+        "defensor": "Enio Jorge Lima Barbalho Junior (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-12-14",
+        "data_fim": "2026-12-19",
+        "defensor": "Emilly Bianca Ferreira dos Santos (R)",
+        "assessoria": ""
+      }
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 1185/2026-GSPG/DPE/AM",
+      "texto": "ALTERAR a Portaria 1011/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.739, pág. 5, em 25 de Setembro de 2026, nos seguintes termos"
+    }
   }
 ]
