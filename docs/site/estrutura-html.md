@@ -831,8 +831,9 @@ botão "📥 Importar Pauta (ZIP)" ou arrastar o ZIP em qualquer lugar do site).
 navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTexto()`.
 
 - **Duas origens, mesmo botão:** ZIP do **Projudi** (varas de Itacoatiara, cabeçalho
-  "PODER JUDICIÁRIO" + nome da vara) e ZIP do **SEEU** (execução penal — VEP, cabeçalho
-  "TJAM - VEP de Itacoatiara - Regime …"). A origem é detectada PDF a PDF (`_audEhSeeu()`), não
+  "PODER JUDICIÁRIO" + nome da vara) e ZIP do **SEEU** (execução penal — cabeçalho
+  "TJAM - <vara>": "VEP de Itacoatiara - Regime …" ou, desde 09/11/2026, "Corregedoria de
+  Presídios e outros Procedimentos da Comarca de" — qualquer linha "TJAM - " vale, sessão 56). A origem é detectada PDF a PDF (`_audEhSeeu()`), não
   pelo nome do arquivo.
 - **DP:** área pela vara (`AUD_AREA_KEYWORDS`) + paridade do dígito antes do 1º "-" do processo
   (`AUD_DP_POR_AREA`). O SEEU é sempre `criminal` (par → 5ª DP, ímpar → 6ª DP), qualquer que seja
@@ -843,6 +844,12 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
   várias linhas são juntados numa pessoa só (`_juntarPartes`, execução penal tem uma parte de
   cada lado); sem linha "Data Inicial/Data Final", o período vem do nome do ZIP
   (`…_19-10-2026_a_25-10-2026.zip`).
+- **Aviso de problemas (sessão 56):** ao fim da importação, se algo falhou ou entrou incompleto, o
+  modal fica aberto com a lista (`_audListaProblemas()`, estilo `warn`/`error` de `_audSetStatus()`)
+  até clicar em "Fechar" (`#aud-import-fechar`; clicar fora não fecha, e durante a importação não
+  fecha). Itens: arquivo com erro, PDF ilegível ou sem audiência, bloco sem número de processo
+  (`descartados` de `_audParsearTexto()`), audiência sem DP ou sem data/hora (`problemas` de
+  `_audProcessarZip()`). Cada arquivo tem try/catch próprio — a falha de um não para os outros.
 - **Gravação por origem:** `_audSalvar()` lê o documento da semana e substitui só as audiências
   da mesma origem do ZIP importado, mantendo as da outra (reimportar o Projudi não apaga o SEEU e
   vice-versa). Sem `origem` = Projudi (dados antigos).

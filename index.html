@@ -14595,9 +14595,11 @@ Regras obrigatórias:
             return m ? m[1].trim() : '';
         }
 
-        // Pauta do SEEU (execução penal): o cabeçalho traz "TJAM - VEP de Itacoatiara - Regime …"
-        // no lugar de "PODER JUDICIÁRIO\n<vara>". É sempre criminal.
-        const AUD_SEEU_RE = /^\x02?TJAM - (VEP[^\n]*)$/m;
+        // Pauta do SEEU (execução penal): o cabeçalho traz "TJAM - <vara>" no lugar de
+        // "PODER JUDICIÁRIO\n<vara>". É sempre criminal. Varas já vistas: "VEP de Itacoatiara -
+        // Regime …" e "Corregedoria de Presídios e outros Procedimentos da Comarca de …"
+        // (pauta de 09/11/2026). Pautas do Projudi nunca têm linha "TJAM - ".
+        const AUD_SEEU_RE = /^\x02?TJAM - ([^\n]+)$/m;
 
         function _audEhSeeu(texto) {
             return AUD_SEEU_RE.test(texto);
@@ -14615,6 +14617,7 @@ Regras obrigatórias:
                 texto = texto.replace(/^\x02?TRIBUNAL DE JUSTI[ÇC]A DO ESTADO DO AMAZONAS\n(?:\x02?PODER JUDICI[ÁA]RIO\n)?\x02?TJAM - [^\n]*\n(?:\x02?Edital de[^\n]*\n)?\x02?ESTADO DO AMAZONAS\n(?:\x02?Data Inicial:[^\n]*\n)?/gm, '');
             }
             const audiencias = [];
+            const descartados = []; // blocos "Processo:" sem número reconhecível (avisados na importação)
 
             // Dividir por bloco: cada audiência começa em "Processo:"
             const blocos = texto.split(/\nProcesso:/);
@@ -14623,7 +14626,10 @@ Regras obrigatórias:
                 const bloco = 'Processo:' + blocos[i];
 
                 const processo = (bloco.match(/Processo:\s*(\S+)/) || [])[1]?.trim();
-                if (!processo || !/\d{7}-\d{2}/.test(processo)) continue;
+                if (!processo || !/\d{7}-\d{2}/.test(processo)) {
+                    descartados.push(bloco.split('\n')[0].replace(/\x02/g, '').slice(0, 80));
+                    continue;
+                }
 
                 const status = (bloco.match(/Status da Audi[eê]ncia:\s*([^\n]+)/) || [])[1]?.trim() || 'DESIGNADA';
                 const dhStr  = (bloco.match(/Data\/hora Audi[eê]ncia:\s*([^\n]+)/) || [])[1]?.trim() || '';
@@ -14775,7 +14781,7 @@ Regras obrigatórias:
                 });
             }
 
-            return { vara, area, origem: seeu ? 'seeu' : 'projudi', audiencias };
+            return { vara, area, origem: seeu ? 'seeu' : 'projudi', audiencias, descartados };
         }
 
         // ─── Processamento do ZIP ─────────────────────────────────────────
@@ -14786,6 +14792,7 @@ Regras obrigatórias:
             const todasAuds = [];
             const vistas = new Set();
             const pautas = [];   // um item por PDF lido, mesmo sem audiências
+            const problemas = []; // o que não entrou ou entrou incompleto — mostrado na importação
             let periodo = '';
 
             const entries = [];
@@ -14804,15 +14811,28 @@ Regras obrigatórias:
                         if (m) periodo = `${m[1]} a ${m[2]}`;
                     }
 
-                    const { audiencias, vara } = _audParsearTexto(texto);
+                    const { audiencias, vara, descartados } = _audParsearTexto(texto);
                     const pauta = _audChavePauta(path);
+                    const nomePdf = path.split('/').pop();
                     pautas.push({ pauta, vara });
+                    if (!audiencias.length)
+                        problemas.push(`${nomePdf}: nenhuma audiência lida neste PDF`);
+                    for (const d of descartados)
+                        problemas.push(`${nomePdf}: bloco ignorado, número do processo não reconhecido ("${d}")`);
                     for (const a of audiencias) {
                         const k = _audChaveDedup(a);
-                        if (!vistas.has(k)) { vistas.add(k); todasAuds.push({ ...a, pauta }); }
+                        if (vistas.has(k)) continue;
+                        vistas.add(k);
+                        todasAuds.push({ ...a, pauta });
+                        if (!a.dp)
+                            problemas.push(`${a.processo} (${a.data || 'sem data'} ${a.hora}) — ${nomePdf}: ` +
+                                `sem Defensoria (vara "${a.vara || 'não identificada'}"); foi salva, mas não aparece em nenhuma DP`);
+                        else if (!a.data || !a.hora)
+                            problemas.push(`${a.processo} — ${nomePdf}: data/hora da audiência não lida`);
                     }
                 } catch (e) {
                     console.warn('[AUD] Erro ao processar PDF:', path, e);
+                    problemas.push(`${path.split('/').pop()}: erro ao ler o PDF (${e.message || e}); as audiências dele não entraram`);
                 }
             }
 
@@ -14824,7 +14844,7 @@ Regras obrigatórias:
             }
 
             _audOrdenar(todasAuds);
-            return { periodo, audiencias: todasAuds, pautas };
+            return { periodo, audiencias: todasAuds, pautas, problemas };
         }
 
         // "…/Pautas/02_1a_Vara_da_Comarca_de_Itacoatiara_-_Criminal.pdf" → "1a_Vara_da_Comarca_de_Itacoatiara_-_Criminal"
@@ -15892,7 +15912,7 @@ Regras obrigatórias:
                   onchange="_audArquivosSelecionados([...this.files]); this.value = ''">
                 <div id="aud-import-status" style="display:none;margin-top:14px"></div>
                 <div style="display:flex;gap:12px;margin-top:20px;justify-content:flex-end">
-                  <button onclick="_audFecharImport()"
+                  <button id="aud-import-fechar" onclick="_audFecharImport()"
                     style="padding:8px 20px;border-radius:8px;border:1.5px solid var(--border-color);background:white;
                            cursor:pointer;font-family:inherit;font-weight:600">Cancelar</button>
                 </div>
@@ -15911,18 +15931,32 @@ Regras obrigatórias:
             document.body.appendChild(div);
         }
 
+        // Durante a importação o botão não fecha (o envio continua); depois, o aviso
+        // só some quando a usuária clica em "Fechar".
         function _audFecharImport() {
+            if (_audImportando) return mostrarToast('⏳ Aguarde a importação terminar.', true);
             const o = document.getElementById('aud-import-overlay');
             if (o) o.style.display = 'none';
+            const st = document.getElementById('aud-import-status');
+            if (st) { st.style.display = 'none'; st.innerHTML = ''; }
+            const bt = document.getElementById('aud-import-fechar');
+            if (bt) bt.textContent = 'Cancelar';
         }
 
         function _audSetStatus(msg, tipo = 'info') {
             const el = document.getElementById('aud-import-status');
             if (!el) return;
-            const bg  = { info: '#eff6ff', success: '#f0fdf4', error: '#fef2f2' };
-            const cor = { info: '#1e3a8a', success: '#065f46', error: '#dc2626' };
-            el.style.cssText = `display:block;padding:12px 16px;border-radius:8px;background:${bg[tipo]};color:${cor[tipo]};font-size:.9em`;
+            const bg  = { info: '#eff6ff', success: '#f0fdf4', warn: '#fffbeb', error: '#fef2f2' };
+            const cor = { info: '#1e3a8a', success: '#065f46', warn: '#92400e', error: '#dc2626' };
+            const borda = { warn: '#f59e0b', error: '#dc2626' }[tipo];
+            el.style.cssText = `display:block;padding:12px 16px;border-radius:8px;background:${bg[tipo]};color:${cor[tipo]};` +
+                `font-size:.9em;max-height:45vh;overflow-y:auto;overflow-wrap:anywhere;${borda ? `border-left:4px solid ${borda}` : ''}`;
             el.innerHTML = msg;
+        }
+
+        // Lista de problemas da importação, um por linha
+        function _audListaProblemas(avisos) {
+            return `<ul style="margin:6px 0 0;padding-left:20px">${avisos.map(a => `<li style="margin:3px 0">${esc(a)}</li>`).join('')}</ul>`;
         }
 
         // Um ou mais arquivos (botão ou arrastar). Tipo reconhecido pelo conteúdo:
@@ -15942,77 +15976,106 @@ Regras obrigatórias:
             try {
                 if (!window.JSZip) await _pcCarregarScript(AUD_JSZIP_SRC);
                 const pautas = [], csvs = [], copias = [];
+                // Cada arquivo tem seu próprio try/catch: a falha de um vira aviso e os
+                // demais continuam sendo importados.
+                const falhou = (nome, e) => {
+                    console.error('[AUD] Erro ao importar', nome, e);
+                    const msg = /central directory|zip file|corrupted zip|end of data/i.test(e?.message || '')
+                        ? 'arquivo ZIP inválido ou corrompido' : (e?.message || e);
+                    avisos.push(`${nome}: erro — ${msg}. Este arquivo não foi importado; os demais seguiram.`);
+                };
+
                 for (const f of files) {
-                    if (/\.csv$/i.test(f.name)) {
-                        const txt = await _audTextoCsv(f);
-                        if (_audEhCsvClassificacao(txt)) csvs.push(f);
-                        else avisos.push(`${f.name}: CSV sem as colunas "processo;DPE"`);
-                    } else if (/\.zip$/i.test(f.name)) {
-                        _audSetStatus(`⏳ Abrindo ${esc(f.name)}...`);
-                        const zip = await JSZip.loadAsync(f);
-                        const pdfs = [];
-                        zip.forEach((path, entry) => {
-                            if (!entry.dir && path.toLowerCase().endsWith('.pdf')) pdfs.push({ path, entry });
-                        });
-                        const cps = pdfs.filter(p => _audEhCopia(p.path));
-                        if (cps.length) copias.push({ file: f, zip, entradas: cps });
-                        if (pdfs.length > cps.length) pautas.push({ file: f, zip });
-                        if (!pdfs.length) avisos.push(`${f.name}: nenhum PDF dentro do ZIP`);
-                    } else {
-                        avisos.push(`${f.name}: tipo não suportado (use .zip ou .csv)`);
-                    }
+                    try {
+                        if (/\.csv$/i.test(f.name)) {
+                            const txt = await _audTextoCsv(f);
+                            if (_audEhCsvClassificacao(txt)) csvs.push(f);
+                            else avisos.push(`${f.name}: CSV sem as colunas "processo;DPE"`);
+                        } else if (/\.zip$/i.test(f.name)) {
+                            _audSetStatus(`⏳ Abrindo ${esc(f.name)}...`);
+                            const zip = await JSZip.loadAsync(f);
+                            const pdfs = [];
+                            zip.forEach((path, entry) => {
+                                if (!entry.dir && path.toLowerCase().endsWith('.pdf')) pdfs.push({ path, entry });
+                            });
+                            const cps = pdfs.filter(p => _audEhCopia(p.path));
+                            if (cps.length) copias.push({ file: f, zip, entradas: cps });
+                            if (pdfs.length > cps.length) pautas.push({ file: f, zip });
+                            if (!pdfs.length) avisos.push(`${f.name}: nenhum PDF dentro do ZIP`);
+                        } else {
+                            avisos.push(`${f.name}: tipo não suportado (use .zip ou .csv)`);
+                        }
+                    } catch (e) { falhou(f.name, e); }
                 }
 
                 for (const { file, zip } of pautas) {
-                    _audSetStatus(`⏳ Lendo a pauta ${esc(file.name)}...`);
-                    const { periodo, audiencias, pautas } = await _audProcessarZip(file, zip);
-                    if (!audiencias.length) { avisos.push(`${file.name}: nenhuma audiência encontrada`); continue; }
-                    const primData = audiencias.find(a => a.data)?.data;
-                    const semKey = primData ? _audSemanaDeDataBR(primData) : _audSemanaISO();
-                    _audSetStatus(`⏳ Salvando ${audiencias.length} audiência(s)...`);
-                    audDadosAtual  = await _audSalvar(semKey, periodo, audiencias, pautas);
-                    audSemanaAtual = semKey;
-                    audSemanasDisp = await _audListarSemanas();
-                    const por = {};
-                    for (const a of audiencias) if (a.dp) por[a.dp] = (por[a.dp] || 0) + 1;
-                    const res = Object.entries(por).sort().map(([d, n]) => `${d}ª DP: ${n}`).join(' · ');
-                    const origens = [...new Set(audiencias.map(a => a.origem === 'seeu' ? 'SEEU' : 'Projudi'))].join(' + ');
-                    resumo.push(`${audiencias.length} audiência(s) do ${origens} (${res})`);
+                    try {
+                        _audSetStatus(`⏳ Lendo a pauta ${esc(file.name)}...`);
+                        const { periodo, audiencias, pautas, problemas } = await _audProcessarZip(file, zip);
+                        avisos.push(...problemas);
+                        if (!audiencias.length) { avisos.push(`${file.name}: nenhuma audiência encontrada`); continue; }
+                        const primData = audiencias.find(a => a.data)?.data;
+                        const semKey = primData ? _audSemanaDeDataBR(primData) : _audSemanaISO();
+                        _audSetStatus(`⏳ Salvando ${audiencias.length} audiência(s)...`);
+                        audDadosAtual  = await _audSalvar(semKey, periodo, audiencias, pautas);
+                        audSemanaAtual = semKey;
+                        const por = {};
+                        for (const a of audiencias) if (a.dp) por[a.dp] = (por[a.dp] || 0) + 1;
+                        const semDp = audiencias.filter(a => !a.dp).length;
+                        const res = Object.entries(por).sort().map(([d, n]) => `${d}ª DP: ${n}`)
+                            .concat(semDp ? [`sem DP: ${semDp}`] : []).join(' · ');
+                        const origens = [...new Set(audiencias.map(a => a.origem === 'seeu' ? 'SEEU' : 'Projudi'))].join(' + ');
+                        resumo.push(`${audiencias.length} audiência(s) do ${origens} (${res})`);
+                    } catch (e) { falhou(file.name, e); }
                 }
 
                 for (const f of csvs) {
-                    _audSetStatus(`⏳ Lendo a classificação ${esc(f.name)}...`);
-                    const { total, foraDaPauta } = await _audImportarClassificacao(f);
-                    resumo.push(`${total} classificação(ões) DPE`);
-                    if (foraDaPauta.length)
-                        avisos.push(`Classificação de processo fora da pauta: ${foraDaPauta.join(', ')}`);
+                    try {
+                        _audSetStatus(`⏳ Lendo a classificação ${esc(f.name)}...`);
+                        const { total, foraDaPauta } = await _audImportarClassificacao(f);
+                        resumo.push(`${total} classificação(ões) DPE`);
+                        if (foraDaPauta.length)
+                            avisos.push(`Classificação de processo fora da pauta: ${foraDaPauta.join(', ')}`);
+                    } catch (e) { falhou(f.name, e); }
                 }
 
                 for (const { file, zip, entradas } of copias) {
-                    const { total, avisos: av } = await _audImportarCopias(file, zip, entradas, msg => _audSetStatus(msg));
-                    if (total) resumo.push(`${total} cópia(s) integral(is)`);
-                    avisos.push(...av);
+                    try {
+                        const { total, avisos: av } = await _audImportarCopias(file, zip, entradas, msg => _audSetStatus(msg));
+                        if (total) resumo.push(`${total} cópia(s) integral(is)`);
+                        avisos.push(...av);
+                    } catch (e) { falhou(file.name, e); }
                 }
 
-                if (audSemanaAtual) audDadosAtual = await _audCarregarSemana(audSemanaAtual);
-                audSemanasDisp = await _audListarSemanas();
+                try {
+                    if (audSemanaAtual) audDadosAtual = await _audCarregarSemana(audSemanaAtual);
+                    audSemanasDisp = await _audListarSemanas();
+                } catch (e) { falhou('Recarregar a tela', e); }
                 const el = document.getElementById('audiencias-content');
                 if (el) _audRenderConteudo(el);
-
-                if (!resumo.length) {
-                    _audSetStatus(`⚠️ Nada foi importado.<br>${avisos.map(esc).join('<br>')}`, 'error');
-                } else if (avisos.length) {
-                    _audSetStatus(`✅ Importado: ${esc(resumo.join(' · '))}<br><br>⚠️ Avisos:<br>${avisos.map(esc).join('<br>')}`, 'success');
-                } else {
-                    _audFecharImport();
-                    mostrarToast(`✅ Importado: ${resumo.join(' · ')}`);
-                }
             } catch (e) {
                 console.error('[AUD] Erro ao importar:', e);
-                _audSetStatus(`❌ Erro: ${esc(e.message)}${resumo.length ? `<br>Já importado: ${esc(resumo.join(' · '))}` : ''}`, 'error');
+                avisos.push(`Erro geral: ${e?.message || e}`);
             } finally {
                 _audImportando = false;
                 window.removeEventListener('beforeunload', sairAviso);
+            }
+
+            // Sem problema: fecha e mostra o toast de sempre. Com problema: o modal fica
+            // aberto com a lista até a usuária clicar em "Fechar".
+            if (resumo.length && !avisos.length) {
+                _audFecharImport();
+                mostrarToast(`✅ Importado: ${resumo.join(' · ')}`);
+                return;
+            }
+            _audAbrirImport();
+            const bt = document.getElementById('aud-import-fechar');
+            if (bt) bt.textContent = 'Fechar';
+            const titulo = `⚠️ ${avisos.length} problema(s) na importação:`;
+            if (!resumo.length) {
+                _audSetStatus(`<strong>❌ Nada foi importado.</strong><br><br><strong>${titulo}</strong>${_audListaProblemas(avisos)}`, 'error');
+            } else {
+                _audSetStatus(`✅ Importado: ${esc(resumo.join(' · '))}<br><br><strong>${titulo}</strong>${_audListaProblemas(avisos)}`, 'warn');
             }
         }
 

@@ -62,6 +62,17 @@ docs/
 
 ---
 
+## Estado atual (sessão 56 — 09/11/2026)
+
+**Implementado nesta sessão (Audiências):** bugfix — PDF do SEEU com cabeçalho "TJAM - Corregedoria
+de Presídios…" (não VEP) era lido como Projudi e a audiência ficava sem DP (caso: processo
+5000086-52.2026.8.04.4700, 13/11). `AUD_SEEU_RE` agora aceita qualquer "TJAM - <vara>". Testado no
+navegador com as pautas reais SEEU 02–08/11 e 09–15/11 e Projudi 09–15/11 (todas com DP).
+Também: aviso de problemas na importação, que só fecha no botão "Fechar" — lista arquivo com erro,
+PDF ilegível/sem audiência, bloco sem número de processo e audiência sem DP ou sem data/hora; a
+falha de um arquivo não interrompe os demais. Testado com Firestore simulado.
+**Pendente (usuária):** reimportar o ZIP do SEEU de 09–15/11 no site.
+
 ## Estado atual (sessão 55 — 04/11/2026)
 
 **Implementado nesta sessão:** nova linha **Coordenação do Polo Médio Amazonas** em "Designações

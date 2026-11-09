@@ -4,6 +4,24 @@
 
 ---
 
+## Sessão 56 — 09/11/2026
+
+- **Audiências → SEEU além da VEP (bugfix):** o processo 5000086-52.2026.8.04.4700 (pauta SEEU de
+  09–15/11, PDF "Corregedoria de Presídios e outros Procedimentos") não aparecia em nenhuma DP. O
+  cabeçalho era "TJAM - Corregedoria de Presídios…", e `AUD_SEEU_RE` só aceitava "TJAM - VEP…":
+  o PDF era lido como Projudi, sem vara nem área, e a audiência ficava com `dp: null`. Agora
+  qualquer linha "TJAM - <vara>" marca o PDF como SEEU (pautas do Projudi nunca têm essa linha).
+  Testado no navegador com as pautas reais: SEEU 09–15/11 = 4 audiências (a 5000086 na 5ª DP),
+  SEEU 02–08/11 = 5 e Projudi 09–15/11 = 113, todas com DP.
+- **Audiências → aviso de problemas na importação:** o modal fica aberto, com a lista de problemas
+  (caixa amarela; vermelha se nada entrou), até a usuária clicar em "Fechar" — clicar fora não fecha.
+  Lista: arquivo que falhou (ZIP corrompido etc.), PDF com erro de leitura ou sem nenhuma audiência,
+  bloco "Processo:" sem número reconhecível, audiência **sem DP** (salva, mas fora dos filtros) e
+  audiência sem data/hora. Cada arquivo tem seu try/catch: a falha de um não interrompe os demais.
+  Sem problema, fecha sozinho com o toast de sempre. `_audProcessarZip()` devolve `problemas`,
+  `_audParsearTexto()` devolve `descartados`. Testado no navegador com Firestore simulado (ZIP
+  corrompido + SEEU + Projudi reais, DP forçada a vazio num processo).
+
 ## Sessão 54 — 04/11/2026
 
 - **Calendário de afastamentos → cor do Pedro Paiva:** ele usava a paleta dinâmica e caía no mesmo
