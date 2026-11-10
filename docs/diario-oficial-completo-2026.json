@@ -7188,5 +7188,28 @@
       "numero": "PORTARIA Nº 1185/2026-GSPG/DPE/AM",
       "texto": "ALTERAR a Portaria 1011/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.739, pág. 5, em 25 de Setembro de 2026, nos seguintes termos"
     }
+  },
+  {
+    "edicao": 2768,
+    "data": "2026-11-09",
+    "data_formatada": "09/11/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/11/Edicao_2768-2026__publicada_em_09_novembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1198/2026-GSPG/DPE/AM",
+        "sei": "26.0.000015074-5",
+        "sgi": null,
+        "categorias": [
+          "comarca",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "I - DESIGNAR, em caráter especial, o Defensor Público de 3.ª Classe Inácio de Araújo Navarro, para atuar nas Sessões de Julgamento do Tribunal do Júri da Vara Única da Comarca de Urucurituba nos dias 11 e 12 de novembro de 2026, às 08h30, nos autos de n.º 0000513-67.2026.8.04.7600 e 0000854-30.2025.8.04.7600, respectivamente."
+        ],
+        "resumo": "Designa Defensor Inácio de Araújo Navarro para atuar no Tribunal do Júri da Comarca de Urucurituba nos dias 11 e 12 de novembro de 2026"
+      }
+    ]
   }
 ]
