@@ -7211,5 +7211,55 @@
         "resumo": "Designa Defensor Inácio de Araújo Navarro para atuar no Tribunal do Júri da Comarca de Urucurituba nos dias 11 e 12 de novembro de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2769,
+    "data": "2026-11-10",
+    "data_formatada": "10/11/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/11/Edicao_2769-2026__publicada_em_10_novembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 2047/2026-GDPG/DPE/AM",
+        "sei": "26.0.000015869-0",
+        "sgi": "2602279",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Alcilene Araújo Cavalcante Saraiva, Auxiliar II de Defensoria, no trecho Manaus/Rio Preto da Eva/Silves/Itacoatiara/Manaus, no período de 12 a 13 de novembro de 2026, a fim de realizar a entrega do material referente ao 4º ressuprimento anual;"
+        ],
+        "resumo": "Autoriza deslocamento de servidora para Silves e Itacoatiara (Polo Médio) para entrega de material de ressuprimento em 12-13/11/2026"
+      },
+      {
+        "numero": "Portaria Nº 2051/2026-GDPG/DPE/AM",
+        "sei": "26.0.000015918-1",
+        "sgi": "2602391",
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Inacio de Araujo Navarro, Defensor Público de 3ª Classe, no trecho Manaus/Urucurituba/Manaus, no período de 10 a 13 de novembro de 2026, a fim de atuar em 2 (duas) sessões do Tribunal do Júri no município de Urucurituba-AM;"
+        ],
+        "resumo": "Autoriza deslocamento de defensor para Urucurituba (Polo Médio) a fim de atuar em sessões do Tribunal do Júri em 10-13/11/2026"
+      },
+      {
+        "numero": "Portaria Nº 1203/2026-GSPG/DPE/AM",
+        "sei": "26.0.000015886-0",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "nomeacao_diretoria"
+        ],
+        "trechos": [
+          "I - CESSAR OS EFEITOS, a contar do dia 01 de novembro de 2026, a FGD-6 (Coordenadoria do Interior), nos termos da Lei n.º 4.831 de 13 de maio de 2019, concedida à Defensora Pública Emilly Bianca Ferreira dos Santos;",
+          "II - DESIGNAR, a contar do dia 01 de novembro de 2026, o Defensor Público Miguel Eduardo de Azevedo Martins Filho como Coordenador do Polo do Médio Amazonas, atribuindo-lhe a FGD-6 (Coordenadoria do Interior), nos termos da Lei nº 4.831 de 13 de maio de 2019."
+        ],
+        "resumo": "Cessa coordenação do Polo Médio Amazonas de Emilly Bianca e designa Miguel Eduardo de Azevedo Martins Filho como novo Coordenador do Polo Médio Amazonas a partir de 01/11/2026"
+      }
+    ]
   }
 ]
