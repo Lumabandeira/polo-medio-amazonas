@@ -7261,5 +7261,66 @@
         "resumo": "Cessa coordenação do Polo Médio Amazonas de Emilly Bianca e designa Miguel Eduardo de Azevedo Martins Filho como novo Coordenador do Polo Médio Amazonas a partir de 01/11/2026"
       }
     ]
+  },
+  {
+    "edicao": 2770,
+    "data": "2026-11-11",
+    "data_formatada": "11/11/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/11/Edicao_2770-2026__publicada_em_11_novembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 2058/2026-GDPG/DPE/AM",
+        "sei": "26.0.000008325-8",
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "servidor"
+        ],
+        "trechos": [
+          "I - DESIGNAR, a contar de 9 de novembro de 2026 até 18 de dezembro de 2026, o servidor Francisco Patrick Barbosa Chagas para prestar assessoria remota junto ao Polo do Médio Amazonas, sem prejuízo das atribuições ordinárias e após o horário do expediente regular"
+        ],
+        "resumo": "Designa servidor Francisco Patrick Barbosa Chagas para prestar assessoria remota ao Polo do Médio Amazonas de 09/11 a 18/12/2026"
+      },
+      {
+        "numero": "Portaria Nº 2061/2026-GDPG/DPE/AM",
+        "sei": "26.0.000015968-8",
+        "sgi": "2602412",
+        "categorias": [
+          "comarca",
+          "servidor"
+        ],
+        "trechos": [
+          "II - AUTORIZAR o deslocamento de Alysson Francisco Moura Freitas, Auxiliar I de Defensoria, no trecho Manaus/Rio Preto da Eva/Silves/Itacoatiara/Manaus, no período de 12 a 13 de novembro de 2026, a fim de conduzir a servidora Alcilene Araújo que fará a entrega de materiais referentes ao 4º ressuprimento anual, bem como conduzir no trecho de volta o Defensor Público Inácio de Araújo Navarro ao município de Manaus"
+        ],
+        "resumo": "Autoriza deslocamento de servidor Alysson Francisco Moura Freitas por Silves e Itacoatiara de 12-13/11/2026 para ressuprimento de materiais"
+      },
+      {
+        "numero": "Portaria Nº 2071/2026-GSPG/DPE/AM",
+        "sei": "26.0.000015982-3",
+        "sgi": "2602345",
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Miguel Eduardo de Azevedo Martins Filho, Defensor Público de 3ª Classe, no trecho Itacoatiara/Manaus/Itacoatiara, no período de 11 a 12 de novembro de 2026, a fim de atuar em sessão de julgamento, a ser realizada na 2ª Vara do Tribunal do Júri da Comarca de Manaus-AM"
+        ],
+        "resumo": "Autoriza deslocamento de Defensor Miguel Eduardo de Azevedo Martins Filho de Itacoatiara para Manaus de 11-12/11/2026 para atuar em julgamento"
+      },
+      {
+        "numero": "Portaria Nº 1200/2026-GSPG/DPE/AM",
+        "sei": "26.0.000015871-1",
+        "sgi": "2602389",
+        "categorias": [
+          "comarca",
+          "defensor"
+        ],
+        "trechos": [
+          "I - AUTORIZAR o deslocamento de Miguel Eduardo de Azevedo Martins Filho, Defensor Público de 3ª Classe, no trecho Itacoatiara/Silves/Itacoatiara, no dia 24 de novembro de 2026, a fim de realizar inspeção carcerária e atendimentos prisionais, na comarca de Silves-AM"
+        ],
+        "resumo": "Autoriza deslocamento de Defensor Miguel Eduardo de Azevedo Martins Filho de Itacoatiara a Silves em 24/11/2026 para inspeção carcerária"
+      }
+    ]
   }
 ]
