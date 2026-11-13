@@ -4,6 +4,16 @@
 
 ---
 
+## Sessão 57 — 13/11/2026
+
+**Audiências — pasta descompactada e só cópias DPE.** A pauta de 16–22/11 chegou como pasta
+(PDFs da pauta e 32 cópias integrais soltos, CSVs e TXTs auxiliares); o site só aceitava .zip/.csv.
+Agora aceita arrastar a pasta inteira, PDFs soltos ou escolher uma pasta (`_audColetarDrop()`,
+`_audProcessarPauta()`, `_audEntradasZip()`/`_audEntradaArquivo()`), ignora os auxiliares e usa a
+`classificacao.csv` revisada no lugar da prévia. As cópias integrais só sobem para processos com
+DPE = SIM ou POSSÍVEL. Testado com Firestore/Storage simulados e os arquivos reais (45 audiências,
+43 classificações, só cópias SIM enviadas).
+
 ## Sessão 56 — 09/11/2026
 
 - **Audiências → SEEU além da VEP (bugfix):** o processo 5000086-52.2026.8.04.4700 (pauta SEEU de

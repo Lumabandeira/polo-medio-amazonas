@@ -62,6 +62,19 @@ docs/
 
 ---
 
+## Estado atual (sessão 57 — 13/11/2026)
+
+**Implementado nesta sessão (Audiências):** a pauta passou a vir **descompactada** (pasta com
+`Pautas/*.pdf`, `Copias_Integrais/*.pdf`, `classificacao.csv`, `classificacao_previa.csv`,
+`processos.csv`, `indice_textos.csv`, `Resumos/`, `Textos/`) e o site só aceitava .zip/.csv.
+Agora dá para arrastar a pasta inteira (ou PDFs soltos, ou "🗂️ selecione uma pasta"):
+`_audColetarDrop()` lê subpastas; `_audProcessarZip` virou `_audProcessarPauta(nome, entradas)`;
+auxiliares são ignorados; prévia só sem a classificação revisada. **Cópias integrais só sobem se
+DPE = SIM ou POSSÍVEL** (NÃO fica de fora; sem classificação → aviso). Testado no navegador com
+Firestore/Storage simulados e os arquivos reais de 16–22/11: 45 audiências (= `processos.csv`),
+43 classificações (revisadas, não a prévia), cópias SIM enviadas e NÃO deixadas de fora.
+**Pendente (usuária):** arrastar a pasta de 16–22/11 no site publicado.
+
 ## Estado atual (sessão 56 — 09/11/2026)
 
 **Implementado nesta sessão (Audiências):** bugfix — PDF do SEEU com cabeçalho "TJAM - Corregedoria

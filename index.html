@@ -14784,26 +14784,20 @@ Regras obrigatórias:
             return { vara, area, origem: seeu ? 'seeu' : 'projudi', audiencias, descartados };
         }
 
-        // ─── Processamento do ZIP ─────────────────────────────────────────
-        async function _audProcessarZip(file, zip) {
-            if (!window.JSZip) await _pcCarregarScript(AUD_JSZIP_SRC);
-
-            zip = zip || await JSZip.loadAsync(file);
+        // ─── Processamento da pauta (ZIP ou PDFs soltos/pasta) ────────────
+        // `nome`: nome do ZIP ou da pasta (de onde sai o período quando o PDF não traz).
+        // `entries`: [{ path, buf: () => Promise<ArrayBuffer>, blob: () => Promise<Blob> }]
+        // — vêm de _audEntradasZip() (ZIP) ou _audEntradaArquivo() (arquivo solto).
+        async function _audProcessarPauta(nome, entries) {
             const todasAuds = [];
             const vistas = new Set();
             const pautas = [];   // um item por PDF lido, mesmo sem audiências
             const problemas = []; // o que não entrou ou entrou incompleto — mostrado na importação
             let periodo = '';
 
-            const entries = [];
-            zip.forEach((path, entry) => {
-                if (!entry.dir && path.toLowerCase().endsWith('.pdf') && !_audEhCopia(path))
-                    entries.push({ path, entry });
-            });
-
-            for (const { path, entry } of entries) {
+            for (const { path, buf: lerBuf } of entries) {
                 try {
-                    const buf = await entry.async('arraybuffer');
+                    const buf = await lerBuf();
                     const texto = await _audExtrairTextoPdf(buf);
 
                     if (!periodo) {
@@ -14836,15 +14830,35 @@ Regras obrigatórias:
                 }
             }
 
-            // O SEEU não traz "Data Inicial/Data Final": usa o período do nome do ZIP
+            // O SEEU não traz "Data Inicial/Data Final": usa o período do nome do ZIP/pasta
             // (ex.: Pauta_SEEU_Itacoatiara_19-10-2026_a_25-10-2026.zip).
             if (!periodo) {
-                const m = (file.name || '').match(/(\d{2})-(\d{2})-(\d{4})_a_(\d{2})-(\d{2})-(\d{4})/);
+                const m = (nome || '').match(/(\d{2})-(\d{2})-(\d{4})_a_(\d{2})-(\d{2})-(\d{4})/);
                 if (m) periodo = `${m[1]}/${m[2]}/${m[3]} a ${m[4]}/${m[5]}/${m[6]}`;
             }
 
             _audOrdenar(todasAuds);
             return { periodo, audiencias: todasAuds, pautas, problemas };
+        }
+
+        // PDFs de um ZIP no formato de entrada de _audProcessarPauta/_audImportarCopias
+        function _audEntradasZip(zip) {
+            const out = [];
+            zip.forEach((path, entry) => {
+                if (!entry.dir && path.toLowerCase().endsWith('.pdf'))
+                    out.push({ path, buf: () => entry.async('arraybuffer'), blob: () => entry.async('blob') });
+            });
+            return out;
+        }
+
+        // Arquivo solto (ou de uma pasta arrastada) no mesmo formato
+        function _audEntradaArquivo(f) {
+            return { path: _audCaminho(f), buf: () => f.arrayBuffer(), blob: async () => f };
+        }
+
+        // Caminho relativo: pasta arrastada (_audPath), pasta escolhida (webkitRelativePath) ou só o nome
+        function _audCaminho(f) {
+            return f._audPath || f.webkitRelativePath || f.name;
         }
 
         // "…/Pautas/02_1a_Vara_da_Comarca_de_Itacoatiara_-_Criminal.pdf" → "1a_Vara_da_Comarca_de_Itacoatiara_-_Criminal"
@@ -15044,28 +15058,51 @@ Regras obrigatórias:
             return bytes >= 1048576 ? `${Math.round(bytes / 1048576)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
         }
 
-        async function _audImportarCopias(file, zip, entradas, progresso) {
-            const m = (file.name || '').match(/(\d{2})-(\d{2})-(\d{4})_a_/);
+        // Só sobem as cópias de processos classificados como DPE = SIM ou POSSÍVEL
+        // (classificação já gravada na semana — o CSV do mesmo lote é importado antes).
+        // NÃO → ignorada sem aviso (contada em `foraDpe`); sem classificação → aviso.
+        async function _audImportarCopias(nome, entradas, progresso) {
+            const m = (nome || '').match(/(\d{2})-(\d{2})-(\d{4})_a_/);
             const semZip = m ? _audSemanaDeDataBR(`${m[1]}/${m[2]}/${m[3]}`) : null;
             const enviadas = {}, avisos = [];
             const storage = firebase.storage();
-            for (let i = 0; i < entradas.length; i++) {
-                const { path, entry } = entradas[i];
-                const nomeArq = path.split('/').pop();
+            const classifCache = {};
+            const classifDaSemana = async sem => {
+                if (!(sem in classifCache)) {
+                    const d = await db.collection('audiencias_semanas').doc(sem).get();
+                    classifCache[sem] = d.exists ? d.data().classificacao || {} : {};
+                }
+                return classifCache[sem];
+            };
+
+            const fila = [];
+            let foraDpe = 0;
+            for (const ent of entradas) {
+                const nomeArq = ent.path.split('/').pop();
                 const proc = _audExtrairProcesso(nomeArq);
                 if (!proc) { avisos.push(`${nomeArq}: número do processo não encontrado no nome`); continue; }
                 const sem = semZip || _audSemanaDoProcesso(proc);
                 if (!sem) { avisos.push(`${proc}: semana não identificada`); continue; }
                 if (!_audCopiaDisponivel(sem)) { avisos.push(`${proc}: semana ${sem} já passou — cópia não enviada`); continue; }
+                const dpe = (await classifDaSemana(sem))[proc]?.dpe;
+                if (dpe === 'NÃO') { foraDpe++; continue; }
+                if (dpe !== 'SIM' && dpe !== 'POSSÍVEL') {
+                    avisos.push(`${proc}: sem classificação DPE (SIM/POSSÍVEL) — cópia não enviada. Envie junto o classificacao.csv`);
+                    continue;
+                }
+                fila.push({ ...ent, proc, sem });
+            }
 
-                const blob = await entry.async('blob');
+            for (let i = 0; i < fila.length; i++) {
+                const { proc, sem } = fila[i];
+                const blob = await fila[i].blob();
                 const caminho = `${AUD_COPIAS_PASTA}/${sem}/${proc}.pdf`;
                 const task = storage.ref(caminho).put(blob, {
                     contentType: 'application/pdf',
                     contentDisposition: `attachment; filename="Copia_Integral_${proc}.pdf"`,
                 });
                 await new Promise((res, rej) => task.on('state_changed',
-                    s => progresso(`⏳ Enviando cópia ${i + 1}/${entradas.length} (${proc}) — `
+                    s => progresso(`⏳ Enviando cópia ${i + 1}/${fila.length} (${proc}) — `
                                  + `${Math.round(100 * s.bytesTransferred / (s.totalBytes || 1))}% de ${_audFmtTamanho(blob.size)}`),
                     rej, res));
                 (enviadas[sem] = enviadas[sem] || {})[proc] = { path: caminho, tamanho: blob.size, enviado_em: Date.now() };
@@ -15082,7 +15119,7 @@ Regras obrigatórias:
                     if (!(audSemanasDisp.find(s => s.id === sem)?.audiencias || []).some(a => a.processo === p))
                         avisos.push(`${p}: cópia enviada, mas o processo não está na pauta da semana ${sem}`);
             }
-            return { total, avisos };
+            return { total, avisos, foraDpe };
         }
 
         async function _audBaixarCopia(btn, semana, proc) {
@@ -15148,7 +15185,7 @@ Regras obrigatórias:
             overlay.innerHTML = `
                 <div class="aud-drop-icon">📦</div>
                 <div class="aud-drop-titulo">Solte os arquivos aqui</div>
-                <div class="aud-drop-sub">Pauta (Projudi/SEEU), cópias integrais (ZIP) ou classificação DPE (CSV)</div>`;
+                <div class="aud-drop-sub">Pasta da semana, pauta (PDF/ZIP), cópias integrais ou classificação DPE (CSV)</div>`;
             document.body.appendChild(overlay);
 
             let dragCounter = 0;
@@ -15171,20 +15208,50 @@ Regras obrigatórias:
                 if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
             });
 
-            document.addEventListener('drop', e => {
+            document.addEventListener('drop', async e => {
                 e.preventDefault();
                 dragCounter = 0;
                 overlay.classList.remove('visivel');
                 if (userRole !== 'admin') return;
-                const files = [...e.dataTransfer.files];
+                const files = await _audColetarDrop(e.dataTransfer);
                 if (!files.length) return;
-                if (!files.some(f => /\.(zip|csv)$/i.test(f.name))) {
-                    mostrarToast('⚠️ Apenas arquivos .zip e .csv são suportados.');
+                if (!files.some(f => /\.(zip|csv|pdf)$/i.test(f.name))) {
+                    mostrarToast('⚠️ Arraste a pasta da pauta, PDFs, .zip ou .csv.');
                     return;
                 }
                 showSection('audiencias');
                 setTimeout(() => _audArquivosSelecionados(files), 150);
             });
+        }
+
+        // Arquivos de um drop, entrando nas pastas (recursivo). Cada File recebe
+        // `_audPath` com o caminho relativo ("Pasta/Copias_Integrais/x.pdf").
+        // As entradas precisam ser pegas antes de qualquer await (o DataTransfer expira).
+        async function _audColetarDrop(dt) {
+            if (!dt) return [];
+            const entradas = [...(dt.items || [])]
+                .filter(i => i.kind === 'file')
+                .map(i => i.webkitGetAsEntry ? i.webkitGetAsEntry() : null);
+            if (!entradas.length || entradas.some(en => !en)) return [...(dt.files || [])];
+            const out = [];
+            const lerDir = dir => new Promise((res, rej) => {
+                const r = dir.createReader(), todos = [];
+                const lote = () => r.readEntries(es => es.length ? (todos.push(...es), lote()) : res(todos), rej);
+                lote();
+            });
+            const visitar = async en => {
+                if (en.isFile) {
+                    const f = await new Promise((res, rej) => en.file(res, rej));
+                    f._audPath = en.fullPath.replace(/^\//, '');
+                    out.push(f);
+                } else if (en.isDirectory) {
+                    for (const filho of await lerDir(en)) await visitar(filho);
+                }
+            };
+            for (const en of entradas) {
+                try { await visitar(en); } catch (err) { console.warn('[AUD] Erro ao ler', en.fullPath, err); }
+            }
+            return out;
         }
 
         // ─── Render principal ─────────────────────────────────────────────
@@ -15897,18 +15964,25 @@ Regras obrigatórias:
               <div style="background:white;border-radius:16px;padding:32px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
                 <h3 style="margin:0 0 8px;color:#9f1239">📥 Importar Audiências</h3>
                 <p style="color:var(--text-secondary);font-size:.9em;margin-bottom:20px">
-                  Selecione um ou mais arquivos — o tipo é reconhecido sozinho:<br>
-                  • <strong>ZIP da pauta</strong> (PDFs do Projudi ou do SEEU)<br>
-                  • <strong>ZIP das cópias integrais</strong> (<code>Copia_Integral_&lt;processo&gt;.pdf</code>,
-                    ficam para download só na semana da audiência)<br>
-                  • <strong>CSV da classificação</strong> (<code>processo;DPE;observações</code>)</p>
+                  Arraste a <strong>pasta da semana</strong> inteira ou os arquivos — o tipo é reconhecido sozinho:<br>
+                  • <strong>Pauta</strong> (PDFs do Projudi/SEEU, soltos, na pasta <code>Pautas</code> ou em ZIP)<br>
+                  • <strong>Cópias integrais</strong> (<code>Copia_Integral_&lt;processo&gt;.pdf</code>, soltas ou em ZIP) —
+                    <strong>só sobem as dos processos DPE = SIM ou POSSÍVEL</strong>; ficam para download só na semana da audiência<br>
+                  • <strong>Classificação</strong> (<code>classificacao.csv</code>: <code>processo;DPE;observações</code>)<br>
+                  <span style="font-size:.9em">Os demais (Resumos, Textos, processos.csv, índice, prévia) são ignorados.</span></p>
                 <label for="aud-zip-input" id="aud-drop-label"
                   style="display:block;border:2px dashed #fda4af;border-radius:12px;padding:30px;text-align:center;
                          cursor:pointer;transition:border-color .2s;color:#9f1239;font-weight:600">
                   📂 Clique para selecionar os arquivos<br>
-                  <span style="font-size:.85em;font-weight:400;color:var(--text-secondary)">ou arraste e solte aqui</span>
+                  <span style="font-size:.85em;font-weight:400;color:var(--text-secondary)">ou arraste e solte aqui a pasta ou os arquivos</span>
                 </label>
-                <input type="file" id="aud-zip-input" accept=".zip,.csv" multiple style="display:none"
+                <div style="text-align:center;margin-top:8px">
+                  <label for="aud-pasta-input" style="cursor:pointer;color:#9f1239;font-size:.88em;text-decoration:underline">
+                    🗂️ ou selecione uma pasta</label>
+                </div>
+                <input type="file" id="aud-zip-input" accept=".zip,.csv,.pdf" multiple style="display:none"
+                  onchange="_audArquivosSelecionados([...this.files]); this.value = ''">
+                <input type="file" id="aud-pasta-input" webkitdirectory multiple style="display:none"
                   onchange="_audArquivosSelecionados([...this.files]); this.value = ''">
                 <div id="aud-import-status" style="display:none;margin-top:14px"></div>
                 <div style="display:flex;gap:12px;margin-top:20px;justify-content:flex-end">
@@ -15921,11 +15995,11 @@ Regras obrigatórias:
             const label = div.querySelector('#aud-drop-label');
             label.addEventListener('dragover',  e => { e.preventDefault(); label.style.borderColor = '#9f1239'; });
             label.addEventListener('dragleave', () => { label.style.borderColor = '#fda4af'; });
-            label.addEventListener('drop', e => {
+            label.addEventListener('drop', async e => {
                 e.preventDefault();
                 label.style.borderColor = '#fda4af';
                 e.stopPropagation();
-                const fs = [...e.dataTransfer.files];
+                const fs = await _audColetarDrop(e.dataTransfer);
                 if (fs.length) _audArquivosSelecionados(fs);
             });
             document.body.appendChild(div);
@@ -15985,35 +16059,65 @@ Regras obrigatórias:
                     avisos.push(`${nome}: erro — ${msg}. Este arquivo não foi importado; os demais seguiram.`);
                 };
 
+                // PDFs soltos são agrupados pela pasta de topo arrastada (cujo nome dá o
+                // período, ex.: "PROJUDI_Pauta_Itacoatiara_16-11-2026_a_22-11-2026").
+                const soltos = {};   // pasta de topo → { pauta: [], copia: [] }
+                const grupo = f => {
+                    const partes = _audCaminho(f).split('/');
+                    const k = partes.length > 1 ? partes[0] : '';
+                    return soltos[k] = soltos[k] || { nome: k, pauta: [], copia: [] };
+                };
+                const csvsCand = [];
+                let ignorados = 0;
+
                 for (const f of files) {
+                    const caminho = _audCaminho(f);
                     try {
                         if (/\.csv$/i.test(f.name)) {
                             const txt = await _audTextoCsv(f);
-                            if (_audEhCsvClassificacao(txt)) csvs.push(f);
+                            if (_audEhCsvClassificacao(txt)) csvsCand.push(f);
+                            else if (files.length > 1) ignorados++;   // processos.csv, indice_textos.csv…
                             else avisos.push(`${f.name}: CSV sem as colunas "processo;DPE"`);
                         } else if (/\.zip$/i.test(f.name)) {
                             _audSetStatus(`⏳ Abrindo ${esc(f.name)}...`);
                             const zip = await JSZip.loadAsync(f);
-                            const pdfs = [];
-                            zip.forEach((path, entry) => {
-                                if (!entry.dir && path.toLowerCase().endsWith('.pdf')) pdfs.push({ path, entry });
-                            });
+                            const pdfs = _audEntradasZip(zip);
                             const cps = pdfs.filter(p => _audEhCopia(p.path));
-                            if (cps.length) copias.push({ file: f, zip, entradas: cps });
-                            if (pdfs.length > cps.length) pautas.push({ file: f, zip });
+                            const pts = pdfs.filter(p => !_audEhCopia(p.path));
+                            if (cps.length) copias.push({ nome: f.name, entradas: cps });
+                            if (pts.length) pautas.push({ nome: f.name, entradas: pts });
                             if (!pdfs.length) avisos.push(`${f.name}: nenhum PDF dentro do ZIP`);
+                        } else if (/\.pdf$/i.test(f.name)) {
+                            grupo(f)[_audEhCopia(caminho) ? 'copia' : 'pauta'].push(_audEntradaArquivo(f));
+                        } else if (files.length > 1) {
+                            ignorados++;   // Resumos/Textos .txt e outros auxiliares
                         } else {
-                            avisos.push(`${f.name}: tipo não suportado (use .zip ou .csv)`);
+                            avisos.push(`${f.name}: tipo não suportado (use a pasta, PDFs, .zip ou .csv)`);
                         }
                     } catch (e) { falhou(f.name, e); }
                 }
+                for (const g of Object.values(soltos)) {
+                    if (g.pauta.length) pautas.push({ nome: g.nome, entradas: g.pauta });
+                    if (g.copia.length) copias.push({ nome: g.nome, entradas: g.copia });
+                }
+                // classificacao_previa.csv é a pré-classificação do script: só vale se
+                // não vier a classificação revisada junto.
+                const ehPrevia = f => /pr[eé]via/i.test(f.name);
+                for (const f of csvsCand) {
+                    if (ehPrevia(f) && csvsCand.some(o => !ehPrevia(o))) ignorados++;
+                    else {
+                        if (ehPrevia(f)) avisos.push(`${f.name}: usada a classificação PRÉVIA (não revisada) — confira`);
+                        csvs.push(f);
+                    }
+                }
 
-                for (const { file, zip } of pautas) {
+                for (const { nome, entradas } of pautas) {
+                    const rotulo = nome || 'PDFs da pauta';
                     try {
-                        _audSetStatus(`⏳ Lendo a pauta ${esc(file.name)}...`);
-                        const { periodo, audiencias, pautas, problemas } = await _audProcessarZip(file, zip);
+                        _audSetStatus(`⏳ Lendo a pauta ${esc(rotulo)}...`);
+                        const { periodo, audiencias, pautas, problemas } = await _audProcessarPauta(nome, entradas);
                         avisos.push(...problemas);
-                        if (!audiencias.length) { avisos.push(`${file.name}: nenhuma audiência encontrada`); continue; }
+                        if (!audiencias.length) { avisos.push(`${rotulo}: nenhuma audiência encontrada`); continue; }
                         const primData = audiencias.find(a => a.data)?.data;
                         const semKey = primData ? _audSemanaDeDataBR(primData) : _audSemanaISO();
                         _audSetStatus(`⏳ Salvando ${audiencias.length} audiência(s)...`);
@@ -16026,7 +16130,12 @@ Regras obrigatórias:
                             .concat(semDp ? [`sem DP: ${semDp}`] : []).join(' · ');
                         const origens = [...new Set(audiencias.map(a => a.origem === 'seeu' ? 'SEEU' : 'Projudi'))].join(' + ');
                         resumo.push(`${audiencias.length} audiência(s) do ${origens} (${res})`);
-                    } catch (e) { falhou(file.name, e); }
+                    } catch (e) { falhou(rotulo, e); }
+                }
+
+                // A classificação e as cópias acham a semana pelo processo: lista atualizada
+                if (pautas.length && (csvs.length || copias.length)) {
+                    try { audSemanasDisp = await _audListarSemanas(); } catch (e) { falhou('Atualizar semanas', e); }
                 }
 
                 for (const f of csvs) {
@@ -16039,13 +16148,16 @@ Regras obrigatórias:
                     } catch (e) { falhou(f.name, e); }
                 }
 
-                for (const { file, zip, entradas } of copias) {
+                for (const { nome, entradas } of copias) {
                     try {
-                        const { total, avisos: av } = await _audImportarCopias(file, zip, entradas, msg => _audSetStatus(msg));
-                        if (total) resumo.push(`${total} cópia(s) integral(is)`);
+                        _audSetStatus('⏳ Conferindo a classificação DPE das cópias...');
+                        const { total, avisos: av, foraDpe } = await _audImportarCopias(nome, entradas, msg => _audSetStatus(msg));
+                        if (total) resumo.push(`${total} cópia(s) integral(is) DPE`);
+                        if (foraDpe) resumo.push(`${foraDpe} cópia(s) de processos não DPE deixadas de fora`);
                         avisos.push(...av);
-                    } catch (e) { falhou(file.name, e); }
+                    } catch (e) { falhou(nome || 'Cópias integrais', e); }
                 }
+                if (ignorados) resumo.push(`${ignorados} arquivo(s) auxiliar(es) ignorado(s)`);
 
                 try {
                     if (audSemanaAtual) audDadosAtual = await _audCarregarSemana(audSemanaAtual);

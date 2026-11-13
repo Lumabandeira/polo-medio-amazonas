@@ -849,7 +849,7 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
   até clicar em "Fechar" (`#aud-import-fechar`; clicar fora não fecha, e durante a importação não
   fecha). Itens: arquivo com erro, PDF ilegível ou sem audiência, bloco sem número de processo
   (`descartados` de `_audParsearTexto()`), audiência sem DP ou sem data/hora (`problemas` de
-  `_audProcessarZip()`). Cada arquivo tem try/catch próprio — a falha de um não para os outros.
+  `_audProcessarPauta()`). Cada arquivo tem try/catch próprio — a falha de um não para os outros.
 - **Gravação por origem:** `_audSalvar()` lê o documento da semana e substitui só as audiências
   da mesma origem do ZIP importado, mantendo as da outra (reimportar o Projudi não apaga o SEEU e
   vice-versa). Sem `origem` = Projudi (dados antigos).
@@ -857,12 +857,25 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
   vez e reconhece o tipo pelo conteúdo (`_audArquivosSelecionados()`): ZIP com
   `Copia_Integral_<processo>.pdf` → cópias integrais; outro ZIP → pauta; CSV cujo cabeçalho tem
   `processo` e `DPE` → classificação. Ordem de processamento: pautas → CSVs → cópias.
+- **Pasta descompactada / PDFs soltos (sessão 57):** dá para arrastar a pasta da semana inteira
+  (ex.: `PROJUDI_Pauta_Itacoatiara_16-11-2026_a_22-11-2026/` com `Pautas/`, `Copias_Integrais/`,
+  `Resumos/`, `Textos/` e CSVs) ou escolher pelo link "🗂️ selecione uma pasta" (`webkitdirectory`).
+  `_audColetarDrop()` entra nas subpastas (`webkitGetAsEntry`) e guarda o caminho em `f._audPath`
+  (`_audCaminho()`). PDFs soltos são agrupados pela pasta de topo (o nome dá o período):
+  `Copia_Integral_*.pdf` → cópias, demais PDFs → pauta. ZIP e arquivo solto viram o mesmo formato
+  de entrada `{path, buf(), blob()}` (`_audEntradasZip()`/`_audEntradaArquivo()`). Num lote com
+  vários arquivos, `.txt`, `processos.csv`, `indice_textos.csv` e afins são ignorados sem aviso
+  (contados no resumo); `classificacao_previa.csv` só é usada se não vier a classificação revisada.
+- **Só cópias DPE (sessão 57):** `_audImportarCopias()` só envia a cópia se a classificação gravada
+  na semana for **SIM ou POSSÍVEL** (o CSV do mesmo lote é importado antes). NÃO → fica de fora
+  sem aviso (contada no resumo); sem classificação → aviso, e a cópia não sobe. Vale para ZIP e
+  para PDFs soltos.
 - **Pauta parcial:** o ZIP pode ser de um dia só (`…_22-10-2026_a_22-10-2026.zip`) ou só de
   algumas varas. `_audSalvar()` troca só as audiências da mesma origem, dentro do período do ZIP
   **e da mesma pauta** (campo `pauta` = nome do PDF sem o número de ordem, `_audChavePauta()`,
   sessão 53); audiências antigas sem `pauta` casam pela vara. Um ZIP só das varas criminais não
   apaga Família/Cível; o período da semana vira a união. Arquivos que não são PDF dentro do ZIP
-  (`.md`, `.csv`, `Resumos/*.txt`) são ignorados — o CSV de classificação precisa ir separado.
+  (`.md`, `.csv`, `Resumos/*.txt`) são ignorados — o CSV de classificação precisa ir separado (ou arraste a pasta inteira).
 - **Nomes quebrados (sessão 53):** no Projudi, linha que começa com DE/DA/DO/DOS/DAS/E ou tem
   uma palavra só continua o nome anterior (`CONTINUA_NOME` em `_parsearPartes`). Limitação: um
   corréu de nome com uma palavra só seria juntado ao anterior.
