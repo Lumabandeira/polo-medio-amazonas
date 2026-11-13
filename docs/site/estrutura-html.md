@@ -459,6 +459,20 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   Pesquisa de mercado) gerando PDF de 4 páginas na ordem certa, caso sem nenhum anexo (toast, sem
   gerar arquivo) e caso de 1 anexo com URL inválida (PDF final sai só com os outros 2, toast avisa
   qual anexo faltou).
+- **Assinatura digital (gov.br) — "juntar primeiro, assinar depois" (sessão 58):** o
+  `copyPages()` do pdf-lib cria um PDF novo, então a assinatura digital de um anexo já assinado
+  **não passa** para o PDF juntado (o carimbo visual continua, mas deixa de ser verificável). Por
+  isso: (1) texto fixo `.pc-merge-dica` abaixo do botão de juntar; (2) depois do merge,
+  `#pc-merge-aviso` (`_pcAvisoPosMergeHtml()`) mostra o próximo passo (assinar no
+  `PC_ASSINADOR_GOVBR` e enviar no slot final) e lista os anexos PDF que tinham assinatura
+  (detectada por `_pdfTemAssinaturaDigital(bytes)` — procura um `/ByteRange [a b c d]` preenchido;
+  confere só a **presença**, não a validade, que se confere no `PC_VALIDAR_ITI`); o aviso some no
+  próximo re-render do modal; (3) seção "🔏 PDF final assinado" (`_slotPdfFinalAssinado(d)`,
+  `_uploadPdfFinalAssinado(file)`, drop `tipo 'final'`, preview `'pdf_final_assinado'`): só PDF,
+  grava `pdf_final_assinado: {url, assinado}` — `assinado` calculado no envio, slot verde só com
+  assinatura encontrada, amarelo "Anexado, mas sem assinatura digital" se não. Não entra no merge
+  nem em `_contarAnexosPreenchidos()`. Testado no navegador com PDFs gerados no pdf-lib (com e
+  sem dicionário de assinatura) e Storage/Firestore simulados.
 - **Arrastar e soltar arquivo (drag & drop):** todos os pontos de upload do modal de Anexos
   (Justificativa/Pesquisa de mercado/Recibo/Atesto, Fotos e Outros documentos) aceitam soltar o
   arquivo direto, além do botão de sempre. 3 funções genéricas perto das funções de upload

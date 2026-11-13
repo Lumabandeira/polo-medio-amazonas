@@ -1360,6 +1360,10 @@
         .pc-anexo-slot-desc { font-size: 0.78em; font-weight: 400; color: var(--text-secondary); line-height: 1.35; }
         .pc-anexo-slot-status { font-size: 0.85em; color: var(--text-secondary); }
         .pc-anexo-slot-acoes { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+        .pc-merge-dica { font-size: 0.8em; color: var(--text-secondary); line-height: 1.4; margin: 0 0 12px; }
+        .pc-merge-aviso { border: 1px solid #93c5fd; background: #eff6ff; color: #1e3a8a; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.85em; line-height: 1.45; }
+        .pc-merge-aviso p { margin: 0 0 6px; }
+        .pc-merge-aviso p:last-child { margin-bottom: 0; }
         .pc-anexo-drop-hint { font-size: 0.72em; color: var(--text-secondary); }
         .pc-anexo-dragover {
             border-style: dashed !important; border-color: var(--primary-color, #1e40af) !important;
@@ -12692,6 +12696,10 @@
                 const cm = d.comprovacao_mercado || {};
                 return cm.url ? { url: cm.url, nome: 'Pesquisa de mercado' } : null;
             }
+            if (campo === 'pdf_final_assinado') {
+                const pf = d.pdf_final_assinado || {};
+                return pf.url ? { url: pf.url, nome: 'PDF final assinado' } : null;
+            }
             if (campo.startsWith('foto:')) {
                 const i = Number(campo.split(':')[1]);
                 const url = (d.fotos_urls || [])[i];
@@ -12773,6 +12781,39 @@
 
         const _ANEXOS_ORDEM_MERGE = ['justificativa_url', 'comprovacao_mercado', 'recibo_url', 'atesto_url'];
 
+        // ══ Assinatura digital em PDF (gov.br / ICP-Brasil) ══
+        // A assinatura digital protege o arquivo exatamente como foi assinado. Ao juntar os
+        // anexos, o pdf-lib cria um PDF novo copiando só as páginas — a assinatura de um anexo
+        // já assinado NÃO passa para o PDF juntado. Por isso o fluxo é: juntar → assinar o PDF
+        // final no gov.br → enviar no slot "PDF final assinado".
+        // A detecção só confere se HÁ assinatura (dicionário com /ByteRange preenchido), não
+        // se ela é válida — validade se confere no validar.iti.gov.br.
+        const PC_ASSINADOR_GOVBR = 'https://assinador.iti.br/';
+        const PC_VALIDAR_ITI = 'https://validar.iti.gov.br/';
+
+        function _pdfTemAssinaturaDigital(bytes) {
+            const u8 = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+            let s = '';
+            const BLOCO = 0x8000;
+            for (let i = 0; i < u8.length; i += BLOCO) {
+                s += String.fromCharCode.apply(null, u8.subarray(i, i + BLOCO));
+            }
+            return /\/ByteRange\s*\[\s*\d+\s+\d+\s+\d+\s+\d+\s*\]/.test(s);
+        }
+
+        function _pcAvisoPosMergeHtml(assinadosPerdidos) {
+            const nomes = assinadosPerdidos.length > 1
+                ? assinadosPerdidos.slice(0, -1).join(', ') + ' e ' + assinadosPerdidos[assinadosPerdidos.length - 1]
+                : assinadosPerdidos.join('');
+            const perdidos = assinadosPerdidos.length > 0
+                ? `<p>⚠️ <strong>${esc(nomes)}</strong> ${assinadosPerdidos.length > 1 ? 'tinham' : 'tinha'} assinatura digital, que <strong>não passa</strong> para o PDF juntado (a imagem do carimbo continua, mas a assinatura deixa de ser verificável).</p>`
+                : '';
+            return `${perdidos}
+                <p>📌 <strong>Próximo passo:</strong> assine o PDF que acabou de baixar no
+                <a href="${PC_ASSINADOR_GOVBR}" target="_blank" rel="noopener">assinador do gov.br</a>
+                e envie o arquivo assinado em <strong>"🔏 PDF final assinado"</strong>, abaixo. Depois de assinar, não junte nem edite o arquivo de novo.</p>`;
+        }
+
         async function _baixarAnexosMerge() {
             const d = _despesaAtualAnexos();
             if (!d) return;
@@ -12794,6 +12835,7 @@
                 const mergedPdf = await PDFDocument.create();
                 const falhas = [];
                 const semAssinatura = [];
+                const assinadosPerdidos = [];
 
                 // Tudo sai em folha A4: PDF fora do padrão é reduzido/ampliado, imagem é
                 // centralizada na folha e .docx é desenhado e convertido em imagem por página.
@@ -12802,6 +12844,7 @@
                         const bytes = await _baixarArrayBuffer(item.url);
                         if (_ehPdfUrl(item.url)) {
                             await _pcAdicionarPdfA4(mergedPdf, bytes);
+                            if (_pdfTemAssinaturaDigital(bytes)) assinadosPerdidos.push(item.nome);
                         } else if (_ehDocxUrl(item.url)) {
                             const paginas = await _docxParaImagens(bytes);
                             for (const pg of paginas) await _pcAdicionarImagemA4(mergedPdf, pg.bytes, true, true);
@@ -12839,7 +12882,12 @@
                 if (avisos.length > 0) {
                     mostrarToast(`⚠️ PDF gerado, mas ${avisos.join('; ')}.`, true);
                 } else {
-                    mostrarToast('✅ PDF com os anexos gerado com sucesso.');
+                    mostrarToast('✅ PDF gerado — agora assine o PDF final no gov.br.');
+                }
+                const avisoEl = document.getElementById('pc-merge-aviso');
+                if (avisoEl) {
+                    avisoEl.innerHTML = _pcAvisoPosMergeHtml(assinadosPerdidos);
+                    avisoEl.style.display = '';
                 }
             } catch (e) {
                 console.error('Erro ao gerar PDF mesclado:', e);
@@ -12871,13 +12919,39 @@
             </div>`;
         }
 
+        // Slot do PDF juntado já assinado no gov.br — campo `pdf_final_assinado: {url, assinado}`
+        // na despesa. `assinado` é gravado no envio (_pdfTemAssinaturaDigital), para não ter
+        // que baixar o arquivo a cada render.
+        function _slotPdfFinalAssinado(d) {
+            const pf = d.pdf_final_assinado || {};
+            const status = !pf.url ? '⚠️ Pendente'
+                : pf.assinado ? `✅ Anexado · 🔏 assinatura digital encontrada · <a href="${PC_VALIDAR_ITI}" target="_blank" rel="noopener">conferir no validar.iti.gov.br</a>`
+                : '<span class="pc-anexo-sem-assinatura">⚠️ Anexado, mas sem assinatura digital</span>';
+            const classe = pf.url && pf.assinado ? 'ok' : 'pendente';
+            return `<div class="pc-anexo-slot ${classe}" ondragover="_anexoDragOver(event)" ondragleave="_anexoDragLeave(event)" ondrop="_anexoDrop(event, 'final')">
+                <div class="pc-anexo-slot-titulo">
+                    <span class="pc-anexo-slot-label">🔏 PDF final assinado</span>
+                    <span class="pc-anexo-slot-desc">O PDF gerado por "Baixar anexos em 1 PDF", depois de assinado no gov.br. É este arquivo que mantém a assinatura verificável.</span>
+                    <span class="pc-anexo-drop-hint">📥 ou arraste o arquivo aqui (só PDF)</span>
+                </div>
+                <span class="pc-anexo-slot-status">${status}</span>
+                <div class="pc-anexo-slot-acoes">
+                    ${pf.url ? `<button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="_visualizarAnexoCampo('pdf_final_assinado')">👁️ Visualizar</button>` : ''}
+                    <input type="file" accept="application/pdf,.pdf" style="display:none" id="pc-input-final" onchange="_uploadPdfFinalAssinado(this.files[0])">
+                    <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-input-final').click()">${pf.url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
+                </div>
+            </div>`;
+        }
+
         function _renderCorpoModalAnexos(d) {
             const cm = d.comprovacao_mercado || {};
 
             let html = `
                 <div class="pc-anexos-layout">
                 <div class="pc-anexos-lista">
-                <button class="btn-editar" style="margin-bottom:12px" onclick="_baixarAnexosMerge()">🧷 Baixar anexos em 1 PDF (Justificativa → Pesquisa de mercado → Recibo/NF → Atesto)</button>
+                <button class="btn-editar" style="margin-bottom:6px" onclick="_baixarAnexosMerge()">🧷 Baixar anexos em 1 PDF (Justificativa → Pesquisa de mercado → Recibo/NF → Atesto)</button>
+                <p class="pc-merge-dica">🔏 Junte primeiro e assine depois: assinaturas digitais dos arquivos separados não passam para o PDF juntado. Assine o PDF final no <a href="${PC_ASSINADOR_GOVBR}" target="_blank" rel="noopener">gov.br</a> e envie em "PDF final assinado".</p>
+                <div id="pc-merge-aviso" class="pc-merge-aviso" style="display:none"></div>
                 <div class="pc-anexo-slots">
                     ${_slotAnexoSimples('justificativa_url', '📄 Justificativa', d.justificativa_url, 'Para cada aquisição/contratação de serviços por adiantamento, contendo o registro da verificação da existência do bem em estoque ou de contrato vigente.')}
 
@@ -12898,6 +12972,9 @@
                     ${_slotAnexoSimples('recibo_url', '🧾 Recibo / Nota Fiscal', d.recibo_url, 'Sem rasuras e em nome da Unidade Gestora que fora concedido.')}
                     ${_slotAnexoSimples('atesto_url', '✅ Atesto', d.atesto_url, 'Por servidor que não o tomador.')}
                 </div>
+
+                <h4 style="margin-top:20px">🔏 PDF final assinado</h4>
+                <div class="pc-anexo-slots">${_slotPdfFinalAssinado(d)}</div>
 
                 <h4 style="margin-top:20px">📷 Fotos</h4>
                 <div class="pc-fotos-grid" id="pc-fotos-grid">
@@ -14315,6 +14392,7 @@ Regras obrigatórias:
             let promessa;
             if (tipo === 'slot') promessa = _uploadSlotSimples(ref, files[0]);
             else if (tipo === 'mercado') promessa = _uploadComprovacaoMercado(files[0]);
+            else if (tipo === 'final') promessa = _uploadPdfFinalAssinado(files[0]);
             else if (tipo === 'fotos') promessa = uploadFotos(files);
             else if (tipo === 'outro') promessa = adicionarOutroDocumento(files[0]);
 
@@ -14364,6 +14442,30 @@ Regras obrigatórias:
                 mostrarToast('✅ Anexo enviado com sucesso.');
             } catch (e) {
                 console.error('Erro ao enviar comprovação de mercado:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        async function _uploadPdfFinalAssinado(file) {
+            if (!file) return;
+            if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') {
+                mostrarToast('⚠️ Envie o PDF assinado (.pdf).', true);
+                return;
+            }
+            try {
+                mostrarToast('⏳ Enviando arquivo...');
+                const assinado = _pdfTemAssinaturaDigital(await file.arrayBuffer());
+                const caminho = `prestacoes-contas/${_anexoPrestacaoId}/despesas/${_anexoDespesaIdx}/pdf-final-assinado-${Date.now()}.pdf`;
+                const url = await _uploadParaStorage(caminho, file);
+                const d = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, {
+                    pdf_final_assinado: { url, assinado }
+                });
+                _renderCorpoModalAnexos(d);
+                _renderDetalhePrestacao();
+                if (assinado) mostrarToast('✅ PDF final enviado — assinatura digital encontrada.');
+                else mostrarToast('⚠️ PDF enviado, mas não encontrei assinatura digital nele. Assine no gov.br e substitua.', true);
+            } catch (e) {
+                console.error('Erro ao enviar PDF final assinado:', e);
                 mostrarToast('❌ ' + e.message, true);
             }
         }

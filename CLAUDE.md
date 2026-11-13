@@ -62,6 +62,17 @@ docs/
 
 ---
 
+## Estado atual (sessão 58 — 13/11/2026)
+
+**Implementado nesta sessão (Prestação de Contas → modal de Anexos):** fluxo "juntar primeiro,
+assinar depois" para assinatura gov.br — o "🧷 Baixar anexos em 1 PDF" cria PDF novo e a
+assinatura digital dos anexos não passa para ele. Dica fixa abaixo do botão, aviso pós-merge
+(`#pc-merge-aviso`) com o próximo passo e os anexos que tinham assinatura
+(`_pdfTemAssinaturaDigital()`, só presença de `/ByteRange`), e seção "🔏 PDF final assinado"
+(`pdf_final_assinado: {url, assinado}`, só PDF; verde só se a assinatura for encontrada).
+Testado no navegador com PDFs gerados e Storage/Firestore simulados. Sem mudança de regras.
+**Pendente (usuária):** conferir com o Controle Interno da DPE/AM se aceitam o PDF único assinado.
+
 ## Estado atual (sessão 57 — 13/11/2026)
 
 **Implementado nesta sessão (Audiências):** a pauta passou a vir **descompactada** (pasta com

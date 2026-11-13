@@ -4,6 +4,16 @@
 
 ---
 
+## Sessão 58 — 13/11/2026
+
+**Prestação de Contas — assinatura gov.br no PDF juntado.** A usuária perguntou sobre usar foto da
+assinatura (desaconselhado: sem valor de assinatura eletrônica) e depois notou que, ao juntar os
+anexos num PDF, as assinaturas gov.br deixam de ser verificáveis (o pdf-lib copia só as páginas).
+Fluxo adotado: juntar primeiro, assinar o PDF final no gov.br. No modal de Anexos: dica fixa no
+botão de juntar, aviso pós-merge com o próximo passo e a lista de anexos que tinham assinatura
+(`_pdfTemAssinaturaDigital()`), e seção nova "🔏 PDF final assinado" (`pdf_final_assinado:
+{url, assinado}`). Testado no navegador com PDFs gerados e Storage/Firestore simulados.
+
 ## Sessão 57 — 13/11/2026
 
 **Audiências — pasta descompactada e só cópias DPE.** A pauta de 16–22/11 chegou como pasta
