@@ -9,10 +9,10 @@
 **Prestação de Contas — assinatura gov.br no PDF juntado.** A usuária perguntou sobre usar foto da
 assinatura (desaconselhado: sem valor de assinatura eletrônica) e depois notou que, ao juntar os
 anexos num PDF, as assinaturas gov.br deixam de ser verificáveis (o pdf-lib copia só as páginas).
-Fluxo adotado: juntar primeiro, assinar o PDF final no gov.br. No modal de Anexos: dica fixa no
-botão de juntar, aviso pós-merge com o próximo passo e a lista de anexos que tinham assinatura
-(`_pdfTemAssinaturaDigital()`), e seção nova "🔏 PDF final assinado" (`pdf_final_assinado:
-{url, assinado}`). Testado no navegador com PDFs gerados e Storage/Firestore simulados.
+Fluxo adotado: juntar primeiro, assinar o PDF final no gov.br. Foi publicado um conjunto completo
+(aviso pós-merge, detecção de assinatura, slot "🔏 PDF final assinado"), mas no dia seguinte
+(14/11) a usuária pediu para reverter e deixar **só** o texto fixo abaixo do botão de juntar
+(`.pc-merge-dica`). O resto saiu do `index.html`.
 
 ## Sessão 57 — 13/11/2026
 

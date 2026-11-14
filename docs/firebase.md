@@ -268,9 +268,7 @@ despesas: [
     recibo_url: "https://..." | null,
     comprovacao_mercado: { tipo: "pesquisa" | "justificativa_ausencia", url: "https://..." } | null,
     justificativa_url: "https://..." | null,
-    atesto_url: "https://..." | null,
-    pdf_final_assinado: { url: "https://...", assinado: true | false } | ausente,  ← sessão 58: PDF juntado já assinado no gov.br; `assinado` = assinatura digital detectada no envio
-    fotos_urls: ["https://...", ...],
+    atesto_url: "https://..." | null,    fotos_urls: ["https://...", ...],
     outros_documentos: [{ nome: "...", url: "https://..." }],
     // sessão 47 — só gravados pela conta PC_IA_EMAIL ("✨ Gerar com Claude"):
     fornecedor_cnpj: "17.980.600/0001-66" | null,
