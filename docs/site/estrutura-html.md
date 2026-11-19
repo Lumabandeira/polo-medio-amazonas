@@ -328,6 +328,8 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   Cada tomador pode ter no máximo **2 prontos pagamentos com `status: "aberto"` simultâneos**,
   em categorias diferentes entre si (`consumo` | `pessoa_juridica` | `pessoa_fisica`) — regra
   aplicada em `_validarCategoriaDisponivel()` antes de salvar ou reabrir.
+  Cada card mostra, logo abaixo da linha "Aplicação", a linha "Prazo Prestação de Contas:"
+  (`p.prazo_prestacao_contas` formatado; "—" se vazio) — sessão 59.
 - **Modelos de Documentos**: card abaixo da lista de Prontos Pagamentos, em `#pc-lista-view`, com
   uma biblioteca de modelos de referência (título "📚 Modelos de Documentos" — sem sufixo). Dois
   modelos gerais no topo, fora de qualquer categoria/serviço porque não variam por tipo de

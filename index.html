@@ -11510,6 +11510,7 @@
                     </div>
                     <div class="pc-card-sei">${p.processo_sei ? 'SEI ' + esc(p.processo_sei) : 'Sem processo SEI'}</div>
                     <div class="pc-card-linha${_pcAplicacaoVencida(p) ? ' pc-aplic-vencida' : ''}"><span>Aplicação:</span> <strong>${(_pcDataRecebimento(p) || p.data_fim_aplicacao) ? formatarData(_pcDataRecebimento(p)) + ' a ' + formatarData(p.data_fim_aplicacao) : '—'}</strong>${_pcAplicacaoVencida(p) ? ' <span class="pc-aplic-tag">⚠ prazo encerrado</span>' : ''}</div>
+                    <div class="pc-card-linha"><span>Prazo Prestação de Contas:</span> <strong>${p.prazo_prestacao_contas ? formatarData(p.prazo_prestacao_contas) : '—'}</strong></div>
                     <div class="pc-card-valores">
                         <div><span>Concedido</span><strong>${formatarMoeda(_pcValorConcedido(p))}</strong></div>
                         <div><span>Despesas</span><strong>${formatarMoeda(totalDespesas)}</strong></div>

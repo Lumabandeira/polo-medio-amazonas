@@ -62,6 +62,12 @@ docs/
 
 ---
 
+## Estado atual (sessão 59 — 19/11/2026)
+
+**Implementado nesta sessão (Prestação de Contas → Lista):** o card de cada pronto pagamento
+mostra a linha "Prazo Prestação de Contas: dd/mm/aaaa" logo abaixo de "Aplicação" ("—" se vazio).
+Conferido no navegador com dados simulados.
+
 ## Estado atual (sessão 58 — 13/11/2026)
 
 **Implementado nesta sessão (Prestação de Contas → modal de Anexos):** só um texto fixo
