@@ -11392,7 +11392,7 @@
             pessoa_juridica: 'Pessoa Jurídica',
             pessoa_fisica: 'Pessoa Física'
         };
-        const PC_TOTAL_SLOTS = 5; // recibo, comprovação de mercado, justificativa, atesto, fotos
+        const PC_TOTAL_SLOTS = 4; // recibo, comprovação de mercado, justificativa, fotos (atesto agora é feito no próprio recibo — sessão 59)
         // Fallback para registros antigos que só tinham valor_recebido (campo removido do formulário)
         function _pcValorConcedido(p) {
             return Number(p.valor_concedido ?? p.valor_recebido) || 0;
@@ -12159,7 +12159,6 @@
             if (d.recibo_url) n++;
             if (d.comprovacao_mercado && d.comprovacao_mercado.url) n++;
             if (d.justificativa_url) n++;
-            if (d.atesto_url) n++;
             if (d.fotos_urls && d.fotos_urls.length > 0) n++;
             return n;
         }
@@ -12749,7 +12748,7 @@
             }
         }
 
-        const _ANEXOS_ORDEM_MERGE = ['justificativa_url', 'comprovacao_mercado', 'recibo_url', 'atesto_url'];
+        const _ANEXOS_ORDEM_MERGE = ['justificativa_url', 'comprovacao_mercado', 'recibo_url'];
 
         async function _baixarAnexosMerge() {
             const d = _despesaAtualAnexos();
@@ -12855,7 +12854,7 @@
             let html = `
                 <div class="pc-anexos-layout">
                 <div class="pc-anexos-lista">
-                <button class="btn-editar" style="margin-bottom:6px" onclick="_baixarAnexosMerge()">🧷 Baixar anexos em 1 PDF (Justificativa → Pesquisa de mercado → Recibo/NF → Atesto)</button>
+                <button class="btn-editar" style="margin-bottom:6px" onclick="_baixarAnexosMerge()">🧷 Baixar anexos em 1 PDF (Justificativa → Pesquisa de mercado → Recibo/NF)</button>
                 <p class="pc-merge-dica">🔏 Junte primeiro e assine depois: assinaturas digitais dos arquivos separados não passam para o PDF juntado. Assine o PDF final no <a href="https://assinador.iti.br/" target="_blank" rel="noopener">gov.br</a> e envie em "PDF final assinado".</p>
                 <div class="pc-anexo-slots">
                     ${_slotAnexoSimples('justificativa_url', '📄 Justificativa', d.justificativa_url, 'Para cada aquisição/contratação de serviços por adiantamento, contendo o registro da verificação da existência do bem em estoque ou de contrato vigente.')}
@@ -12875,7 +12874,6 @@
                     </div>
 
                     ${_slotAnexoSimples('recibo_url', '🧾 Recibo / Nota Fiscal', d.recibo_url, 'Sem rasuras e em nome da Unidade Gestora que fora concedido.')}
-                    ${_slotAnexoSimples('atesto_url', '✅ Atesto', d.atesto_url, 'Por servidor que não o tomador.')}
                 </div>
 
                 <h4 style="margin-top:20px">📷 Fotos</h4>

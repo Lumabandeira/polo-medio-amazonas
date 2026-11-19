@@ -398,9 +398,14 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   slot de Recibo por categoria). Não confundir com `_pcModelos.memorando_url`/
   `pesquisa_mercado_url` — campos homônimos, mas de outra seção (biblioteca "Modelos de
   Documentos", modelo geral de referência), que não foram tocados.
-- **Anexos por despesa**: modal com 5 slots fixos, nesta ordem de exibição — Justificativa,
+- **Anexos por despesa**: modal com 4 slots fixos, nesta ordem de exibição — Justificativa,
   Pesquisa de mercado (rótulo exibido; campo/nomes internos continuam `comprovacao_mercado`),
-  Recibo/NF, Atesto, Fotos — + lista livre de "Outros documentos" (`_renderCorpoModalAnexos()`).
+  Recibo/NF, Fotos — + lista livre de "Outros documentos" (`_renderCorpoModalAnexos()`).
+  **Sessão 59:** o slot de Atesto saiu do modal (o atesto passou a ser feito no próprio recibo, por
+  ordem recebida pela usuária). `PC_TOTAL_SLOTS` = 4, `_contarAnexosPreenchidos()` não conta mais
+  `atesto_url` e `_ANEXOS_ORDEM_MERGE` não inclui mais o Atesto. `atesto_url` já gravado fica no
+  Firestore como legado (sem limpeza). As menções a Atesto abaixo são históricas; o código do
+  "Gerar com Claude" para Atesto e o Modelo de Atesto da biblioteca de modelos continuam no arquivo.
   A ordem dos 4 primeiros é só de exibição (template fixo, sem campo de ordem) — os campos
   continuam `recibo_url`/`comprovacao_mercado`/`justificativa_url`/`atesto_url`.
   Todos os slots exceto Fotos têm um texto explicativo menor abaixo do título — Justificativa,

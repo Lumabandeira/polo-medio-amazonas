@@ -266,7 +266,7 @@ despesas: [
     recibo_url: "https://..." | null,
     comprovacao_mercado: { tipo: "pesquisa" | "justificativa_ausencia", url: "https://..." } | null,
     justificativa_url: "https://..." | null,
-    atesto_url: "https://..." | null,    fotos_urls: ["https://...", ...],
+    atesto_url: "https://..." | null,    // legado — slot removido do modal na sessão 59    fotos_urls: ["https://...", ...],
     outros_documentos: [{ nome: "...", url: "https://..." }],
     // sessão 47 — só gravados pela conta PC_IA_EMAIL ("✨ Gerar com Claude"):
     fornecedor_cnpj: "17.980.600/0001-66" | null,

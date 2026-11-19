@@ -70,6 +70,10 @@ Conferido no navegador com dados simulados.
 Também: retirados do formulário "Novo/Editar Pronto Pagamento" os campos Banco, Agência e Conta da
 Unidade Gestora Concedente (fica só Órgão/CNPJ). Não são mais gravados; documentos antigos mantêm
 `unidade_gestora_banco/agencia/conta` como legado, sem limpeza. Testado com Firestore simulado.
+Também: removido o slot "Atesto" do modal de Anexos por despesa — o atesto agora é feito no próprio
+recibo. Contador de anexos passa a /4 e o "Baixar anexos em 1 PDF" junta só Justificativa →
+Pesquisa de mercado → Recibo/NF. `atesto_url` antigo fica como legado. O "Modelo de Atesto" da
+biblioteca de Modelos de Documentos ainda existe.
 
 ## Estado atual (sessão 58 — 13/11/2026)
 
@@ -121,9 +125,6 @@ indicar quem assumiu a coordenação. Ver `docs/site/estrutura-html.md` (seção
 `#a7f3d0` (texto `#065f46`; contorno `#059669` no Trabalho em Trânsito, `BADGE_COR_CONTORNO`) — antes
 caía no mesmo verde do Miguel pela paleta dinâmica. `BADGE_PALETTE_INICIO = 8` mantém as cores de
 quem segue na paleta (Thays continua azul). Conferido no navegador com dados simulados.
-Também: retirados do formulário "Novo/Editar Pronto Pagamento" os campos Banco, Agência e Conta da
-Unidade Gestora Concedente (fica só Órgão/CNPJ). Não são mais gravados; documentos antigos mantêm
-`unidade_gestora_banco/agencia/conta` como legado, sem limpeza. Testado com Firestore simulado.
 
 ## Estado atual (sessão 53 — 21/10/2026)
 
