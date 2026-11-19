@@ -4307,21 +4307,9 @@
                         <div class="form-group form-full" style="margin-top:8px; margin-bottom:-8px">
                             <strong>🏦 Unidade Gestora Concedente</strong>
                         </div>
-                        <div class="form-group" style="grid-column: span 2">
+                        <div class="form-group form-full">
                             <label>Órgão / CNPJ</label>
                             <input type="text" id="fp-ug-cnpj" placeholder="19.421.427/0001-91 - Defensoria Pública do Estado do Amazonas - DPE/AM">
-                        </div>
-                        <div class="form-group">
-                            <label>Banco</label>
-                            <input type="text" id="fp-ug-banco" placeholder="BANCO BRADESCO">
-                        </div>
-                        <div class="form-group">
-                            <label>Agência</label>
-                            <input type="text" id="fp-ug-agencia" placeholder="3739-7">
-                        </div>
-                        <div class="form-group">
-                            <label>Conta</label>
-                            <input type="text" id="fp-ug-conta" placeholder="56.735-3">
                         </div>
                     </div>
                     <div class="form-actions">
@@ -11445,10 +11433,7 @@
             return p.data_fim_aplicacao < new Date().toISOString().split('T')[0];
         }
         const PC_UG_CONCEDENTE_PADRAO = {
-            cnpj: '19.421.427/0001-91 - Defensoria Pública do Estado do Amazonas - DPE/AM',
-            banco: 'BANCO BRADESCO',
-            agencia: '3739-7',
-            conta: '56.735-3'
+            cnpj: '19.421.427/0001-91 - Defensoria Pública do Estado do Amazonas - DPE/AM'
         };
 
         let prestacoesContas = [];
@@ -12007,9 +11992,6 @@
             document.getElementById('form-prestacao').reset();
             document.getElementById('fp-id').value = '';
             document.getElementById('fp-ug-cnpj').value = PC_UG_CONCEDENTE_PADRAO.cnpj;
-            document.getElementById('fp-ug-banco').value = PC_UG_CONCEDENTE_PADRAO.banco;
-            document.getElementById('fp-ug-agencia').value = PC_UG_CONCEDENTE_PADRAO.agencia;
-            document.getElementById('fp-ug-conta').value = PC_UG_CONCEDENTE_PADRAO.conta;
             document.getElementById('fp-erro').style.display = 'none';
             _pcAtualizarPrazosForm();
             document.getElementById('form-prestacao-overlay').classList.add('active');
@@ -12039,9 +12021,6 @@
             document.getElementById('fp-data-fim').value = p.data_fim_aplicacao || '';
             document.getElementById('fp-prazo-pc').value = p.prazo_prestacao_contas || '';
             document.getElementById('fp-ug-cnpj').value = p.unidade_gestora_cnpj || PC_UG_CONCEDENTE_PADRAO.cnpj;
-            document.getElementById('fp-ug-banco').value = p.unidade_gestora_banco || PC_UG_CONCEDENTE_PADRAO.banco;
-            document.getElementById('fp-ug-agencia').value = p.unidade_gestora_agencia || PC_UG_CONCEDENTE_PADRAO.agencia;
-            document.getElementById('fp-ug-conta').value = p.unidade_gestora_conta || PC_UG_CONCEDENTE_PADRAO.conta;
             document.getElementById('fp-erro').style.display = 'none';
             _pcAtualizarPrazosForm();
             document.getElementById('form-prestacao-overlay').classList.add('active');
@@ -12085,9 +12064,6 @@
                 data_fim_aplicacao: dataFim,
                 prazo_prestacao_contas: prazoPc,
                 unidade_gestora_cnpj: document.getElementById('fp-ug-cnpj').value.trim() || null,
-                unidade_gestora_banco: document.getElementById('fp-ug-banco').value.trim() || null,
-                unidade_gestora_agencia: document.getElementById('fp-ug-agencia').value.trim() || null,
-                unidade_gestora_conta: document.getElementById('fp-ug-conta').value.trim() || null,
                 atualizado_por: currentUser.email,
                 atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
             };

@@ -497,12 +497,11 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   com `valor_recebido` continuam exibindo o valor certo via `_pcValorConcedido(p)` (fallback
   `valor_concedido ?? valor_recebido`), inclusive ao abrir para edição — `valor_recebido` nunca é
   regravado depois disso.
-- **Unidade Gestora Concedente**: bloco de 4 campos no formulário (Órgão/CNPJ, Banco, Agência,
-  Conta), pré-preenchidos com os dados fixos da DPE/AM (`PC_UG_CONCEDENTE_PADRAO`) mas editáveis —
-  os 4 continuam gravados em `prestacoes_contas/{id}`. No Detalhe (`_renderDetalhePrestacao()`),
-  só o "Órgão / CNPJ" aparece nas informações gerais; Banco/Agência/Conta ficam só no cadastro
-  (usuária considerou redundante mostrar os dados bancários na tela de exibição). Nenhum dos 4
-  entra no PDF exportado.
+- **Unidade Gestora Concedente**: só o campo "Órgão / CNPJ" no formulário (largura total),
+  pré-preenchido com o dado fixo da DPE/AM (`PC_UG_CONCEDENTE_PADRAO.cnpj`) mas editável, e
+  exibido no Detalhe e nos cards. Banco/Agência/Conta foram retirados do formulário na sessão 59 a
+  pedido da usuária — não são mais gravados; documentos antigos mantêm
+  `unidade_gestora_banco/agencia/conta` como dado legado (sem limpeza). Não entra no PDF.
 - **Reordenar despesas**: cada linha da tabela ganhou botões ⬆️/⬇️ (`moverDespesa(prestacaoId, idx, direcao)`,
   perto de `excluirDespesa()`) que trocam de posição duas despesas dentro do array `despesas[]` e
   regravam o array inteiro no Firestore — mesmo padrão de `salvarDespesa()`/`excluirDespesa()`. Sem

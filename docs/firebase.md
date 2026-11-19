@@ -254,9 +254,7 @@ data_inicio_aplicacao:    "YYYY-MM-DD"   ← sempre = data_recebimento (sessão 
 data_fim_aplicacao:       "YYYY-MM-DD"
 prazo_prestacao_contas:   "YYYY-MM-DD"
 unidade_gestora_cnpj:     "19.421.427/0001-91 - Defensoria Pública do Estado do Amazonas - DPE/AM" | null
-unidade_gestora_banco:    "BANCO BRADESCO" | null
-unidade_gestora_agencia:  "3739-7" | null
-unidade_gestora_conta:    "56.735-3" | null
+unidade_gestora_banco/agencia/conta: legado — não gravados desde a sessão 59
 memorando_url:            "https://firebasestorage..." | null
 termo_devolucao_url:      "https://firebasestorage..." | null
 comprovante_devolucao_url:"https://firebasestorage..." | null
@@ -289,13 +287,10 @@ criado_em / atualizado_em:   timestamp
   lugar que usa o valor (cards, Detalhe, PDF), e `abrirEditarPrestacao()` aplica o mesmo fallback
   ao popular o formulário — `valor_recebido` nunca é regravado a partir daí (campo removido do
   HTML), só permanece como dado legado nos documentos antigos até serem editados/salvos de novo.
-- **Unidade Gestora Concedente:** 4 campos opcionais (`unidade_gestora_cnpj/banco/agencia/conta`)
-  no formulário de cadastro, pré-preenchidos com os dados fixos da DPE/AM (constante
-  `PC_UG_CONCEDENTE_PADRAO` em `index.html`) mas editáveis campo a campo, caso a unidade gestora
-  mude no futuro. Só o "Órgão / CNPJ" é exibido (somente leitura, "—" quando ausente) no bloco de
-  informações gerais do Detalhe (`_renderDetalhePrestacao()`) — Banco/Agência/Conta continuam
-  gravados normalmente mas ficam ocultos na exibição, só editáveis pelo cadastro (usuária achou
-  redundante mostrar os dados bancários na tela). Nenhum dos 4 entra no PDF do Mapa Demonstrativo.
+- **Unidade Gestora Concedente:** só `unidade_gestora_cnpj` no formulário, pré-preenchido com o
+  dado fixo da DPE/AM (`PC_UG_CONCEDENTE_PADRAO.cnpj` em `index.html`) mas editável; exibido no
+  Detalhe e nos cards. Banco/Agência/Conta saíram do formulário na sessão 59 (pedido da usuária) e
+  não são mais gravados; documentos antigos mantêm esses campos como legado. Não entra no PDF.
 - **Regra de negócio (client-side, em `_validarCategoriaDisponivel()`):** um mesmo `tomador` pode
   ter no máximo 2 documentos com `status: "aberto"` ao mesmo tempo, e as categorias desses 2
   precisam ser diferentes entre si. Marcar como `"concluido"` libera a vaga.
