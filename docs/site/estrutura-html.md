@@ -850,6 +850,12 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
 - **DP:** área pela vara (`AUD_AREA_KEYWORDS`) + paridade do dígito antes do 1º "-" do processo
   (`AUD_DP_POR_AREA`). O SEEU é sempre `criminal` (par → 5ª DP, ímpar → 6ª DP), qualquer que seja
   o sufixo do processo (`.4700`/`.4701`).
+- **Violência doméstica é criminal** (sessão 60): a 2ª Vara de Itacoatiara (Juizado Especializado da
+  Violência Doméstica) e qualquer vara com "violência"/"Maria da Penha"/"juizado especializado" →
+  `criminal` (5ª/6ª DP). Essa regra vem **antes** de Família, porque o nome completo tem
+  "Familiar". O Projudi corta o nome da vara ("…Juizado Especializado da Violência"); se vier só
+  "2ª Vara da Comarca de Itacoatiara", também vira criminal. Audiências já salvas com `dp` nulo
+  têm a DP recalculada ao carregar a semana (`_audCompletarDps()` em `_audCarregarSemana()`).
 - **Particularidades do SEEU** (sessão 51): o cabeçalho de página se repete no meio dos blocos e
   é removido antes do parsing (sessão 53: também o formato com "PODER JUDICIÁRIO", "Edital de" e
   "Data Inicial" entre as linhas, visto na pauta de 26/10/2026) (senão gruda no nome do réu); nomes de réu/autor quebrados em

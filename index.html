@@ -14434,7 +14434,12 @@ Regras obrigatórias:
         const AUD_EXCELJS_SRC  = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
 
         // ─── Mapeamento vara → área de atuação ──────────────────────────
+        // Violência doméstica vem PRIMEIRO: o nome completo da vara ("…Violência Doméstica e
+        // Familiar contra a Mulher") contém "familiar", que casaria com Família. É sempre
+        // criminal (5ª/6ª DP). O Projudi costuma cortar o nome ("…Juizado Especializado da
+        // Violência"), por isso basta "violência"/"juizado especializado" (pauta de 23/11/2026).
         const AUD_AREA_KEYWORDS = [
+            { keywords: ['violência', 'violencia', 'maria da penha', 'juizado especializado'], area: 'criminal' },
             { keywords: ['família', 'familia', 'sucessão', 'sucessoes', 'sucessõ'], area: 'familia' },
             { keywords: ['criminal', 'júri', 'juri', 'dignidade', 'garantias', 'inquérit', 'inquerit', 'custódia', 'custodia'], area: 'criminal' },
             { keywords: ['cível', 'civel', 'fazenda', 'infância', 'infancia', 'previdenciário', 'previdenciario', 'registros', 'juventude'], area: 'civel' },
@@ -14489,7 +14494,23 @@ Regras obrigatórias:
                     k.normalize('NFD').replace(/[̀-ͯ]/g, ''));
                 if (keys.some(k => lower.includes(k))) return rule.area;
             }
+            // Nome cortado antes de "Violência": a 2ª Vara de Itacoatiara é o Juizado de
+            // Violência Doméstica, logo criminal.
+            if (/^\s*2\s*[ªºa°o]?\s*vara da comarca de itacoatiara\b/.test(lower)) return 'criminal';
             return null;
+        }
+
+        // Audiências salvas antes de uma regra nova de vara (ex.: 2ª Vara/Violência Doméstica
+        // antes de 20/11/2026) ficaram com dp null. Recalcula ao carregar a semana.
+        function _audCompletarDps(dados) {
+            if (!dados || !Array.isArray(dados.audiencias)) return dados;
+            for (const a of dados.audiencias) {
+                if (a.dp) continue;
+                const area = a.origem === 'seeu' ? 'criminal' : _audDetectarArea(a.vara);
+                const dp = _audAtribuirDP(a.processo, area);
+                if (dp) { a.dp = dp; a.area = area; }
+            }
+            return dados;
         }
 
         function _audAtribuirDP(processo, area) {
@@ -15148,7 +15169,7 @@ Regras obrigatórias:
         async function _audCarregarSemana(key) {
             if (!db) return null;
             const doc = await db.collection('audiencias_semanas').doc(key).get();
-            return doc.exists ? doc.data() : null;
+            return doc.exists ? _audCompletarDps(doc.data()) : null;
         }
 
         // ─── Drop global (arrastar ZIP direto para o site) ───────────────

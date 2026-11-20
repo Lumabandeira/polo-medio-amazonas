@@ -4,6 +4,17 @@
 
 ---
 
+## Sessão 60 — 20/11/2026
+
+**Audiências — 2ª Vara (Violência Doméstica) sem DP.** As 21 audiências da 2ª Vara na pauta de
+23–27/11 foram salvas sem Defensoria: `AUD_AREA_KEYWORDS` não tinha regra de violência doméstica
+(e o nome completo, com "Familiar", cairia em Família). Nova regra `criminal` no topo
+(violência/Maria da Penha/juizado especializado + fallback "2ª Vara da Comarca de Itacoatiara") e
+`_audCompletarDps()` recalcula a DP de audiências já gravadas sem DP ao carregar a semana — não
+precisa reimportar. Testado com node nos nomes cortado, completo e só "2ª Vara".
+
+---
+
 ## Sessão 58 — 13/11/2026
 
 **Prestação de Contas — assinatura gov.br no PDF juntado.** A usuária perguntou sobre usar foto da

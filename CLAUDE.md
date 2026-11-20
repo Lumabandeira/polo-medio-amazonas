@@ -62,6 +62,13 @@ docs/
 
 ---
 
+## Estado atual (sessão 60 — 20/11/2026)
+
+**Implementado nesta sessão (Audiências):** varas de violência doméstica (2ª Vara de Itacoatiara,
+mesmo com o nome cortado pelo Projudi) passam a ser criminais → 5ª/6ª DP pela paridade. Antes
+ficavam sem DP e não apareciam para nenhum defensor. Audiências já salvas sem DP são recalculadas
+ao abrir a semana (`_audCompletarDps()`). Testado com node; não conferido no site publicado.
+
 ## Estado atual (sessão 59 — 19/11/2026)
 
 **Implementado nesta sessão (Prestação de Contas → Lista):** o card de cada pronto pagamento
