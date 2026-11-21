@@ -62,6 +62,13 @@ docs/
 
 ---
 
+## Estado atual (sessão 61 — 21/11/2026)
+
+**Implementado nesta sessão (Prestação de Contas → modal de Anexos):** o "🧷 Baixar anexos em 1 PDF"
+passa a incluir, depois de Justificativa → Pesquisa de mercado → Recibo/NF, todas as Fotos e os
+Outros documentos (`_baixarAnexosMerge()`). Foto WEBP/GIF é convertida para PNG via canvas. Não
+testado no navegador.
+
 ## Estado atual (sessão 60 — 20/11/2026)
 
 **Implementado nesta sessão (Audiências):** varas de violência doméstica (2ª Vara de Itacoatiara,

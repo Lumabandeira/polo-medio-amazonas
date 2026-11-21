@@ -447,7 +447,10 @@ qualquer usuário não-admin de volta para `atribuicoes` como segunda camada de 
   com o link "Abrir" (nova guia) de antes. Proporção das colunas ajustada depois a pedido da
   usuária: `.pc-anexos-lista { flex: 3 ... }` / `.pc-anexos-preview { flex: 5 ... }` (lista a
   ~37,5% da largura, preview a ~62,5% — a lista ficou em 75% da largura original, que era 50/50).
-- **Baixar os 4 anexos mesclados em 1 PDF:** botão "🧷 Baixar anexos em 1 PDF" no topo de
+- **Baixar os anexos mesclados em 1 PDF** (sessão 61: além de Justificativa → Pesquisa de mercado →
+  Recibo/NF, entram depois todas as **Fotos** (`foto:i`) e os **Outros documentos** (`outro:i`), na
+  ordem do modal; foto em formato que o pdf-lib não lê, como WEBP, é convertida para PNG via canvas):
+  botão "🧷 Baixar anexos em 1 PDF" no topo de
   `.pc-anexos-lista`, `_baixarAnexosMerge()` (ao lado de `_baixarAnexo()`). Ordem fixa e sempre a
   mesma, `_ANEXOS_ORDEM_MERGE = ['justificativa_url', 'comprovacao_mercado', 'recibo_url',
   'atesto_url']` — resolve cada chave com `_resolverPreviewAnexo(d, campo)` (mesma função do

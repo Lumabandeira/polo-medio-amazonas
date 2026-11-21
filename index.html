@@ -12753,7 +12753,11 @@
         async function _baixarAnexosMerge() {
             const d = _despesaAtualAnexos();
             if (!d) return;
-            const itens = _ANEXOS_ORDEM_MERGE
+            // Ordem: Justificativa → Pesquisa de mercado → Recibo/NF → Fotos → Outros documentos
+            const campos = _ANEXOS_ORDEM_MERGE
+                .concat((d.fotos_urls || []).map((_, i) => `foto:${i}`))
+                .concat((d.outros_documentos || []).map((_, i) => `outro:${i}`));
+            const itens = campos
                 .map(campo => _resolverPreviewAnexo(d, campo))
                 .filter(Boolean);
             if (itens.length === 0) {
@@ -12784,7 +12788,17 @@
                             for (const pg of paginas) await _pcAdicionarImagemA4(mergedPdf, pg.bytes, true, true);
                             semAssinatura.push(item.nome);
                         } else {
-                            await _pcAdicionarImagemA4(mergedPdf, bytes, _pcTipoImagem(bytes, item.url) === 'png', false);
+                            try {
+                                await _pcAdicionarImagemA4(mergedPdf, bytes, _pcTipoImagem(bytes, item.url) === 'png', false);
+                            } catch (eImg) {
+                                // Foto em formato que o pdf-lib não lê (WEBP, GIF…): converte para PNG pelo navegador.
+                                const bmp = await createImageBitmap(new Blob([bytes]));
+                                const cv = document.createElement('canvas');
+                                cv.width = bmp.width; cv.height = bmp.height;
+                                cv.getContext('2d').drawImage(bmp, 0, 0);
+                                const png = await new Promise(res => cv.toBlob(res, 'image/png'));
+                                await _pcAdicionarImagemA4(mergedPdf, await png.arrayBuffer(), true, false);
+                            }
                         }
                     } catch (e) {
                         console.error(`Erro ao juntar anexo "${item.nome}":`, e);
@@ -12854,7 +12868,7 @@
             let html = `
                 <div class="pc-anexos-layout">
                 <div class="pc-anexos-lista">
-                <button class="btn-editar" style="margin-bottom:6px" onclick="_baixarAnexosMerge()">🧷 Baixar anexos em 1 PDF (Justificativa → Pesquisa de mercado → Recibo/NF)</button>
+                <button class="btn-editar" style="margin-bottom:6px" onclick="_baixarAnexosMerge()">🧷 Baixar anexos em 1 PDF (Justificativa → Pesquisa de mercado → Recibo/NF → Fotos → Outros documentos)</button>
                 <p class="pc-merge-dica">🔏 Junte primeiro e assine depois: assinaturas digitais dos arquivos separados não passam para o PDF juntado. Assine o PDF final no <a href="https://assinador.iti.br/" target="_blank" rel="noopener">gov.br</a> e envie em "PDF final assinado".</p>
                 <div class="pc-anexo-slots">
                     ${_slotAnexoSimples('justificativa_url', '📄 Justificativa', d.justificativa_url, 'Para cada aquisição/contratação de serviços por adiantamento, contendo o registro da verificação da existência do bem em estoque ou de contrato vigente.')}
