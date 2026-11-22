@@ -68,6 +68,10 @@ docs/
 passa a incluir, depois de Justificativa → Pesquisa de mercado → Recibo/NF, todas as Fotos e os
 Outros documentos (`_baixarAnexosMerge()`). Foto WEBP/GIF é convertida para PNG via canvas. Não
 testado no navegador.
+Também: botão "🗑️ Apagar" (só `userRole === 'admin'`) nos slots Justificativa, Pesquisa de mercado
+e Recibo/NF — `removerAnexoSlot(campo)` grava `''` (ou `comprovacao_mercado: {}`) e o slot volta a
+Pendente; o arquivo no Storage não é apagado. O ✕ de Fotos e Outros documentos passou a aparecer só
+para admin. Testado no navegador com Firestore simulado (admin vê 3 botões; usuário comum, nenhum).
 
 ## Estado atual (sessão 60 — 20/11/2026)
 

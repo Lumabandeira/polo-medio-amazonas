@@ -12858,6 +12858,7 @@
                     ${podeGerar ? `<button class="btn-editar pc-btn-ia" style="padding:4px 8px;font-size:0.8em" onclick="pcIaIniciar('${campo}')">✨ Gerar com Claude</button>` : ''}
                     <input type="file" accept="${aceitaDocx ? PC_ACCEPT_ANEXO_DOCX : PC_ACCEPT_ANEXO}" style="display:none" id="pc-input-${campo}" onchange="_uploadSlotSimples('${campo}', this.files[0])">
                     <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-input-${campo}').click()">${url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
+                    ${url && userRole === 'admin' ? `<button class="btn-editar pc-btn-remover-anexo" style="padding:4px 8px;font-size:0.8em" onclick="removerAnexoSlot('${campo}')">🗑️ Apagar</button>` : ''}
                 </div>
             </div>`;
         }
@@ -12884,6 +12885,7 @@
                             ${cm.url ? `<button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="_visualizarAnexoCampo('comprovacao_mercado')">👁️ Visualizar</button>` : ''}
                             <input type="file" accept="application/pdf,image/*" style="display:none" id="pc-input-mercado" onchange="_uploadComprovacaoMercado(this.files[0])">
                             <button class="btn-editar" style="padding:4px 8px;font-size:0.8em" onclick="document.getElementById('pc-input-mercado').click()">${cm.url ? '🔄 Substituir' : '⬆️ Enviar'}</button>
+                            ${cm.url && userRole === 'admin' ? `<button class="btn-editar pc-btn-remover-anexo" style="padding:4px 8px;font-size:0.8em" onclick="removerAnexoSlot('comprovacao_mercado')">🗑️ Apagar</button>` : ''}
                         </div>
                     </div>
 
@@ -12895,7 +12897,7 @@
                     ${(d.fotos_urls || []).map((url, i) => `
                         <div class="pc-foto-item">
                             <img src="${esc(url)}" alt="Foto ${i+1}" onclick="_visualizarAnexoCampo('foto:${i}')">
-                            <button type="button" class="pc-foto-remover" onclick="removerFoto(${i})">✕</button>
+                            ${userRole === 'admin' ? `<button type="button" class="pc-foto-remover" onclick="removerFoto(${i})">✕</button>` : ''}
                         </div>`).join('')}
                 </div>
                 <div class="pc-anexo-dropzone" ondragover="_anexoDragOver(event)" ondragleave="_anexoDragLeave(event)" ondrop="_anexoDrop(event, 'fotos')">
@@ -12909,7 +12911,7 @@
                     ${(d.outros_documentos || []).map((doc, i) => `
                         <div class="pc-outro-item">
                             <button type="button" class="pc-outro-item-nome" onclick="_visualizarAnexoCampo('outro:${i}')">${esc(doc.nome)}</button>
-                            <button type="button" class="pc-foto-remover" onclick="removerOutroDocumento(${i})">✕</button>
+                            ${userRole === 'admin' ? `<button type="button" class="pc-foto-remover" onclick="removerOutroDocumento(${i})">✕</button>` : ''}
                         </div>`).join('') || '<p style="color:var(--text-secondary);font-size:0.9em">Nenhum documento avulso.</p>'}
                 </div>
                 <div class="pc-anexo-dropzone" style="margin-top:8px" ondragover="_anexoDragOver(event)" ondragleave="_anexoDragLeave(event)" ondrop="_anexoDrop(event, 'outro')">
@@ -14416,6 +14418,28 @@ Regras obrigatórias:
                 mostrarToast('✅ Documento anexado com sucesso.');
             } catch (e) {
                 console.error('Erro ao anexar documento:', e);
+                mostrarToast('❌ ' + e.message, true);
+            }
+        }
+
+        // Apaga o arquivo de um slot fixo (Justificativa, Pesquisa de mercado, Recibo/NF) — só admin.
+        // O slot volta a "Pendente"; o arquivo no Storage não é apagado (mesmo padrão de removerFoto).
+        async function removerAnexoSlot(campo) {
+            if (userRole !== 'admin') {
+                mostrarToast('⚠️ Só administradores podem apagar anexos.', true);
+                return;
+            }
+            const nomes = { justificativa_url: 'a Justificativa', comprovacao_mercado: 'a Pesquisa de mercado', recibo_url: 'o Recibo / Nota Fiscal' };
+            if (!confirm(`Apagar ${nomes[campo] || 'este anexo'} desta despesa? O slot volta a ficar pendente.`)) return;
+            const patch = campo === 'comprovacao_mercado' ? { comprovacao_mercado: {} } : { [campo]: '' };
+            try {
+                const dAtualizada = await _atualizarDespesaFirestore(_anexoPrestacaoId, _anexoDespesaIdx, patch);
+                if (_anexoPreviewCampo === campo) _anexoPreviewCampo = null;
+                _renderCorpoModalAnexos(dAtualizada);
+                _renderDetalhePrestacao();
+                mostrarToast('🗑️ Anexo apagado.');
+            } catch (e) {
+                console.error('Erro ao apagar anexo:', e);
                 mostrarToast('❌ ' + e.message, true);
             }
         }
