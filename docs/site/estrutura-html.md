@@ -915,6 +915,30 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
   "VEP de Itacoatiara - Regime Aberto" etc. As audiências do SEEU entram nos filtros por DP e no
   preset "Criminal", e nas exportações DOCX/XLSX, em ordem de data/hora (`_audOrdenar()`).
 
+## Estagiários e Residentes (`#estagiarios`)
+
+Sessão 62 (23/11/2026). Primeiro dia de cada estagiário e residente do Polo, por área.
+
+- **Acesso:** todos os logados veem a lista; só admin vê ➕ Novo cadastro, ✏️, 🗑️ e 📄 (PDF).
+- **Layout:** 4 cartões (`EST_AREAS`: familia, civel, registro, criminal), cada um com as
+  subtabelas Estagiários e Residentes (ordem pelo primeiro dia). Colunas: Nome · Primeiro dia (com
+  tempo no Polo, `_estTempo()`). Botão também no header-nav e na landing (`.btn-estagiarios`, verde).
+- **Amarelo:** só estagiário, a partir de primeiro dia + 21 meses (`_estSituacao()`); mostra
+  "⏳ Completa 2 anos em dd/mm/aaaa" (depois, "⚠️ Completou 2 anos em …"). Residente nunca fica amarelo.
+- **Formulário** (`#est-form-overlay`, `abrirFormEstagiario(id?)`/`salvarEstagiario()`): arrastar ou
+  escolher o PDF do encaminhamento → `_estArquivoEscolhido()` extrai o texto com PDF.js
+  (`_audCarregarPdfJs()`) e `_estLerEncaminhamento()` preenche nome ("encaminho … GRADUAÇÃO NOME EM
+  MAIÚSCULAS", ou o nome do arquivo depois do último "-"), tipo (ASSUNTO com "residen"/"estagi") e
+  primeiro dia ("a partir de 13 de Janeiro de 2025" — procurado no texto **sem espaços**, porque o
+  PDF.js parte palavras: "d e 202 5"). Área sempre escolhida à mão.
+- **Dados:** `secoes/estagiarios_residentes` `{ pessoas: [{id, nome, tipo, area, data_inicio, pdf_path,
+  pdf_nome}], atualizado_por, atualizado_em }` — sempre regravado inteiro (`_estSalvarLista()`).
+- **PDF:** Storage `prestacoes-contas/_estagiarios/{id}-{timestamp}.pdf` (aproveita a regra admin-only
+  de `prestacoes-contas/**`). Grava-se só `pdf_path` — **nunca a URL de download**, porque o doc em
+  `secoes` é legível por qualquer logado e a URL com token abriria o arquivo para todos.
+  `abrirEncaminhamentoEstagiario()` pede `getDownloadURL()` no clique (abre a aba antes, contra
+  bloqueio de pop-up). Substituir o PDF ou excluir o cadastro apaga o arquivo antigo.
+
 ## Cache localStorage (elimina flash de dados)
 
 | Chave | Conteúdo |

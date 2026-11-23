@@ -1136,6 +1136,51 @@
             color: white;
         }
 
+        .btn-estagiarios {
+            background: linear-gradient(135deg, #065f46 0%, #6ee7b7 100%);
+            color: white;
+        }
+
+        /* ─── Estagiários e Residentes ───────────────────────────── */
+        .est-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+        .est-topo h2 { margin: 0; }
+        .est-legenda { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.82em; color: var(--text-secondary); margin-bottom: 16px; }
+        .est-legenda span { display: inline-flex; align-items: center; gap: 6px; }
+        .est-legenda i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 1px solid #ca8a04; background: #fef08a; }
+        .est-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+        .est-area { border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; background: #fff; min-width: 0; }
+        .est-area-tit { padding: 10px 14px; font-weight: 700; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+        .est-area-tit small { font-weight: 500; opacity: 0.9; }
+        .est-area-familia  .est-area-tit { background: linear-gradient(135deg, #be185d, #f472b6); }
+        .est-area-civel    .est-area-tit { background: linear-gradient(135deg, #1d4ed8, #60a5fa); }
+        .est-area-registro .est-area-tit { background: linear-gradient(135deg, #b45309, #fbbf24); }
+        .est-area-criminal .est-area-tit { background: linear-gradient(135deg, #7f1d1d, #ef4444); }
+        .est-sub { padding: 8px 14px 12px; }
+        .est-sub + .est-sub { border-top: 1px dashed var(--border-color); }
+        .est-sub h4 { margin: 4px 0 6px; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); }
+        .est-vazio { font-size: 0.85em; color: #94a3b8; font-style: italic; margin: 2px 0 4px; }
+        .est-tabela { width: 100%; min-width: 0 !important; border-collapse: collapse; font-size: 0.88em; box-shadow: none; border-radius: 0; margin: 0; background: none; }
+        .est-tabela thead, .est-tabela thead tr, .est-tabela th { background: none !important; }
+        .est-tabela th { text-align: left; font-size: 0.78em; color: var(--text-secondary); font-weight: 600; padding: 4px 6px; border-bottom: 1px solid var(--border-color); }
+        .est-tabela td { padding: 6px; border-bottom: 1px solid #f1f5f9; vertical-align: top; overflow-wrap: anywhere; }
+        .est-tabela tr.est-alerta td { background: #fef08a; }
+        .est-tabela tr.est-alerta td:first-child { box-shadow: inset 4px 0 0 #ca8a04; }
+        .est-nome { font-weight: 600; }
+        .est-obs { display: block; font-size: 0.78em; color: #854d0e; font-weight: 600; margin-top: 2px; }
+        .est-tempo { display: block; font-size: 0.78em; color: var(--text-secondary); }
+        .est-acoes { white-space: nowrap; text-align: right; }
+        .est-acoes button { border: 1px solid var(--border-color); background: #fff; border-radius: 6px; padding: 3px 7px; font-size: 0.85em; cursor: pointer; margin-left: 2px; }
+        .est-acoes button:hover { background: #f1f5f9; }
+        .est-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .est-form-grid .form-group input, .est-form-grid .form-group select { width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95em; background: #fff; }
+        .est-drop { grid-column: 1 / -1; border: 2px dashed #6ee7b7; border-radius: 12px; padding: 16px; text-align: center; color: #065f46; background: #ecfdf5; cursor: pointer; font-size: 0.9em; }
+        .est-drop.arrastando { background: #d1fae5; border-color: #059669; }
+        .est-drop-status { display: block; margin-top: 6px; font-size: 0.85em; color: #334155; }
+        @media (max-width: 600px) {
+            .est-grid { grid-template-columns: 1fr; }
+            .est-form-grid { grid-template-columns: 1fr; }
+        }
+
         /* ─── Audiências ─────────────────────────────────────────── */
         .aud-dp-btn {
             padding: 8px 16px;
@@ -3467,6 +3512,7 @@
                 <a class="header-nav-btn btn-diario" href="?s=diario-oficial" onclick="showSection('diario-oficial');return false;">📰 Diário Oficial</a>
                 <a class="header-nav-btn btn-fichas" href="?s=fichas" onclick="showSection('fichas');return false;">🎫 Fichas do Dia</a>
                 <a class="header-nav-btn btn-audiencias" href="?s=audiencias" onclick="showSection('audiencias');return false;">⚖️ Audiências</a>
+                <a class="header-nav-btn btn-estagiarios" href="?s=estagiarios" onclick="showSection('estagiarios');return false;">🎓 Estagiários e Residentes</a>
                 <a id="header-btn-prestacao-contas" class="header-nav-btn btn-prestacao-contas" href="?s=prestacao-contas" onclick="showSection('prestacao-contas');return false;" style="display:none">💰 Prestação de Contas</a>
             </div>
         </header>
@@ -3527,6 +3573,11 @@
                     <span class="landing-btn-icon">⚖️</span>
                     <span class="landing-btn-title">Audiências</span>
                     <span class="landing-btn-desc">Pauta de audiências semanal organizada por Defensoria — 1ª a 6ª DP</span>
+                </button>
+                <button class="landing-btn btn-estagiarios" onclick="showSection('estagiarios')">
+                    <span class="landing-btn-icon">🎓</span>
+                    <span class="landing-btn-title">Estagiários e Residentes</span>
+                    <span class="landing-btn-desc">Primeiro dia de cada estagiário e residente, por área — Família, Cível, Registro e Criminal</span>
                 </button>
                 <button id="btn-prestacao-contas" class="landing-btn btn-prestacao-contas" style="display:none" onclick="showSection('prestacao-contas')">
                     <span class="landing-btn-icon">💰</span>
@@ -3833,6 +3884,66 @@
                     <p>28. Urucurituba</p>
                     <br>
                     <p>33. Urucará</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção: Estagiários e Residentes -->
+        <div id="estagiarios" class="tab-content">
+            <div class="card">
+                <div id="estagiarios-content">
+                    <p style="text-align:center;padding:30px;color:var(--text-secondary);">⏳ Carregando...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário: novo/editar estagiário ou residente (admin) -->
+        <div id="est-form-overlay" class="form-af-overlay" onclick="fecharFormEstagiario(event)">
+            <div class="form-af-content" style="max-width:560px" onclick="event.stopPropagation()">
+                <div class="form-af-header" style="background:linear-gradient(135deg,#065f46,#10b981)">
+                    <h2 id="est-form-titulo">➕ Novo cadastro</h2>
+                    <button class="form-af-close" onclick="fecharFormEstagiario()">×</button>
+                </div>
+                <div class="form-af-body">
+                    <form onsubmit="event.preventDefault();salvarEstagiario()">
+                        <input type="hidden" id="est-form-id">
+                        <div class="est-form-grid">
+                            <label class="est-drop" id="est-drop">
+                                📄 Arraste aqui o PDF do encaminhamento ou clique para escolher
+                                <input type="file" id="est-form-pdf" accept="application/pdf,.pdf" style="display:none" onchange="_estArquivoEscolhido(this.files[0])">
+                                <span class="est-drop-status" id="est-drop-status">O nome, o tipo e o primeiro dia são lidos do PDF — confira antes de salvar.</span>
+                            </label>
+                            <div class="form-group" style="grid-column:1/-1">
+                                <label>NOME</label>
+                                <input type="text" id="est-form-nome" required>
+                            </div>
+                            <div class="form-group">
+                                <label>TIPO</label>
+                                <select id="est-form-tipo" required>
+                                    <option value="estagiario">Estagiário(a)</option>
+                                    <option value="residente">Residente</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>ÁREA</label>
+                                <select id="est-form-area" required>
+                                    <option value="">— escolha —</option>
+                                    <option value="familia">Família</option>
+                                    <option value="civel">Cível</option>
+                                    <option value="registro">Registro</option>
+                                    <option value="criminal">Criminal</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>PRIMEIRO DIA</label>
+                                <input type="date" id="est-form-data" required>
+                            </div>
+                        </div>
+                        <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:12px;border-top:1px solid var(--border-color)">
+                            <button type="button" class="btn-cancelar" onclick="fecharFormEstagiario()">Cancelar</button>
+                            <button type="submit" id="est-form-submit" class="btn-salvar-form">💾 Salvar</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -7604,6 +7715,10 @@
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('audiencias').classList.add('active');
                 renderAudiencias();
+            } else if (tabName === 'estagiarios') {
+                document.querySelector('.tabs').style.display = 'none';
+                document.getElementById('estagiarios').classList.add('active');
+                renderEstagiarios();
             } else if (tabName === 'viagens-eventos') {
                 document.querySelector('.tabs').style.display = 'none';
                 document.getElementById('viagens-eventos').classList.add('active');
@@ -11232,6 +11347,285 @@
         function _fichasProximaSegunda(d) {
             return _fichasSomaDias(d, d.getDay() === 6 ? 2 : 1);
         }
+
+        // ══ Estagiários e Residentes (#estagiarios) ═══════════════════════
+        // Doc único secoes/estagiarios_residentes { pessoas: [...] } (leitura: logados; escrita: admin).
+        // PDF do encaminhamento no Storage em prestacoes-contas/_estagiarios/ (caminho já admin-only):
+        // grava-se só o caminho (pdf_path), nunca a URL de download — a URL vale para quem a tiver,
+        // e o doc é legível por todos os logados.
+        const EST_AREAS = [
+            { chave: 'familia',  rotulo: 'Família' },
+            { chave: 'civel',    rotulo: 'Cível' },
+            { chave: 'registro', rotulo: 'Registro' },
+            { chave: 'criminal', rotulo: 'Criminal' }
+        ];
+        const EST_TIPOS = [
+            { chave: 'estagiario', rotulo: 'Estagiários' },
+            { chave: 'residente',  rotulo: 'Residentes' }
+        ];
+        const EST_MESES = ['janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+        let _estPessoas = null;
+        let _estArquivo = null;      // PDF escolhido no formulário (ainda não enviado)
+        let _estDropIniciado = false;
+
+        function _estEsc(t) {
+            return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+        function _estData(iso) {          // 'YYYY-MM-DD' → Date local
+            const [a, m, d] = String(iso || '').split('-').map(Number);
+            return a && m && d ? new Date(a, m - 1, d) : null;
+        }
+        function _estFmt(d) {
+            return d ? `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}` : '—';
+        }
+        function _estSomaMeses(d, meses) {
+            const r = new Date(d.getFullYear(), d.getMonth() + meses, 1);
+            const ult = new Date(r.getFullYear(), r.getMonth() + 1, 0).getDate();
+            r.setDate(Math.min(d.getDate(), ult));
+            return r;
+        }
+        function _estHoje() { const h = new Date(); return new Date(h.getFullYear(), h.getMonth(), h.getDate()); }
+        // Tempo desde o primeiro dia: "1 ano e 10 meses"
+        function _estTempo(inicio, hoje) {
+            if (!inicio || inicio > hoje) return 'começa em ' + _estFmt(inicio);
+            let meses = (hoje.getFullYear() - inicio.getFullYear()) * 12 + (hoje.getMonth() - inicio.getMonth());
+            if (hoje.getDate() < inicio.getDate()) meses--;
+            const a = Math.floor(meses / 12), m = meses % 12;
+            const partes = [];
+            if (a) partes.push(a + (a === 1 ? ' ano' : ' anos'));
+            if (m) partes.push(m + (m === 1 ? ' mês' : ' meses'));
+            return partes.length ? partes.join(' e ') : 'menos de 1 mês';
+        }
+        // Estagiário fica amarelo a partir de 3 meses antes de completar 2 anos
+        function _estSituacao(p, hoje) {
+            const inicio = _estData(p.data_inicio);
+            if (!inicio || p.tipo !== 'estagiario') return { inicio, alerta: false };
+            const doisAnos = _estSomaMeses(inicio, 24);
+            const aviso = _estSomaMeses(inicio, 21);
+            return { inicio, doisAnos, alerta: hoje >= aviso, completou: hoje >= doisAnos };
+        }
+
+        async function _estCarregar() {
+            const doc = await db.collection('secoes').doc('estagiarios_residentes').get();
+            _estPessoas = (doc.exists && Array.isArray(doc.data().pessoas)) ? doc.data().pessoas : [];
+        }
+
+        async function renderEstagiarios() {
+            const cont = document.getElementById('estagiarios-content');
+            if (_estPessoas === null) {
+                try { await _estCarregar(); }
+                catch (e) {
+                    console.error('Erro ao carregar estagiários/residentes:', e);
+                    cont.innerHTML = '<p style="text-align:center;padding:30px;color:#b91c1c;">Não foi possível carregar a lista.</p>';
+                    return;
+                }
+            }
+            const isAdmin = userRole === 'admin';
+            const hoje = _estHoje();
+            const blocoArea = area => {
+                const daArea = _estPessoas.filter(p => p.area === area.chave);
+                const subs = EST_TIPOS.map(tipo => {
+                    const lista = daArea.filter(p => p.tipo === tipo.chave)
+                        .sort((a, b) => (a.data_inicio || '').localeCompare(b.data_inicio || '') || a.nome.localeCompare(b.nome));
+                    if (!lista.length) return `<div class="est-sub"><h4>${tipo.rotulo}</h4><p class="est-vazio">Nenhum cadastrado.</p></div>`;
+                    const linhas = lista.map(p => {
+                        const s = _estSituacao(p, hoje);
+                        let obs = '';
+                        if (s.alerta) obs = `<span class="est-obs">${s.completou ? '⚠️ Completou 2 anos em ' : '⏳ Completa 2 anos em '}${_estFmt(s.doisAnos)}</span>`;
+                        const acoes = isAdmin ? `<td class="est-acoes">`
+                            + (p.pdf_path ? `<button title="Abrir encaminhamento (PDF)" onclick="abrirEncaminhamentoEstagiario('${p.id}')">📄</button>` : '')
+                            + `<button title="Editar" onclick="abrirFormEstagiario('${p.id}')">✏️</button>`
+                            + `<button title="Excluir" onclick="excluirEstagiario('${p.id}')">🗑️</button></td>` : '';
+                        return `<tr class="${s.alerta ? 'est-alerta' : ''}">`
+                            + `<td><span class="est-nome">${_estEsc(p.nome)}</span>${obs}</td>`
+                            + `<td>${_estFmt(s.inicio)}<span class="est-tempo">${_estTempo(s.inicio, hoje)}</span></td>`
+                            + acoes + `</tr>`;
+                    }).join('');
+                    return `<div class="est-sub"><h4>${tipo.rotulo} (${lista.length})</h4>`
+                        + `<table class="est-tabela"><thead><tr><th>Nome</th><th>Primeiro dia</th>${isAdmin ? '<th></th>' : ''}</tr></thead><tbody>${linhas}</tbody></table></div>`;
+                }).join('');
+                return `<div class="est-area est-area-${area.chave}"><div class="est-area-tit">${area.rotulo}<small>${daArea.length} ${daArea.length === 1 ? 'pessoa' : 'pessoas'}</small></div>${subs}</div>`;
+            };
+            const semArea = _estPessoas.filter(p => !EST_AREAS.some(a => a.chave === p.area));
+            cont.innerHTML = `
+                <div class="est-topo">
+                    <h2>🎓 Estagiários e Residentes</h2>
+                    ${isAdmin ? '<button class="btn-salvar" onclick="abrirFormEstagiario()">➕ Novo cadastro</button>' : ''}
+                </div>
+                <div class="est-legenda">
+                    <span><i></i> Estagiário a 3 meses (ou menos) de completar 2 anos no Polo</span>
+                    ${isAdmin ? '<span>📄 Encaminhamento em PDF (visível só para administradores)</span>' : ''}
+                </div>
+                <div class="est-grid">${EST_AREAS.map(blocoArea).join('')}</div>
+                ${semArea.length ? `<p class="est-vazio" style="margin-top:12px">Sem área: ${semArea.map(p => _estEsc(p.nome)).join(', ')}</p>` : ''}`;
+        }
+
+        async function _estSalvarLista(pessoas) {
+            await db.collection('secoes').doc('estagiarios_residentes').set({
+                pessoas,
+                atualizado_por: currentUser.email,
+                atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            _estPessoas = pessoas;
+        }
+
+        function _estIniciarDrop() {
+            if (_estDropIniciado) return;
+            _estDropIniciado = true;
+            const drop = document.getElementById('est-drop');
+            ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('arrastando'); }));
+            ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('arrastando'); }));
+            drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) _estArquivoEscolhido(f); });
+        }
+
+        function abrirFormEstagiario(id) {
+            if (userRole !== 'admin') return;
+            _estIniciarDrop();
+            const p = id ? _estPessoas.find(x => x.id === id) : null;
+            _estArquivo = null;
+            document.getElementById('est-form-pdf').value = '';
+            document.getElementById('est-form-titulo').textContent = p ? '✏️ Editar cadastro' : '➕ Novo cadastro';
+            document.getElementById('est-form-id').value = p ? p.id : '';
+            document.getElementById('est-form-nome').value = p ? p.nome : '';
+            document.getElementById('est-form-tipo').value = p ? p.tipo : 'estagiario';
+            document.getElementById('est-form-area').value = p ? p.area : '';
+            document.getElementById('est-form-data').value = p ? p.data_inicio : '';
+            document.getElementById('est-drop-status').textContent = p && p.pdf_path
+                ? `Anexado: ${p.pdf_nome || 'encaminhamento.pdf'} — escolha outro PDF só se quiser substituir.`
+                : 'O nome, o tipo e o primeiro dia são lidos do PDF — confira antes de salvar.';
+            document.getElementById('est-form-overlay').classList.add('active');
+        }
+
+        function fecharFormEstagiario(e) {
+            if (e && e.target !== document.getElementById('est-form-overlay')) return;
+            document.getElementById('est-form-overlay').classList.remove('active');
+        }
+
+        // "ANNE LAIS DA COSTA TELES" → "Anne Lais da Costa Teles"
+        function _estNomeProprio(t) {
+            return t.toLowerCase().split(/\s+/).filter(Boolean)
+                .map((w, i) => (i > 0 && /^(da|de|do|das|dos|e)$/.test(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ');
+        }
+
+        // Lê do texto do encaminhamento o nome, o tipo e o primeiro dia ("a partir de 13 de Janeiro de 2025")
+        function _estLerEncaminhamento(texto, nomeArquivo) {
+            const t = texto.replace(/\s+/g, ' ');
+            const r = {};
+            const sem = s => s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+            // O PDF.js parte palavras ("d e 202 5"): procura a data no texto sem espaços
+            const mData = sem(t).replace(/\s+/g, '').match(/apartirde(\d{1,2})(?:º|°|o)?de([a-z]+?)de(\d{4})/);
+            if (mData) {
+                const mes = EST_MESES.indexOf(sem(mData[2]));
+                if (mes >= 0) r.data = `${mData[3]}-${String(mes + 1).padStart(2, '0')}-${mData[1].padStart(2, '0')}`;
+            }
+            const mNome = t.match(/encaminho[\s\S]{0,160}?(?:GRADUA[ÇC][ÃA]O|gradua[çc][ãa]o|RESIDENTE|[Rr]esidente|JUR[ÍI]DIC[OA]|[Jj]ur[íi]dic[oa])\s+([A-ZÀ-Ý]{2,}(?:\s+[A-ZÀ-Ý]{1,})+)/);
+            if (mNome) r.nome = _estNomeProprio(mNome[1]);
+            else {
+                const mArq = (nomeArquivo || '').replace(/\.pdf$/i, '').match(/-\s*([^-]+)$/);
+                if (mArq) r.nome = _estNomeProprio(mArq[1].trim());
+            }
+            const assunto = sem((t.match(/ASSUNTO:[\s\S]{0,200}/i) || [t.slice(0, 1500)])[0]);
+            r.tipo = /residen/.test(assunto) ? 'residente' : (/estagi/.test(assunto) ? 'estagiario' : null);
+            return r;
+        }
+
+        async function _estArquivoEscolhido(file) {
+            const status = document.getElementById('est-drop-status');
+            if (!file) return;
+            if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') {
+                status.textContent = '⚠️ Escolha um arquivo PDF.';
+                return;
+            }
+            _estArquivo = file;
+            status.textContent = `⏳ Lendo ${file.name}…`;
+            try {
+                await _audCarregarPdfJs();
+                const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+                let texto = '';
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const c = await (await pdf.getPage(i)).getTextContent();
+                    texto += c.items.map(it => it.str).join(' ') + '\n';
+                }
+                const r = _estLerEncaminhamento(texto, file.name);
+                const lidos = [];
+                if (r.nome) { document.getElementById('est-form-nome').value = r.nome; lidos.push('nome'); }
+                if (r.tipo) { document.getElementById('est-form-tipo').value = r.tipo; lidos.push('tipo'); }
+                if (r.data) { document.getElementById('est-form-data').value = r.data; lidos.push('primeiro dia'); }
+                status.textContent = `📎 ${file.name}` + (lidos.length ? ` — lido do PDF: ${lidos.join(', ')}. Confira e escolha a área.` : ' — não consegui ler os dados; preencha à mão.');
+            } catch (e) {
+                console.error('Erro ao ler encaminhamento:', e);
+                status.textContent = `📎 ${file.name} — não consegui ler o PDF; preencha os dados à mão.`;
+            }
+        }
+
+        async function salvarEstagiario() {
+            if (userRole !== 'admin') return;
+            const btn = document.getElementById('est-form-submit');
+            const id = document.getElementById('est-form-id').value || ('est_' + Date.now());
+            const antigo = _estPessoas.find(x => x.id === id);
+            const reg = {
+                ...(antigo || {}),
+                id,
+                nome: document.getElementById('est-form-nome').value.trim(),
+                tipo: document.getElementById('est-form-tipo').value,
+                area: document.getElementById('est-form-area').value,
+                data_inicio: document.getElementById('est-form-data').value
+            };
+            if (!reg.nome || !reg.area || !reg.data_inicio) { mostrarToast('Preencha nome, área e primeiro dia.', true); return; }
+            btn.disabled = true; btn.textContent = '⏳ Salvando...';
+            try {
+                if (_estArquivo) {
+                    if (_estArquivo.size > 15 * 1024 * 1024) throw new Error('PDF maior que 15MB.');
+                    const caminho = `prestacoes-contas/_estagiarios/${id}-${Date.now()}.pdf`;
+                    await storage.ref().child(caminho).put(_estArquivo, { contentType: 'application/pdf' });
+                    if (antigo && antigo.pdf_path) storage.ref().child(antigo.pdf_path).delete().catch(() => {});
+                    reg.pdf_path = caminho;
+                    reg.pdf_nome = _estArquivo.name;
+                }
+                const lista = _estPessoas.filter(x => x.id !== id).concat([reg]);
+                await _estSalvarLista(lista);
+                document.getElementById('est-form-overlay').classList.remove('active');
+                mostrarToast('✅ Cadastro salvo.');
+                renderEstagiarios();
+            } catch (e) {
+                console.error('Erro ao salvar estagiário/residente:', e);
+                mostrarToast('Erro ao salvar: ' + e.message, true);
+            } finally {
+                btn.disabled = false; btn.textContent = '💾 Salvar';
+            }
+        }
+
+        async function excluirEstagiario(id) {
+            if (userRole !== 'admin') return;
+            const p = _estPessoas.find(x => x.id === id);
+            if (!p || !confirm(`Excluir ${p.nome} da lista? O PDF do encaminhamento também será apagado.`)) return;
+            try {
+                await _estSalvarLista(_estPessoas.filter(x => x.id !== id));
+                if (p.pdf_path) storage.ref().child(p.pdf_path).delete().catch(() => {});
+                mostrarToast('Cadastro excluído.');
+                renderEstagiarios();
+            } catch (e) {
+                console.error('Erro ao excluir estagiário/residente:', e);
+                mostrarToast('Erro ao excluir: ' + e.message, true);
+            }
+        }
+
+        async function abrirEncaminhamentoEstagiario(id) {
+            if (userRole !== 'admin') return;
+            const p = _estPessoas.find(x => x.id === id);
+            if (!p || !p.pdf_path) return;
+            const janela = window.open('', '_blank');   // aberta já no clique, para o navegador não bloquear
+            try {
+                const url = await storage.ref().child(p.pdf_path).getDownloadURL();
+                if (janela) janela.location.href = url; else window.location.href = url;
+            } catch (e) {
+                if (janela) janela.close();
+                console.error('Erro ao abrir encaminhamento:', e);
+                mostrarToast('Não foi possível abrir o PDF: ' + e.message, true);
+            }
+        }
+
 
         function renderFichas() {
             const hoje = _fichasHoje();

@@ -36,6 +36,15 @@ role: "admin" | "viewer"
 nome: "..."
 ```
 
+### `secoes/estagiarios_residentes` (sessão 62)
+```
+pessoas: [{ id, nome, tipo: "estagiario"|"residente", area: "familia"|"civel"|"registro"|"criminal",
+            data_inicio: "YYYY-MM-DD", pdf_path?, pdf_nome? }]
+atualizado_por, atualizado_em
+```
+`pdf_path` aponta para `prestacoes-contas/_estagiarios/…` no Storage (admin-only). Não gravar URL de
+download aqui — o doc é legível por todos os logados.
+
 ### `secoes/{id}` — conteúdo editável das seções
 
 | doc | campos |

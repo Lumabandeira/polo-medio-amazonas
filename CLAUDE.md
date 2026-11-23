@@ -32,6 +32,7 @@ Antes de qualquer alteração, leia **apenas** os arquivos listados para a taref
 | Mexer na seção Viagens e Eventos (tabelas de viagens/eventos da equipe) | `docs/site/estrutura-html.md` (seção "Viagens e Eventos") · `docs/firebase.md` (schema `viagens_tabela1`/`viagens_tabela2`) |
 | Mexer em Fichas do Dia (PDF das fichas de atendimento) | `docs/site/estrutura-html.md` (seção "Fichas do Dia") |
 | Mexer na seção Audiências (pauta Projudi/SEEU por DP) | `docs/site/estrutura-html.md` (seção "Audiências") · `docs/firebase.md` (schema `audiencias_semanas`) |
+| Mexer na seção Estagiários e Residentes (primeiro dia, por área) | `docs/site/estrutura-html.md` (seção "Estagiários e Residentes") · `docs/firebase.md` (schema `secoes/estagiarios_residentes`) |
 | Mexer na seção Escala Semanal (atendimento/audiência/plantão por semana) | `docs/site/estrutura-html.md` (seção "Escala Semanal") — somente leitura, sem Firestore próprio |
 
 ---
@@ -61,6 +62,21 @@ docs/
 ```
 
 ---
+
+## Estado atual (sessão 62 — 23/11/2026)
+
+**Implementado nesta sessão:** nova seção **🎓 Estagiários e Residentes** (`#estagiarios`, todos os
+logados veem; só admin cadastra/edita/exclui). Quatro cartões por área (Família, Cível, Registro,
+Criminal), cada um com Estagiários e Residentes: nome, primeiro dia e tempo no Polo. Estagiário fica
+**amarelo** a partir de 3 meses antes de completar 2 anos (`_estSituacao()`; residente não). O admin
+arrasta o PDF do encaminhamento no formulário e o site lê nome, tipo e primeiro dia
+(`_estLerEncaminhamento()`, PDF.js). Dados em `secoes/estagiarios_residentes` (array `pessoas`); PDF
+em `prestacoes-contas/_estagiarios/` (caminho já admin-only no `storage.rules`) — só o **caminho**
+fica no Firestore, a URL é pedida na hora do clique (📄), então só admin abre. Nenhuma regra nova.
+Testado no navegador com Firestore/Storage simulados e o encaminhamento real da Anne (lido:
+Anne Lais da Costa Teles, estagiária, 13/01/2025 → amarela, 2 anos em 13/01/2027), desktop e 375px.
+**Pendente (usuária):** cadastrar a Anne (Criminal) pelo site — o Claude não grava no Firebase.
+Ver `docs/site/estrutura-html.md` (seção "Estagiários e Residentes").
 
 ## Estado atual (sessão 61 — 21/11/2026)
 
