@@ -75,7 +75,8 @@ em `prestacoes-contas/_estagiarios/` (caminho já admin-only no `storage.rules`)
 fica no Firestore, a URL é pedida na hora do clique (📄), então só admin abre. Nenhuma regra nova.
 Testado no navegador com Firestore/Storage simulados e o encaminhamento real da Anne (lido:
 Anne Lais da Costa Teles, estagiária, 13/01/2025 → amarela, 2 anos em 13/01/2027), desktop e 375px.
-**Pendente (usuária):** cadastrar a Anne (Criminal) pelo site — o Claude não grava no Firebase.
+Bugfix no mesmo dia: o botão "➕ Novo cadastro" usava `.btn-salvar` (oculta por padrão) → `.btn-salvar-form`.
+Anne cadastrada pelo site publicado (Criminal, 13/01/2025, PDF anexado e aberto por admin) com a usuária logada no navegador.
 Ver `docs/site/estrutura-html.md` (seção "Estagiários e Residentes").
 
 ## Estado atual (sessão 61 — 21/11/2026)
