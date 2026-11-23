@@ -81,6 +81,9 @@ no formato "a partir de 26/03/2026" (encaminhamento da Heloisa). Testado localme
 Anne cadastrada pelo site publicado (Criminal, 13/01/2025, PDF anexado e aberto por admin) com a usuária logada no navegador.
 Depois: Heloisa, Jordana, Erick, Carlos Eduardo, Andella e Paloma cadastrados do mesmo jeito (7 no total).
 **Regra de prazo (a pedido da usuária):** estagiário até 2 anos, residente até 3 anos; amarelo 3 meses antes.
+Bugfix: com a aba nova (sem `pma-role` em cache) a seção era desenhada como viewer e o "➕ Novo cadastro"
+sumia até reabrir a seção; agora o `onAuthStateChanged` redesenha `#estagiarios` quando o papel muda.
+Giderlane (Família) cadastrada a partir do TCE (sem encaminhamento): 1º dia = início da vigência, 13/10/2026.
 Ver `docs/site/estrutura-html.md` (seção "Estagiários e Residentes").
 
 ## Estado atual (sessão 61 — 21/11/2026)

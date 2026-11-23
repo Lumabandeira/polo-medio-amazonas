@@ -10843,6 +10843,8 @@
                             const _s = sessionStorage.getItem('pma-secao');
                             if (_s === 'atribuicoes') setTimeout(renderAtribuicoes, 100);
                         }
+                        // Estagiários e Residentes: botões e PDF dependem do papel (vale nos dois sentidos)
+                        if (document.getElementById('estagiarios').classList.contains('active')) renderEstagiarios();
                     }
                 } catch(e) { /* mantém role atual */ }
             } else {
