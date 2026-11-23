@@ -923,13 +923,16 @@ Sessão 62 (23/11/2026). Primeiro dia de cada estagiário e residente do Polo, p
 - **Layout:** 4 cartões (`EST_AREAS`: familia, civel, registro, criminal), cada um com as
   subtabelas Estagiários e Residentes (ordem pelo primeiro dia). Colunas: Nome · Primeiro dia (com
   tempo no Polo, `_estTempo()`). Botão também no header-nav e na landing (`.btn-estagiarios`, verde).
-- **Amarelo:** só estagiário, a partir de primeiro dia + 21 meses (`_estSituacao()`); mostra
+- **Tipos** (`EST_TIPOS`): `estagiario` (graduação), `estagiario_medio` (nível médio — subtabela só aparece
+  na área se houver alguém, `soSeHouver`) e `residente`. Nível médio criado a pedido da usuária: o CEA
+  às vezes manda o encaminhamento como "graduação" (caso Heloisa); o tipo é corrigido no formulário.
+- **Amarelo:** só estagiário (graduação ou nível médio), a partir de primeiro dia + 21 meses (`_estSituacao()`); mostra
   "⏳ Completa 2 anos em dd/mm/aaaa" (depois, "⚠️ Completou 2 anos em …"). Residente nunca fica amarelo.
 - **Formulário** (`#est-form-overlay`, `abrirFormEstagiario(id?)`/`salvarEstagiario()`): arrastar ou
   escolher o PDF do encaminhamento → `_estArquivoEscolhido()` extrai o texto com PDF.js
   (`_audCarregarPdfJs()`) e `_estLerEncaminhamento()` preenche nome ("encaminho … GRADUAÇÃO NOME EM
   MAIÚSCULAS", ou o nome do arquivo depois do último "-"), tipo (ASSUNTO com "residen"/"estagi") e
-  primeiro dia ("a partir de 13 de Janeiro de 2025" — procurado no texto **sem espaços**, porque o
+  primeiro dia ("a partir de 13 de Janeiro de 2025" ou "a partir de 26/03/2026" — procurado no texto **sem espaços**, porque o
   PDF.js parte palavras: "d e 202 5"). Área sempre escolhida à mão.
 - **Dados:** `secoes/estagiarios_residentes` `{ pessoas: [{id, nome, tipo, area, data_inicio, pdf_path,
   pdf_nome}], atualizado_por, atualizado_em }` — sempre regravado inteiro (`_estSalvarLista()`).

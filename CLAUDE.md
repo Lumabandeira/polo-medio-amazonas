@@ -76,6 +76,8 @@ fica no Firestore, a URL é pedida na hora do clique (📄), então só admin ab
 Testado no navegador com Firestore/Storage simulados e o encaminhamento real da Anne (lido:
 Anne Lais da Costa Teles, estagiária, 13/01/2025 → amarela, 2 anos em 13/01/2027), desktop e 375px.
 Bugfix no mesmo dia: o botão "➕ Novo cadastro" usava `.btn-salvar` (oculta por padrão) → `.btn-salvar-form`.
+Também: tipo **Estagiário(a) de nível médio** (`estagiario_medio`, também fica amarelo) e leitura da data
+no formato "a partir de 26/03/2026" (encaminhamento da Heloisa). Testado localmente com o PDF real.
 Anne cadastrada pelo site publicado (Criminal, 13/01/2025, PDF anexado e aberto por admin) com a usuária logada no navegador.
 Ver `docs/site/estrutura-html.md` (seção "Estagiários e Residentes").
 

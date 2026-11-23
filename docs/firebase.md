@@ -38,7 +38,7 @@ nome: "..."
 
 ### `secoes/estagiarios_residentes` (sessão 62)
 ```
-pessoas: [{ id, nome, tipo: "estagiario"|"residente", area: "familia"|"civel"|"registro"|"criminal",
+pessoas: [{ id, nome, tipo: "estagiario"|"estagiario_medio"|"residente", area: "familia"|"civel"|"registro"|"criminal",
             data_inicio: "YYYY-MM-DD", pdf_path?, pdf_nome? }]
 atualizado_por, atualizado_em
 ```
