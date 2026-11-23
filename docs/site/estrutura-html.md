@@ -926,8 +926,9 @@ Sessão 62 (23/11/2026). Primeiro dia de cada estagiário e residente do Polo, p
 - **Tipos** (`EST_TIPOS`): `estagiario` (graduação), `estagiario_medio` (nível médio — subtabela só aparece
   na área se houver alguém, `soSeHouver`) e `residente`. Nível médio criado a pedido da usuária: o CEA
   às vezes manda o encaminhamento como "graduação" (caso Heloisa); o tipo é corrigido no formulário.
-- **Amarelo:** só estagiário (graduação ou nível médio), a partir de primeiro dia + 21 meses (`_estSituacao()`); mostra
-  "⏳ Completa 2 anos em dd/mm/aaaa" (depois, "⚠️ Completou 2 anos em …"). Residente nunca fica amarelo.
+- **Amarelo:** 3 meses antes do prazo máximo do contrato (`_estSituacao()`): estagiário (graduação ou
+  nível médio) 2 anos → amarelo a partir do 1º dia + 21 meses; residente 3 anos → a partir de + 33 meses.
+  Mostra "⏳ Completa N anos em dd/mm/aaaa" (depois, "⚠️ Completou N anos em …").
 - **Formulário** (`#est-form-overlay`, `abrirFormEstagiario(id?)`/`salvarEstagiario()`): arrastar ou
   escolher o PDF do encaminhamento → `_estArquivoEscolhido()` extrai o texto com PDF.js
   (`_audCarregarPdfJs()`) e `_estLerEncaminhamento()` preenche nome ("encaminho … GRADUAÇÃO NOME EM

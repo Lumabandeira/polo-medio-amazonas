@@ -79,6 +79,8 @@ Bugfix no mesmo dia: o botão "➕ Novo cadastro" usava `.btn-salvar` (oculta po
 Também: tipo **Estagiário(a) de nível médio** (`estagiario_medio`, também fica amarelo) e leitura da data
 no formato "a partir de 26/03/2026" (encaminhamento da Heloisa). Testado localmente com o PDF real.
 Anne cadastrada pelo site publicado (Criminal, 13/01/2025, PDF anexado e aberto por admin) com a usuária logada no navegador.
+Depois: Heloisa, Jordana, Erick, Carlos Eduardo, Andella e Paloma cadastrados do mesmo jeito (7 no total).
+**Regra de prazo (a pedido da usuária):** estagiário até 2 anos, residente até 3 anos; amarelo 3 meses antes.
 Ver `docs/site/estrutura-html.md` (seção "Estagiários e Residentes").
 
 ## Estado atual (sessão 61 — 21/11/2026)

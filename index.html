@@ -11398,13 +11398,15 @@
             if (m) partes.push(m + (m === 1 ? ' mês' : ' meses'));
             return partes.length ? partes.join(' e ') : 'menos de 1 mês';
         }
-        // Estagiário fica amarelo a partir de 3 meses antes de completar 2 anos
+        // Prazo máximo do contrato: estagiário (graduação ou nível médio) 2 anos, residente 3 anos.
+        // Fica amarelo a partir de 3 meses antes do fim do prazo.
         function _estSituacao(p, hoje) {
             const inicio = _estData(p.data_inicio);
-            if (!inicio || !/^estagiario/.test(p.tipo || '')) return { inicio, alerta: false };
-            const doisAnos = _estSomaMeses(inicio, 24);
-            const aviso = _estSomaMeses(inicio, 21);
-            return { inicio, doisAnos, alerta: hoje >= aviso, completou: hoje >= doisAnos };
+            const anos = /^estagiario/.test(p.tipo || '') ? 2 : (p.tipo === 'residente' ? 3 : 0);
+            if (!inicio || !anos) return { inicio, alerta: false };
+            const limite = _estSomaMeses(inicio, anos * 12);
+            const aviso = _estSomaMeses(inicio, anos * 12 - 3);
+            return { inicio, anos, limite, alerta: hoje >= aviso, completou: hoje >= limite };
         }
 
         async function _estCarregar() {
@@ -11434,7 +11436,7 @@
                     const linhas = lista.map(p => {
                         const s = _estSituacao(p, hoje);
                         let obs = '';
-                        if (s.alerta) obs = `<span class="est-obs">${s.completou ? '⚠️ Completou 2 anos em ' : '⏳ Completa 2 anos em '}${_estFmt(s.doisAnos)}</span>`;
+                        if (s.alerta) obs = `<span class="est-obs">${s.completou ? '⚠️ Completou ' : '⏳ Completa '}${s.anos} anos em ${_estFmt(s.limite)}</span>`;
                         const acoes = isAdmin ? `<td class="est-acoes">`
                             + (p.pdf_path ? `<button title="Abrir encaminhamento (PDF)" onclick="abrirEncaminhamentoEstagiario('${p.id}')">📄</button>` : '')
                             + `<button title="Editar" onclick="abrirFormEstagiario('${p.id}')">✏️</button>`
@@ -11456,7 +11458,7 @@
                     ${isAdmin ? '<button class="btn-salvar-form" onclick="abrirFormEstagiario()">➕ Novo cadastro</button>' : ''}
                 </div>
                 <div class="est-legenda">
-                    <span><i></i> Estagiário (graduação ou nível médio) a 3 meses (ou menos) de completar 2 anos no Polo</span>
+                    <span><i></i> A 3 meses (ou menos) do fim do prazo máximo: 2 anos para estagiário (graduação ou nível médio), 3 anos para residente</span>
                     ${isAdmin ? '<span>📄 Encaminhamento em PDF (visível só para administradores)</span>' : ''}
                 </div>
                 <div class="est-grid">${EST_AREAS.map(blocoArea).join('')}</div>
