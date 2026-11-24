@@ -7839,5 +7839,114 @@
       "numero": "PORTARIA Nº 1225/2026-GSPG/DPE/AM",
       "texto": "ALTERAR a Portaria 1011/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.739, pág. 5, em 25 de setembro de 2026, nos seguintes termos"
     }
+  },
+  {
+    "edicao": 2777,
+    "data": "2026-11-23",
+    "data_formatada": "23/11/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/11/Edicao_2777-2026__publicada_em_23_novembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 2141/2026-GDPG/DPE/AM",
+        "sei": "26.0.000016500-9",
+        "sgi": "2602440",
+        "categorias": [
+          "comarca",
+          "projeto"
+        ],
+        "trechos": [
+          "AUTORIZAR o deslocamento de Luciana Pontes da Costa, Assessora Técnica I DPE-2, no trecho Manaus/Itapiranga/Silves/São Sebastião do Uatumã/Manaus, no período de 29 de novembro a 07 de dezembro de 2026, a fim de atuar na 2ª edição do Mutirão Gerando Cidadania, a ser realizada em parceria com a ENEVA SA e a Marinha do Brasil, nos municípios de São Sebastião do Uatumã, Silves e Itapiranga"
+        ],
+        "resumo": "Autoriza deslocamento de servidora para atuar no Mutirão Gerando Cidadania em São Sebastião do Uatumã, Silves e Itapiranga (29/11 a 07/12/2026)"
+      },
+      {
+        "numero": "Portaria Nº 1244/2026-GSPG/DPE/AM",
+        "sei": "26.0.000015781-2",
+        "sgi": "2600610",
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "designacoes"
+        ],
+        "trechos": [
+          "DESIGNAR, cumulativamente, o Defensor Público de 3ª Classe Miguel Eduardo de Azevedo Martins Filho para atuar na 6ª Defensoria Pública do Polo do Médio Amazonas, no período de 23 de novembro de 2026 a 04 de dezembro de 2026",
+          "DESIGNAR, cumulativamente, a Defensora Pública de 3ª Classe Emilly Bianca Ferreira dos Santos para atuar na 6ª Defensoria Pública do Polo do Médio Amazonas, nos dias 09, 10 e 11 de dezembro de 2026"
+        ],
+        "resumo": "Designa Miguel Eduardo de Azevedo Martins Filho e Emilly Bianca Ferreira dos Santos para atuar na 6ª DP do Polo Médio Amazonas (períodos em nov-dez/2026)"
+      },
+      {
+        "numero": "Portaria Nº 1237/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "plantao",
+          "substituicao"
+        ],
+        "trechos": [
+          "AUTORIZAR a substituição da Defensora Pública Emilly Bianca Ferreira dos Santos, designada para a semana 09 do Plantão do Polo Rio Negro-Solimões, correspondente ao período de 23/11 a 29/11, pelo Defensor Público Miguel Eduardo de Azevedo Martins Filho",
+          "DETERMINAR a seguinte escala de substituição entre os Polos e Unidades do Interior para atuarem reciprocamente como substitutos automáticos em casos de impedimento e suspeição de seus membros plantonistas: Polo do Rio Negro-Solimões | Polo do Médio Amazonas",
+          "Polo do Médio Amazonas | Plantão Cível e de Família | Eliaqui m Antunes de Souza Santos (R) | Pedro Henriqu e Pereira Paiva (R) | Emilly Bianca Ferreira dos Santos (R) | Enio Jorge Lima Barbalh o Júnior (F)",
+          "Polo do Médio Amazonas | Plantão Crimina l e de Custódi a | Eliaqui m Antunes de Souza Santos | Pedro Henriqu e Pereira Paiva | Emilly Bianca Ferreira dos Santos | Enio Jorge Lima Barbalh o Júnior",
+          "Polo do Médio Amazonas | Assess oria | Fábio Bastos de Souza | Larice Bruce Pereira | Larice Bruce Pereira | Larice Bruce Pereira"
+        ],
+        "resumo": "Autoriza substituição de Emilly Bianca Ferreira dos Santos por Miguel Eduardo de Azevedo Martins Filho no plantão; estabelece escala de substituição entre Polos Rio Negro-Solimões e Médio Amazonas"
+      }
+    ],
+    "plantao_polo": [
+      {
+        "data_inicio": "2026-09-28",
+        "data_fim": "2026-10-04",
+        "defensor": "Eliaquim Antunes de Souza Santos (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-10-05",
+        "data_fim": "2026-10-11",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-10-12",
+        "data_fim": "2026-10-18",
+        "defensor": "Emilly Bianca Ferreira dos Santos (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-10-19",
+        "data_fim": "2026-10-25",
+        "defensor": "Enio Jorge Lima Barbalho Júnior (F)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-10-26",
+        "data_fim": "2026-11-01",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-11-02",
+        "data_fim": "2026-11-08",
+        "defensor": "Pedro Henrique Pereira Paiva (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-11-09",
+        "data_fim": "2026-11-15",
+        "defensor": "Eliaquim Antunes de Souza (R)",
+        "assessoria": ""
+      },
+      {
+        "data_inicio": "2026-11-16",
+        "data_fim": "2026-11-22",
+        "defensor": "Miguel Eduardo de Azevedo Martins Filho (R)",
+        "assessoria": ""
+      }
+    ],
+    "plantao_polo_portaria": {
+      "numero": "PORTARIA Nº 1237/2026-GSPG/DPE/AM",
+      "texto": "ALTERAR a Portaria 1011/2026-GSPG/DPE/AM, publicada no Diário Oficial Eletrônico da DPE/AM, Ano 12, Edição 2.739, pág. 5, em 25 de setembro de 2026, nos seguintes termos"
+    }
   }
 ]
