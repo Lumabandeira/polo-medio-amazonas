@@ -7970,5 +7970,32 @@
         "resumo": "Autoriza deslocamento da Defensora Emilly Bianca para atuar no Tribunal do Júri da Comarca de Itacoatiara de 24 a 28 de novembro de 2026"
       }
     ]
+  },
+  {
+    "edicao": 2779,
+    "data": "2026-11-25",
+    "data_formatada": "25/11/2026",
+    "url": "https://diario.defensoria.am.def.br/wp-content/uploads/2026/11/Edicao_2779-2026__publicada_em_25_novembro_de_2026.pdf",
+    "portarias": [],
+    "portarias_estruturadas": [
+      {
+        "numero": "Portaria Nº 1202/2026-GSPG/DPE/AM",
+        "sei": null,
+        "sgi": null,
+        "categorias": [
+          "polo_medio",
+          "defensor",
+          "servidor",
+          "plantao"
+        ],
+        "trechos": [
+          "Polo do Médio Amazonas | Plantão Cível e de Família | Eliaqui m Antunes de Souza Santos | Pedro Henriqu e Pereira Paiva (R) | Emilly Bianca Ferreira dos Santos (R) | Enio Jorge Lima Barbalh o Júnior (F)",
+          "Polo do Médio Amazonas | Plantão Crimina l e de Custódi a | Eliaqui m Antunes de Souza Santos | Pedro Henriqu e Pereira Paiva | Emilly Bianca Ferreira dos Santos | Enio Jorge Lima Barbalh o Júnior",
+          "Polo do Médio Amazonas | Assess oria | Fábio Bastos de Souza | Larice Bruce Pereira | Larice Bruce Pereira | Larice Bruce Pereira",
+          "PORTARIA 1202/2026-GSPG/DPE/AM (6ª Alteração da Portaria 1011/2026-GSPG/DPE/AM)"
+        ],
+        "resumo": "6ª Alteração da Escala de Plantão do Polo Médio Amazonas para o 4º trimestre de 2026, designando defensores e servidores (Eliaquim Antunes, Pedro Henrique, Emilly Bianca, Enio Jorge, Fábio Bastos, Larice Bruce) para plantão cível, criminal, custódia e assessoria"
+      }
+    ]
   }
 ]
