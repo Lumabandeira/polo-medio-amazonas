@@ -75,6 +75,9 @@ Também: linha mesclada com o dia da semana ("Terça-feira 01/12/2026") antes de
 audiências do mesmo dia (`tr.aud-dia`, `_audDiaSemana()` em `_audRenderTabela()`), também no
 DOCX (`gridSpan`) e no XLSX (`mergeCells`). Conferido no navegador com dados simulados (arquivos
 gerados e relidos; não abertos no Word/Excel).
+Bugfix: o site não aceitava arrastar a pasta da pauta numa aba nova ou fora de Audiências (o arrastar
+global só ligava ao abrir a seção já como admin). Agora `_audIniciarDropGlobal()` roda no login e
+confere o papel a cada evento; `#audiencias` é redesenhada quando o papel muda. Testado com eventos simulados.
 **Pendente (usuária):** arrastar a pasta de 30/11–06/12 no site publicado.
 
 ## Estado atual (sessão 62 — 23/11/2026)

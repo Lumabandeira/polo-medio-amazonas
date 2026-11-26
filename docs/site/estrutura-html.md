@@ -842,7 +842,11 @@ documentada na sessão do Plantão (commitar a regra sozinho não publica).
 ## Audiências (`#audiencias`)
 
 Pauta semanal de audiências por DP (1ª–6ª de Itacoatiara), importada de um ZIP de PDFs (admin:
-botão "📥 Importar Pauta (ZIP)" ou arrastar o ZIP em qualquer lugar do site). Texto extraído no
+botão "📥 Importar Pauta (ZIP)" ou arrastar o ZIP em qualquer lugar do site). O arrastar global
+(`_audIniciarDropGlobal()`) é ligado no login (`onAuthStateChanged`), para qualquer papel — os
+eventos conferem `userRole === 'admin'` na hora. Até a sessão 63 só ligava ao abrir Audiências já
+como admin, então numa aba nova (papel ainda não carregado) ou fora da seção a pasta não era aceita;
+quando o papel muda, `#audiencias` é redesenhada se estiver aberta. Texto extraído no
 navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTexto()`.
 
 - **Duas origens, mesmo botão:** ZIP do **Projudi** (varas de Itacoatiara, cabeçalho

@@ -10832,6 +10832,10 @@
                 currentUser = user;
                 // Usa role em cache (sessionStorage) para renderizar imediatamente sem esperar o Firestore
                 userRole = sessionStorage.getItem('pma-role') || 'viewer';
+                // Arrastar a pasta da pauta funciona em qualquer tela (os eventos conferem
+                // o papel na hora): antes só ligava ao abrir Audiências já como admin, e numa
+                // aba nova (papel ainda não carregado) o arrastar não fazia nada.
+                _audIniciarDropGlobal();
                 mostrarSiteAutenticado();
                 carregarConteudoFirestore();
                 // Verifica role no Firestore em segundo plano
@@ -10850,6 +10854,8 @@
                         }
                         // Estagiários e Residentes: botões e PDF dependem do papel (vale nos dois sentidos)
                         if (document.getElementById('estagiarios').classList.contains('active')) renderEstagiarios();
+                        // Audiências: botão "Importar" e limpeza de cópias também dependem do papel
+                        if (document.getElementById('audiencias')?.classList.contains('active')) renderAudiencias();
                     }
                 } catch(e) { /* mantém role atual */ }
             } else {
@@ -16068,7 +16074,8 @@ Regras obrigatórias:
         }
 
         function renderAudiencias() {
-            if (userRole === 'admin') { _audIniciarDropGlobal(); _audLimparCopiasAntigas(); }
+            _audIniciarDropGlobal();
+            if (userRole === 'admin') _audLimparCopiasAntigas();
             const el = document.getElementById('audiencias-content');
             if (!el) return;
             el.innerHTML = '<p style="text-align:center;padding:30px;color:var(--text-secondary)">⏳ Carregando audiências...</p>';

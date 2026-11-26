@@ -21,6 +21,13 @@ no navegador com dados simulados. Depois, a pedido da usuária, a mesma linha en
 (`gridSpan`) e no XLSX (`mergeCells`), nas abas Audiências e Garantias — conferido gerando os dois
 arquivos no navegador e relendo com ExcelJS/JSZip (XML do DOCX válido).
 
+**Audiências — bugfix: site não aceitava a pasta arrastada.** O arrastar global só era ligado por
+`renderAudiencias()` com `userRole === 'admin'`; numa aba nova o papel em cache ainda é "viewer"
+quando a seção abre (mesmo problema de Estagiários), e fora de Audiências ele nem existia. Agora é
+ligado no login e confere o papel a cada evento; a seção também é redesenhada quando o papel muda.
+Testado no navegador com eventos simulados (papel "viewer" no início, "admin" depois: overlay
+aparece e o CSV é recebido). Causa deduzida do código, não reproduzida com o login real.
+
 ---
 
 ## Sessão 60 — 20/11/2026
