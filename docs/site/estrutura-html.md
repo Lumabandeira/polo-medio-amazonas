@@ -911,6 +911,10 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
   do selo DPE, o selo amarelo "👥 N defensores" (`.aud-dpe-def`, `_audDefensoresExtra()`). Sem coluna
   nova: nas exportações a coluna "DPE" vira "SIM (2 defensores)" (`_audDpeTexto()`). CSV antigo,
   sem a coluna, continua funcionando.
+- **Dia da semana (sessão 63):** `_audRenderTabela()` insere, antes de cada grupo de audiências do
+  mesmo dia, uma linha mesclada (`tr.aud-dia`, `colspan` = nº de colunas) com "Segunda-feira
+  30/11/2026" etc. (`_audDiaSemana()`). Depende de as audiências virem ordenadas por data
+  (`_audOrdenar()` ao salvar, `_audSortKey()` no Compatibilizar). Só na tela; DOCX/XLSX não mudaram.
 - **Cópias integrais:** cada PDF vai para o Storage em `audiencias-copias/{semana}/{processo}.pdf`
   (`_audImportarCopias()`, barra de progresso no modal, aviso ao fechar a aba durante o envio,
   `contentDisposition: attachment`). Semana pela data do nome do ZIP; semana já passada é recusada.

@@ -12,7 +12,12 @@
 "👥 N defensores" logo abaixo do selo DPE, e nas exportações a coluna "DPE" vira "SIM (2
 defensores)" — sem coluna nova, a pedido da usuária. Testado com node e o CSV real (51
 classificações, só o 0005047-24.2026 com 2 defensores); não conferido no navegador (o servidor
-local não subiu nesta máquina).
+local não subiu nesta máquina; depois conferido na tela).
+
+**Audiências — dia da semana.** Antes de cada grupo de audiências do mesmo dia, a tabela ganha uma
+linha mesclada rosa com "Terça-feira 01/12/2026" etc. (`tr.aud-dia`, `_audDiaSemana()`), também no
+modo Compatibilizar e na Vara de Garantias. Só na tela (exportações iguais). Testado com node na
+pauta de 30/11–06/12 e conferido no navegador com dados simulados.
 
 ---
 
