@@ -1229,6 +1229,8 @@
         .aud-dpe-sim { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
         .aud-dpe-nao { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
         .aud-dpe-possivel { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; }
+        .aud-dpe-def { display: inline-block; margin-top: 3px; border-radius: 4px; padding: 1px 6px; font-size: 0.75em; font-weight: 700;
+                       background: #fde047; color: #713f12; border: 1px solid #eab308; }
         .aud-dpe-obs { margin-top: 4px; font-size: 0.8em; color: #4b5563; max-width: 280px; white-space: normal; text-decoration: none; }
         .aud-copia-btn {
             display: block; margin-top: 6px; padding: 3px 8px; border-radius: 6px; cursor: pointer;
@@ -15442,12 +15444,15 @@ Regras obrigatórias:
             const iProc = cab.findIndex(c => c.startsWith('processo'));
             const iDpe  = cab.findIndex(c => c === 'dpe');
             const iObs  = cab.findIndex(c => c.startsWith('observ'));
+            const iDef  = cab.findIndex(c => c.startsWith('defensor')); // coluna opcional (desde 30/11/2026)
             const mapa = {};
             for (const l of linhas) {
                 const proc = _audExtrairProcesso(l[iProc]);
                 const dpe = _audNormDpe(l[iDpe]);
                 if (!proc || !dpe) continue;
                 mapa[proc] = { dpe, obs: iObs >= 0 ? (l[iObs] || '').trim() : '' };
+                const nDef = iDef >= 0 ? parseInt(String(l[iDef] || '').trim(), 10) : NaN;
+                if (nDef > 0) mapa[proc].defensores = nDef;
             }
             return mapa;
         }
@@ -15834,9 +15839,9 @@ Regras obrigatórias:
                 };
                 rows.forEach((a, idx) => {
                     const vals = inclDp
-                        ? [a.dp+'ª', a.processo, _audDpeDe(a)?.dpe||'', a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
+                        ? [a.dp+'ª', a.processo, _audDpeTexto(a), a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
                            _audPartesTexto(a.autores, a.advAutor), _audPartesTexto(a.reus, a.advReu), a.status||'']
-                        : [a.processo, _audDpeDe(a)?.dpe||'', a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
+                        : [a.processo, _audDpeTexto(a), a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
                            _audPartesTexto(a.autores, a.advAutor), _audPartesTexto(a.reus, a.advReu), a.status||''];
                     const bg = a.status === 'CANCELADA'   ? 'FFFEE2E2'
                              : a.status === 'REDESIGNADA' ? 'FFFFF3C7'
@@ -15904,7 +15909,7 @@ Regras obrigatórias:
             const toVals = (a, inclDp) => {
                 const r = inclDp ? [a.dp + 'ª'] : [];
                 const proc = a.processo + (a.status ? ` (${a.status})` : '');
-                r.push(proc, _audDpeDe(a)?.dpe || '—', a.data, a.hora, a.vara || '—', a.classe || '—', a.tipo || '—',
+                r.push(proc, _audDpeTexto(a) || '—', a.data, a.hora, a.vara || '—', a.classe || '—', a.tipo || '—',
                        _audPartesTexto(a.autores, a.advAutor) || '—',
                        _audPartesTexto(a.reus, a.advReu) || '—');
                 return r;
@@ -16307,6 +16312,8 @@ Regras obrigatórias:
                         ? `<details class="aud-dpe"><summary class="aud-dpe-selo aud-dpe-${dpeCls}" title="${_escAttr(cls.obs)}">DPE: ${esc(cls.dpe)}</summary>
                                <div class="aud-dpe-obs">${esc(cls.obs)}</div></details>`
                         : `<div class="aud-dpe"><span class="aud-dpe-selo aud-dpe-${dpeCls}">DPE: ${esc(cls.dpe)}</span></div>`;
+                const nDef = _audDefensoresExtra(cls);
+                const defHtml = nDef ? `<div><span class="aud-dpe-def">👥 ${nDef} defensores</span></div>` : '';
                 const copia = audDadosAtual?.copias?.[a.processo];
                 const copiaHtml = copia && _audCopiaDisponivel(audSemanaAtual)
                     ? `<button class="aud-copia-btn" onclick="_audBaixarCopia(this, '${_escAttr(audSemanaAtual)}', '${_escAttr(a.processo)}')"
@@ -16315,7 +16322,7 @@ Regras obrigatórias:
 
                 h += `<tr class="${rowCls}">
                     ${mostrarDp ? `<td style="white-space:nowrap;font-weight:700;color:#9f1239">${esc(a.dp)}ª</td>` : ''}
-                    <td><span class="aud-processo">${esc(a.processo)}</span>${badgeSeeu}${badge}${dpeHtml}${copiaHtml}</td>
+                    <td><span class="aud-processo">${esc(a.processo)}</span>${badgeSeeu}${badge}${dpeHtml}${defHtml}${copiaHtml}</td>
                     <td><strong>${esc(a.data)}</strong><br><span style="font-size:0.9em">${esc(a.hora)}</span></td>
                     <td style="font-size:0.85em">${esc(a.vara || '—')}</td>
                     <td style="font-size:0.85em">${esc(a.classe || '—')}</td>
@@ -16329,9 +16336,22 @@ Regras obrigatórias:
             return h;
         }
 
-        // Classificação DPE da audiência na semana carregada ({dpe, obs} ou null)
+        // Classificação DPE da audiência na semana carregada ({dpe, obs, defensores?} ou null)
         function _audDpeDe(a) {
             return audDadosAtual?.classificacao?.[a.processo] || null;
+        }
+
+        // Nº de defensores quando a audiência é da DPE e precisa de 2 ou mais (senão 0)
+        function _audDefensoresExtra(cls) {
+            return cls && ['SIM', 'POSSÍVEL'].includes(cls.dpe) && cls.defensores >= 2 ? cls.defensores : 0;
+        }
+
+        // Texto da coluna "DPE" das exportações: "SIM" ou "SIM (2 defensores)"
+        function _audDpeTexto(a) {
+            const cls = _audDpeDe(a);
+            if (!cls?.dpe) return '';
+            const n = _audDefensoresExtra(cls);
+            return n ? `${cls.dpe} (${n} defensores)` : cls.dpe;
         }
 
         function _audFiltrarDpe(auds) {
@@ -16412,7 +16432,7 @@ Regras obrigatórias:
                   • <strong>Pauta</strong> (PDFs do Projudi/SEEU, soltos, na pasta <code>Pautas</code> ou em ZIP)<br>
                   • <strong>Cópias integrais</strong> (<code>Copia_Integral_&lt;processo&gt;.pdf</code>, soltas ou em ZIP) —
                     <strong>só sobem as dos processos DPE = SIM ou POSSÍVEL</strong>; ficam para download só na semana da audiência<br>
-                  • <strong>Classificação</strong> (<code>classificacao.csv</code>: <code>processo;DPE;observações</code>)<br>
+                  • <strong>Classificação</strong> (<code>classificacao.csv</code>: <code>processo;DPE;observações</code>, com a coluna opcional <code>defensores</code>)<br>
                   <span style="font-size:.9em">Os demais (Resumos, Textos, processos.csv, índice, prévia) são ignorados.</span></p>
                 <label for="aud-zip-input" id="aud-drop-label"
                   style="display:block;border:2px dashed #fda4af;border-radius:12px;padding:30px;text-align:center;

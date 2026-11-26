@@ -4,6 +4,18 @@
 
 ---
 
+## Sessão 63 — 26/11/2026
+
+**Audiências — audiência que precisa de 2 ou mais defensores.** O `classificacao.csv` da pauta de
+30/11–06/12 trouxe a coluna nova `defensores` (1 ou 2; vazia nos "NÃO"), que o site ignorava. Agora
+é lida e gravada na classificação (`defensores`); com 2 ou mais aparece um selo amarelo
+"👥 N defensores" logo abaixo do selo DPE, e nas exportações a coluna "DPE" vira "SIM (2
+defensores)" — sem coluna nova, a pedido da usuária. Testado com node e o CSV real (51
+classificações, só o 0005047-24.2026 com 2 defensores); não conferido no navegador (o servidor
+local não subiu nesta máquina).
+
+---
+
 ## Sessão 60 — 20/11/2026
 
 **Audiências — 2ª Vara (Violência Doméstica) sem DP.** As 21 audiências da 2ª Vara na pauta de

@@ -63,6 +63,16 @@ docs/
 
 ---
 
+## Estado atual (sessão 63 — 26/11/2026)
+
+**Implementado nesta sessão (Audiências):** o `classificacao.csv` passou a ter a coluna opcional
+`defensores` (`processo;DPE;defensores;observações`). O site grava o número na classificação e,
+quando a audiência é da DPE e precisa de 2 ou mais, mostra o selo amarelo "👥 N defensores" logo
+abaixo do selo DPE (`_audDefensoresExtra()`, `.aud-dpe-def`); com 1 defensor fica como antes.
+Exportações: coluna "DPE" vira "SIM (2 defensores)" (`_audDpeTexto()`), sem coluna nova. Testado
+com node e o CSV real de 30/11–06/12 (só 0005047-24.2026 com 2); não conferido no navegador.
+**Pendente (usuária):** arrastar a pasta de 30/11–06/12 no site publicado.
+
 ## Estado atual (sessão 62 — 23/11/2026)
 
 **Implementado nesta sessão:** nova seção **🎓 Estagiários e Residentes** (`#estagiarios`, todos os

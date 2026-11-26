@@ -905,6 +905,12 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
   (`_audImportarClassificacao()`). Na tabela, selo `DPE: SIM/NÃO/POSSÍVEL` (`.aud-dpe-*`) que abre
   as observações (`<details>`); botão "🟢 Só DPE" (`audSoDpe`, SIM + POSSÍVEL) filtra a tela e as
   exportações. DOCX/XLSX ganham a coluna "DPE" depois de "Processo".
+- **Nº de defensores (sessão 63):** coluna opcional `defensores` no CSV
+  (`processo;DPE;defensores;observações`, vazia nos "NÃO"), gravada como `defensores` na
+  classificação. Com 1 defensor nada muda; com 2 ou mais (e DPE = SIM/POSSÍVEL) aparece, logo abaixo
+  do selo DPE, o selo amarelo "👥 N defensores" (`.aud-dpe-def`, `_audDefensoresExtra()`). Sem coluna
+  nova: nas exportações a coluna "DPE" vira "SIM (2 defensores)" (`_audDpeTexto()`). CSV antigo,
+  sem a coluna, continua funcionando.
 - **Cópias integrais:** cada PDF vai para o Storage em `audiencias-copias/{semana}/{processo}.pdf`
   (`_audImportarCopias()`, barra de progresso no modal, aviso ao fechar a aba durante o envio,
   `contentDisposition: attachment`). Semana pela data do nome do ZIP; semana já passada é recusada.

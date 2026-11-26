@@ -332,7 +332,7 @@ audiencias: [{ dp, processo, data, hora, tipo, classe, status, vara, area,
                origem: "projudi" | "seeu",          ← sessão 51; ausente = projudi
                pauta: "1a_Vara_da_Comarca_de_Itacoatiara_-_Criminal",  ← sessão 53, PDF de origem
                autores: [{nome, adv}], reus: [{nome, adv}] }]
-classificacao: { "<processo>": { dpe: "SIM" | "NÃO" | "POSSÍVEL", obs } }   ← sessão 52, do CSV
+classificacao: { "<processo>": { dpe: "SIM" | "NÃO" | "POSSÍVEL", obs, defensores? } }   ← sessão 52, do CSV (defensores: nº, sessão 63, opcional)
 copias:        { "<processo>": { path, tamanho, enviado_em } }             ← sessão 52, só na semana vigente
 ```
 - Escrita só admin. Cada importação troca só as audiências da origem importada **dentro do
