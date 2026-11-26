@@ -72,8 +72,9 @@ abaixo do selo DPE (`_audDefensoresExtra()`, `.aud-dpe-def`); com 1 defensor fic
 Exportações: coluna "DPE" vira "SIM (2 defensores)" (`_audDpeTexto()`), sem coluna nova. Testado
 com node e o CSV real de 30/11–06/12 (só 0005047-24.2026 com 2) e conferido no navegador.
 Também: linha mesclada com o dia da semana ("Terça-feira 01/12/2026") antes de cada grupo de
-audiências do mesmo dia (`tr.aud-dia`, `_audDiaSemana()` em `_audRenderTabela()`); só na tela,
-exportações sem mudança. Conferido no navegador com dados simulados.
+audiências do mesmo dia (`tr.aud-dia`, `_audDiaSemana()` em `_audRenderTabela()`), também no
+DOCX (`gridSpan`) e no XLSX (`mergeCells`). Conferido no navegador com dados simulados (arquivos
+gerados e relidos; não abertos no Word/Excel).
 **Pendente (usuária):** arrastar a pasta de 30/11–06/12 no site publicado.
 
 ## Estado atual (sessão 62 — 23/11/2026)

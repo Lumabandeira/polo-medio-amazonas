@@ -16,8 +16,10 @@ local não subiu nesta máquina; depois conferido na tela).
 
 **Audiências — dia da semana.** Antes de cada grupo de audiências do mesmo dia, a tabela ganha uma
 linha mesclada rosa com "Terça-feira 01/12/2026" etc. (`tr.aud-dia`, `_audDiaSemana()`), também no
-modo Compatibilizar e na Vara de Garantias. Só na tela (exportações iguais). Testado com node na
-pauta de 30/11–06/12 e conferido no navegador com dados simulados.
+modo Compatibilizar e na Vara de Garantias. Testado com node na pauta de 30/11–06/12 e conferido
+no navegador com dados simulados. Depois, a pedido da usuária, a mesma linha entrou no DOCX
+(`gridSpan`) e no XLSX (`mergeCells`), nas abas Audiências e Garantias — conferido gerando os dois
+arquivos no navegador e relendo com ExcelJS/JSZip (XML do DOCX válido).
 
 ---
 

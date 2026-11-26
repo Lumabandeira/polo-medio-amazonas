@@ -914,7 +914,9 @@ navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTex
 - **Dia da semana (sessão 63):** `_audRenderTabela()` insere, antes de cada grupo de audiências do
   mesmo dia, uma linha mesclada (`tr.aud-dia`, `colspan` = nº de colunas) com "Segunda-feira
   30/11/2026" etc. (`_audDiaSemana()`). Depende de as audiências virem ordenadas por data
-  (`_audOrdenar()` ao salvar, `_audSortKey()` no Compatibilizar). Só na tela; DOCX/XLSX não mudaram.
+  (`_audOrdenar()` ao salvar, `_audSortKey()` no Compatibilizar). Também nas exportações, com o
+  texto "Terça-feira — 01/12/2026": no XLSX, linha com `mergeCells` (as linhas de dados deixaram de
+  ser `6 + idx` e usam o contador `linhaAtual`); no DOCX, linha com `gridSpan` e `keepNext`.
 - **Cópias integrais:** cada PDF vai para o Storage em `audiencias-copias/{semana}/{processo}.pdf`
   (`_audImportarCopias()`, barra de progresso no modal, aviso ao fechar a aba durante o envio,
   `contentDisposition: attachment`). Semana pela data do nome do ZIP; semana já passada é recusada.

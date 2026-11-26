@@ -15840,7 +15840,24 @@ Regras obrigatórias:
                     bottom:{style:'thin',color:{argb:'FFD1D5DB'}},
                     right: {style:'thin',color:{argb:'FFD1D5DB'}},
                 };
+                // Linha mesclada com o dia da semana antes de cada grupo do mesmo dia (como na tela)
+                let linhaAtual = 6, diaAnterior = null;
                 rows.forEach((a, idx) => {
+                    if (a.data !== diaAnterior) {
+                        diaAnterior = a.data;
+                        ws.mergeCells(linhaAtual, 1, linhaAtual, n);
+                        const cd = ws.getCell(linhaAtual, 1);
+                        cd.value = [_audDiaSemana(a.data) || 'Sem data', a.data].filter(Boolean).join(' — ');
+                        cd.style = {
+                            font:      { name:'Calibri', size:11, bold:true, color:{argb:VERM} },
+                            fill:      { type:'pattern', pattern:'solid', fgColor:{argb:'FFFFE4E6'} },
+                            border:    { top:{style:'thin',color:{argb:'FFFB7185'}}, bottom:{style:'thin',color:{argb:'FFFDA4AF'}},
+                                         left:{style:'thin',color:{argb:'FFD1D5DB'}}, right:{style:'thin',color:{argb:'FFD1D5DB'}} },
+                            alignment: { horizontal:'center', vertical:'middle' },
+                        };
+                        ws.getRow(linhaAtual).height = 20;
+                        linhaAtual++;
+                    }
                     const vals = inclDp
                         ? [a.dp+'ª', a.processo, _audDpeTexto(a), a.data, a.hora, a.vara||'', a.classe||'', a.tipo||'',
                            _audPartesTexto(a.autores, a.advAutor), _audPartesTexto(a.reus, a.advReu), a.status||'']
@@ -15850,7 +15867,7 @@ Regras obrigatórias:
                              : a.status === 'REDESIGNADA' ? 'FFFFF3C7'
                              : idx % 2 === 1              ? 'FFF9FAFB'
                              : 'FFFFFFFF';
-                    const dr = ws.getRow(6 + idx);
+                    const dr = ws.getRow(linhaAtual++);
                     dr.height = estimarAltura(vals, colDefs);
                     vals.forEach((v, ci) => {
                         const cell = dr.getCell(ci + 1);
@@ -15947,10 +15964,22 @@ Regras obrigatórias:
                 const grid = tcols.map(c => `<w:gridCol w:w="${c.w}"/>`).join('');
                 const hdr  = `<w:tr><w:trPr><w:tblHeader/><w:trHeight w:val="380" w:hRule="atLeast"/></w:trPr>`
                            + tcols.map(c => mkCell(c.l, c.w, true, '')).join('') + '</w:tr>';
+                // Linha mesclada (gridSpan) com o dia da semana antes de cada grupo do mesmo dia
+                const linhaDia = data => {
+                    const txt = [_audDiaSemana(data) || 'Sem data', data].filter(Boolean).join(' — ');
+                    return `<w:tr><w:trPr><w:cantSplit/></w:trPr><w:tc><w:tcPr><w:tcW w:w="${tw}" w:type="dxa"/>`
+                         + `<w:gridSpan w:val="${tcols.length}"/><w:shd w:val="clear" w:color="auto" w:fill="FFE4E6"/></w:tcPr>`
+                         + `<w:p><w:pPr><w:keepNext/><w:spacing w:before="40" w:after="40"/><w:jc w:val="center"/></w:pPr>`
+                         + `<w:r><w:rPr><w:b/><w:color w:val="9F1239"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr>`
+                         + `<w:t xml:space="preserve">${xe(txt)}</w:t></w:r></w:p></w:tc></w:tr>`;
+                };
+                let diaAnterior = null;
                 const body = rows.map(a => {
                     const fill = a.status === 'CANCELADA' ? 'FEE2E2'
                                : a.status === 'REDESIGNADA' ? 'FEF3C7' : '';
-                    return `<w:tr>${tcols.map((c, i) => mkCell(toVals(a, inclDp)[i] || '—', c.w, false, fill)).join('')}</w:tr>`;
+                    let pre = '';
+                    if (a.data !== diaAnterior) { diaAnterior = a.data; pre = linhaDia(a.data); }
+                    return pre + `<w:tr>${tcols.map((c, i) => mkCell(toVals(a, inclDp)[i] || '—', c.w, false, fill)).join('')}</w:tr>`;
                 }).join('');
                 return `<w:tbl><w:tblPr><w:tblW w:w="${tw}" w:type="dxa"/>${borders}${cellMar}</w:tblPr>`
                      + `<w:tblGrid>${grid}</w:tblGrid>${hdr}${body}</w:tbl>`;
