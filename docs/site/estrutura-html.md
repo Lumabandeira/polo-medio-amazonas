@@ -846,7 +846,10 @@ botão "📥 Importar Pauta (ZIP)" ou arrastar o ZIP em qualquer lugar do site).
 (`_audIniciarDropGlobal()`) é ligado no login (`onAuthStateChanged`), para qualquer papel — os
 eventos conferem `userRole === 'admin'` na hora. Até a sessão 63 só ligava ao abrir Audiências já
 como admin, então numa aba nova (papel ainda não carregado) ou fora da seção a pasta não era aceita;
-quando o papel muda, `#audiencias` é redesenhada se estiver aberta. Texto extraído no
+quando o papel muda, `#audiencias` é redesenhada se estiver aberta. Visitante que solta arquivo
+recebe o toast "Só administradores podem importar audiências". Drop já tratado por outra área
+(`e.defaultPrevented` — encaminhamento de Estagiários, modal de Anexos) é ignorado pelo global, que
+antes também mandava esse arquivo para a importação de audiências. Texto extraído no
 navegador com PDF.js (`_audExtrairTextoPdf()`), blocos lidos por `_audParsearTexto()`.
 
 - **Duas origens, mesmo botão:** ZIP do **Projudi** (varas de Itacoatiara, cabeçalho

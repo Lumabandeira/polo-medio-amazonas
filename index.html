@@ -15649,7 +15649,7 @@ Regras obrigatórias:
             let dragCounter = 0;
 
             document.addEventListener('dragenter', e => {
-                if (userRole !== 'admin') return;
+                if (userRole !== 'admin' || e.defaultPrevented) return;   // outra área de soltar já tratou
                 const hasFiles = e.dataTransfer && [...e.dataTransfer.items].some(i => i.kind === 'file');
                 if (!hasFiles) return;
                 dragCounter++;
@@ -15667,10 +15667,16 @@ Regras obrigatórias:
             });
 
             document.addEventListener('drop', async e => {
-                e.preventDefault();
                 dragCounter = 0;
                 overlay.classList.remove('visivel');
-                if (userRole !== 'admin') return;
+                // Soltou numa área própria (anexos, encaminhamento de estagiário…): não é pauta
+                if (e.defaultPrevented) return;
+                e.preventDefault();
+                const temArquivo = e.dataTransfer && [...(e.dataTransfer.items || [])].some(i => i.kind === 'file');
+                if (userRole !== 'admin') {
+                    if (temArquivo) mostrarToast('⚠️ Só administradores podem importar audiências. Entre com a conta de administrador.', true);
+                    return;
+                }
                 const files = await _audColetarDrop(e.dataTransfer);
                 if (!files.length) return;
                 if (!files.some(f => /\.(zip|csv|pdf)$/i.test(f.name))) {

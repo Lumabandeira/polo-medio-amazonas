@@ -78,6 +78,9 @@ gerados e relidos; não abertos no Word/Excel).
 Bugfix: o site não aceitava arrastar a pasta da pauta numa aba nova ou fora de Audiências (o arrastar
 global só ligava ao abrir a seção já como admin). Agora `_audIniciarDropGlobal()` roda no login e
 confere o papel a cada evento; `#audiencias` é redesenhada quando o papel muda. Testado com eventos simulados.
+(O caso real da usuária era estar logada como visitante.) Visitante que solta arquivo agora vê o aviso
+"Só administradores podem importar audiências"; drop já tratado por outra área (`e.defaultPrevented`,
+ex.: encaminhamento de Estagiários) não vai mais para a importação de audiências.
 **Pendente (usuária):** arrastar a pasta de 30/11–06/12 no site publicado.
 
 ## Estado atual (sessão 62 — 23/11/2026)

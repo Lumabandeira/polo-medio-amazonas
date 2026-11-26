@@ -27,6 +27,10 @@ quando a seção abre (mesmo problema de Estagiários), e fora de Audiências el
 ligado no login e confere o papel a cada evento; a seção também é redesenhada quando o papel muda.
 Testado no navegador com eventos simulados (papel "viewer" no início, "admin" depois: overlay
 aparece e o CSV é recebido). Causa deduzida do código, não reproduzida com o login real.
+Depois a usuária viu que estava logada como visitante — o site ignorava o arquivo sem dizer nada.
+Agora o visitante recebe o aviso "Só administradores podem importar audiências". Também: o drop
+global passa a ignorar arquivos já tratados por outra área (`e.defaultPrevented`), porque o PDF do
+encaminhamento de Estagiários ia junto para a importação de audiências. Testado com eventos simulados.
 
 ---
 
