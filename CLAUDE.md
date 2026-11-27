@@ -95,7 +95,8 @@ Urucurituba → Itacoatiara 7h todo dia; volta de Itacoatiara 10h30/11h alternad
 **Cotação de viagem (🧾):** botão "Montar cotação" na aba Lanchas → modal com origem, destino, ida,
 volta, passageiros e observação; lista as lanchas que fazem o trecho naquele dia da semana (todas
 marcadas, a usuária desmarca) e gera **PDF** (`_cotBaixarPDF()`) ou **texto para copiar**. Sem
-Firestore. CNPJ em campo próprio (`cnpj`/`semCnpj`). Testado no navegador local (PDF renderizado e
+Firestore. CNPJ em campo próprio (`cnpj`/`semCnpj`). Notas com marcador (¹) só entram na
+cotação quando um horário com o mesmo marcador foi incluído. Testado no navegador local (PDF renderizado e
 conferido, desktop e 375px).
 
 ## Estado atual (sessão 63 — 26/11/2026)

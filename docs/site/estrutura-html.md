@@ -763,7 +763,9 @@ lanchas vêm marcadas e a usuária desmarca as que não quer (`_cotDesmarcadas`,
 "perna|índice"). Saídas: **⬇️ Baixar PDF** (`_cotBaixarPDF()`, jsPDF + AutoTable, A4 retrato, logo
 das Fichas do Dia via `_fichasCarregarLogo()`, uma tabela por perna com Horário/Prestador/Lancha/
 Valor/Total (valor × nº de passageiros, mínimo 1)/Telefones/CNPJ, quadro amarelo com avisos e notas
-dos prestadores escolhidos, arquivo `cotacao-lancha-<origem>-<destino>-<data>.pdf`) e **📋 Copiar
+dos prestadores escolhidos — o `aviso` entra sempre; uma nota que começa com marcador (¹ ² … `COT_MARCADORES`)
+só entra se algum horário marcado daquele prestador tiver o mesmo marcador (`_cotAvisos()`),
+ arquivo `cotacao-lancha-<origem>-<destino>-<data>.pdf`) e **📋 Copiar
 texto** (`_cotTexto()`, para WhatsApp). No PDF os emojis saem (`_cotSemEmoji()`) porque a fonte do
 jsPDF não os tem, e "→" vira "para". Botões secundários usam `.cot-btn-sec`, **não**
 `.btn-cancelar` (que é `display:none` por padrão no site).

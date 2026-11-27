@@ -9965,14 +9965,26 @@
             return L.join('\n');
         }
 
+        // Avisos (faixa amarela) entram sempre que o prestador está na cotação.
+        // Notas que começam com marcador (¹ ² ³ …) só entram se algum horário
+        // marcado desse prestador tiver o mesmo marcador; nota sem marcador entra sempre.
+        const COT_MARCADORES = /[¹²³⁴⁵⁶⁷⁸⁹*]/;
         function _cotAvisos(E) {
-            const vistos = new Map();
+            const porPrestador = new Map(); // prestador -> { aviso, notas, horas[] }
             E.pernas.forEach(p => p.opcoes.filter(o => o.marcada).forEach(o => {
-                if (vistos.has(o.prestador)) return;
-                const textos = [o.aviso, ...o.notas].map(_cotSemEmoji).filter(Boolean);
-                if (textos.length) vistos.set(o.prestador, textos.join(' '));
+                if (!porPrestador.has(o.prestador)) porPrestador.set(o.prestador, { aviso: o.aviso, notas: o.notas, horas: [] });
+                porPrestador.get(o.prestador).horas.push(o.hora);
             }));
-            return [...vistos].map(([prestador, texto]) => ({ prestador, texto }));
+            const out = [];
+            porPrestador.forEach((v, prestador) => {
+                const notas = v.notas.filter(n => {
+                    const m = String(n).trim().match(new RegExp('^' + COT_MARCADORES.source));
+                    return !m || v.horas.some(h => String(h).includes(m[0]));
+                });
+                const textos = [v.aviso, ...notas].map(_cotSemEmoji).filter(Boolean);
+                if (textos.length) out.push({ prestador, texto: textos.join(' ') });
+            });
+            return out;
         }
 
         async function _cotCopiarTexto() {
