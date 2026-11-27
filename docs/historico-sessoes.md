@@ -13,6 +13,8 @@
   `LANCHAS_INFO`, sem Firestore. Conferido no navegador local, desktop e 375px.
 - **Lanchas → Lancha do Dib:** segundo prestador (Itacoatiara ⇄ Urucará, seg/qua/sex, 14h na ida e
   6h na volta). `LANCHAS_INFO` passou a ser um array de prestadores.
+- **Lanchas → valores:** passagem por trecho (ida ou volta) no quadro de cada prestador —
+  Anneth Martins R$ 45,00, Lancha do Dib R$ 150,00.
 
 ---
 

@@ -729,7 +729,9 @@ tipos de evento guardados em coleções separadas:
 V, com telefones, Instagram e Wi-Fi a bordo) e **Lancha do Dib** (Itacoatiara ⇄ Urucará, só
 telefone). Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
 sentido), mais notas opcionais. **Conteúdo fixo, sem Firestore e sem edição pelo site:** tudo vem
-do array `LANCHAS_INFO` (um item por prestador; `instagram`, `extras` e `notas` opcionais) e é
+do array `LANCHAS_INFO` (um item por prestador; `valor`, `instagram`, `extras` e `notas` opcionais — `valor` aparece
+como "💵 Passagem: … (ida ou volta)" no quadro do prestador: Anneth Martins R$ 45,00, Lancha do
+Dib R$ 150,00 por trecho) e é
 desenhado por `_viagensLanchasHtml()`/`_viagensLanchasPrestadorHtml()` (CSS `.lanchas-*`).
 Prestador novo = novo item no array. Fonte: panfleto do prestador (nov/2026). Para mudar
 um horário, editar só `LANCHAS_INFO`. Visível a todos os logados.

@@ -74,6 +74,8 @@ Conferido no navegador local (desktop e 375px, Firestore simulado).
 Depois: `LANCHAS_INFO` virou um array (um item por prestador) e entrou a **Lancha do Dib**
 (Itacoatiara → Urucará 14h e Urucará → Itacoatiara 6h, seg/qua/sex; tel. (92) 9151-7906 — número
 com 8 dígitos, como informado pela usuária). Conferido no navegador local.
+Também: valor da passagem por prestador (campo `valor`): Anneth Martins R$ 45,00 e Lancha do Dib
+R$ 150,00 por trecho, ida ou volta.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 

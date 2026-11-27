@@ -1877,6 +1877,7 @@
             margin-bottom: 22px;
         }
         .lanchas-prestador-nome { font-weight: 700; color: #0c4a6e; font-size: 1.05em; margin-bottom: 6px; }
+        .lanchas-valor { font-size: 0.95em; color: #065f46; margin-bottom: 6px; }
         .lanchas-prestador-info { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.88em; color: #334155; }
         .lanchas-prestador-info a { color: #0369a1; font-weight: 600; }
         .lanchas-table { min-width: 0; }
@@ -9546,11 +9547,12 @@
         // ── Lanchas (sub-aba 🚤): horários fixos, sem Firestore ───────────
         // Um item por prestador. Fontes: panfleto do Expresso Anneth Martins
         // (nov/2026) e informação da usuária (Lancha do Dib, nov/2026). Para mudar
-        // um horário, editar só esta constante. Campos opcionais: instagram,
-        // extras, notas.
+        // um horário, editar só esta constante. Campos opcionais: valor,
+        // instagram, extras, notas.
         const LANCHAS_INFO = [{
             prestador: 'Expresso Anneth Martins',
             telefones: ['(92) 99285-9253', '(92) 99128-9504'],
+            valor: 'R$ 45,00 por trecho',
             instagram: 'lancha_annethmartins',
             extras: '📶 Wi-Fi grátis a bordo',
             trechos: [
@@ -9571,6 +9573,7 @@
         }, {
             prestador: 'Lancha do Dib',
             telefones: ['(92) 9151-7906'],
+            valor: 'R$ 150,00 por trecho',
             trechos: [
                 { titulo: 'Itacoatiara → Urucará', linhas: [
                     { hora: '14h00', lancha: 'Lancha do Dib', dias: 'seg, qua, sex' },
@@ -9600,6 +9603,7 @@
                 <div class="lanchas-bloco">
                 <div class="lanchas-prestador">
                     <div class="lanchas-prestador-nome">🚤 ${esc(L.prestador)}</div>
+                    ${L.valor ? `<div class="lanchas-valor">💵 Passagem: <strong>${esc(L.valor)}</strong> (ida ou volta)</div>` : ''}
                     <div class="lanchas-prestador-info">
                         <span>📞 Reservas e informações: ${L.telefones.map(t => `<span style="white-space:nowrap">${esc(t)}</span>`).join(' · ')}</span>
                         ${L.instagram ? `<span>📷 Instagram: <a href="https://www.instagram.com/${_escAttr(L.instagram)}/" target="_blank" rel="noopener">@${esc(L.instagram)}</a></span>` : ''}
