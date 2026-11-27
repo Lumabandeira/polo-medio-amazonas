@@ -18,6 +18,8 @@
 - **Lanchas → São Sebastião do Uatumã:** a Lancha do Dib passa por lá antes de Urucará. Novas
   tabelas Itacoatiara ⇄ São Sebastião do Uatumã (R$ 140,00; volta ~06h15) e valor por tabela
   (`trechos[].valor`) no Dib; linha "🧭 Rota" no quadro do prestador.
+- **Lanchas → A. Felipe:** Urucará ⇄ Itapiranga, seg a sáb (6h ida, 11h volta), ainda sem
+  telefone e valor; telefone passou a ser opcional no quadro do prestador.
 
 ---
 

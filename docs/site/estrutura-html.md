@@ -727,7 +727,8 @@ tipos de evento guardados em coleções separadas:
 **🚤 Lanchas (3ª sub-aba, sessão 64):** um bloco por prestador, separados por linha tracejada
 (`.lanchas-bloco`): **Expresso Anneth Martins** (Itacoatiara ⇄ Urucurituba, Anneth Martins I e
 V, com telefones, Instagram e Wi-Fi a bordo) e **Lancha do Dib** (Itacoatiara ⇄ Urucará, só
-telefone). Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
+telefone) e **Lancha A. Felipe** (Urucará ⇄ Itapiranga, seg a sáb, 6h na ida e 11h na volta; sem
+telefone nem valor por enquanto — `telefones: []` não mostra a linha 📞). Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
 sentido), mais notas opcionais. **Conteúdo fixo, sem Firestore e sem edição pelo site:** tudo vem
 do array `LANCHAS_INFO` (um item por prestador; `valor`, `instagram`, `extras` e `notas` opcionais — `valor` aparece
 como "💵 Passagem: … (ida ou volta)" no quadro do prestador, usado no Anneth Martins, R$ 45,00;

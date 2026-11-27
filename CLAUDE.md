@@ -78,6 +78,8 @@ Também: valor da passagem — Anneth Martins R$ 45,00 por trecho (campo `valor`
 Lancha do Dib passa por São Sebastião do Uatumã antes de Urucará (campo `rota`): tabelas próprias
 de Itacoatiara ⇄ São Sebastião do Uatumã, R$ 140,00 (volta às "06h15 (aprox.)"), e Itacoatiara ⇄
 Urucará, R$ 150,00 — preço por tabela em `trechos[].valor`.
+Também: **Lancha A. Felipe** (Urucará → Itapiranga 6h, Itapiranga → Urucará 11h, seg a sáb).
+**Pendente (usuária):** telefone e valor da A. Felipe.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 

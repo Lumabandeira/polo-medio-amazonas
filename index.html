@@ -9595,6 +9595,17 @@
                     { hora: '06h15 (aprox.)', lancha: 'Lancha do Dib', dias: 'seg, qua, sex' },
                 ]},
             ],
+        }, {
+            prestador: 'Lancha A. Felipe',
+            telefones: [],
+            trechos: [
+                { titulo: 'Urucará → Itapiranga', linhas: [
+                    { hora: '06h00', lancha: 'A. Felipe', dias: 'seg, ter, qua, qui, sex, sáb' },
+                ]},
+                { titulo: 'Itapiranga → Urucará', linhas: [
+                    { hora: '11h00', lancha: 'A. Felipe', dias: 'seg, ter, qua, qui, sex, sáb' },
+                ]},
+            ],
         }];
 
         function _viagensLanchasHtml() {
@@ -9619,7 +9630,7 @@
                     ${L.valor ? `<div class="lanchas-valor">💵 Passagem: <strong>${esc(L.valor)}</strong> (ida ou volta)</div>` : ''}
                     ${L.rota ? `<div class="lanchas-rota">🧭 Rota: ${esc(L.rota)}</div>` : ''}
                     <div class="lanchas-prestador-info">
-                        <span>📞 Reservas e informações: ${L.telefones.map(t => `<span style="white-space:nowrap">${esc(t)}</span>`).join(' · ')}</span>
+                        ${!(L.telefones || []).length ? '' : `<span>📞 Reservas e informações: ${L.telefones.map(t => `<span style="white-space:nowrap">${esc(t)}</span>`).join(' · ')}</span>`}
                         ${L.instagram ? `<span>📷 Instagram: <a href="https://www.instagram.com/${_escAttr(L.instagram)}/" target="_blank" rel="noopener">@${esc(L.instagram)}</a></span>` : ''}
                         ${L.extras ? `<span>${esc(L.extras)}</span>` : ''}
                     </div>
