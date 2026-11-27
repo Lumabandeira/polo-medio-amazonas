@@ -726,7 +726,7 @@ tipos de evento guardados em coleções separadas:
 
 **🚤 Lanchas (3ª sub-aba, sessão 64):** um **cartão por prestador** (`.lanchas-bloco`, borda
 colorida, faixa `.lanchas-cab` com o nome, corpo `.lanchas-corpo`), cada um com cor própria pelo
-campo `cor` → `LANCHAS_CORES` (azul, verde, laranja, roxo; aplicada via variáveis CSS `--lc` e
+campo `cor` → `LANCHAS_CORES` (azul, verde, rosa, laranja, roxo; aplicada via variáveis CSS `--lc` e
 `--lc-claro` na faixa, borda, quadro de informações e cabeçalho das tabelas). Ordem e cores: **Expresso Anneth Martins** (Itacoatiara ⇄ Urucurituba, Anneth Martins I e
 V, com telefones, Instagram e Wi-Fi a bordo) e **Lancha do Dib** (Itacoatiara ⇄ Urucará, só
 telefone) e **Lancha A. Felipe**, também conhecida como Nagibe (seg a sáb, uma tabela por trecho: Urucará →
@@ -736,7 +736,10 @@ mesmo valor para Urucará ou São Sebastião do Uatumã; aviso amarelo do recibo
 **Exp. Bianca II Viagens** (Urucurituba ⇄ Itacoatiara, do panfleto: saídas de Urucurituba 7h
 seg–sex, 11h sáb, 14h dom; voltas de Itacoatiara 14h seg–sex, 17h sáb e dom; 3 telefones; R$ 45,00 por trecho). Tem
 `aviso` — faixa amarela (`.lanchas-aviso`) "⚠️ Sem CNPJ", importante para a prestação de contas de
-pronto pagamento de Pessoa Física. Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
+pronto pagamento de Pessoa Física.
+**Expresso BAE Urucurituba** (cartão rosa, logo depois do Bianca II; tel. (92) 9375-1229; Wi-Fi a
+bordo; sem valor por enquanto): Urucurituba → Itacoatiara 7h todos os dias; Itacoatiara →
+Urucurituba "10h30 ou 11h00 ¹" de seg a sáb (alterna, com nota) e 15h no domingo. Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
 sentido), mais notas opcionais. **Conteúdo fixo, sem Firestore e sem edição pelo site:** tudo vem
 do array `LANCHAS_INFO` (um item por prestador; `valor`, `instagram`, `extras` e `notas` opcionais — `valor` aparece
 como "💵 Passagem: … (ida ou volta)" no quadro do prestador, usado no Anneth Martins, R$ 45,00;

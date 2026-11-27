@@ -9722,6 +9722,22 @@
                 ]},
             ],
         }, {
+            // Informado pela usuária (nov/2026).
+            prestador: 'Expresso BAE Urucurituba',
+            cor: 'rosa',
+            telefones: ['(92) 9375-1229'],
+            extras: '📶 Wi-Fi a bordo',
+            trechos: [
+                { titulo: 'Itacoatiara → Urucurituba', linhas: [
+                    { hora: '10h30 ou 11h00 ¹', lancha: 'Expresso BAE', dias: 'seg, ter, qua, qui, sex, sáb' },
+                    { hora: '15h00', lancha: 'Expresso BAE', dias: 'dom' },
+                ]},
+                { titulo: 'Urucurituba → Itacoatiara', linhas: [
+                    { hora: '07h00', lancha: 'Expresso BAE', dias: 'seg, ter, qua, qui, sex, sáb, dom' },
+                ]},
+            ],
+            notas: ['¹ De segunda a sábado, a volta de Itacoatiara alterna entre 10h30 e 11h00. Confirme o horário com o prestador antes de viajar.'],
+        }, {
             prestador: 'Lancha do Dib',
             cor: 'laranja',
             telefones: ['(92) 9151-7906'],
@@ -9770,6 +9786,7 @@
             verde:   ['#047857', '#d1fae5'],
             laranja: ['#c2410c', '#ffedd5'],
             roxo:    ['#6d28d9', '#ede9fe'],
+            rosa:    ['#be185d', '#fce7f3'],
         };
 
         function _viagensLanchasHtml() {

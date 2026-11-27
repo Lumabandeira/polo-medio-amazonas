@@ -30,6 +30,8 @@
   observação) que lista as lanchas do trecho naquele dia e gera PDF ou texto para a administração.
   Decisões da usuária: comparar todas as lanchas (ela desmarca), nomes dos passageiros, sem
   histórico no Firestore.
+- **Lanchas → Expresso BAE Urucurituba:** 5º prestador (Urucurituba ⇄ Itacoatiara, cor rosa nova em
+  `LANCHAS_CORES`), com Wi-Fi e nota sobre o horário alternado da volta.
 
 ---
 
