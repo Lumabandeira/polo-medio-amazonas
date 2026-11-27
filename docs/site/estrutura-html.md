@@ -724,8 +724,10 @@ tipos de evento guardados em coleções separadas:
 | 1 | 🧳 Eventos e Próximas Viagens Previstas | `data_inicio`, `data_fim`, `membro`, `motivo` + processo/portaria (ver abaixo) | `viagens_tabela1_admin/{id}` | `pma-viagens-tabela1` |
 | 2 | 📅 Viagens Trimestrais | `local`, `data_inicio`, `data_fim`, `motivo`, `membro` + processo/portaria (ver abaixo) | `viagens_tabela2_admin/{id}` | `pma-viagens-tabela2` |
 
-**🚤 Lanchas (3ª sub-aba, sessão 64):** um bloco por prestador, separados por linha tracejada
-(`.lanchas-bloco`): **Expresso Anneth Martins** (Itacoatiara ⇄ Urucurituba, Anneth Martins I e
+**🚤 Lanchas (3ª sub-aba, sessão 64):** um **cartão por prestador** (`.lanchas-bloco`, borda
+colorida, faixa `.lanchas-cab` com o nome, corpo `.lanchas-corpo`), cada um com cor própria pelo
+campo `cor` → `LANCHAS_CORES` (azul, verde, laranja, roxo; aplicada via variáveis CSS `--lc` e
+`--lc-claro` na faixa, borda, quadro de informações e cabeçalho das tabelas). Ordem e cores: **Expresso Anneth Martins** (Itacoatiara ⇄ Urucurituba, Anneth Martins I e
 V, com telefones, Instagram e Wi-Fi a bordo) e **Lancha do Dib** (Itacoatiara ⇄ Urucará, só
 telefone) e **Lancha A. Felipe**, também conhecida como Nagibe (Urucará ⇄ Itapiranga, seg a sáb, 6h na
 ida e 11h na volta; tel. (92) 9138-0808; sem valor por enquanto). `telefones: []` esconde a linha 📞.

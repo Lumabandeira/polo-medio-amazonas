@@ -83,6 +83,9 @@ Urucará 11h, seg a sáb; tel. (92) 9138-0808). **Pendente (usuária):** valor d
 Também: **Exp. Bianca II Viagens** (Urucurituba ⇄ Itacoatiara, do panfleto; R$ 45,00) com faixa amarela
 "⚠️ Sem CNPJ" (campo `aviso`), importante para pronto pagamento de Pessoa Física. Considerado que
 "saindo" no panfleto = saída de Urucurituba.
+Ordem: Anneth Martins (azul), Bianca II (verde), Dib (laranja), A. Felipe (roxo) — cada prestador
+virou um cartão com cor própria (campo `cor` → `LANCHAS_CORES`). A. Felipe ganhou aviso amarelo
+(recibo demorado; CNPJ 13.317.633/0001-70).
 
 ## Estado atual (sessão 63 — 26/11/2026)
 

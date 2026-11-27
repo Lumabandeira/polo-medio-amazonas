@@ -1868,15 +1868,38 @@
 
         .viagens-subtabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         /* Sub-aba 🚤 Lanchas */
-        .lanchas-prestador {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-left: 4px solid #0284c7;
-            border-radius: 10px;
-            padding: 12px 16px;
-            margin-bottom: 22px;
+        /* Cada prestador = um cartão com cor própria (--lc forte, --lc-claro fundo), ver LANCHAS_CORES */
+        .lanchas-bloco {
+            border: 2px solid var(--lc);
+            border-radius: 14px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
         }
-        .lanchas-prestador-nome { font-weight: 700; color: #0c4a6e; font-size: 1.05em; margin-bottom: 6px; }
+        .lanchas-cab {
+            background: var(--lc);
+            color: white;
+            font-weight: 700;
+            font-size: 1.2em;
+            padding: 12px 18px;
+            letter-spacing: 0.02em;
+        }
+        .lanchas-corpo { padding: 16px 18px 4px; }
+        .lanchas-corpo .viagens-block h3 { border-bottom-color: var(--lc-claro); }
+        .lanchas-corpo .viagens-table th { background: var(--lc); }
+        .lanchas-corpo .viagens-table-wrap { border-color: var(--lc-claro); }
+        .lanchas-prestador {
+            background: var(--lc-claro);
+            border-left: 4px solid var(--lc);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) {
+            .lanchas-corpo { padding: 12px 10px 2px; }
+            .lanchas-cab { font-size: 1.05em; padding: 10px 12px; }
+        }
         .lanchas-valor { font-size: 0.95em; color: #065f46; margin-bottom: 6px; }
         .lanchas-aviso {
             background: #fef3c7; border: 1px solid #fcd34d; color: #78350f; font-weight: 600;
@@ -1892,7 +1915,7 @@
         .lanchas-table { min-width: 0; }
         .lanchas-hora { font-weight: 700; white-space: nowrap; }
         .lanchas-nota { font-size: 0.82em; color: #64748b; margin: -14px 0 0; line-height: 1.5; }
-        .lanchas-bloco + .lanchas-bloco { margin-top: 36px; padding-top: 28px; border-top: 2px dashed #cbd5e1; }
+        .lanchas-corpo .lanchas-nota { margin: -14px 0 18px; }
         .viagens-subtab-btn {
             padding: 8px 18px;
             border: 1.5px solid #cbd5e1;
@@ -9558,9 +9581,11 @@
         // (nov/2026) e informação da usuária (Lancha do Dib, nov/2026). Para mudar
         // um horário, editar só esta constante. Campos opcionais: valor (do
         // prestador, igual em todos os trechos) ou trechos[].valor (por trecho),
-        // rota, aviso (faixa amarela), instagram, extras, notas.
+        // rota, aviso (faixa amarela), instagram, extras, notas. `cor` = chave de
+        // LANCHAS_CORES (cor do cartão; padrão azul).
         const LANCHAS_INFO = [{
             prestador: 'Expresso Anneth Martins',
+            cor: 'azul',
             telefones: ['(92) 99285-9253', '(92) 99128-9504'],
             valor: 'R$ 45,00 por trecho',
             instagram: 'lancha_annethmartins',
@@ -9583,6 +9608,7 @@
         }, {
             // Fonte: panfleto do prestador + telefone informado pela usuária (nov/2026).
             prestador: 'Exp. Bianca II Viagens',
+            cor: 'verde',
             telefones: ['(92) 8845-0764', '(92) 9149-4582', '(92) 99218-8781'],
             valor: 'R$ 45,00 por trecho',
             aviso: '⚠️ Sem CNPJ — importante para a prestação de contas de pronto pagamento',
@@ -9599,6 +9625,7 @@
             ],
         }, {
             prestador: 'Lancha do Dib',
+            cor: 'laranja',
             telefones: ['(92) 9151-7906'],
             rota: 'Itacoatiara → São Sebastião do Uatumã → Urucará (na volta, o caminho inverso). Entre São Sebastião do Uatumã e Urucará são cerca de 15 minutos.',
             // valor por trecho (o preço muda conforme o destino)
@@ -9618,6 +9645,7 @@
             ],
         }, {
             prestador: 'Lancha A. Felipe (também conhecida como Nagibe)',
+            cor: 'roxo',
             telefones: ['(92) 9138-0808'],
             aviso: '⚠️ Demoram para gerar recibo — melhor levar o recibo pronto para assinatura. CNPJ: 13.317.633/0001-70',
             trechos: [
@@ -9629,6 +9657,14 @@
                 ]},
             ],
         }];
+
+        // Cor do cartão de cada prestador: [forte (faixa/borda/cabeçalho), claro (fundos)]
+        const LANCHAS_CORES = {
+            azul:    ['#0369a1', '#e0f2fe'],
+            verde:   ['#047857', '#d1fae5'],
+            laranja: ['#c2410c', '#ffedd5'],
+            roxo:    ['#6d28d9', '#ede9fe'],
+        };
 
         function _viagensLanchasHtml() {
             return LANCHAS_INFO.map(_viagensLanchasPrestadorHtml).join('');
@@ -9645,10 +9681,12 @@
                         </table>
                     </div>
                 </div>`).join('');
+            const cor = LANCHAS_CORES[L.cor] || LANCHAS_CORES.azul;
             return `
-                <div class="lanchas-bloco">
+                <div class="lanchas-bloco" style="--lc:${cor[0]};--lc-claro:${cor[1]}">
+                <div class="lanchas-cab">🚤 ${esc(L.prestador)}</div>
+                <div class="lanchas-corpo">
                 <div class="lanchas-prestador">
-                    <div class="lanchas-prestador-nome">🚤 ${esc(L.prestador)}</div>
                     ${L.valor ? `<div class="lanchas-valor">💵 Passagem: <strong>${esc(L.valor)}</strong> (ida ou volta)</div>` : ''}
                     ${L.aviso ? `<div class="lanchas-aviso">${esc(L.aviso)}</div>` : ''}
                     ${L.rota ? `<div class="lanchas-rota">🧭 Rota: ${esc(L.rota)}</div>` : ''}
@@ -9660,6 +9698,7 @@
                 </div>
                 ${tabelas}
                 ${(L.notas || []).map(n => `<p class="lanchas-nota">${esc(n)}</p>`).join('')}
+                </div>
                 </div>`;
         }
         let _viagensCalAno       = new Date().getFullYear();

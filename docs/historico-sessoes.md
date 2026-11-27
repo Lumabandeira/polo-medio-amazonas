@@ -23,6 +23,9 @@
   (92) 9138-0808 e apelido Nagibe.
 - **Lanchas → Exp. Bianca II Viagens:** Urucurituba ⇄ Itacoatiara (panfleto), 3 telefones e faixa
   amarela "⚠️ Sem CNPJ" (campo `aviso`), por causa da prestação de contas de PP de Pessoa Física.
+- **Lanchas → cartões:** cada prestador virou um cartão com cor própria (escolha da usuária entre
+  3 opções), para marcar bem onde começa e termina; Bianca II passou para logo depois do Anneth
+  Martins; A. Felipe ganhou aviso amarelo sobre o recibo e o CNPJ.
 
 ---
 
