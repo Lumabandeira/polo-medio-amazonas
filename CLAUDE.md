@@ -92,6 +92,8 @@ Ordem atual: Anneth Martins (azul), BAE (verde), Bianca II (rosa), Dib (roxo), A
 Também: **Expresso BAE Urucurituba** (cartão verde, antes do Bianca II; tel. (92) 9375-1229; Wi-Fi; R$ 45,00):
 Urucurituba → Itacoatiara 7h todo dia; volta de Itacoatiara 10h30/11h alternados seg–sáb e 15h dom.
 **Pendente (usuária):** CNPJs do Anneth Martins, Dib e BAE.
+Também: sub-abas de Viagens e Eventos viraram cartões (ícone, título e descrição), no formato das
+abas de Designações, com classe própria `.viagens-subtab-btn` em grafite.
 **Cotação de viagem (🧾):** botão "Montar cotação" na aba Lanchas → modal com origem, destino, ida,
 volta, passageiros e observação; lista as lanchas que fazem o trecho naquele dia da semana (todas
 marcadas, a usuária desmarca) e gera **PDF** (`_cotBaixarPDF()`) ou **texto para copiar**. Sem

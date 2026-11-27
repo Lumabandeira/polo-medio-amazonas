@@ -724,6 +724,11 @@ tipos de evento guardados em coleções separadas:
 | 1 | 🧳 Eventos e Próximas Viagens Previstas | `data_inicio`, `data_fim`, `membro`, `motivo` + processo/portaria (ver abaixo) | `viagens_tabela1_admin/{id}` | `pma-viagens-tabela1` |
 | 2 | 📅 Viagens Trimestrais | `local`, `data_inicio`, `data_fim`, `motivo`, `membro` + processo/portaria (ver abaixo) | `viagens_tabela2_admin/{id}` | `pma-viagens-tabela2` |
 
+**Sub-abas em cartões (sessão 64):** os 3 botões (📅 Calendário, 📋 Lista, 🚤 Lanchas) são cartões
+com ícone, título e descrição (`.vst-ico`/`.vst-tit`/`.vst-desc`), no mesmo formato das abas de
+Designações (`.tab-button`), mas com classe própria `.viagens-subtab-btn` (o `.tab-button` é mexido
+por `showSection()`/`showTab()`) e na cor grafite da seção. No celular os 3 cabem lado a lado.
+
 **🚤 Lanchas (3ª sub-aba, sessão 64):** um **cartão por prestador** (`.lanchas-bloco`, borda
 colorida, faixa `.lanchas-cab` com o nome, corpo `.lanchas-corpo`), cada um com cor própria pelo
 campo `cor` → `LANCHAS_CORES` (azul, verde, rosa, laranja, roxo; aplicada via variáveis CSS `--lc` e

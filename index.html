@@ -1866,7 +1866,12 @@
         .viagens-trimestrais-block .btn-editar { color: #0369a1; border-color: #0284c7; }
         .viagens-trimestrais-block .btn-editar:hover { background: #f0f9ff; border-color: #0369a1; }
 
-        .viagens-subtabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        /* Sub-abas em cartões, no mesmo formato das abas de Designações (.tab-button),
+           mas com classe própria e na cor grafite da seção */
+        .viagens-subtabs {
+            display: flex; gap: 12px; margin-bottom: 22px;
+            padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px;
+        }
         /* Sub-aba 🚤 Lanchas */
         /* Cada prestador = um cartão com cor própria (--lc forte, --lc-claro fundo), ver LANCHAS_CORES */
         .lanchas-bloco {
@@ -1968,17 +1973,45 @@
             .cot-op-info, .cot-op-valor { grid-column: 2; text-align: left; }
         }
         .viagens-subtab-btn {
-            padding: 8px 18px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 24px;
+            flex: 1 1 0;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 14px 10px;
             background: white;
-            color: #334155;
-            font-weight: 600;
-            font-size: 0.9em;
+            border: 2px solid #cbd5e1;
+            border-radius: 14px;
             cursor: pointer;
             font-family: inherit;
+            color: #334155;
+            text-align: center;
+            transition: transform 0.15s, box-shadow 0.15s, background 0.15s, border-color 0.15s;
+            box-shadow: 0 2px 6px rgba(51, 65, 85, 0.08);
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
-        .viagens-subtab-btn.active { background: #334155; color: white; border-color: #334155; }
+        .viagens-subtab-btn .vst-ico  { font-size: 1.7em; line-height: 1.1; }
+        .viagens-subtab-btn .vst-tit  { font-size: 1em; font-weight: 700; line-height: 1.25; }
+        .viagens-subtab-btn .vst-desc { font-size: 0.8em; font-weight: 500; color: #64748b; line-height: 1.3; }
+        .viagens-subtab-btn:hover {
+            transform: translateY(-2px);
+            border-color: #64748b;
+            box-shadow: 0 6px 14px rgba(51, 65, 85, 0.15);
+        }
+        .viagens-subtab-btn.active {
+            background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+            border-color: #1e293b;
+            color: white;
+            box-shadow: 0 6px 16px rgba(30, 41, 59, 0.3);
+        }
+        .viagens-subtab-btn.active .vst-desc { color: #e2e8f0; }
+        @media (max-width: 600px) {
+            .viagens-subtabs { gap: 6px; padding: 8px; }
+            .viagens-subtab-btn { min-width: 0; padding: 9px 4px; font-size: 0.8em; border-radius: 12px; }
+            .viagens-subtab-btn .vst-desc { font-size: 0.78em; }
+        }
 
         .viagens-cal-nav {
             display: flex;
@@ -10159,9 +10192,9 @@
                     <div class="viagens-sub">Agenda de eventos, viagens previstas e viagens trimestrais da equipe do Polo Médio Amazonas.</div>
                 </div>
                 <div class="viagens-subtabs">
-                    <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'calendario' ? ' active' : ''}" onclick="_viagensMudarSubTab('calendario', this)">📅 Calendário</button>
-                    <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'lista' ? ' active' : ''}" onclick="_viagensMudarSubTab('lista', this)">📋 Lista</button>
-                    <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'lanchas' ? ' active' : ''}" onclick="_viagensMudarSubTab('lanchas', this)">🚤 Lanchas</button>
+                    <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'calendario' ? ' active' : ''}" onclick="_viagensMudarSubTab('calendario', this)"><span class="vst-ico">📅</span><span class="vst-tit">Calendário</span><span class="vst-desc">Eventos e viagens no mês</span></button>
+                    <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'lista' ? ' active' : ''}" onclick="_viagensMudarSubTab('lista', this)"><span class="vst-ico">📋</span><span class="vst-tit">Lista</span><span class="vst-desc">Eventos e viagens trimestrais por data</span></button>
+                    <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'lanchas' ? ' active' : ''}" onclick="_viagensMudarSubTab('lanchas', this)"><span class="vst-ico">🚤</span><span class="vst-tit">Lanchas</span><span class="vst-desc">Horários, valores e cotação de viagem</span></button>
                 </div>
                 <div id="viagens-view-calendario" style="display:${_viagensSubTab === 'calendario' ? 'block' : 'none'}">
                     <div class="viagens-cal-nav">
