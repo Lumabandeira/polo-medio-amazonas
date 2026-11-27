@@ -1882,6 +1882,7 @@
         .lanchas-table { min-width: 0; }
         .lanchas-hora { font-weight: 700; white-space: nowrap; }
         .lanchas-nota { font-size: 0.82em; color: #64748b; margin: -14px 0 0; line-height: 1.5; }
+        .lanchas-bloco + .lanchas-bloco { margin-top: 36px; padding-top: 28px; border-top: 2px dashed #cbd5e1; }
         .viagens-subtab-btn {
             padding: 8px 18px;
             border: 1.5px solid #cbd5e1;
@@ -9543,9 +9544,11 @@
         let _viagensSubTab       = 'calendario';
 
         // ── Lanchas (sub-aba 🚤): horários fixos, sem Firestore ───────────
-        // Fonte: panfleto do Expresso Anneth Martins (nov/2026). Para mudar um
-        // horário, editar só esta constante.
-        const LANCHAS_INFO = {
+        // Um item por prestador. Fontes: panfleto do Expresso Anneth Martins
+        // (nov/2026) e informação da usuária (Lancha do Dib, nov/2026). Para mudar
+        // um horário, editar só esta constante. Campos opcionais: instagram,
+        // extras, notas.
+        const LANCHAS_INFO = [{
             prestador: 'Expresso Anneth Martins',
             telefones: ['(92) 99285-9253', '(92) 99128-9504'],
             instagram: 'lancha_annethmartins',
@@ -9565,10 +9568,24 @@
                 ]},
             ],
             notas: ['¹ Na quarta-feira, o horário da volta de Itacoatiara alterna a cada semana entre 10h30 e 12h00. Confirme com o prestador antes de viajar.'],
-        };
+        }, {
+            prestador: 'Lancha do Dib',
+            telefones: ['(92) 9151-7906'],
+            trechos: [
+                { titulo: 'Itacoatiara → Urucará', linhas: [
+                    { hora: '14h00', lancha: 'Lancha do Dib', dias: 'seg, qua, sex' },
+                ]},
+                { titulo: 'Urucará → Itacoatiara', linhas: [
+                    { hora: '06h00', lancha: 'Lancha do Dib', dias: 'seg, qua, sex' },
+                ]},
+            ],
+        }];
 
         function _viagensLanchasHtml() {
-            const L = LANCHAS_INFO;
+            return LANCHAS_INFO.map(_viagensLanchasPrestadorHtml).join('');
+        }
+
+        function _viagensLanchasPrestadorHtml(L) {
             const tabelas = L.trechos.map(t => `
                 <div class="viagens-block">
                     <h3>${esc(t.titulo)}</h3>
@@ -9580,16 +9597,18 @@
                     </div>
                 </div>`).join('');
             return `
+                <div class="lanchas-bloco">
                 <div class="lanchas-prestador">
                     <div class="lanchas-prestador-nome">🚤 ${esc(L.prestador)}</div>
                     <div class="lanchas-prestador-info">
                         <span>📞 Reservas e informações: ${L.telefones.map(t => `<span style="white-space:nowrap">${esc(t)}</span>`).join(' · ')}</span>
-                        <span>📷 Instagram: <a href="https://www.instagram.com/${_escAttr(L.instagram)}/" target="_blank" rel="noopener">@${esc(L.instagram)}</a></span>
-                        <span>${esc(L.extras)}</span>
+                        ${L.instagram ? `<span>📷 Instagram: <a href="https://www.instagram.com/${_escAttr(L.instagram)}/" target="_blank" rel="noopener">@${esc(L.instagram)}</a></span>` : ''}
+                        ${L.extras ? `<span>${esc(L.extras)}</span>` : ''}
                     </div>
                 </div>
                 ${tabelas}
-                ${L.notas.map(n => `<p class="lanchas-nota">${esc(n)}</p>`).join('')}`;
+                ${(L.notas || []).map(n => `<p class="lanchas-nota">${esc(n)}</p>`).join('')}
+                </div>`;
         }
         let _viagensCalAno       = new Date().getFullYear();
         let _viagensCalMes       = new Date().getMonth();

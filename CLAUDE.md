@@ -71,6 +71,9 @@ e Lista, com os horários das lanchas Itacoatiara ⇄ Urucurituba do Expresso An
 (92) 99128-9504, Instagram @lancha_annethmartins e Wi-Fi grátis a bordo. Conteúdo fixo na
 constante `LANCHAS_INFO` (`_viagensLanchasHtml()`), sem Firestore nem edição pelo site.
 Conferido no navegador local (desktop e 375px, Firestore simulado).
+Depois: `LANCHAS_INFO` virou um array (um item por prestador) e entrou a **Lancha do Dib**
+(Itacoatiara → Urucará 14h e Urucará → Itacoatiara 6h, seg/qua/sex; tel. (92) 9151-7906 — número
+com 8 dígitos, como informado pela usuária). Conferido no navegador local.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 

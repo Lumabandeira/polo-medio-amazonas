@@ -11,6 +11,8 @@
   (que corrigiu duas informações anteriores: a lancha das 7h de Urucurituba é só às quartas, e o
   telefone tem 9 dígitos). Inclui telefones, Instagram e Wi-Fi a bordo. Conteúdo fixo em
   `LANCHAS_INFO`, sem Firestore. Conferido no navegador local, desktop e 375px.
+- **Lanchas → Lancha do Dib:** segundo prestador (Itacoatiara ⇄ Urucará, seg/qua/sex, 14h na ida e
+  6h na volta). `LANCHAS_INFO` passou a ser um array de prestadores.
 
 ---
 

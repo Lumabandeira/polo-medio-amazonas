@@ -724,11 +724,14 @@ tipos de evento guardados em coleções separadas:
 | 1 | 🧳 Eventos e Próximas Viagens Previstas | `data_inicio`, `data_fim`, `membro`, `motivo` + processo/portaria (ver abaixo) | `viagens_tabela1_admin/{id}` | `pma-viagens-tabela1` |
 | 2 | 📅 Viagens Trimestrais | `local`, `data_inicio`, `data_fim`, `motivo`, `membro` + processo/portaria (ver abaixo) | `viagens_tabela2_admin/{id}` | `pma-viagens-tabela2` |
 
-**🚤 Lanchas (3ª sub-aba, sessão 64):** horários das lanchas entre Itacoatiara e Urucurituba
-(Expresso Anneth Martins — Anneth Martins I e V), com telefones, Instagram e Wi-Fi a bordo, em
-duas tabelas Horário/Lancha/Dias (uma por sentido) e nota de rodapé. **Conteúdo fixo, sem
-Firestore e sem edição pelo site:** tudo vem da constante `LANCHAS_INFO` e é desenhado por
-`_viagensLanchasHtml()` (CSS `.lanchas-*`). Fonte: panfleto do prestador (nov/2026). Para mudar
+**🚤 Lanchas (3ª sub-aba, sessão 64):** um bloco por prestador, separados por linha tracejada
+(`.lanchas-bloco`): **Expresso Anneth Martins** (Itacoatiara ⇄ Urucurituba, Anneth Martins I e
+V, com telefones, Instagram e Wi-Fi a bordo) e **Lancha do Dib** (Itacoatiara ⇄ Urucará, só
+telefone). Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
+sentido), mais notas opcionais. **Conteúdo fixo, sem Firestore e sem edição pelo site:** tudo vem
+do array `LANCHAS_INFO` (um item por prestador; `instagram`, `extras` e `notas` opcionais) e é
+desenhado por `_viagensLanchasHtml()`/`_viagensLanchasPrestadorHtml()` (CSS `.lanchas-*`).
+Prestador novo = novo item no array. Fonte: panfleto do prestador (nov/2026). Para mudar
 um horário, editar só `LANCHAS_INFO`. Visível a todos os logados.
 
 **Processo e portaria (opcionais, ambas as tabelas):** `processo_tipo` (`"SEI"`/`"SGI"`, select) +
