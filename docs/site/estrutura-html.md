@@ -737,7 +737,7 @@ mesmo valor para Urucará ou São Sebastião do Uatumã; aviso amarelo do recibo
 seg–sex, 11h sáb, 14h dom; voltas de Itacoatiara 14h seg–sex, 17h sáb e dom; 3 telefones; R$ 45,00 por trecho). Tem
 `aviso` — faixa amarela (`.lanchas-aviso`) "⚠️ Sem CNPJ", importante para a prestação de contas de
 pronto pagamento de Pessoa Física.
-**Expresso BAE Urucurituba** (cartão rosa, logo depois do Bianca II; tel. (92) 9375-1229; Wi-Fi a
+**Expresso BAE Urucurituba** (cartão verde, entre o Anneth Martins e o Bianca II, que é rosa; tel. (92) 9375-1229; Wi-Fi a
 bordo; R$ 45,00 por trecho): Urucurituba → Itacoatiara 7h todos os dias; Itacoatiara →
 Urucurituba "10h30 ou 11h00 ¹" de seg a sáb (alterna, com nota) e 15h no domingo. Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
 sentido), mais notas opcionais. **Conteúdo fixo, sem Firestore e sem edição pelo site:** tudo vem
