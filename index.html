@@ -1790,6 +1790,13 @@
             border-top: 1px dashed #cbd5e1;
         }
         .escala-vazio { color: #cbd5e1; font-style: italic; }
+        .escala-table td.escala-recesso-cell {
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+        }
+        .escala-table td.escala-recesso-cell small { font-weight: 400; color: #64748b; }
+        .escala-recesso-aviso { display: block; font-size: 0.78em; font-weight: 500; color: #64748b; margin-top: 3px; }
 
         /* ─── Seção Viagens e Eventos ────────────────────────────── */
         #viagens-eventos .card h2 { color: #334155; border-bottom-color: #94a3b8; }
@@ -7518,17 +7525,41 @@
         // agrupa dias consecutivos com o mesmo responsável em "segmentos" — só
         // aparece mais de um segmento quando há troca de titular/substituto no
         // meio da semana.
+        // Recesso forense (datas inclusivas): sem demanda do Projudi, então a Escala
+        // Semanal mostra "Recesso forense" em vez de defensores (o Plantão continua).
+        const RECESSOS_FORENSES = [
+            { inicio: '2025-12-20', fim: '2026-01-06' },
+            { inicio: '2026-12-20', fim: '2027-01-06' }
+        ];
+
+        function _isoLocal(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function _recessoDoDia(d) {
+            const iso = _isoLocal(d);
+            return RECESSOS_FORENSES.find(r => iso >= r.inicio && iso <= r.fim) || null;
+        }
+
+        function _recessoDescricao(r) {
+            const fmt = iso => iso.split('-').reverse().join('/');
+            const dias = Math.round((new Date(r.fim + 'T12:00:00') - new Date(r.inicio + 'T12:00:00')) / 86400000) + 1;
+            return `${fmt(r.inicio)} a ${fmt(r.fim)} · ${dias} dias`;
+        }
+
         function segmentarResponsavelSemana(dp, weekStart) {
             const segmentos = [];
             for (let i = 0; i < 5; i++) {
                 const d = new Date(weekStart);
                 d.setDate(d.getDate() + i);
-                const resp = getResponsibleForDPOnDay(dp, d.getFullYear(), d.getMonth() + 1, d.getDate());
+                const resp = _recessoDoDia(d)
+                    ? { name: 'Recesso forense', isSub: false, semCobertura: false, recesso: true }
+                    : getResponsibleForDPOnDay(dp, d.getFullYear(), d.getMonth() + 1, d.getDate());
                 const last = segmentos[segmentos.length - 1];
-                if (last && last.name === resp.name && last.isSub === resp.isSub && last.semCobertura === resp.semCobertura) {
+                if (last && last.name === resp.name && last.isSub === resp.isSub && last.semCobertura === resp.semCobertura && !!last.recesso === !!resp.recesso) {
                     last.fim = d;
                 } else {
-                    segmentos.push({ name: resp.name, isSub: resp.isSub, semCobertura: resp.semCobertura, inicio: d, fim: d });
+                    segmentos.push({ name: resp.name, isSub: resp.isSub, semCobertura: resp.semCobertura, recesso: !!resp.recesso, inicio: d, fim: d });
                 }
             }
             return segmentos;
@@ -7571,7 +7602,12 @@
             if (!segs.length) return '<span class="escala-vazio">—</span>';
             return segs.map((seg, i) => {
                 let nomeHtml;
-                if (seg.semCobertura) {
+                if (seg.recesso) {
+                    const periodo = segs.length > 1
+                        ? (i === 0 ? ` até ${fmtDay(seg.fim)}` : ` a partir de ${fmtDay(seg.inicio)}`) : '';
+                    const linha = `⚖️ Recesso forense${periodo}`;
+                    return i === 0 ? linha : `<span class="escala-seg-divider">${linha}</span>`;
+                } else if (seg.semCobertura) {
                     nomeHtml = '<span class="escala-vazio" title="Titular ausente — sem substituto definido">—</span>';
                 } else if (seg.isSub) {
                     nomeHtml = `<em title="Substituto">${seg.name}</em>`;
@@ -7595,9 +7631,33 @@
         }
 
         function generateEscalaWeekRowHTML(week) {
+            // Dias úteis da semana (mesma janela de segmentarResponsavelSemana)
+            const uteis = [];
+            for (let i = 0; i < 5; i++) { const x = new Date(week.start); x.setDate(x.getDate() + i); uteis.push(x); }
+            const recessosUteis = uteis.map(_recessoDoDia);
+            // Algum dia da semana (seg–dom) no recesso: aviso abaixo do título da semana
+            let recessoSemana = null;
+            for (let i = 0; i < 7 && !recessoSemana; i++) {
+                const x = new Date(week.start); x.setDate(x.getDate() + i);
+                if (x <= week.end) recessoSemana = _recessoDoDia(x);
+            }
+
+            if (recessosUteis.every(Boolean)) {
+                const r = recessosUteis[0];
+                const plantao = _escalaBuscarPlantao(week.start);
+                return `<tr>
+                    <td class="escala-semana-cell">${formatWeekTitle(week.start, week.end)}</td>
+                    <td colspan="5" class="escala-recesso-cell">⚖️ Recesso forense<br><small>${_recessoDescricao(r)}</small></td>
+                    <td>${_escalaRenderPlantaoCelula(plantao)}</td>
+                    <td colspan="2" class="escala-recesso-cell">⚖️ Recesso forense</td>
+                </tr>`;
+            }
+
             const d = gerarEscalaSemanaData(week);
+            const aviso = recessoSemana
+                ? `<span class="escala-recesso-aviso">⚖️ Recesso forense: ${_recessoDescricao(recessoSemana)}</span>` : '';
             return `<tr>
-                <td class="escala-semana-cell">${formatWeekTitle(week.start, week.end)}</td>
+                <td class="escala-semana-cell">${formatWeekTitle(week.start, week.end)}${aviso}</td>
                 <td>${_escalaRenderCelula(d.atendimentoFamilia)}</td>
                 <td class="escala-audiencia-cell">${_escalaRenderCelula(d.audienciaFamilia)}</td>
                 <td>${_escalaRenderCelula(d.civel)}</td>

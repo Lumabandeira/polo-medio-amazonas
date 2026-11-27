@@ -313,6 +313,15 @@ tudo é calculado em `renderEscalaSemanal()` a partir de outras fontes já exist
 - **Plantão**: `_escalaBuscarPlantao()` casa a segunda-feira da semana com
   `data_inicio` em `plantaoRegistros` (mesma coleção `plantao_admin` da seção
   Plantão) — fica em branco nas semanas sem período cadastrado.
+- **Recesso forense** (`RECESSOS_FORENSES`, datas inclusivas; hoje 20/12/2025–06/01/2026
+  e 20/12/2026–06/01/2027): sem demanda do Projudi, então nenhum defensor aparece.
+  Semana com os 5 dias úteis no recesso vira uma linha com "⚖️ Recesso forense" mesclado
+  nas 5 colunas de Itacoatiara e nas 2 das UDIS (`.escala-recesso-cell`); o **Plantão
+  continua** sendo mostrado. Semana com só parte dos dias no recesso: o dia útil do
+  recesso vira segmento "Recesso forense" (`até`/`a partir de`), e qualquer semana que
+  toque o recesso (mesmo só no domingo, como 14–20/12/2026) ganha o aviso com o período
+  e o total de dias abaixo do título (`.escala-recesso-aviso`). Recesso novo = nova
+  entrada no array.
 
 Estética própria (`escala-*` no CSS): cabeçalho em gradiente vermelho (diferente do
 azul padrão do site), grade visível em todas as células, e fundo levemente mais

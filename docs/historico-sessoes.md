@@ -12,6 +12,10 @@
   `ano` (passado por `getResponsibleForDPOnDay()`), e titularidade sem `fim` vale sem limite
   (antes ia só até 01/01/2027). Testado com node e o `designacoes-2026.json`: 31/12/2026 e
   01/01/2027 dão o mesmo titular.
+- **Escala Semanal → recesso forense** (20/12/2026 a 06/01/2027, 18 dias): semanas de 21–27/12
+  e 28–31/12 mostram "⚖️ Recesso forense" no lugar dos defensores (Plantão continua); a de
+  14–20/12 ganha o aviso do recesso. Constante `RECESSOS_FORENSES`. Conferido no navegador
+  local com plantão simulado.
 - **Viagens e Eventos → nova sub-aba 🚤 Lanchas:** horários das lanchas Itacoatiara ⇄ Urucurituba
   do Expresso Anneth Martins (Anneth Martins I e V), montados a partir do panfleto do prestador
   (que corrigiu duas informações anteriores: a lancha das 7h de Urucurituba é só às quartas, e o

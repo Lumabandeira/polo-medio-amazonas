@@ -103,7 +103,10 @@ conferido, desktop e 375px).
 **Bugfix (Escala Semanal / Designações diárias, virada do ano):** `getTitularForDPOnDay()` usava
 sempre o ano 2026 — em 01/01/2027 voltavam os titulares de jan/2026 (José Antônio, Ícaro, Mariana,
 Elton, Elaine). Agora recebe `ano`; titularidade sem `fim` não expira mais em 01/01/2027. Testado
-com node e o JSON; não conferido no site publicado.
+com node e o JSON; conferido pela usuária no site publicado.
+**Escala Semanal → recesso forense** (`RECESSOS_FORENSES`, 20/12/2026–06/01/2027, 18 dias): semanas
+inteiras no recesso mostram "⚖️ Recesso forense" no lugar dos defensores (Plantão continua); a semana
+de 14–20/12 ganha aviso. Conferido no navegador local com plantão simulado.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 
