@@ -107,8 +107,8 @@ com node e o JSON; conferido pela usuária no site publicado.
 **Escala Semanal → recesso forense** (`RECESSOS_FORENSES`, 20/12/2026–06/01/2027, 18 dias): semanas
 inteiras no recesso mostram "⚖️ Recesso forense" no lugar dos defensores (Plantão continua); a semana
 de 14–20/12 ganha aviso e cada célula mostra o membro "até 19/12" + "A partir de 20/12: Recesso
-forense". Plantão: escala definida só até 19/12/2026 → "até 19/12" + "A partir de 20/12: ⏳ A
-definir" e semanas seguintes "⏳ A definir". Conferido no navegador local com plantão simulado.
+forense". Plantão: escala definida só até 19/12/2026 → "até 19/12" + "A partir de 20/12: —"
+e semanas seguintes "—" (sem designação). Conferido no navegador local com plantão simulado.
 **Pendente (usuária):** cadastrar o plantão a partir de 20/12/2026 quando houver designação.
 
 ## Estado atual (sessão 63 — 26/11/2026)

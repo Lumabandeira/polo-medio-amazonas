@@ -7642,7 +7642,7 @@
         // `week` (opcional) permite mostrar "A definir" quando a escala de plantão
         // termina antes do fim da semana (ex.: escala só até 19/12/2026) ou já acabou.
         function _escalaRenderPlantaoCelula(periodo, week) {
-            const aDefinir = '<span class="escala-vazio" title="Membro e assessor ainda não designados">⏳ A definir</span>';
+            const aDefinir = '<span class="escala-vazio" title="Membro e assessor ainda não designados">—</span>';
             if (!periodo) {
                 if (week) {
                     const fimEscala = (plantaoRegistros || []).reduce((m, r) => (r.data_fim && r.data_fim > m ? r.data_fim : m), '');
