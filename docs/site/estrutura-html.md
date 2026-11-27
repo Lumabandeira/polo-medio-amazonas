@@ -71,6 +71,14 @@ azul-clara; ativa = gradiente azul (mesmo do botão do topo); hover sobe 2px. No
 - Os 3 sinos de notificação que ficavam entre os cartões foram removidos na sessão 50 (ver
   `docs/automacao.md`).
 
+**Recesso forense** (mesma constante `RECESSOS_FORENSES` da Escala Semanal, `_recessoDoDia()`):
+- Designações diárias (`generateWeekTableHTML()`): o dia do recesso tem cabeçalho "⚖️ Recesso" e
+  todas as DPs mostram "⚖️ Recesso" (`.recesso-cell`, cinza, sem destaque de alternância); a
+  semana que toca o recesso ganha aviso abaixo do título (`.recesso-aviso-semana`).
+- Calendários de afastamentos (`renderCalendar()`): dia do recesso com fundo cinza
+  (`.dia-recesso`) e etiqueta "⚖️ Recesso" (`.recesso-badge`), sem tirar os badges de afastamento.
+  Só exibição — não entra em `afastamentos[]` nem muda o clique do dia.
+
 ## Diário Oficial — filtros por categoria
 
 Os botões de filtro são montados a partir das categorias presentes no JSON; rótulo em

@@ -110,6 +110,9 @@ de 14–20/12 ganha aviso e cada célula mostra o membro "até 19/12" + "A parti
 forense". Plantão: escala definida só até 19/12/2026 → "até 19/12" + "A partir de 20/12: —"
 e semanas seguintes "—" (sem designação). Conferido no navegador local com plantão simulado.
 **Pendente (usuária):** cadastrar o plantão a partir de 20/12/2026 quando houver designação.
+**Designações, Férias e Folgas → recesso forense:** Designações diárias mostra "⚖️ Recesso" nas DPs
+nos dias do recesso (com aviso nas semanas) e o Calendário de afastamentos marca esses dias em cinza
+com etiqueta "⚖️ Recesso". Mesma constante `RECESSOS_FORENSES`. Conferido no navegador local.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 

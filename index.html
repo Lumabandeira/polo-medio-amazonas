@@ -1796,6 +1796,21 @@
             font-weight: 600;
         }
         .escala-table td.escala-recesso-cell small { font-weight: 400; color: #64748b; }
+        /* Recesso forense em Designações diárias e no Calendário de afastamentos */
+        table th.recesso-cell, table td.recesso-cell {
+            background: #f1f5f9 !important;
+            color: #64748b !important;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        table th.recesso-cell small { font-weight: 500; }
+        .recesso-aviso-semana { margin: -8px 0 10px; font-size: 0.85em; font-weight: 600; color: #64748b; }
+        .calendar-day.dia-recesso { background: #f1f5f9; }
+        .recesso-badge {
+            font-size: 0.72em; font-weight: 600; color: #475569;
+            background: #e2e8f0; border-radius: 4px; padding: 1px 5px; margin-bottom: 2px;
+            display: inline-block;
+        }
         .escala-recesso-aviso { display: block; font-size: 0.78em; font-weight: 500; color: #64748b; margin-top: 3px; }
 
         /* ─── Seção Viagens e Eventos ────────────────────────────── */
@@ -6915,6 +6930,11 @@
                 const hasQualquerMarcador = hasAfastamento || remotoDia;
 
                 dayDiv.className = hasAfastamento ? 'calendar-day has-afastamento' : 'calendar-day';
+                const recessoDia = _recessoDoDia(new Date(year, month, day));
+                if (recessoDia) {
+                    dayDiv.classList.add('dia-recesso');
+                    dayDiv.title = `Recesso forense (${_recessoDescricao(recessoDia)})`;
+                }
 
                 const dayNumber = document.createElement('div');
                 dayNumber.className = 'day-number';
@@ -6923,6 +6943,13 @@
 
                 const markers = document.createElement('div');
                 markers.className = 'day-markers';
+
+                if (recessoDia) {
+                    const tag = document.createElement('div');
+                    tag.className = 'recesso-badge';
+                    tag.textContent = '⚖️ Recesso';
+                    markers.appendChild(tag);
+                }
 
                 if (hasAfastamento) {
                     const sorted = [...monthData[day]].sort((a, b) => {
@@ -7419,7 +7446,11 @@
             while (cur <= endDate) { days.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
 
             let html = '<table><thead><tr><th>DP</th>';
-            days.forEach(d => { html += `<th>${fmtDay(d)}</th>`; });
+            days.forEach(d => {
+                html += _recessoDoDia(d)
+                    ? `<th class="recesso-cell" title="Recesso forense">${fmtDay(d)}<br><small>⚖️ Recesso</small></th>`
+                    : `<th>${fmtDay(d)}</th>`;
+            });
             html += '</tr></thead><tbody>';
 
             DPS_CONFIG.forEach(dp => {
@@ -7427,6 +7458,11 @@
                 const rowClass = (active && dp.highlight) ? dp.highlight : '';
                 html += `<tr><td${rowClass ? ` class="${rowClass}"` : ''}>${dp.label}</td>`;
                 days.forEach(d => {
+                    // Recesso forense: sem demanda do Projudi, nenhum defensor na DP
+                    if (_recessoDoDia(d)) {
+                        html += '<td class="recesso-cell" title="Recesso forense">⚖️ Recesso</td>';
+                        return;
+                    }
                     const isWeekday = d.getDay() >= 1 && d.getDay() <= 5;
                     const baseClass = (active && dp.highlight && isWeekday) ? dp.highlight : '';
                     const resp = getResponsibleForDPOnDay(dp, d.getFullYear(), d.getMonth()+1, d.getDate());
@@ -7502,6 +7538,18 @@
                     h4.style.cssText = `margin-top:${wi===0?'20':'30'}px;margin-bottom:15px;color:var(--primary-color);`;
                     h4.textContent   = 'Designações - ' + formatWeekTitle(week.start, week.end);
                     section.appendChild(h4);
+
+                    // Aviso quando algum dia da semana cai no recesso forense
+                    let recessoSemana = null;
+                    for (const x = new Date(week.start); x <= week.end && !recessoSemana; x.setDate(x.getDate() + 1)) {
+                        recessoSemana = _recessoDoDia(x);
+                    }
+                    if (recessoSemana) {
+                        const aviso = document.createElement('p');
+                        aviso.className   = 'recesso-aviso-semana';
+                        aviso.textContent = `⚖️ Recesso forense: ${_recessoDescricao(recessoSemana)}`;
+                        section.appendChild(aviso);
+                    }
 
                     const wrap = document.createElement('div');
                     wrap.style.overflowX = 'auto';
