@@ -738,7 +738,7 @@ seg–sex, 11h sáb, 14h dom; voltas de Itacoatiara 14h seg–sex, 17h sáb e do
 `aviso` — faixa amarela (`.lanchas-aviso`) "⚠️ Sem CNPJ", importante para a prestação de contas de
 pronto pagamento de Pessoa Física.
 **Expresso BAE Urucurituba** (cartão rosa, logo depois do Bianca II; tel. (92) 9375-1229; Wi-Fi a
-bordo; sem valor por enquanto): Urucurituba → Itacoatiara 7h todos os dias; Itacoatiara →
+bordo; R$ 45,00 por trecho): Urucurituba → Itacoatiara 7h todos os dias; Itacoatiara →
 Urucurituba "10h30 ou 11h00 ¹" de seg a sáb (alterna, com nota) e 15h no domingo. Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
 sentido), mais notas opcionais. **Conteúdo fixo, sem Firestore e sem edição pelo site:** tudo vem
 do array `LANCHAS_INFO` (um item por prestador; `valor`, `instagram`, `extras` e `notas` opcionais — `valor` aparece

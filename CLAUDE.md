@@ -88,9 +88,9 @@ virou um cartão com cor própria (campo `cor` → `LANCHAS_CORES`). A. Felipe g
 (recibo demorado; CNPJ 13.317.633/0001-70). A. Felipe: R$ 80,00 por trecho (era R$ 70,00; reajuste informado pelo prestador) (vale para
 Urucará e São Sebastião do Uatumã) e uma tabela por trecho — Urucará → Itapiranga 6h, São Sebastião
 do Uatumã → Itapiranga 6h15, Itapiranga → Urucará 11h, Itapiranga → São Sebastião do Uatumã 11h.
-Também: **Expresso BAE Urucurituba** (cartão rosa, após o Bianca II; tel. (92) 9375-1229; Wi-Fi):
+Também: **Expresso BAE Urucurituba** (cartão rosa, após o Bianca II; tel. (92) 9375-1229; Wi-Fi; R$ 45,00):
 Urucurituba → Itacoatiara 7h todo dia; volta de Itacoatiara 10h30/11h alternados seg–sáb e 15h dom.
-**Pendente (usuária):** valor do BAE; CNPJs do Anneth Martins, Dib e BAE.
+**Pendente (usuária):** CNPJs do Anneth Martins, Dib e BAE.
 **Cotação de viagem (🧾):** botão "Montar cotação" na aba Lanchas → modal com origem, destino, ida,
 volta, passageiros e observação; lista as lanchas que fazem o trecho naquele dia da semana (todas
 marcadas, a usuária desmarca) e gera **PDF** (`_cotBaixarPDF()`) ou **texto para copiar**. Sem
