@@ -7639,10 +7639,28 @@
             }).join('');
         }
 
-        function _escalaRenderPlantaoCelula(periodo) {
-            if (!periodo) return '<span class="escala-vazio">—</span>';
-            let html = periodo.defensor || '—';
-            if (periodo.assessoria) html += `<br><small style="color:#64748b">${periodo.assessoria}</small>`;
+        // `week` (opcional) permite mostrar "A definir" quando a escala de plantão
+        // termina antes do fim da semana (ex.: escala só até 19/12/2026) ou já acabou.
+        function _escalaRenderPlantaoCelula(periodo, week) {
+            const aDefinir = '<span class="escala-vazio" title="Membro e assessor ainda não designados">⏳ A definir</span>';
+            if (!periodo) {
+                if (week) {
+                    const fimEscala = (plantaoRegistros || []).reduce((m, r) => (r.data_fim && r.data_fim > m ? r.data_fim : m), '');
+                    if (fimEscala && _isoLocal(week.start) > fimEscala) return aDefinir;
+                }
+                return '<span class="escala-vazio">—</span>';
+            }
+            let html = esc(periodo.defensor || '—');
+            if (periodo.assessoria) html += `<br><small style="color:#64748b">${esc(periodo.assessoria)}</small>`;
+            if (week && periodo.data_fim) {
+                const domingo = new Date(week.start); domingo.setDate(domingo.getDate() + 6);
+                const fimSemana = _isoLocal(week.end < domingo ? week.end : domingo);
+                if (periodo.data_fim < fimSemana) {
+                    const seguinte = new Date(periodo.data_fim + 'T12:00:00'); seguinte.setDate(seguinte.getDate() + 1);
+                    const fimFmt = periodo.data_fim.split('-').reverse().slice(0, 2).join('/');
+                    html += ` <small>até ${fimFmt}</small><span class="escala-seg-divider">A partir de ${fmtDay(seguinte)}: ${aDefinir}</span>`;
+                }
+            }
             return html;
         }
 
@@ -7664,7 +7682,7 @@
                 return `<tr>
                     <td class="escala-semana-cell">${formatWeekTitle(week.start, week.end)}</td>
                     <td colspan="5" class="escala-recesso-cell">⚖️ Recesso forense<br><small>${_recessoDescricao(r)}</small></td>
-                    <td>${_escalaRenderPlantaoCelula(plantao)}</td>
+                    <td>${_escalaRenderPlantaoCelula(plantao, week)}</td>
                     <td colspan="2" class="escala-recesso-cell">⚖️ Recesso forense</td>
                 </tr>`;
             }
@@ -7679,7 +7697,7 @@
                 <td>${_escalaRenderCelula(d.civel)}</td>
                 <td>${_escalaRenderCelula(d.atendimentoCriminal)}</td>
                 <td class="escala-audiencia-cell">${_escalaRenderCelula(d.audienciaCriminal)}</td>
-                <td>${_escalaRenderPlantaoCelula(d.plantao)}</td>
+                <td>${_escalaRenderPlantaoCelula(d.plantao, week)}</td>
                 <td>${_escalaRenderCelula(d.ssu)}</td>
                 <td>${_escalaRenderCelula(d.silves)}</td>
             </tr>`;

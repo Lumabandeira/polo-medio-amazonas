@@ -17,6 +17,8 @@
   14–20/12 ganha o aviso do recesso. Constante `RECESSOS_FORENSES`. Conferido no navegador
   local com plantão simulado. Ajuste: na semana 14–20/12, cada célula mostra o membro "até
   19/12" e "A partir de 20/12: ⚖️ Recesso forense" (recesso começando no fim de semana).
+  Plantão: a escala está definida só até 19/12/2026, então a célula mostra "até 19/12" +
+  "A partir de 20/12: ⏳ A definir", e as semanas seguintes "⏳ A definir".
 - **Viagens e Eventos → nova sub-aba 🚤 Lanchas:** horários das lanchas Itacoatiara ⇄ Urucurituba
   do Expresso Anneth Martins (Anneth Martins I e V), montados a partir do panfleto do prestador
   (que corrigiu duas informações anteriores: a lancha das 7h de Urucurituba é só às quartas, e o

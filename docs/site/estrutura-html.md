@@ -312,7 +312,10 @@ tudo é calculado em `renderEscalaSemanal()` a partir de outras fontes já exist
   (`"até DD/MM"` / `"a partir de DD/MM"`) separadas por uma linha pontilhada.
 - **Plantão**: `_escalaBuscarPlantao()` casa a segunda-feira da semana com
   `data_inicio` em `plantaoRegistros` (mesma coleção `plantao_admin` da seção
-  Plantão) — fica em branco nas semanas sem período cadastrado.
+  Plantão) — fica em branco nas semanas sem período cadastrado. Se o período termina antes
+  do domingo da semana (ex.: escala só até 19/12/2026), a célula mostra "até 19/12" e
+  "A partir de 20/12: ⏳ A definir"; semanas depois do último `data_fim` cadastrado mostram
+  "⏳ A definir" em vez de "—" (`_escalaRenderPlantaoCelula(periodo, week)`).
 - **Recesso forense** (`RECESSOS_FORENSES`, datas inclusivas; hoje 20/12/2025–06/01/2026
   e 20/12/2026–06/01/2027): sem demanda do Projudi, então nenhum defensor aparece.
   Semana com os 5 dias úteis no recesso vira uma linha com "⚖️ Recesso forense" mesclado
