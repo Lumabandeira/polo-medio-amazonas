@@ -724,6 +724,13 @@ tipos de evento guardados em coleções separadas:
 | 1 | 🧳 Eventos e Próximas Viagens Previstas | `data_inicio`, `data_fim`, `membro`, `motivo` + processo/portaria (ver abaixo) | `viagens_tabela1_admin/{id}` | `pma-viagens-tabela1` |
 | 2 | 📅 Viagens Trimestrais | `local`, `data_inicio`, `data_fim`, `motivo`, `membro` + processo/portaria (ver abaixo) | `viagens_tabela2_admin/{id}` | `pma-viagens-tabela2` |
 
+**🚤 Lanchas (3ª sub-aba, sessão 64):** horários das lanchas entre Itacoatiara e Urucurituba
+(Expresso Anneth Martins — Anneth Martins I e V), com telefones, Instagram e Wi-Fi a bordo, em
+duas tabelas Horário/Lancha/Dias (uma por sentido) e nota de rodapé. **Conteúdo fixo, sem
+Firestore e sem edição pelo site:** tudo vem da constante `LANCHAS_INFO` e é desenhado por
+`_viagensLanchasHtml()` (CSS `.lanchas-*`). Fonte: panfleto do prestador (nov/2026). Para mudar
+um horário, editar só `LANCHAS_INFO`. Visível a todos os logados.
+
 **Processo e portaria (opcionais, ambas as tabelas):** `processo_tipo` (`"SEI"`/`"SGI"`, select) +
 `processo_numero` (texto livre) — mesmo padrão do campo "Processo" do formulário de Afastamentos
 ([index.html:3958](polo-medio-amazonas/index.html:3958)); e `portaria_url` — **só o link**, sem

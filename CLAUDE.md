@@ -63,6 +63,15 @@ docs/
 
 ---
 
+## Estado atual (sessão 64 — 27/11/2026)
+
+**Implementado nesta sessão (Viagens e Eventos):** 3ª sub-aba **🚤 Lanchas**, ao lado de Calendário
+e Lista, com os horários das lanchas Itacoatiara ⇄ Urucurituba do Expresso Anneth Martins
+(Anneth Martins I e V, conforme o panfleto do prestador), telefones (92) 99285-9253 /
+(92) 99128-9504, Instagram @lancha_annethmartins e Wi-Fi grátis a bordo. Conteúdo fixo na
+constante `LANCHAS_INFO` (`_viagensLanchasHtml()`), sem Firestore nem edição pelo site.
+Conferido no navegador local (desktop e 375px, Firestore simulado).
+
 ## Estado atual (sessão 63 — 26/11/2026)
 
 **Implementado nesta sessão (Audiências):** o `classificacao.csv` passou a ter a coluna opcional

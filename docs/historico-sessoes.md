@@ -4,6 +4,16 @@
 
 ---
 
+## Sessão 64 — 27/11/2026
+
+- **Viagens e Eventos → nova sub-aba 🚤 Lanchas:** horários das lanchas Itacoatiara ⇄ Urucurituba
+  do Expresso Anneth Martins (Anneth Martins I e V), montados a partir do panfleto do prestador
+  (que corrigiu duas informações anteriores: a lancha das 7h de Urucurituba é só às quartas, e o
+  telefone tem 9 dígitos). Inclui telefones, Instagram e Wi-Fi a bordo. Conteúdo fixo em
+  `LANCHAS_INFO`, sem Firestore. Conferido no navegador local, desktop e 375px.
+
+---
+
 ## Sessão 63 — 26/11/2026
 
 **Audiências — audiência que precisa de 2 ou mais defensores.** O `classificacao.csv` da pauta de

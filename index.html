@@ -1866,7 +1866,22 @@
         .viagens-trimestrais-block .btn-editar { color: #0369a1; border-color: #0284c7; }
         .viagens-trimestrais-block .btn-editar:hover { background: #f0f9ff; border-color: #0369a1; }
 
-        .viagens-subtabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .viagens-subtabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        /* Sub-aba 🚤 Lanchas */
+        .lanchas-prestador {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-left: 4px solid #0284c7;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 22px;
+        }
+        .lanchas-prestador-nome { font-weight: 700; color: #0c4a6e; font-size: 1.05em; margin-bottom: 6px; }
+        .lanchas-prestador-info { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.88em; color: #334155; }
+        .lanchas-prestador-info a { color: #0369a1; font-weight: 600; }
+        .lanchas-table { min-width: 0; }
+        .lanchas-hora { font-weight: 700; white-space: nowrap; }
+        .lanchas-nota { font-size: 0.82em; color: #64748b; margin: -14px 0 0; line-height: 1.5; }
         .viagens-subtab-btn {
             padding: 8px 18px;
             border: 1.5px solid #cbd5e1;
@@ -9526,6 +9541,56 @@
         let _viagensListaCidade  = 'todas'; // filtro de cidade, só na tabela 2 (Viagens Trimestrais)
         const VIAGENS_CIDADES    = ['Itapiranga', 'São Sebastião do Uatumã', 'Silves', 'Urucará', 'Urucurituba'];
         let _viagensSubTab       = 'calendario';
+
+        // ── Lanchas (sub-aba 🚤): horários fixos, sem Firestore ───────────
+        // Fonte: panfleto do Expresso Anneth Martins (nov/2026). Para mudar um
+        // horário, editar só esta constante.
+        const LANCHAS_INFO = {
+            prestador: 'Expresso Anneth Martins',
+            telefones: ['(92) 99285-9253', '(92) 99128-9504'],
+            instagram: 'lancha_annethmartins',
+            extras: '📶 Wi-Fi grátis a bordo',
+            trechos: [
+                { titulo: 'Itacoatiara → Urucurituba', linhas: [
+                    { hora: '06h00', lancha: 'Anneth Martins I', dias: 'seg' },
+                    { hora: '10h30 ou 12h00 ¹', lancha: 'Anneth Martins I', dias: 'qua' },
+                    { hora: '12h00', lancha: 'Anneth Martins V', dias: 'seg, ter, qui, sex, sáb' },
+                    { hora: '17h00', lancha: 'Anneth Martins I', dias: 'seg, ter, qui, sex' },
+                ]},
+                { titulo: 'Urucurituba → Itacoatiara', linhas: [
+                    { hora: '07h00', lancha: 'Anneth Martins I', dias: 'qua' },
+                    { hora: '11h00', lancha: 'Anneth Martins I', dias: 'seg, ter, qui, sex' },
+                    { hora: '16h00', lancha: 'Anneth Martins V', dias: 'seg, ter, qui, sex, sáb' },
+                    { hora: '16h00', lancha: 'Anneth Martins I', dias: 'dom' },
+                ]},
+            ],
+            notas: ['¹ Na quarta-feira, o horário da volta de Itacoatiara alterna a cada semana entre 10h30 e 12h00. Confirme com o prestador antes de viajar.'],
+        };
+
+        function _viagensLanchasHtml() {
+            const L = LANCHAS_INFO;
+            const tabelas = L.trechos.map(t => `
+                <div class="viagens-block">
+                    <h3>${esc(t.titulo)}</h3>
+                    <div class="viagens-table-wrap lanchas-wrap">
+                        <table class="viagens-table lanchas-table">
+                            <thead><tr><th>Horário</th><th>Lancha</th><th>Dias</th></tr></thead>
+                            <tbody>${t.linhas.map(l => `<tr><td class="lanchas-hora">${esc(l.hora)}</td><td>${esc(l.lancha)}</td><td>${esc(l.dias)}</td></tr>`).join('')}</tbody>
+                        </table>
+                    </div>
+                </div>`).join('');
+            return `
+                <div class="lanchas-prestador">
+                    <div class="lanchas-prestador-nome">🚤 ${esc(L.prestador)}</div>
+                    <div class="lanchas-prestador-info">
+                        <span>📞 Reservas e informações: ${L.telefones.map(t => `<span style="white-space:nowrap">${esc(t)}</span>`).join(' · ')}</span>
+                        <span>📷 Instagram: <a href="https://www.instagram.com/${_escAttr(L.instagram)}/" target="_blank" rel="noopener">@${esc(L.instagram)}</a></span>
+                        <span>${esc(L.extras)}</span>
+                    </div>
+                </div>
+                ${tabelas}
+                ${L.notas.map(n => `<p class="lanchas-nota">${esc(n)}</p>`).join('')}`;
+        }
         let _viagensCalAno       = new Date().getFullYear();
         let _viagensCalMes       = new Date().getMonth();
         let _viagensDiaAtual     = null;
@@ -9567,6 +9632,7 @@
                 <div class="viagens-subtabs">
                     <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'calendario' ? ' active' : ''}" onclick="_viagensMudarSubTab('calendario', this)">📅 Calendário</button>
                     <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'lista' ? ' active' : ''}" onclick="_viagensMudarSubTab('lista', this)">📋 Lista</button>
+                    <button type="button" class="viagens-subtab-btn${_viagensSubTab === 'lanchas' ? ' active' : ''}" onclick="_viagensMudarSubTab('lanchas', this)">🚤 Lanchas</button>
                 </div>
                 <div id="viagens-view-calendario" style="display:${_viagensSubTab === 'calendario' ? 'block' : 'none'}">
                     <div class="viagens-cal-nav">
@@ -9582,7 +9648,8 @@
                         <span><span class="dot" style="background:#0ea5e9"></span>Viagens Trimestrais</span>
                     </div>
                 </div>
-                <div id="viagens-view-lista" style="display:${_viagensSubTab === 'lista' ? 'block' : 'none'}">${listaBlocos}</div>`;
+                <div id="viagens-view-lista" style="display:${_viagensSubTab === 'lista' ? 'block' : 'none'}">${listaBlocos}</div>
+                <div id="viagens-view-lanchas" style="display:${_viagensSubTab === 'lanchas' ? 'block' : 'none'}">${_viagensLanchasHtml()}</div>`;
 
             Promise.all([_viagensCarregarEventos(1), _viagensCarregarEventos(2)]).then(() => {
                 _viagensRenderCalendario();
@@ -9601,6 +9668,7 @@
             _viagensSubTab = tab;
             document.getElementById('viagens-view-calendario').style.display = tab === 'calendario' ? 'block' : 'none';
             document.getElementById('viagens-view-lista').style.display      = tab === 'lista' ? 'block' : 'none';
+            document.getElementById('viagens-view-lanchas').style.display    = tab === 'lanchas' ? 'block' : 'none';
             document.querySelectorAll('.viagens-subtab-btn').forEach(b => b.classList.remove('active'));
             if (btnEl) btnEl.classList.add('active');
         }
