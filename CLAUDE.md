@@ -88,6 +88,11 @@ virou um cartão com cor própria (campo `cor` → `LANCHAS_CORES`). A. Felipe g
 (recibo demorado; CNPJ 13.317.633/0001-70). A. Felipe: R$ 80,00 por trecho (era R$ 70,00; reajuste informado pelo prestador) (vale para
 Urucará e São Sebastião do Uatumã) e uma tabela por trecho — Urucará → Itapiranga 6h, São Sebastião
 do Uatumã → Itapiranga 6h15, Itapiranga → Urucará 11h, Itapiranga → São Sebastião do Uatumã 11h.
+**Cotação de viagem (🧾):** botão "Montar cotação" na aba Lanchas → modal com origem, destino, ida,
+volta, passageiros e observação; lista as lanchas que fazem o trecho naquele dia da semana (todas
+marcadas, a usuária desmarca) e gera **PDF** (`_cotBaixarPDF()`) ou **texto para copiar**. Sem
+Firestore. CNPJ em campo próprio (`cnpj`/`semCnpj`). Testado no navegador local (PDF renderizado e
+conferido, desktop e 375px).
 
 ## Estado atual (sessão 63 — 26/11/2026)
 

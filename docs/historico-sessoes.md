@@ -26,6 +26,10 @@
 - **Lanchas → cartões:** cada prestador virou um cartão com cor própria (escolha da usuária entre
   3 opções), para marcar bem onde começa e termina; Bianca II passou para logo depois do Anneth
   Martins; A. Felipe ganhou aviso amarelo sobre o recibo e o CNPJ.
+- **Lanchas → 🧾 Cotação de viagem:** formulário (origem, destino, ida, volta, passageiros,
+  observação) que lista as lanchas do trecho naquele dia e gera PDF ou texto para a administração.
+  Decisões da usuária: comparar todas as lanchas (ela desmarca), nomes dos passageiros, sem
+  histórico no Firestore.
 
 ---
 

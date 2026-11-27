@@ -748,6 +748,23 @@ desenhado por `_viagensLanchasHtml()`/`_viagensLanchasPrestadorHtml()` (CSS `.la
 Prestador novo = novo item no array. Fonte: panfleto do prestador (nov/2026). Para mudar
 um horário, editar só `LANCHAS_INFO`. Visível a todos os logados.
 
+**🧾 Cotação de viagem (dentro da sub-aba Lanchas, sessão 64):** botão "🧾 Montar cotação"
+(`.cot-barra`) abre o modal `#cotacao-overlay` (`_cotAbrir()`): origem, destino, data da ida, data
+da volta (opcional), passageiros (um nome por linha) e observação. Tudo vem de `LANCHAS_INFO` —
+**nada é gravado no Firestore** (decisão da usuária). `_cotOpcoes()` achata o array em uma opção
+por linha de horário, lendo origem/destino do título "Origem → Destino" e os dias de
+`seg/ter/qua/qui/sex/sáb/dom` (`COT_DIAS`); valor numérico de `trechos[].valor` ou `valor` do
+prestador (`_cotValorNum()`); CNPJ do campo `cnpj` (ou "Sem CNPJ" com `semCnpj: true`, senão "Não
+informado"). `_cotEstado()` filtra pelo dia da semana de cada data e ordena por horário; todas as
+lanchas vêm marcadas e a usuária desmarca as que não quer (`_cotDesmarcadas`, chave
+"perna|índice"). Saídas: **⬇️ Baixar PDF** (`_cotBaixarPDF()`, jsPDF + AutoTable, A4 retrato, logo
+das Fichas do Dia via `_fichasCarregarLogo()`, uma tabela por perna com Horário/Prestador/Lancha/
+Valor/Total (valor × nº de passageiros, mínimo 1)/Telefones/CNPJ, quadro amarelo com avisos e notas
+dos prestadores escolhidos, arquivo `cotacao-lancha-<origem>-<destino>-<data>.pdf`) e **📋 Copiar
+texto** (`_cotTexto()`, para WhatsApp). No PDF os emojis saem (`_cotSemEmoji()`) porque a fonte do
+jsPDF não os tem, e "→" vira "para". Botões secundários usam `.cot-btn-sec`, **não**
+`.btn-cancelar` (que é `display:none` por padrão no site).
+
 **Processo e portaria (opcionais, ambas as tabelas):** `processo_tipo` (`"SEI"`/`"SGI"`, select) +
 `processo_numero` (texto livre) — mesmo padrão do campo "Processo" do formulário de Afastamentos
 ([index.html:3958](polo-medio-amazonas/index.html:3958)); e `portaria_url` — **só o link**, sem

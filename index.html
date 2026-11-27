@@ -1916,6 +1916,57 @@
         .lanchas-hora { font-weight: 700; white-space: nowrap; }
         .lanchas-nota { font-size: 0.82em; color: #64748b; margin: -14px 0 0; line-height: 1.5; }
         .lanchas-corpo .lanchas-nota { margin: -14px 0 18px; }
+        /* Cotação de viagem (🧾) */
+        .cot-barra {
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+            background: #f8fafc; border: 1px dashed #94a3b8; border-radius: 12px;
+            padding: 12px 16px; margin-bottom: 24px; font-size: 0.86em; color: #475569;
+        }
+        .cot-btn-abrir {
+            background: linear-gradient(135deg, #0369a1, #0ea5e9); color: white; border: none;
+            border-radius: 8px; padding: 9px 16px; font-weight: 700; font-size: 1.05em;
+            cursor: pointer; font-family: inherit; white-space: nowrap;
+        }
+        .cot-btn-abrir:hover { filter: brightness(1.08); }
+        .cot-btn-sec {
+            background: white; color: #334155; border: 1.5px solid #cbd5e1; border-radius: 8px;
+            padding: 9px 16px; font-weight: 600; font-size: 0.92em; cursor: pointer; font-family: inherit;
+        }
+        .cot-btn-sec:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .cot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+        .cot-input {
+            width: 100%; padding: 9px 12px; border: 1px solid var(--border-color); border-radius: 8px;
+            font-size: 0.95em; font-family: inherit; background: #fff;
+        }
+        .cot-opc { font-weight: 400; text-transform: none; color: var(--text-secondary); }
+        .cot-perna { margin-bottom: 14px; }
+        .cot-perna-tit {
+            font-weight: 700; color: #0c4a6e; background: #e0f2fe; border-radius: 8px;
+            padding: 8px 12px; margin-bottom: 8px;
+        }
+        .cot-perna-tit span { font-weight: 500; color: #334155; margin-left: 6px; }
+        .cot-op {
+            display: grid; grid-template-columns: auto 90px 1fr auto; gap: 10px; align-items: center;
+            border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; margin-bottom: 6px;
+            cursor: pointer; font-size: 0.9em;
+        }
+        .cot-op:hover { background: #f8fafc; }
+        .cot-op-off { opacity: 0.45; }
+        .cot-op-hora { font-weight: 700; }
+        .cot-op-info small { color: #64748b; }
+        .cot-op-valor { font-weight: 700; color: #065f46; text-align: right; white-space: nowrap; }
+        .cot-op-valor small { font-weight: 500; color: #64748b; }
+        .cot-vazio { color: #94a3b8; font-size: 0.88em; margin: 6px 0 10px; }
+        .cot-dica { font-size: 0.8em; color: #64748b; margin: 4px 0 0; }
+        .cot-acoes {
+            display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;
+            padding-top: 12px; margin-top: 12px; border-top: 1px solid var(--border-color);
+        }
+        @media (max-width: 600px) {
+            .cot-grid { grid-template-columns: 1fr; }
+            .cot-op { grid-template-columns: auto 1fr; }
+            .cot-op-info, .cot-op-valor { grid-column: 2; text-align: left; }
+        }
         .viagens-subtab-btn {
             padding: 8px 18px;
             border: 1.5px solid #cbd5e1;
@@ -4111,6 +4162,50 @@
                             <button type="submit" id="viagens-form-submit" class="btn-salvar-form">💾 Salvar</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Cotação de viagem de lancha (sub-aba 🚤 Lanchas) — sem Firestore -->
+        <div id="cotacao-overlay" class="form-af-overlay" onclick="_cotFechar(event)">
+            <div class="form-af-content" style="max-width:820px" onclick="event.stopPropagation()">
+                <div class="form-af-header" style="background:linear-gradient(135deg,#0369a1,#0ea5e9)">
+                    <h2>🧾 Cotação de viagem</h2>
+                    <button class="form-af-close" onclick="_cotFechar()">×</button>
+                </div>
+                <div class="form-af-body">
+                    <div class="cot-grid">
+                        <div class="form-group">
+                            <label>ORIGEM</label>
+                            <select id="cot-origem" class="cot-input" onchange="_cotOrigemMudou()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>DESTINO</label>
+                            <select id="cot-destino" class="cot-input" onchange="_cotRender()"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>DATA DA IDA</label>
+                            <input type="date" id="cot-ida" class="cot-input" onchange="_cotRender()">
+                        </div>
+                        <div class="form-group">
+                            <label>DATA DA VOLTA <span class="cot-opc">(opcional)</span></label>
+                            <input type="date" id="cot-volta" class="cot-input" onchange="_cotRender()">
+                        </div>
+                        <div class="form-group" style="grid-column:1/-1">
+                            <label>PASSAGEIROS <span class="cot-opc">(um nome por linha)</span></label>
+                            <textarea id="cot-passageiros" class="cot-input" rows="3" placeholder="ex: Eliaquim Antunes de Souza Santos&#10;Natália ..." oninput="_cotRender()"></textarea>
+                        </div>
+                        <div class="form-group" style="grid-column:1/-1">
+                            <label>OBSERVAÇÃO <span class="cot-opc">(opcional — sai no PDF)</span></label>
+                            <input type="text" id="cot-obs" class="cot-input" placeholder="ex: viagem trimestral a Urucará" oninput="_cotRender()">
+                        </div>
+                    </div>
+                    <div id="cot-resultado"></div>
+                    <div class="cot-acoes">
+                        <button type="button" class="cot-btn-sec" onclick="_cotFechar()">Fechar</button>
+                        <button type="button" class="cot-btn-sec" onclick="_cotCopiarTexto()">📋 Copiar texto</button>
+                        <button type="button" class="btn-salvar-form" onclick="_cotBaixarPDF()">⬇️ Baixar PDF</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -9582,7 +9677,9 @@
         // um horário, editar só esta constante. Campos opcionais: valor (do
         // prestador, igual em todos os trechos) ou trechos[].valor (por trecho),
         // rota, aviso (faixa amarela), instagram, extras, notas. `cor` = chave de
-        // LANCHAS_CORES (cor do cartão; padrão azul).
+        // LANCHAS_CORES (cor do cartão; padrão azul). `cnpj` / `semCnpj: true` só
+        // aparecem na Cotação (🧾). Títulos dos trechos sempre "Origem → Destino" e
+        // dias com seg/ter/qua/qui/sex/sáb/dom: a Cotação lê os dois.
         const LANCHAS_INFO = [{
             prestador: 'Expresso Anneth Martins',
             cor: 'azul',
@@ -9612,6 +9709,7 @@
             telefones: ['(92) 8845-0764', '(92) 9149-4582', '(92) 99218-8781'],
             valor: 'R$ 45,00 por trecho',
             aviso: '⚠️ Sem CNPJ — importante para a prestação de contas de pronto pagamento',
+            semCnpj: true,
             trechos: [
                 { titulo: 'Itacoatiara → Urucurituba', linhas: [
                     { hora: '14h00', lancha: 'Bianca II', dias: 'seg, ter, qua, qui, sex' },
@@ -9649,6 +9747,7 @@
             telefones: ['(92) 9138-0808'],
             valor: 'R$ 80,00 por trecho',
             aviso: '⚠️ Demoram para gerar recibo — melhor levar o recibo pronto para assinatura. CNPJ: 13.317.633/0001-70',
+            cnpj: '13.317.633/0001-70',
             trechos: [
                 { titulo: 'Urucará → Itapiranga', linhas: [
                     { hora: '06h00', lancha: 'A. Felipe', dias: 'seg, ter, qua, qui, sex, sáb' },
@@ -9674,7 +9773,290 @@
         };
 
         function _viagensLanchasHtml() {
-            return LANCHAS_INFO.map(_viagensLanchasPrestadorHtml).join('');
+            return `
+                <div class="cot-barra">
+                    <button type="button" class="cot-btn-abrir" onclick="_cotAbrir()">🧾 Montar cotação</button>
+                    <span>Escolha o trecho e a data e baixe um PDF com lanchas, horários, valores e contatos para a administração.</span>
+                </div>` + LANCHAS_INFO.map(_viagensLanchasPrestadorHtml).join('');
+        }
+
+        // ── Cotação de viagem (🧾) — tudo calculado de LANCHAS_INFO, nada gravado ──
+        const COT_DIAS = { dom: 0, seg: 1, ter: 2, qua: 3, qui: 4, sex: 5, 'sáb': 6, sab: 6 };
+        const COT_DIA_NOME = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+        let _cotDesmarcadas = new Set(); // chaves "perna|índice" das opções desmarcadas
+
+        function _cotValorNum(txt) {
+            const m = String(txt || '').match(/R\$\s*([\d.]+,\d{2}|[\d.]+)/);
+            return m ? Number(m[1].replace(/\./g, '').replace(',', '.')) : null;
+        }
+        function _cotMoeda(v) {
+            return v == null ? '—' : 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Lista plana: uma opção por (prestador, trecho, linha de horário)
+        function _cotOpcoes() {
+            const out = [];
+            LANCHAS_INFO.forEach(P => P.trechos.forEach(T => {
+                const [origem, destino] = T.titulo.split('→').map(s => s.trim());
+                if (!origem || !destino) return;
+                T.linhas.forEach(l => {
+                    const dias = new Set(String(l.dias).split(',').map(d => COT_DIAS[d.trim().toLowerCase()]).filter(d => d != null));
+                    out.push({
+                        prestador: P.prestador, lancha: l.lancha, hora: l.hora, dias, origem, destino,
+                        valor: _cotValorNum(T.valor || P.valor),
+                        telefones: P.telefones || [],
+                        cnpj: P.cnpj || (P.semCnpj ? 'Sem CNPJ' : 'Não informado'),
+                        aviso: P.aviso || '', notas: P.notas || [],
+                    });
+                });
+            }));
+            return out;
+        }
+
+        function _cotAbrir() {
+            const ops = _cotOpcoes();
+            const origens = [...new Set(ops.map(o => o.origem))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+            const sel = document.getElementById('cot-origem');
+            const atual = sel.value;
+            sel.innerHTML = origens.map(c => `<option value="${_escAttr(c)}">${esc(c)}</option>`).join('');
+            if (origens.includes(atual)) sel.value = atual;
+            else if (origens.includes('Itacoatiara')) sel.value = 'Itacoatiara';
+            const ida = document.getElementById('cot-ida');
+            if (!ida.value) {
+                const h = new Date();
+                ida.value = `${h.getFullYear()}-${String(h.getMonth() + 1).padStart(2, '0')}-${String(h.getDate()).padStart(2, '0')}`;
+            }
+            _cotOrigemMudou(true);
+            document.getElementById('cotacao-overlay').classList.add('active');
+        }
+
+        function _cotFechar(e) {
+            if (e && e.target !== document.getElementById('cotacao-overlay')) return;
+            document.getElementById('cotacao-overlay').classList.remove('active');
+        }
+
+        function _cotOrigemMudou(manterDestino) {
+            const origem = document.getElementById('cot-origem').value;
+            const destinos = [...new Set(_cotOpcoes().filter(o => o.origem === origem).map(o => o.destino))]
+                .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+            const sel = document.getElementById('cot-destino');
+            const atual = sel.value;
+            sel.innerHTML = destinos.map(c => `<option value="${_escAttr(c)}">${esc(c)}</option>`).join('');
+            if (manterDestino && destinos.includes(atual)) sel.value = atual;
+            _cotDesmarcadas = new Set();
+            _cotRender();
+        }
+
+        function _cotData(iso) {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return null;
+            const [a, m, d] = iso.split('-').map(Number);
+            return new Date(a, m - 1, d);
+        }
+        function _cotDataTxt(dt) {
+            return `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}/${dt.getFullYear()} (${COT_DIA_NOME[dt.getDay()]})`;
+        }
+        function _cotHoraMin(h) {
+            const m = String(h).match(/(\d{1,2})h(\d{2})/);
+            return m ? Number(m[1]) * 60 + Number(m[2]) : 9999;
+        }
+
+        // Monta o estado atual da cotação (lido do formulário)
+        function _cotEstado() {
+            const origem = document.getElementById('cot-origem').value;
+            const destino = document.getElementById('cot-destino').value;
+            const passageiros = document.getElementById('cot-passageiros').value.split('\n').map(s => s.trim()).filter(Boolean);
+            const obs = document.getElementById('cot-obs').value.trim();
+            const ops = _cotOpcoes();
+            const pernas = [];
+            const add = (rotulo, de, para, iso) => {
+                const dt = _cotData(iso);
+                if (!dt) return;
+                const opcoes = ops
+                    .map((o, i) => ({ ...o, i }))
+                    .filter(o => o.origem === de && o.destino === para && o.dias.has(dt.getDay()))
+                    .sort((a, b) => _cotHoraMin(a.hora) - _cotHoraMin(b.hora));
+                pernas.push({ rotulo, de, para, dt, opcoes });
+            };
+            if (origem && destino) {
+                add('Ida', origem, destino, document.getElementById('cot-ida').value);
+                add('Volta', destino, origem, document.getElementById('cot-volta').value);
+            }
+            pernas.forEach((p, pi) => p.opcoes.forEach(o => { o.chave = pi + '|' + o.i; o.marcada = !_cotDesmarcadas.has(o.chave); }));
+            return { origem, destino, passageiros, obs, pernas };
+        }
+
+        function _cotToggle(chave, marcada) {
+            if (marcada) _cotDesmarcadas.delete(chave); else _cotDesmarcadas.add(chave);
+            _cotRender();
+        }
+
+        function _cotRender() {
+            const el = document.getElementById('cot-resultado');
+            if (!el) return;
+            const E = _cotEstado();
+            const n = E.passageiros.length;
+            if (!E.pernas.length) {
+                el.innerHTML = '<p class="cot-vazio">Escolha a data da ida para ver as lanchas.</p>';
+                return;
+            }
+            el.innerHTML = E.pernas.map(p => `
+                <div class="cot-perna">
+                    <div class="cot-perna-tit">${p.rotulo === 'Ida' ? '➡️' : '⬅️'} ${p.rotulo}: ${esc(p.de)} → ${esc(p.para)} <span>${esc(_cotDataTxt(p.dt))}</span></div>
+                    ${!p.opcoes.length
+                        ? '<p class="cot-vazio">Nenhuma lancha cadastrada faz esse trecho nesse dia da semana.</p>'
+                        : p.opcoes.map(o => `
+                            <label class="cot-op${o.marcada ? '' : ' cot-op-off'}">
+                                <input type="checkbox" ${o.marcada ? 'checked' : ''} onchange="_cotToggle('${o.chave}', this.checked)">
+                                <span class="cot-op-hora">${esc(o.hora)}</span>
+                                <span class="cot-op-info"><strong>${esc(o.prestador)}</strong> · ${esc(o.lancha)}<br>
+                                    <small>📞 ${esc(o.telefones.join(' · ') || 'sem telefone')} · CNPJ: ${esc(o.cnpj)}</small></span>
+                                <span class="cot-op-valor">${_cotMoeda(o.valor)}${n > 1 && o.valor != null ? `<br><small>${n} × = ${_cotMoeda(o.valor * n)}</small>` : ''}</span>
+                            </label>`).join('')}
+                </div>`).join('') +
+                `<p class="cot-dica">${n ? `${n} passageiro(s).` : 'Sem passageiros informados — o total considera 1 pessoa.'} Desmarque as lanchas que não quer no PDF.</p>`;
+        }
+
+        function _cotSemEmoji(s) {
+            return String(s || '').replace(/[^\u0000-ÿ—–]/g, '').replace(/\s+/g, ' ').trim();
+        }
+
+        function _cotValidar(E) {
+            if (!E.pernas.length) { mostrarToast('⚠️ Escolha a data da ida.', true); return false; }
+            if (!E.pernas.some(p => p.opcoes.some(o => o.marcada))) {
+                mostrarToast('⚠️ Nenhuma lancha marcada para a cotação.', true); return false;
+            }
+            return true;
+        }
+
+        function _cotTexto() {
+            const E = _cotEstado();
+            if (!_cotValidar(E)) return null;
+            const n = Math.max(E.passageiros.length, 1);
+            const L = [`🧾 COTAÇÃO DE VIAGEM — Polo Médio Amazonas`, `Emitida em ${_cotDataTxt(new Date())}`, ''];
+            if (E.passageiros.length) L.push(`👥 Passageiros (${E.passageiros.length}): ${E.passageiros.join(', ')}`);
+            if (E.obs) L.push(`📝 ${E.obs}`);
+            E.pernas.forEach(p => {
+                L.push('', `${p.rotulo.toUpperCase()}: ${p.de} → ${p.para} — ${_cotDataTxt(p.dt)}`);
+                const ms = p.opcoes.filter(o => o.marcada);
+                if (!ms.length) L.push('  (nenhuma lancha selecionada)');
+                ms.forEach(o => L.push(`• ${o.hora} — ${o.prestador} (${o.lancha}) — ${_cotMoeda(o.valor)}${n > 1 && o.valor != null ? ` (total ${n} pessoas: ${_cotMoeda(o.valor * n)})` : ''} — Tel.: ${o.telefones.join(' / ') || '—'} — CNPJ: ${o.cnpj}`));
+            });
+            const avisos = _cotAvisos(E);
+            if (avisos.length) { L.push('', 'Observações dos prestadores:'); avisos.forEach(a => L.push(`• ${a.prestador}: ${a.texto}`)); }
+            L.push('', 'Valores e horários informados pelos prestadores — confirmar antes da compra.');
+            return L.join('\n');
+        }
+
+        function _cotAvisos(E) {
+            const vistos = new Map();
+            E.pernas.forEach(p => p.opcoes.filter(o => o.marcada).forEach(o => {
+                if (vistos.has(o.prestador)) return;
+                const textos = [o.aviso, ...o.notas].map(_cotSemEmoji).filter(Boolean);
+                if (textos.length) vistos.set(o.prestador, textos.join(' '));
+            }));
+            return [...vistos].map(([prestador, texto]) => ({ prestador, texto }));
+        }
+
+        async function _cotCopiarTexto() {
+            const t = _cotTexto();
+            if (!t) return;
+            try {
+                await navigator.clipboard.writeText(t);
+            } catch (e) {
+                const ta = document.createElement('textarea');
+                ta.value = t; document.body.appendChild(ta); ta.select();
+                try { document.execCommand('copy'); } finally { ta.remove(); }
+            }
+            mostrarToast('📋 Cotação copiada — é só colar na conversa.');
+        }
+
+        async function _cotBaixarPDF() {
+            const E = _cotEstado();
+            if (!_cotValidar(E)) return;
+            if (!window.jspdf) { mostrarToast('❌ Biblioteca de PDF ainda não carregou. Tente novamente em instantes.', true); return; }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+            const M = 14, W = doc.internal.pageSize.getWidth();
+            const n = Math.max(E.passageiros.length, 1);
+            const AZUL = [3, 105, 161];
+            let y = 14;
+
+            try {
+                const logo = await _fichasCarregarLogo();
+                doc.addImage(logo, 'PNG', M, y - 2, 16, 16 * 281 / 300);
+            } catch (e) { /* sem logo, segue */ }
+            doc.setFont(undefined, 'bold'); doc.setFontSize(11);
+            doc.text('DEFENSORIA PÚBLICA DO ESTADO DO AMAZONAS', M + 20, y + 3);
+            doc.setFont(undefined, 'normal'); doc.setFontSize(9.5);
+            doc.text('Polo do Médio Amazonas', M + 20, y + 8);
+            y += 22;
+            doc.setFont(undefined, 'bold'); doc.setFontSize(14); doc.setTextColor(...AZUL);
+            doc.text('COTAÇÃO DE VIAGEM FLUVIAL', W / 2, y, { align: 'center' });
+            doc.setTextColor(0); doc.setFont(undefined, 'normal'); doc.setFontSize(9);
+            doc.text(`Emitida em ${_cotDataTxt(new Date())}`, W / 2, y + 5, { align: 'center' });
+            y += 13;
+
+            const info = [
+                ['Trecho', `${E.origem} para ${E.destino}${E.pernas.length > 1 ? ' (ida e volta)' : ' (só ida)'}`],
+                ...E.pernas.map(p => [p.rotulo, _cotDataTxt(p.dt)]),
+                ['Passageiros', E.passageiros.length ? `${E.passageiros.length}: ${E.passageiros.join(', ')}` : 'Não informados'],
+            ];
+            if (E.obs) info.push(['Observação', E.obs]);
+            doc.autoTable({
+                startY: y, margin: { left: M, right: M }, theme: 'grid',
+                body: info, styles: { fontSize: 9, cellPadding: 1.8 },
+                columnStyles: { 0: { fontStyle: 'bold', cellWidth: 32, fillColor: [224, 242, 254] } },
+            });
+            y = doc.lastAutoTable.finalY + 8;
+
+            const colTotal = `Total (${n} pess.)`;
+            E.pernas.forEach(p => {
+                const ms = p.opcoes.filter(o => o.marcada);
+                doc.setFont(undefined, 'bold'); doc.setFontSize(10.5); doc.setTextColor(...AZUL);
+                if (y > 260) { doc.addPage(); y = 16; }
+                doc.text(`${p.rotulo.toUpperCase()}: ${p.de} para ${p.para} — ${_cotDataTxt(p.dt)}`, M, y);
+                doc.setTextColor(0);
+                if (!ms.length) {
+                    doc.setFont(undefined, 'normal'); doc.setFontSize(9);
+                    doc.text('Nenhuma lancha selecionada para este trecho.', M, y + 6);
+                    y += 14;
+                    return;
+                }
+                doc.autoTable({
+                    startY: y + 3, margin: { left: M, right: M }, theme: 'grid',
+                    head: [['Horário', 'Prestador', 'Lancha', 'Valor', colTotal, 'Telefone(s)', 'CNPJ']],
+                    body: ms.map(o => [o.hora, o.prestador, o.lancha, _cotMoeda(o.valor),
+                        o.valor == null ? '—' : _cotMoeda(o.valor * n), o.telefones.join('\n') || '—', o.cnpj]),
+                    styles: { fontSize: 8.5, cellPadding: 1.8, valign: 'middle' },
+                    headStyles: { fillColor: AZUL, textColor: 255, fontStyle: 'bold' },
+                    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 20 }, 3: { halign: 'right', cellWidth: 20 }, 4: { halign: 'right', cellWidth: 24 }, 6: { cellWidth: 30 } },
+                    didParseCell: d => { if (d.section === 'head' && (d.column.index === 3 || d.column.index === 4)) d.cell.styles.halign = 'right'; },
+                });
+                y = doc.lastAutoTable.finalY + 8;
+            });
+
+            const avisos = _cotAvisos(E);
+            if (avisos.length) {
+                if (y > 255) { doc.addPage(); y = 16; }
+                doc.setFont(undefined, 'bold'); doc.setFontSize(10);
+                doc.text('Observações dos prestadores', M, y);
+                doc.autoTable({
+                    startY: y + 3, margin: { left: M, right: M }, theme: 'grid',
+                    body: avisos.map(a => [a.prestador, a.texto]),
+                    styles: { fontSize: 8.5, cellPadding: 1.8, fillColor: [254, 243, 199] },
+                    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 45 } },
+                });
+                y = doc.lastAutoTable.finalY + 8;
+            }
+
+            if (y > 275) { doc.addPage(); y = 16; }
+            doc.setFont(undefined, 'italic'); doc.setFontSize(8); doc.setTextColor(100);
+            doc.text('Valores e horários informados pelos prestadores e registrados no site do Polo — confirmar antes da compra.', M, y);
+            doc.setTextColor(0);
+
+            const iso = E.pernas[0].dt;
+            const dataArq = `${iso.getFullYear()}-${String(iso.getMonth() + 1).padStart(2, '0')}-${String(iso.getDate()).padStart(2, '0')}`;
+            doc.save(`cotacao-lancha-${_slugify(E.origem)}-${_slugify(E.destino)}-${dataArq}.pdf`);
         }
 
         function _viagensLanchasPrestadorHtml(L) {
