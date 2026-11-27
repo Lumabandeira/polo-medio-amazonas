@@ -730,8 +730,11 @@ V, com telefones, Instagram e Wi-Fi a bordo) e **Lancha do Dib** (Itacoatiara �
 telefone). Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
 sentido), mais notas opcionais. **Conteúdo fixo, sem Firestore e sem edição pelo site:** tudo vem
 do array `LANCHAS_INFO` (um item por prestador; `valor`, `instagram`, `extras` e `notas` opcionais — `valor` aparece
-como "💵 Passagem: … (ida ou volta)" no quadro do prestador: Anneth Martins R$ 45,00, Lancha do
-Dib R$ 150,00 por trecho) e é
+como "💵 Passagem: … (ida ou volta)" no quadro do prestador, usado no Anneth Martins, R$ 45,00;
+quando o preço muda conforme o destino, usa-se `trechos[].valor`, selo verde ao lado do título da
+tabela — Lancha do Dib: R$ 140,00 Itacoatiara ⇄ São Sebastião do Uatumã e R$ 150,00 Itacoatiara ⇄
+Urucará; `rota` mostra o caminho da lancha no quadro do prestador). Na volta, a passagem em São
+Sebastião do Uatumã está como "06h15 (aprox.)" (15 min depois da saída de Urucará, decisão da usuária) e é
 desenhado por `_viagensLanchasHtml()`/`_viagensLanchasPrestadorHtml()` (CSS `.lanchas-*`).
 Prestador novo = novo item no array. Fonte: panfleto do prestador (nov/2026). Para mudar
 um horário, editar só `LANCHAS_INFO`. Visível a todos os logados.

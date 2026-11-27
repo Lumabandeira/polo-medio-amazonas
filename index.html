@@ -1878,6 +1878,11 @@
         }
         .lanchas-prestador-nome { font-weight: 700; color: #0c4a6e; font-size: 1.05em; margin-bottom: 6px; }
         .lanchas-valor { font-size: 0.95em; color: #065f46; margin-bottom: 6px; }
+        .lanchas-rota { font-size: 0.88em; color: #334155; margin-bottom: 6px; line-height: 1.5; }
+        .lanchas-trecho-valor {
+            display: inline-block; font-size: 0.68em; font-weight: 700; color: #065f46;
+            background: #d1fae5; border-radius: 12px; padding: 2px 10px; vertical-align: middle; margin-left: 6px;
+        }
         .lanchas-prestador-info { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.88em; color: #334155; }
         .lanchas-prestador-info a { color: #0369a1; font-weight: 600; }
         .lanchas-table { min-width: 0; }
@@ -9547,8 +9552,9 @@
         // ── Lanchas (sub-aba 🚤): horários fixos, sem Firestore ───────────
         // Um item por prestador. Fontes: panfleto do Expresso Anneth Martins
         // (nov/2026) e informação da usuária (Lancha do Dib, nov/2026). Para mudar
-        // um horário, editar só esta constante. Campos opcionais: valor,
-        // instagram, extras, notas.
+        // um horário, editar só esta constante. Campos opcionais: valor (do
+        // prestador, igual em todos os trechos) ou trechos[].valor (por trecho),
+        // rota, instagram, extras, notas.
         const LANCHAS_INFO = [{
             prestador: 'Expresso Anneth Martins',
             telefones: ['(92) 99285-9253', '(92) 99128-9504'],
@@ -9573,13 +9579,20 @@
         }, {
             prestador: 'Lancha do Dib',
             telefones: ['(92) 9151-7906'],
-            valor: 'R$ 150,00 por trecho',
+            rota: 'Itacoatiara → São Sebastião do Uatumã → Urucará (na volta, o caminho inverso). Entre São Sebastião do Uatumã e Urucará são cerca de 15 minutos.',
+            // valor por trecho (o preço muda conforme o destino)
             trechos: [
-                { titulo: 'Itacoatiara → Urucará', linhas: [
+                { titulo: 'Itacoatiara → São Sebastião do Uatumã', valor: 'R$ 140,00', linhas: [
                     { hora: '14h00', lancha: 'Lancha do Dib', dias: 'seg, qua, sex' },
                 ]},
-                { titulo: 'Urucará → Itacoatiara', linhas: [
+                { titulo: 'Itacoatiara → Urucará', valor: 'R$ 150,00', linhas: [
+                    { hora: '14h00', lancha: 'Lancha do Dib', dias: 'seg, qua, sex' },
+                ]},
+                { titulo: 'Urucará → Itacoatiara', valor: 'R$ 150,00', linhas: [
                     { hora: '06h00', lancha: 'Lancha do Dib', dias: 'seg, qua, sex' },
+                ]},
+                { titulo: 'São Sebastião do Uatumã → Itacoatiara', valor: 'R$ 140,00', linhas: [
+                    { hora: '06h15 (aprox.)', lancha: 'Lancha do Dib', dias: 'seg, qua, sex' },
                 ]},
             ],
         }];
@@ -9591,7 +9604,7 @@
         function _viagensLanchasPrestadorHtml(L) {
             const tabelas = L.trechos.map(t => `
                 <div class="viagens-block">
-                    <h3>${esc(t.titulo)}</h3>
+                    <h3>${esc(t.titulo)}${t.valor ? ` <span class="lanchas-trecho-valor">💵 ${esc(t.valor)}</span>` : ''}</h3>
                     <div class="viagens-table-wrap lanchas-wrap">
                         <table class="viagens-table lanchas-table">
                             <thead><tr><th>Horário</th><th>Lancha</th><th>Dias</th></tr></thead>
@@ -9604,6 +9617,7 @@
                 <div class="lanchas-prestador">
                     <div class="lanchas-prestador-nome">🚤 ${esc(L.prestador)}</div>
                     ${L.valor ? `<div class="lanchas-valor">💵 Passagem: <strong>${esc(L.valor)}</strong> (ida ou volta)</div>` : ''}
+                    ${L.rota ? `<div class="lanchas-rota">🧭 Rota: ${esc(L.rota)}</div>` : ''}
                     <div class="lanchas-prestador-info">
                         <span>📞 Reservas e informações: ${L.telefones.map(t => `<span style="white-space:nowrap">${esc(t)}</span>`).join(' · ')}</span>
                         ${L.instagram ? `<span>📷 Instagram: <a href="https://www.instagram.com/${_escAttr(L.instagram)}/" target="_blank" rel="noopener">@${esc(L.instagram)}</a></span>` : ''}

@@ -15,6 +15,9 @@
   6h na volta). `LANCHAS_INFO` passou a ser um array de prestadores.
 - **Lanchas → valores:** passagem por trecho (ida ou volta) no quadro de cada prestador —
   Anneth Martins R$ 45,00, Lancha do Dib R$ 150,00.
+- **Lanchas → São Sebastião do Uatumã:** a Lancha do Dib passa por lá antes de Urucará. Novas
+  tabelas Itacoatiara ⇄ São Sebastião do Uatumã (R$ 140,00; volta ~06h15) e valor por tabela
+  (`trechos[].valor`) no Dib; linha "🧭 Rota" no quadro do prestador.
 
 ---
 

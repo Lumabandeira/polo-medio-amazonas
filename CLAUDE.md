@@ -74,8 +74,10 @@ Conferido no navegador local (desktop e 375px, Firestore simulado).
 Depois: `LANCHAS_INFO` virou um array (um item por prestador) e entrou a **Lancha do Dib**
 (Itacoatiara → Urucará 14h e Urucará → Itacoatiara 6h, seg/qua/sex; tel. (92) 9151-7906 — número
 com 8 dígitos, como informado pela usuária). Conferido no navegador local.
-Também: valor da passagem por prestador (campo `valor`): Anneth Martins R$ 45,00 e Lancha do Dib
-R$ 150,00 por trecho, ida ou volta.
+Também: valor da passagem — Anneth Martins R$ 45,00 por trecho (campo `valor` do prestador).
+Lancha do Dib passa por São Sebastião do Uatumã antes de Urucará (campo `rota`): tabelas próprias
+de Itacoatiara ⇄ São Sebastião do Uatumã, R$ 140,00 (volta às "06h15 (aprox.)"), e Itacoatiara ⇄
+Urucará, R$ 150,00 — preço por tabela em `trechos[].valor`.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 
