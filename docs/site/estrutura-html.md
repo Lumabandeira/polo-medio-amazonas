@@ -318,7 +318,9 @@ tudo é calculado em `renderEscalaSemanal()` a partir de outras fontes já exist
   Semana com os 5 dias úteis no recesso vira uma linha com "⚖️ Recesso forense" mesclado
   nas 5 colunas de Itacoatiara e nas 2 das UDIS (`.escala-recesso-cell`); o **Plantão
   continua** sendo mostrado. Semana com só parte dos dias no recesso: o dia útil do
-  recesso vira segmento "Recesso forense" (`até`/`a partir de`), e qualquer semana que
+  recesso vira segmento "Recesso forense" (`até`/`a partir de`). Se o recesso começa no
+  sábado/domingo (20/12/2026 é domingo), cada célula mostra o membro "até 19/12" e
+  "A partir de 20/12: ⚖️ Recesso forense" (fim de `segmentarResponsavelSemana()`). Qualquer semana que
   toque o recesso (mesmo só no domingo, como 14–20/12/2026) ganha o aviso com o período
   e o total de dias abaixo do título (`.escala-recesso-aviso`). Recesso novo = nova
   entrada no array.

@@ -7562,6 +7562,21 @@
                     segmentos.push({ name: resp.name, isSub: resp.isSub, semCobertura: resp.semCobertura, recesso: !!resp.recesso, inicio: d, fim: d });
                 }
             }
+            // Recesso que começa no sábado/domingo (ex.: 20/12/2026, domingo): a atuação
+            // vai até a véspera do recesso e a célula ganha o segmento do recesso.
+            const ultimo = segmentos[segmentos.length - 1];
+            if (ultimo && !ultimo.recesso) {
+                for (let i = 5; i < 7; i++) {
+                    const d = new Date(weekStart);
+                    d.setDate(d.getDate() + i);
+                    if (_recessoDoDia(d)) {
+                        const vespera = new Date(d); vespera.setDate(vespera.getDate() - 1);
+                        ultimo.fim = vespera;
+                        segmentos.push({ name: 'Recesso forense', isSub: false, semCobertura: false, recesso: true, inicio: d, fim: d });
+                        break;
+                    }
+                }
+            }
             return segmentos;
         }
 
@@ -7603,9 +7618,10 @@
             return segs.map((seg, i) => {
                 let nomeHtml;
                 if (seg.recesso) {
-                    const periodo = segs.length > 1
-                        ? (i === 0 ? ` até ${fmtDay(seg.fim)}` : ` a partir de ${fmtDay(seg.inicio)}`) : '';
-                    const linha = `⚖️ Recesso forense${periodo}`;
+                    let linha = '⚖️ Recesso forense';
+                    if (segs.length > 1) {
+                        linha = i === 0 ? `${linha} até ${fmtDay(seg.fim)}` : `A partir de ${fmtDay(seg.inicio)}: ${linha}`;
+                    }
                     return i === 0 ? linha : `<span class="escala-seg-divider">${linha}</span>`;
                 } else if (seg.semCobertura) {
                     nomeHtml = '<span class="escala-vazio" title="Titular ausente — sem substituto definido">—</span>';

@@ -106,7 +106,8 @@ Elton, Elaine). Agora recebe `ano`; titularidade sem `fim` não expira mais em 0
 com node e o JSON; conferido pela usuária no site publicado.
 **Escala Semanal → recesso forense** (`RECESSOS_FORENSES`, 20/12/2026–06/01/2027, 18 dias): semanas
 inteiras no recesso mostram "⚖️ Recesso forense" no lugar dos defensores (Plantão continua); a semana
-de 14–20/12 ganha aviso. Conferido no navegador local com plantão simulado.
+de 14–20/12 ganha aviso e cada célula mostra o membro "até 19/12" + "A partir de 20/12: Recesso
+forense". Conferido no navegador local com plantão simulado.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 
