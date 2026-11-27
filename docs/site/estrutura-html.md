@@ -728,7 +728,11 @@ tipos de evento guardados em coleções separadas:
 (`.lanchas-bloco`): **Expresso Anneth Martins** (Itacoatiara ⇄ Urucurituba, Anneth Martins I e
 V, com telefones, Instagram e Wi-Fi a bordo) e **Lancha do Dib** (Itacoatiara ⇄ Urucará, só
 telefone) e **Lancha A. Felipe**, também conhecida como Nagibe (Urucará ⇄ Itapiranga, seg a sáb, 6h na
-ida e 11h na volta; tel. (92) 9138-0808; sem valor por enquanto). `telefones: []` esconde a linha 📞. Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
+ida e 11h na volta; tel. (92) 9138-0808; sem valor por enquanto). `telefones: []` esconde a linha 📞.
+**Exp. Bianca II Viagens** (Urucurituba ⇄ Itacoatiara, do panfleto: saídas de Urucurituba 7h
+seg–sex, 11h sáb, 14h dom; voltas de Itacoatiara 14h seg–sex, 17h sáb e dom; 3 telefones). Tem
+`aviso` — faixa amarela (`.lanchas-aviso`) "⚠️ Sem CNPJ", importante para a prestação de contas de
+pronto pagamento de Pessoa Física. Cada bloco tem um quadro do prestador e duas tabelas Horário/Lancha/Dias (uma por
 sentido), mais notas opcionais. **Conteúdo fixo, sem Firestore e sem edição pelo site:** tudo vem
 do array `LANCHAS_INFO` (um item por prestador; `valor`, `instagram`, `extras` e `notas` opcionais — `valor` aparece
 como "💵 Passagem: … (ida ou volta)" no quadro do prestador, usado no Anneth Martins, R$ 45,00;

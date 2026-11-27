@@ -19,7 +19,10 @@
   tabelas Itacoatiara ⇄ São Sebastião do Uatumã (R$ 140,00; volta ~06h15) e valor por tabela
   (`trechos[].valor`) no Dib; linha "🧭 Rota" no quadro do prestador.
 - **Lanchas → A. Felipe:** Urucará ⇄ Itapiranga, seg a sáb (6h ida, 11h volta), ainda sem
-  telefone e valor; telefone passou a ser opcional no quadro do prestador.
+  telefone e valor; telefone passou a ser opcional no quadro do prestador. Depois: telefone
+  (92) 9138-0808 e apelido Nagibe.
+- **Lanchas → Exp. Bianca II Viagens:** Urucurituba ⇄ Itacoatiara (panfleto), 3 telefones e faixa
+  amarela "⚠️ Sem CNPJ" (campo `aviso`), por causa da prestação de contas de PP de Pessoa Física.
 
 ---
 

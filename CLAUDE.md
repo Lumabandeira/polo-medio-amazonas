@@ -80,6 +80,9 @@ de Itacoatiara ⇄ São Sebastião do Uatumã, R$ 140,00 (volta às "06h15 (apro
 Urucará, R$ 150,00 — preço por tabela em `trechos[].valor`.
 Também: **Lancha A. Felipe**, também conhecida como Nagibe (Urucará → Itapiranga 6h, Itapiranga →
 Urucará 11h, seg a sáb; tel. (92) 9138-0808). **Pendente (usuária):** valor da A. Felipe.
+Também: **Exp. Bianca II Viagens** (Urucurituba ⇄ Itacoatiara, do panfleto) com faixa amarela
+"⚠️ Sem CNPJ" (campo `aviso`), importante para pronto pagamento de Pessoa Física. Considerado que
+"saindo" no panfleto = saída de Urucurituba.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 

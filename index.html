@@ -1878,6 +1878,10 @@
         }
         .lanchas-prestador-nome { font-weight: 700; color: #0c4a6e; font-size: 1.05em; margin-bottom: 6px; }
         .lanchas-valor { font-size: 0.95em; color: #065f46; margin-bottom: 6px; }
+        .lanchas-aviso {
+            background: #fef3c7; border: 1px solid #fcd34d; color: #78350f; font-weight: 600;
+            font-size: 0.88em; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; line-height: 1.4;
+        }
         .lanchas-rota { font-size: 0.88em; color: #334155; margin-bottom: 6px; line-height: 1.5; }
         .lanchas-trecho-valor {
             display: inline-block; font-size: 0.68em; font-weight: 700; color: #065f46;
@@ -9554,7 +9558,7 @@
         // (nov/2026) e informação da usuária (Lancha do Dib, nov/2026). Para mudar
         // um horário, editar só esta constante. Campos opcionais: valor (do
         // prestador, igual em todos os trechos) ou trechos[].valor (por trecho),
-        // rota, instagram, extras, notas.
+        // rota, aviso (faixa amarela), instagram, extras, notas.
         const LANCHAS_INFO = [{
             prestador: 'Expresso Anneth Martins',
             telefones: ['(92) 99285-9253', '(92) 99128-9504'],
@@ -9606,6 +9610,22 @@
                     { hora: '11h00', lancha: 'A. Felipe', dias: 'seg, ter, qua, qui, sex, sáb' },
                 ]},
             ],
+        }, {
+            // Fonte: panfleto do prestador + telefone informado pela usuária (nov/2026).
+            prestador: 'Exp. Bianca II Viagens',
+            telefones: ['(92) 8845-0764', '(92) 9149-4582', '(92) 99218-8781'],
+            aviso: '⚠️ Sem CNPJ — importante para a prestação de contas de pronto pagamento de Pessoa Física.',
+            trechos: [
+                { titulo: 'Urucurituba → Itacoatiara', linhas: [
+                    { hora: '07h00', lancha: 'Bianca II', dias: 'seg, ter, qua, qui, sex' },
+                    { hora: '11h00', lancha: 'Bianca II', dias: 'sáb' },
+                    { hora: '14h00', lancha: 'Bianca II', dias: 'dom' },
+                ]},
+                { titulo: 'Itacoatiara → Urucurituba', linhas: [
+                    { hora: '14h00', lancha: 'Bianca II', dias: 'seg, ter, qua, qui, sex' },
+                    { hora: '17h00', lancha: 'Bianca II', dias: 'sáb, dom' },
+                ]},
+            ],
         }];
 
         function _viagensLanchasHtml() {
@@ -9628,6 +9648,7 @@
                 <div class="lanchas-prestador">
                     <div class="lanchas-prestador-nome">🚤 ${esc(L.prestador)}</div>
                     ${L.valor ? `<div class="lanchas-valor">💵 Passagem: <strong>${esc(L.valor)}</strong> (ida ou volta)</div>` : ''}
+                    ${L.aviso ? `<div class="lanchas-aviso">${esc(L.aviso)}</div>` : ''}
                     ${L.rota ? `<div class="lanchas-rota">🧭 Rota: ${esc(L.rota)}</div>` : ''}
                     <div class="lanchas-prestador-info">
                         ${!(L.telefones || []).length ? '' : `<span>📞 Reservas e informações: ${L.telefones.map(t => `<span style="white-space:nowrap">${esc(t)}</span>`).join(' · ')}</span>`}
