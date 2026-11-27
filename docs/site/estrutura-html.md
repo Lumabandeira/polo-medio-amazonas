@@ -729,8 +729,9 @@ colorida, faixa `.lanchas-cab` com o nome, corpo `.lanchas-corpo`), cada um com 
 campo `cor` → `LANCHAS_CORES` (azul, verde, laranja, roxo; aplicada via variáveis CSS `--lc` e
 `--lc-claro` na faixa, borda, quadro de informações e cabeçalho das tabelas). Ordem e cores: **Expresso Anneth Martins** (Itacoatiara ⇄ Urucurituba, Anneth Martins I e
 V, com telefones, Instagram e Wi-Fi a bordo) e **Lancha do Dib** (Itacoatiara ⇄ Urucará, só
-telefone) e **Lancha A. Felipe**, também conhecida como Nagibe (Urucará/São Sebastião do Uatumã ⇄
-Itapiranga, seg a sáb, 6h na ida e 11h na volta; tel. (92) 9138-0808; R$ 70,00 por trecho,
+telefone) e **Lancha A. Felipe**, também conhecida como Nagibe (seg a sáb, uma tabela por trecho: Urucará →
+Itapiranga 6h, São Sebastião do Uatumã → Itapiranga 6h15, Itapiranga → Urucará 11h, Itapiranga →
+São Sebastião do Uatumã 11h; tel. (92) 9138-0808; R$ 70,00 por trecho,
 mesmo valor para Urucará ou São Sebastião do Uatumã; aviso amarelo do recibo/CNPJ). `telefones: []` esconde a linha 📞.
 **Exp. Bianca II Viagens** (Urucurituba ⇄ Itacoatiara, do panfleto: saídas de Urucurituba 7h
 seg–sex, 11h sáb, 14h dom; voltas de Itacoatiara 14h seg–sex, 17h sáb e dom; 3 telefones; R$ 45,00 por trecho). Tem

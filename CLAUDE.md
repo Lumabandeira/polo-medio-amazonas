@@ -85,8 +85,9 @@ Também: **Exp. Bianca II Viagens** (Urucurituba ⇄ Itacoatiara, do panfleto; R
 "saindo" no panfleto = saída de Urucurituba.
 Ordem: Anneth Martins (azul), Bianca II (verde), Dib (laranja), A. Felipe (roxo) — cada prestador
 virou um cartão com cor própria (campo `cor` → `LANCHAS_CORES`). A. Felipe ganhou aviso amarelo
-(recibo demorado; CNPJ 13.317.633/0001-70). Trechos da A. Felipe renomeados para
-"Urucará/São Sebastião do Uatumã ⇄ Itapiranga", R$ 70,00 por trecho (vale para os dois lugares).
+(recibo demorado; CNPJ 13.317.633/0001-70). A. Felipe: R$ 70,00 por trecho (vale para
+Urucará e São Sebastião do Uatumã) e uma tabela por trecho — Urucará → Itapiranga 6h, São Sebastião
+do Uatumã → Itapiranga 6h15, Itapiranga → Urucará 11h, Itapiranga → São Sebastião do Uatumã 11h.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 
