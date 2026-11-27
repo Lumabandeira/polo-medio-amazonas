@@ -95,7 +95,7 @@ localStorage.setItem('pma-xyz', JSON.stringify(celulas));
 2. `loadTitularesFirestore()` → lê `titulares_admin`, substitui `historico_titulares` em memória, re-renderiza
 3. `reloadTitularesData()` → restaura snapshot e reaplicar Firestore (usado ao cancelar)
 
-**Resolução por data:** `getTitularForDPOnDay(dpNum, mes, dia)` — intervalo inclusivo (`inicio <= date <= fim`; `fim == null` = vigente). Retorna a entrada com `inicio` mais recente entre as válidas.
+**Resolução por data:** `getTitularForDPOnDay(dpNum, mes, dia, ano)` — intervalo inclusivo (`inicio <= date <= fim`; `fim == null` = vigente). Retorna a entrada com `inicio` mais recente entre as válidas.
 
 **Ordenação no modal:** `fim === null` (ativo) → topo; `fim === ''` (histórico novo em branco) → final; datas preenchidas → mais recente primeiro.
 

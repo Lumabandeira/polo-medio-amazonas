@@ -23,7 +23,7 @@ Firebase onAuthStateChanged()   ← detecta login/logout
 
 | Função | O que faz |
 |--------|----------|
-| `getTitularForDPOnDay(dpNum, mes, dia)` | Retorna defensor vigente em uma data específica (intervalo inclusivo) |
+| `getTitularForDPOnDay(dpNum, mes, dia, ano)` | Retorna defensor vigente em uma data específica (intervalo inclusivo) |
 | `getCurrentTitular(dp, historico)` | Local a `renderDefensorias` — retorna entrada ativa mais recente |
 | `getFutureTitular(dpKey)` | Retorna defensor com início futuro (detecta futuros membros) |
 | `_atrResolverDefensor(dpKey)` | Versão global para a seção Atribuições (não chama getCurrentTitular) |

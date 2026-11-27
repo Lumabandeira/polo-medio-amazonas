@@ -100,6 +100,10 @@ marcadas, a usuária desmarca) e gera **PDF** (`_cotBaixarPDF()`) ou **texto par
 Firestore. CNPJ em campo próprio (`cnpj`/`semCnpj`). Notas com marcador (¹) só entram na
 cotação quando um horário com o mesmo marcador foi incluído. Testado no navegador local (PDF renderizado e
 conferido, desktop e 375px).
+**Bugfix (Escala Semanal / Designações diárias, virada do ano):** `getTitularForDPOnDay()` usava
+sempre o ano 2026 — em 01/01/2027 voltavam os titulares de jan/2026 (José Antônio, Ícaro, Mariana,
+Elton, Elaine). Agora recebe `ano`; titularidade sem `fim` não expira mais em 01/01/2027. Testado
+com node e o JSON; não conferido no site publicado.
 
 ## Estado atual (sessão 63 — 26/11/2026)
 

@@ -6,6 +6,12 @@
 
 ## Sessão 64 — 27/11/2026
 
+- **Bugfix na virada do ano (Escala Semanal / Designações diárias):** `getTitularForDPOnDay()`
+  montava a data sempre como 2026, então em 01/01/2027 voltavam os titulares de 01/01/2026
+  (José Antônio na 2ª DP, Ícaro na 1ª, Mariana na 4ª, Elton na 5ª, Elaine na 6ª). Agora recebe
+  `ano` (passado por `getResponsibleForDPOnDay()`), e titularidade sem `fim` vale sem limite
+  (antes ia só até 01/01/2027). Testado com node e o `designacoes-2026.json`: 31/12/2026 e
+  01/01/2027 dão o mesmo titular.
 - **Viagens e Eventos → nova sub-aba 🚤 Lanchas:** horários das lanchas Itacoatiara ⇄ Urucurituba
   do Expresso Anneth Martins (Anneth Martins I e V), montados a partir do panfleto do prestador
   (que corrigiu duas informações anteriores: a lancha das 7h de Urucurituba é só às quartas, e o
